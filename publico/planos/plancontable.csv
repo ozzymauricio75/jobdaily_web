@@ -1,0 +1,590 @@
+1;"Activo                        ";;"D";1;;;
+11;"Disponible                    ";1;"D";1;;;
+1105;"Caja                          ";11;"D";1;;;
+110505;"Caja General                  ";1105;"D";1;;;
+11050501;"Principal";110505;"D";1;1;;
+110510;"Caja Menores                  ";1105;"D";1;;;
+11051001;"Caja Menor                    ";110510;"D";1;1;;
+1110;"Bancos                        ";11;"D";1;;;
+111005;"Moneda Nacional               ";1110;"D";1;;;
+11100523;"Banco Occidente";111005;"D";1;1;"BO";
+11100507;"Bancolombia  ";111005;"D";1;1;"BC";
+11100502;"Banco Popular";111005;"D";1;1;"BP";
+1120;"Cuentas De Ahorro             ";11;"D";1;;;
+112010;"Corp. De Ahorro Y Vivienda     ";1120;"D";1;;;
+11201007;" Bancolombia Ahorros";112010;"D";1;1;"BC";
+1125;"Fondos                        ";11;"D";1;;;
+112505;"Rotatorios Moneda Nacional";1125;"D";1;;;
+11250502;" Especiales Moneda Nacional    ";112505;"D";1;1;;1
+12;"Inversiones";1;"D";1;;;
+1205;"Acciones";12;"D";1;;;
+1299;"Provisiones";12;"D";1;;;
+13;"Deudores                      ";1;"D";1;;;
+1305;"Clientes                      ";13;"D";1;;;
+130505;"Nacionales                    ";1305;"D";1;;;
+13050501;" Cuentas X Cobrar -Clientes    ";130505;"D";1;1;;1
+1330;"Anticipos Y Avances           ";13;"D";1;;;
+133005;"A Proveedores                 ";1330;"D";1;1;;
+133010;"A contratistas";1330;"D";1;1;;
+133015;"A Trabajadores                ";1330;"D";1;1;;
+1355;"Anticipo De Impuesto Y Contribuciones O Saldos a Favor     ";13;"D";1;;;
+135515;"Retención En La Fuente            ";1355;"D";1;;;
+13551501;"Construccion 1%";135515;"D";1;1;;
+13551502;" Compras 3.5%                  ";135515;"D";1;1;;1
+13551503;" Servicios 6%                  ";135515;"D";1;1;;1
+13551504;"Honorarios 10%";135515;"D";1;1;;
+13551506;"Rendimientos Financieros 7%";135515;"D";1;1;;
+13551507;" Honorarios 11%                ";135515;"D";1;1;;1
+13551508;" Servicios 4%                  ";135515;"D";1;1;;1
+135518;"Anticipo De Impuesto De Industria Y Comercio    ";1355;"D";1;;;
+13551801;"Cali";135518;"D";1;;;
+1355180101;"Obras Cod.301 3.3x1000        ";13551801;"D";1;1;;1
+1355180102;"Serv. Cod.307 11.0x1000       ";13551801;"D";1;1;;1
+1355180103;"Cod.202 5.5x1000              ";13551801;"D";1;1;;1
+1355180104;"Comerc. Cod.203 7.7x1000      ";13551801;"D";1;1;;1
+1355180201;"Cod.305 6.6x1000              ";13551802;"D";1;1;;1
+1355180202;"Reteica 10.0x1000             ";13551802;"D";1;1;;
+13551802;"Yumbo";135518;"D";1;;;
+1365;"Cxc A Trabajador              ";13;"D";1;;;
+136505;"Vivienda";1365;"D";1;1;;
+136515;"Educacion";1365;"D";1;1;;
+136525;"Calamidad Domestica           ";1365;"D";1;1;;1
+136530;"Responsabilidad";1365;"D";1;1;;1
+136595;"Otros";1365;"D";1;1;;
+13659501;"Gastos por Celular";136595;"D";1;1;;
+13659502;"Perdida de Herramienta";136595;"D";1;1;;
+1380;"Deudores Varios               ";13;"D";1;;;
+138020;"Cuentas Por Cobrar De Terceros";1380;"D";1;;;
+13802001;"Cuentas Por Cobrar De Terceros Clientes";138020;"D";1;1;;1
+14;"Inventarios                   ";1;"D";1;;;
+1410;"Producion Interna En Proceso  ";14;"D";1;;;
+141005;"Materiales Obra en Proceso";1410;"D";1;1;;
+1415;"Obras En Const. En Curso      ";14;"D";1;;;
+141505;"Materiales Mtos en proceso";1415;"D";1;1;;
+1420;"Contratos En Ejecuccion       ";14;"D";1;;;
+142005;"Contratos En Ejecucion Obras       ";1420;"D";1;1;;
+1435;"Mercancia No Fababricada Por La Empresa     ";14;"D";1;;;
+143501;"Inventario Inicial";1435;"D";1;1;;
+15;"Propiedades Planta Y Equipo   ";1;"D";1;;;
+1520;"Maquinaria Y Equipos          ";15;"D";1;;;
+152001;"Maquinaria Producción";1520;"D";1;1;;
+152003;"Equipos A/A En Alquiler       ";1520;"D";1;1;;
+152099;"Ajustes Por Inflacion         ";1520;"D";1;1;;
+1524;"Equipos De Oficina            ";15;"D";1;;;
+152405;"Muebles Y Enseres             ";1524;"D";1;1;;
+152410;"Equipos        ";1524;"D";1;1;;
+152499;"Ajustes Por Inflacion         ";1524;"D";1;1;;
+1528;"Equipo De Comput. Y Comuninacion   ";15;"D";1;;;
+152805;"Equipos De Procesam De Datos  ";1528;"D";1;1;;
+15280501;"Equipos De Procesam De Datos  ";152805;"D";1;1;;
+15280502;"Software";152805;"D";1;1;;
+15280504;"U.P.S";152805;"D";1;1;;
+152810;"Equipos De Telecomunicaciones ";1528;"D";1;1;;
+15281001;"Equipos De Telecomunicaciones ";152810;"D";1;1;;
+152899;"Ajustes Por Inflacion         ";1528;"D";1;1;;
+1540;"Flota Y Equipo De Transporte     ";15;"D";1;;;
+154005;"Autos,Camionetas Y Camperos   ";1540;"D";1;1;;
+154099;"Ajustes Por Inflacion         ";1540;"D";1;1;;
+1592;"Depreciacion Acumulada        ";15;"D";1;;;
+159210;"Maquinaria Y Equipos          ";1592;"D";1;1;;
+15921001;"Maquinaria Y Equipos          ";159210;"D";1;1;;
+159215;"Muebles Y Enseres/Equipos De O";1592;"D";1;;;
+15921501;"Muebles Y Enseres/Equipos De O";159215;"D";1;1;;
+159220;"Equipos Comput Y Comunica     ";1592;"D";1;;;
+15922001;" Equipos De Cumputacion        ";159220;"D";1;1;;
+15922002;" Equipos De Comunicaciones     ";159220;"D";1;1;;
+159235;"Flota Y Equipo De Transporte  ";1592;"D";1;;;
+15923501;" Flota Y Equipo De Transporte  ";159235;"D";1;1;;
+159299;"Ajustes Por Inflacion         ";1592;"D";1;;;
+15929901;" Ajuste Cm Dep. Muebles Y      ";159299;"D";1;1;;
+15929902;" Ajuste Cm.Dep.Maqu Y Equi     ";159299;"D";1;1;;
+15929903;" Ajuste Cm.Dep.Equi.Comuni     ";159299;"D";1;1;;
+15929904;" Ajuste Cm.Dep.Fota Y Equ.     ";159299;"D";1;1;;
+17;"Diferidos                     ";1;"D";1;;;
+1705;"Gastos Pagados Por Anticipado ";17;"D";1;;;
+170520;" Seguros Y Fianzas            ";1705;"D";1;1;;1
+170535;"Mantenimiento de equipos";1705;"D";1;1;;
+1710;"Cargos Diferidos              ";17;"D";1;;;
+171012;"Estudios Investigaciones Y Proyectos";1710;"D";1;1;;
+171016;"Programas Computador (Software)";1710;"D";1;1;;
+171024;"Mejoras A Propiedades Ajenas";1710;"D";1;1;;
+171032;"Entrenamiento De Personal";1710;"D";1;1;;
+171044;" Publicidad Propaganda";1710;"D";1;1;;
+171060;" Dotacion Y Suministro A T     ";1710;"D";1;1;;
+2;"Pasivo                        ";2;"C";1;;;
+21;"Obligaciones Financieras      ";2;"C";1;;;
+2105;"Banco Nacionales              ";21;"C";1;;;
+210505;"Sobregiros";2105;"C";1;;;
+21050523;"Banco De Occidente            ";210505;"C";1;1;"BO";
+21050507;"Bancolombia                   ";210505;"C";1;1;"BC";
+21050502;"Popular";210505;"C";1;1;"BP";
+210501;"Pagares                       ";2105;"C";1;;;
+21050123;"Bco Occidente";210501;"C";1;1;"BO";
+21050107;"Bancolombia";210501;"C";1;1;"BC";
+210515;"Tarjetas de Crédito";2105;"C";1;;;
+21051501;"Tarjeta De Credito Visa";210515;"C";1;1;;
+21051502;"Tarjeta De Credito Master Card";210515;"C";1;1;;
+21051503;"Tarjeta De Credito Diners-Club";210515;"C";1;1;;
+2195;"Otras Obligaciones";21;"C";1;;;
+219505;" Particulares                  ";2195;"C";1;1;;1
+219520;"Socios y Accionistas";2195;"C";1;;;
+21952001;"Medrano Araujo Carlos A.      ";219520;"C";1;1;;
+22;"Proveedores Objeto Social             ";2;"C";1;;;
+2205;"Nacionales                    ";22;"C";1;;;
+220501;"Cuentas Por Pagar Proveedores Objeto Social";2205;"C";1;1;;1
+220502;"Servicios Técnicos";2205;"C";1;1;;
+220503;"Contratistas";2205;"C";1;;;
+220504;"Personal Temporal Mo Directa";2205;"C";1;;;
+220599;"Proveedores Por Legalizar     ";2205;"C";1;1;;1
+23;"Cuentas Por Pagar             ";2;"C";1;;;
+2335;"Costos Y Gastos Por Pagar     ";23;"C";1;;;
+233505;"Gastos Financieros";2335;"C";1;1;;1
+233510;"Gastos Legales ";2335;"C";1;1;;1
+233515;"Libros, Suscripciones, Periodicos Y Revistas";2335;"C";1;1;;1
+233525;"Honorarios";2335;"C";1;1;;1
+233530;"Servicios Técnicos";2335;"C";1;1;;1
+233535;"Servicios De Mtto";2335;"C";1;1;;1
+233540;"Arrendamientos                ";2335;"C";1;1;;1
+233545;"Transportes Fletes Y Acarreos";2335;"C";1;1;;1
+233550;"Servicios Publicos            ";2335;"C";1;1;;1
+233555;"Seguros                       ";2335;"C";1;1;;1
+233560;"Gastos De Viaje";2335;"C";1;1;;1
+233565;"Gastos De Representación Y Relaciones Publicas";2335;"C";1;1;;1
+233595;"Otros                         ";2335;"C";1;;;
+23359501;"Personal Temporal Administrativo";233595;"C";1;1;;1
+23359502;"Servicios Administrativos";233595;"C";1;1;;1
+2355;"Deudas Con Accionistas O Socios";23;"C";1;;;
+2365;"Retfe En La Fuente            ";23;"C";1;;;
+236505;"Salarios Y Pagos Laborales     ";2365;"C";1;1;;1
+236510;"Dividendos Y/O Participaciones";2365;"C";1;1;;1
+236515;"Honorarios";2365;"C";1;1;;1
+236520;"Comisiones";2365;"C";1;1;;
+236525;"Servicios                     ";2365;"C";1;;;
+236530;"Arrendamientos";2365;"C";1;;;1
+236535;"Rendimientos Financieros";2365;"C";1;;;
+23653501;"Rendimientos Financieros 7%";236535;"C";1;1;;
+236540;"Compras";2365;"C";1;;;
+23654001;"Compras 3,5%";236540;"C";1;1;;1
+2367;"Impuesto A Las Ventas Retenido";23;"C";1;;;
+236715;"Retefte Por Iva 16%              ";2367;"C";1;1;;1
+2368;"Impuesto De Industria Y Comercio Retenido";23;"C";1;;;
+236805;"Compras";2368;"C";1;;;
+236810;"Servicios";2368;"C";1;;;
+2370;"Retenc. Y Aportes De Nomi     ";23;"C";1;1;;1
+237005;"Aportes A Entidades Promotoras De Salud Eps";2370;"C";1;1;;1
+237006;"Aportes Administradoras De Riesgos Profesionales Arp";2370;"C";1;;;
+23700601;"Suratep-Admon Riesgos Profesionales";237006;"C";1;1;;
+237010;"Aportes Icbf Sena Y Cajas De Compensación      ";2370;"C";1;;;1
+23701001;"Caja de Compensacion";237010;"C";1;1;;
+23701002;"ICBF";237010;"C";1;1;;
+23701003;"SENA";237010;"C";1;1;;
+237015;"Aportes A Fondos De Pensión Afp";2370;"C";1;;;1
+237025;"Embargos Judiciales";2370;"C";1;1;;1
+237030;"Libranzas";2370;"C";1;1;;1
+237035;"Sindicatos";2370;"C";1;1;;1
+237040;"Cooperativas";2370;"C";1;1;;1
+237045;"Fondos";2370;"C";1;1;;1
+237095;"Otros";2370;"C";1;1;;1
+2380;"Acreedores Varios             ";23;"C";1;;;1
+238020;"Reintegros Por Pagar";2380;"C";1;1;;1
+238030;"Fondos De Cesantias Y/O Pensiones";2380;"C";1;1;;1
+238035;"Donaciones Asignadas Por Pagar";2380;"C";1;1;;1
+238095;"Otros                         ";2380;"C";1;1;;1
+24;"Impuestos Gravamenes Y Tasas     ";2;"C";1;;;
+2404;"De Renta Y Complementario     ";24;"C";1;;;
+240405;"Vigencia Fiscal Corriente     ";2404;"C";1;1;;
+240410;"Vigencias Fiscales Anteriores";2404;"C";1;1;;
+2408;"Impuesto Sobre Las Ventas Por Pagar     ";24;"C";1;;;
+240805;"Iva por pagar";2408;"C";1;1;;
+24080501;"En ventas";240805;"C";1;1;;
+24080502;"En Servicios";240805;"C";1;1;;
+24080503;"Devolucion compra de Mercancía";240805;"C";1;1;;
+240810;"Iva descontable";2408;"C";1;;;
+24081001;"En compra de Mercancías";240810;"C";1;1;;
+24081002;"En Compra de Servicios";240810;"C";1;1;;
+24081003;"En devolucion venta de Mercancía";240810;"C";1;1;;
+240815;"Iva Retenido";2408;"C";1;;;
+24081501;"Iva Retenido Gran Contribuyente";240815;"C";1;1;;
+24081502;"Iva Retenido Régimen Simplificado";240815;"C";1;1;;
+240820;"Iva Saldo a Favor";2408;"C";1;1;;
+240890;"Impuestos Pagados";2408;"C";1;1;;
+2412;"De Industria y Comercio";24;"C";1;;;
+241205;"Vigencia Fiscal Corriente     ";2412;"C";1;1;;
+241210;"Vigencias Fiscales Anteriores";2412;"C";1;1;;
+25;"Obligaciones Laborales        ";2;"C";1;;;
+2505;"Salarios Por Pagar            ";25;"C";1;;;1
+250501;"Nomina por Pagar";2505;"C";1;1;;
+2510;"Cesantias Consolidadas        ";25;"C";1;;;
+251005;"Cesantias Consolidadas        ";2510;"C";1;1;;1
+2515;"Interes Sobre Cesantia        ";25;"C";1;;;
+251501;"Interes Sobre Cesantia        ";2515;"C";1;1;;1
+2520;"Prima De Servicios            ";25;"C";1;;;
+252001;"Prima De Servicios            ";2520;"C";1;1;;1
+"2525";"Vacaciones Consolidadas";25;"C";1;;;
+252501;" Vacaciones Consolidadas       ";2525;"C";1;1;;1
+2530;"Prestaciones Extralegales";25;"C";1;;;
+253005;"Primas";2530;"C";1;1;;
+253010;"Auxilios";2530;"C";1;1;;1
+253015;"Dotación y Suministro a Trabajadores";2530;"C";1;1;;1
+253020;"Bonificaciones";2530;"C";1;1;;1
+253025;"Seguros";2530;"C";1;1;;1
+253095;"Otros";2530;"C";1;1;;1
+2540;"Indemnizaciones Laborales";25;"C";1;;;1
+254001;"Indemnizaciones Laborales";2540;"C";1;1;;
+26;"Pasivos Estimados Y Provisiones";2;"C";1;;;
+2605;"Para Costos Y Gastos               ";26;"C";1;;;
+260595;"Otros                         ";2605;"C";1;1;;1
+2610;"Para Obligaciones Laborales";26;"C";1;;;
+261005;"Cesantias";2610;"C";1;1;;1
+261010;"Interses sobre Cesantias";2610;"C";1;1;;1
+261015;"Vacaciones";2610;"C";1;1;;1
+261020;"Prima De Servicios            ";2610;"C";1;1;;1
+261095;"Otras";2610;"C";1;1;;
+2615;"Para Obligaciones Fiscales";26;"C";1;;;
+261505;"De Renta Y Complementario     ";2615;"C";1;1;;1
+261510;"De Industria y Comercio";2615;"C";1;1;;1
+261520;"De Vehiculos";2615;"C";1;1;;1
+2695;"Provisiones diversas";26;"C";1;;;
+269595;"Otros";2695;"C";1;;;
+27;"Diferidos                     ";2;"C";1;;;
+2705;"Ingresos Recibidos Por Anticipado";27;"C";1;1;;
+2725;"Impuestos Diferidos";27;"C";1;1;;
+28;"Otros Pasivos                 ";2;"C";1;;;
+2805;"Anticipos Y Avances Recibidos    ";28;"C";1;;;
+280505;"De Clientes";2805;"C";1;1;;1
+280515;"Para Obras en Proceso";2805;"C";1;1;;1
+3;"Patrimonio                    ";;"C";1;;;
+31;"Capital Social                      ";3;"C";1;;;
+3105;"Capital Suscrito y Pagado";31;"C";1;;;
+310505;"Capital Autorizado";3105;"C";1;1;;1
+310510;"Capital por Suscribir";3105;"C";1;1;;1
+310515;"Capital Suscrito por Cobrar";3105;"C";1;1;;1
+3115;"Aportes Sociales              ";31;"C";1;;;
+311505;"Cuotas o Partes de Interes Social";3115;"C";1;1;;
+311510;" Aportes De Socios-Fondo Mutuo de Inversión     ";3115;"C";1;1;;
+32;"Superavit De Capital          ";3;"C";1;;;
+33;"Reservas                      ";3;"C";1;;;
+3305;"Reservas Obligatorias         ";33;"C";1;;;
+330505;"Reserva Legal                 ";3305;"C";1;1;;
+34;"Revalorizacion Del Patrimonio ";3;"C";1;;;
+3405;"Ajustes Por Inflacion         ";34;"C";1;;;
+340505;"De Capital Social             ";3405;"C";1;1;;
+340510;"Superavit De Capital          ";3405;"C";1;1;;
+340515;"De Reservas                   ";3405;"C";1;1;;
+340520;"De Resultados De Ejercicios Anteriores     ";3405;"C";1;1;;
+35;"Divid. o Particip. Decret. en Acciones, Cuotas o Partes de Interes Social";3;"C";1;;;
+3505;"Dividendos Decretados en Acciones";35;"C";1;1;;
+36;"Resultados Del Ejercicio      ";3;"C";1;;;
+3605;"Utilidad Del Ejercicio        ";36;"C";1;1;;
+3610;"Perdida Del Ejercicio         ";36;"C";1;1;;
+37;"Resultado Del Ejercicio Anteriores";3;"C";1;;;
+3705;"Utilidades O Excedentes Acumulados     ";37;"C";1;;;
+370505;"Utilidad años anteriores";3705;"C";1;1;;
+3710;"Perdidas Acumuladas";37;"C";1;;;
+371005;"Pérdidas años anteriores";3710;"C";1;1;;
+371010;"Pérdida del periodo";3710;"C";1;1;;
+38;"Superavit por Valorizaciones";3;"C";1;;;
+4;"Ingresos                      ";;"C";2;;;
+41;"Operacionales                 ";4;"C";2;;;
+4130;"Construccion                  ";41;"C";2;;;
+413015;"Acondicionamiento De Edificios     ";4130;"C";2;;;
+41301501;"Ingresos Gravados";413015;"C";2;1;;
+41301502;"Ingresos Excentos";413015;"C";2;1;;
+41301503;"Ingresos Excluidos";413015;"C";2;1;;
+4135;"Comercio Al X Mayor Y Al X Menor     ";41;"C";2;;;
+413536;"Venta De Electrodomesticos Y Muebles    ";4135;"C";2;;;1
+41353601;"Venta Directa - Clientes A/A";413536;"C";2;1;;
+41353602;"Venta Directa-Distribuidor";413536;"C";2;1;;
+4155;"Actividades Inmobiliarias Empresariales Y De Alquiler     ";41;"C";2;;;
+415520;"Alquiler Maquinaria y Equipo";4155;"C";2;1;;1
+415550;"Actividades Empresariales de Consultoría    ";4155;"C";2;;;
+41555001;"Ingresos por Asesoria";415550;"C";2;1;;1
+41555002;"Ingresos Por Diseños          ";415550;"C";2;1;;
+415590;"Mantenimiento y Repación De Maquinaria y Equipos      ";4155;"C";2;;;
+41559001;" O.T.M Contratos               ";415590;"C";2;1;;1
+41559002;" O.T.E Reparaciones            ";415590;"C";2;1;;1
+4175;"Devoluciones Rebajas y Descuentos en Ventas";41;"C";2;;;1
+42;"No Operacionales              ";4;"C";2;;;
+4205;"Otras Ventas";42;"C";2;;;
+420505;"Materia Prima                 ";4205;"C";2;1;;1
+420510;"Material de Desecho";4205;"C";2;1;;1
+420515;"Materiales Varios";4205;"C";2;1;;
+4210;"Financieros                   ";42;"C";2;;;
+421005;"Intereses                     ";4210;"C";2;;;
+42100502;"Banco Popular";421005;"C";2;1;"BP";
+42100507;"Bancolombia                   ";421005;"C";2;1;"BC";
+42100523;"Banco De Occidente            ";421005;"C";2;1;"BO";
+421040;"Descuentos Comerciales Condicionados";4210;"C";2;1;;1
+421055;"Multas y Recargos";4210;"C";2;1;;
+421060;"Sanciones Cheques Devueltos";4210;"C";2;1;;
+421095;"Otros";4210;"C";2;;;
+42109501;"Rendimientos Financieros";421095;"C";2;1;;
+42109502;"Aprovechamientos";421095;"C";2;1;;
+42109503;"Otros Ingresos";421095;"C";2;1;;
+4215;"Dividendos y Participaciones";42;"C";2;1;;
+4220;"Arrendamientos";42;"C";2;1;;
+4245;"Utilidad en Venta de Propiedades Planta y Equipo";42;"C";2;;;
+424505;"Flota y Equipo de Transporte";4245;"C";2;1;;
+4248;"Utilidad en Venta de Otros Bienes";42;"C";2;1;;
+4250;"Recuperaciones";42;"C";2;;;
+425005;"Reintegro costos y gastos";4250;"C";2;1;;
+4295;"Diversos                      ";42;"C";2;;;
+429581;" Ajuste Al Peso                ";4295;"C";2;1;;
+429583;" Llamadas Telefonicas          ";4295;"C";2;1;;1
+47;"Ajustes Por Inflacion         ";4;"C";2;;;
+4705;"Correccion Monetaria          ";47;"C";2;;;
+5;"Gastos                        ";;"D";2;;;
+51;"Operacionales De Administracion";5;"D";2;;;
+5105;"Gastos Del Personal           ";51;"D";2;;;
+510503;"Salario Integral";5105;"D";2;;;
+510506;"Sueldos";5105;"D";2;1;"CC";1
+510515;"Horas Extras y Recargos";5105;"D";2;1;;1
+510518;"Comisiones";5105;"D";2;1;;1
+510521;"Viaticos";5105;"D";2;1;;1
+510524;"Incapacidades                 ";5105;"D";2;1;;1
+510527;"Auxilio de Transporte";5105;"D";2;1;;1
+510530;" Cesantias                     ";5105;"D";2;1;;1
+510533;" Intereses Sobre Cesantias     ";5105;"D";2;1;;1
+510536;" Prima Servicios               ";5105;"D";2;1;;1
+510539;" Vacaciones                    ";5105;"D";2;1;;1
+510542;"Primas Extralegales";5105;"D";2;1;;1
+510545;" Auxilios                      ";5105;"D";2;1;;1
+510548;"Bonificaciones";5105;"D";2;1;;1
+510551;"Dotación y Suministro a Trabajadores";5105;"D";2;1;;1
+510554;"Seguros";5105;"D";2;1;;1
+510560;"Indemnizaciones Laborales";5105;"D";2;1;;1
+510563;"Capacitación al Personal";5105;"D";2;1;;1
+510566;"Gastos Deportivos Y Recreacion    ";5105;"D";2;1;;1
+510568;"Aportes a Administradoras de Riesgos Profesionales ARP";5105;"D";2;1;;1
+510569;"Aportes A Entidades Promotoras De Salud Eps";5105;"D";2;1;;1
+510570;"Aportes A Fondos Pensionales y/o Cesantias";5105;"D";2;1;;1
+51057001;"Aportes A Fondos Pensionales Voluntaria";510570;"D";2;1;;
+510572;"Aportes a Cajas de Compensación Familiar";5105;"D";2;1;;1
+510575;"Aportes a ICBF";5105;"D";2;1;;1
+510578;"Aportes SENA";5105;"D";2;1;;1
+510584;"Gastos Medicos Y Drogas        ";5105;"D";2;1;;1
+510595;" Otros                         ";5105;"D";2;1;;1
+5110;"Honorarios                    ";51;"D";2;;;1
+511005;"Junta Directiva";5110;"D";2;1;;1
+511010;"Revisoria Fiscal              ";5110;"D";2;1;;1
+511025;"Asesoría Juridica";5110;"D";2;1;;1
+511030;"Asesoría Financiera";5110;"D";2;1;;1
+511035;"Asesoria Técnica";5110;"D";2;1;;1
+511095;" Otros                         ";5110;"D";2;;;1
+51109501;"Asesoria y Consultoria";511095;"D";2;1;;
+511099;"Ajustes Por Inflacion         ";5110;"D";2;;;
+5115;"Impuestos";51;"D";2;;;1
+511505;"Industria Y Comercio         ";5115;"D";2;1;;1
+511510;"De Timbres";5115;"D";2;1;;1
+511515;"A La Propiedad Raiz";5115;"D";2;1;;1
+511540;"De Vehiculos";5115;"D";2;1;;1
+511570;"IVA Descontable";5115;"D";2;1;;1
+511595;"otros";5115;"D";2;1;;
+511599;"Ajustes Por Inflacion         ";5115;"D";2;;;
+5120;"Arrendamientos                ";51;"D";2;;;
+512010;"Construcciones Y Edificaciones    ";5120;"D";2;1;;1
+51201001;"Alquiler Bodega";512010;"D";2;1;;
+512095;" Otros                         ";5120;"D";2;1;;1
+5125;"Contribuciones Y Afiliaciones       ";51;"D";2;;;
+512505;"Contribuciones";5125;"D";2;1;;
+512510;"Afiliaciones Y Sostenimiento      ";5125;"D";2;1;;1
+5130;"Seguros                       ";51;"D";2;;;
+513040;"Flota Y Equipo De Transporte     ";5130;"D";2;1;;1
+513070;"Rotura de Maquinaria                   ";5130;"D";2;1;;1
+513075;"Seguro Obligatorio Axidente de Transito           ";5130;"D";2;1;;1
+513085;"Transporte de Mercancias";5130;"D";2;1;;1
+513095;"Otros                         ";5130;"D";2;;;1
+51309501;"Tarjetas de Crédito";513095;"D";2;1;;
+5135;"Servicios                     ";51;"D";2;;;
+513505;"Aseo Y Vigilancia             ";5135;"D";2;;;1
+51350501;"Aseo";513505;"D";2;1;;
+51350502;"Vigilancia";513505;"D";2;1;;
+513510;"Temporales                    ";5135;"D";2;1;;1
+513515;"Asistencia Tecnica            ";5135;"D";2;1;;1
+513525;"Acueducto Y Alcantarillado    ";5135;"D";2;1;;1
+513530;"Energia Eléctrica                       ";5135;"D";2;1;;1
+513535;"Telefono                      ";5135;"D";2;1;;1
+513540;"Correo,Portes,Telegramas      ";5135;"D";2;1;;1
+513550;"Transporte,Fletes,Acarreo     ";5135;"D";2;1;;1
+513595;"Otros                         ";5135;"D";2;;;1
+51359501;"Celular";513595;"D";2;1;;
+51359502;"Internet";513595;"D";2;1;;
+5140;"Gastos Legales                ";51;"D";2;;;
+514005;"Notariales                    ";5140;"D";2;1;;1
+514010;"Registro Mercantil            ";5140;"D";2;1;;1
+514015;"Tramites Y Licencias          ";5140;"D";2;1;;1
+5145;"Mantenimiento y Reparaciones";51;"D";2;;;
+514510;"Construcciones Y Edificaciones    ";5145;"D";2;1;;1
+514515;"Maquinaria Y Equipos          ";5145;"D";2;1;;1
+514520;"Equipo de Oficina";5145;"D";2;1;;1
+514525;"Equipo De Computación Y Comunicación    ";5145;"D";2;1;;1
+5150;"Adecuacion E Instalacion      ";51;"D";2;;;
+515005;"Instalaciones Eléctricas";5150;"D";2;1;;1
+515010;"Arreglos Ornamentales";5150;"D";2;1;;1
+515015;"Reparaciones Locativas";5150;"D";2;1;;1
+515095;"Otros";5150;"D";2;1;;1
+5155;"Gastos de Viaje";51;"D";2;;;
+515505;"alojamiento y manutencion";5155;"D";2;1;;1
+515520;"Pasajes terrestres";5155;"D";2;1;;1
+5160;"Depreciaciones";51;"D";2;;;
+516005;"Construcciones Y Edificaciones    ";5160;"D";2;1;;1
+516010;"Maquinaria Y Equipos          ";5160;"D";2;1;;1
+51601001;"Herramientas";516010;"D";2;1;;
+516015;"Equipo de Oficina";5160;"D";2;1;;1
+51601501;"Muebles y enseres";516015;"D";2;1;;
+516020;"Equipo De Computación Y Comunicación    ";5160;"D";2;1;;1
+5165;"Amortizaciones";51;"D";2;;;
+516510;"intangibles";5165;"D";2;1;;1
+5195;"Diversos                      ";51;"D";2;;;
+519505;"Comisiones                    ";5195;"D";2;1;;1
+519510;"Libros, Suscripciones, Periodicos y Revistas";5195;"D";2;1;;1
+519520;"Gastos de Representación y Relaciones Publicas     ";5195;"D";2;1;;1
+519525;"Elementos Aseo Y Cafeteria    ";5195;"D";2;1;;1
+519530;"Utiles Papelria y Fotocopias       ";5195;"D";2;1;;1
+519535;"Combustibles y Lubricantes";5195;"D";2;1;;
+519545;"Taxis Y Buses                 ";5195;"D";2;1;;1
+519550;"Estampillas";5195;"D";2;1;;
+519560;"Casino y Restaurante";5195;"D";2;1;;1
+519565;"Parqueaderos";5195;"D";2;1;;1
+519580;"Eventos Enfriar SAS ";5195;"D";2;1;;
+519595;"Otros";5195;"D";2;1;;
+52;"Operacional De Ventas         ";5;"D";2;;;
+5205;"Gastos De Personal            ";52;"D";2;;;
+520506;" Sueldo Personal Ventas        ";5205;"D";2;1;"CC";1
+520524;" Incapacidades                 ";5205;"D";2;1;;
+520527;" Subsidio De Transporte        ";5205;"D";2;1;;
+520530;" Cesantias                     ";5205;"D";2;1;;
+520533;" Intereses Sobre Cesantias     ";5205;"D";2;1;;
+520536;"Prima Servicios               ";5205;"D";2;1;;
+520539;" Vacaciones                    ";5105;"D";2;1;;1
+520542;"Primas Extralegales";5105;"D";2;1;;1
+520545;" Auxilios                      ";5105;"D";2;1;;1
+520548;"Bonificaciones";5105;"D";2;1;;1
+520560;"Indemnizaciones Laborales";5105;"D";2;1;;1
+520568;"Aportes a Administradoras de Riesgos Profesionales ARP";5105;"D";2;1;;1
+520569;"Aportes A Entidades Promotoras De Salud Eps";5105;"D";2;1;;1
+520570;"Aportes A Fondos Pensionales y/o Cesantias";5105;"D";2;1;;1
+520572;"Aportes a Cajas de Compensación Familiar";5105;"D";2;1;;1
+520575;"Aportes a ICBF";5105;"D";2;1;;1
+520578;"Aportes SENA";5105;"D";2;1;;1
+520584;"Gastos Medicos Y Drogas        ";5105;"D";2;1;;1
+5215;"Impuestos";52;"D";2;;;
+521505;"Industria Y Comercio         ";5215;"D";2;1;;
+5235;"Servicios                     ";52;"D";2;;;
+523510;"Temporales                    ";5235;"D";2;1;;
+523535;"Servicio Telefonico           ";5235;"D";2;1;;
+523540;"Correo, Portes y telegramas";5235;"D";2;1;;
+523550;"trasnportes, Fletes y Acarreos";5235;"D";2;1;;
+523560;"Publicidad,Propaganda Y P     ";5235;"D";2;1;;
+523595;"Otros";5235;"D";2;1;;
+52359501;"Covinoc";523595;"D";2;1;;
+5295;"Diversos                      ";52;"D";2;;;
+529505;"Comisiones";5295;"D";2;1;;
+529545;" Buses Y Taxis                 ";5295;"D";2;1;;
+5299;"Provisiones                   ";52;"D";2;;;
+529901;" Clientes                      ";5299;"D";2;1;;
+53;"No Operacionales              ";5;"D";2;;;
+5305;"Financieros                   ";53;"D";2;;;
+530505;" Gtos. Bancarios               ";5305;"D";2;;;
+53050501;" Gtos. Bancarios              ";530505;"D";2;1;"BO";1
+53050501;" Gtos. Bancarios               ";530505;"D";2;1;"BC";1
+53050501;" Gtos. Bancarios               ";530505;"D";2;1;"BP";1
+530515;"Comisiones                    ";5305;"D";2;;;1
+53051501;"Comisiones                    ";530515;"D";2;1;"BO";
+53051501;"Comisiones                    ";530515;"D";2;1;"BC";
+53051501;"Comisiones                    ";530515;"D";2;1;"BP";
+530520;"Intereses           ";5305;"D";2;;;1
+53052001;"Intereses  sobregiro              ";530520;"D";2;1;"BO";1
+53052001;"Intereses  sobregiro              ";530520;"D";2;1;"BC";
+53052001;"Intereses  sobregiro              ";530520;"D";2;1;"BP";
+53052002;"intereses corrientes";530520;"D";2;1;"BO";1
+53052002;"intereses corrientes";530520;"D";2;1;"BC";
+53052002;"intereses corrientes";530520;"D";2;1;"BP";
+530525;"Diferencia en cambio";5305;"D";2;;;
+53052501;"Diferencia en cambio";530525;"D";2;1;;
+530535;"descuentos Comerciales condicionados";5305;"D";2;1;;
+530580;"descuentos Comerciales ";5305;"D";2;1;;
+530595;"Otros                         ";5305;"D";2;;;1
+53059501;"Cuota de Manejo";530595;"D";2;1;"BO";
+53059501;"Cuota de Manejo";530595;"D";2;1;"BC";
+53059501;"Cuota de Manejo";530595;"D";2;1;"BP";
+5310;"Pérdida en Venta y Retiro de Bienes";53;"D";2;;;
+5310100;"Pérdida Cartera";5310;"D";2;1;;
+531095;"Otros";5310;"D";2;1;;
+53109501;"Ajuste Inventarios";5310;"D";2;1;;
+5315;"Gtos. Extraordinarios         ";53;"D";2;;;
+531520;"Impuestos Asumidos";5315;"D";2;1;;
+5395;"Gastos Diversos               ";53;"D";2;;;
+539520;"Multas y Sanciones";5395;"D";2;1;;
+539590;" Ajuste Al Peso                ";5395;"D";2;1;;
+539595;"Otros";5395;"D";2;;;
+53959501;"Otros";539595;"D";2;1;;
+6;"Costos De Ventas              ";;"D";2;;;
+61;"Costos De Ventas              ";6;"D";2;;;
+6135;"Comercio al Por Mayor Y Menor       ";61;"D";2;;;
+613536;"Venta de electrodomesticos y muebles";6135;"D";2;;;
+61353601;" Ventas Directas               ";613536;"D";2;1;;
+7;"Costos De Produccion De Operac";;"D";2;;;
+71;"Materia Prima                 ";7;"D";2;;;
+7130;"Costos de Materiales                  ";71;"D";2;;;
+713005;"Costos de Materiales                  ";7130;"D";2;1;"LV";
+713005;" OTM Mantenimiento            ";7130;"D";2;1;"LV";
+713005;" OTE Reparaciones              ";7130;"D";2;1;"LV";
+713099;" Traslado Inventario En Proceso";7130;"D";2;1;;
+72;"Mano De Obra Directa          ";7;"D";2;;;
+7201;"Mano Obra Directa ";72;"D";2;;;
+720106;"Sueldo Personal";7201;"D";2;1;"LV ";
+72010601;"Salario no Facturable";720106;"D";2;1;"LV";
+720115;" Horas Extras Y Recargos       ";7201;"D";2;1;"LV";
+720118;"Comisiones                    ";7201;"D";2;1;"LV";
+720124;" Incapacidades                 ";7201;"D";2;1;"LV";
+720127;" Subsidio De Transporte        ";7201;"D";2;1;"LV";
+720130;" Cesantias                     ";7201;"D";2;1;"LV";
+720133;" Intereses Sobre Cesantias     ";7201;"D";2;1;"LV";
+720136;" Prima Servicios               ";7201;"D";2;1;"LV";
+720139;" Vacaciones                    ";7201;"D";2;1;"LV";
+720142;"Prima Extralegal";7201;"D";2;1;"LV";
+720145;"Auxilios";7201;"D";2;1;"LV";
+720148;"Bonificaciones";7201;"D";2;1;"LV";
+720160;"Indemnizaciones Laborales";7201;"D";2;1;"LV";
+720168;"Aportes a Administradoras de Riesgos Profesionales ARP";7201;"D";2;1;"LV";
+720169;"Aportes A Entidades Promotoras De Salud Eps";7201;"D";2;1;"LV";
+720170;"Aportes A Fondos Pensionales y/o Cesantias";7201;"D";2;1;"LV";
+720172;"Aportes a Cajas de Compensación Familiar";7201;"D";2;1;"LV";
+720175;"Aportes a ICBF";7201;"D";2;1;"LV";
+720178;"SENA";7201;"D";2;1;"LV";
+7203;"Mano de Obra Directa Diseños";72;"D";2;;;
+720306;"Suelso personal Diseños";7203;"D";2;;;
+73;"Costos Indirectos             ";7;"D";2;;;
+7301;"Costos Varios ";73;"D";2;;;
+730102;"Gastos Varios Costos ";730101;"D";2;1;;
+73010201;" Combustibles Camionetas       ";730102;"D";2;1;"LV";
+73010202;" Mantenimiento Camionetas      ";730102;"D";2;1;"LV";
+73010204;" Casino Obras                  ";730102;"D";2;1;"LV";
+73010208;" Correos - Fletes              ";730102;"D";2;1;"LV";
+73010209;" Medios De Transporte          ";730102;"D";2;1;"LV";
+73010210;" Alquiler Andamios             ";730102;"D";2;1;"LV";
+73010211;" Gastos Varios                 ";730102;"D";2;1;"LV";
+73010214;" Transporte Personal Obras     ";730102;"D";2;1;"LV";
+73010215;" Servicios Temporales          ";730102;"D";2;1;"LV";
+73010220;" Asistencia Tecnica            ";730102;"D";2;1;"LV";
+73010240;" Publicidad                    ";730102;"D";2;1;"LV";
+73010250;" Transporte, Fletes Y Acarreos ";730102;"D";2;1;"LV";
+73010257;" Seguros                       ";730102;"D";2;1;"LV";
+7301025701;" Cumplimiento                  ";73010257;"D";2;1;"LV";
+7301;"Costos. Varios De Mttos         OTM";73;"D";2;;;
+730102;"Gtos. Varios De Mttos         ";7301;"D";2;;"LV";
+73010204;" Casino Mtos - Otm             ";730102;"D";2;1;"LV";
+73010214;" Transporte Mtos - Otm         ";730102;"D";2;1;"LV";
+73010209;" Medios De Transporte          ";730102;"D";2;1;"LV";
+73010214;" Transporte Mtos - Ote         ";730102;"D";2;1;"LV";
+73010204;" Casino Mtos - Ote             ";730102;"D";2;1;"LV";
+73010215;" Servicios Temporales          ";730102;"D";2;1;"LV";
+73010215;" Servicios Temporales Otm      ";730102;"D";2;1;"LV";
+73010215;" Servicios Temporales Ote      ";730102;"D";2;1;"LV";
+73010260;" Accesorios Mantenimientos     ";730102;"D";2;1;"LV";
+73010265;" Reparacion Motores Mttos      ";730102;"D";2;1;"LV";
+73010210;" Arrendamientos                ";7310;"D";2;;"LV";
+73010250;" Transporte,Fletes Y Acarreos   ";73010;"D";2;1;"LV";
+73010;" Servicio Tel.Celular          ";73;"D";2;1;"LV";
+73104050;" Mantenimiento Varios          ";7310;"D";2;1;"LV";

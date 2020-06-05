@@ -1,0 +1,21 @@
+    $(document).ready(function() {
+        ejecutarFuncionesGlobales();
+    });
+
+    function seleccionar_todas_sucursales(){
+        var seleccionar_todos = true;
+        var contador_casillas_seleccionadas = 0;
+        var contador_total_casillas = 0;
+        $('#PESTANA_SUCURSALES').find('.sucursales_liquidacion_salario:checkbox').each(function (grupos) {
+            var id = $(this).val();
+            if($('#sucursales_'+id).attr('checked')){
+                contador_casillas_seleccionadas++;
+            }
+            contador_total_casillas++;
+        });
+
+        if(contador_total_casillas == contador_casillas_seleccionadas){
+            seleccionar_todos=false;
+        }
+        $(".sucursales_liquidacion_salario:checkbox").attr('checked', seleccionar_todos);
+    }

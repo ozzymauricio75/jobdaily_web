@@ -1,0 +1,3 @@
+ALTER TABLE job_movimientos_salarios ADD CONSTRAINT movimiento_salario_plan_contable FOREIGN KEY(codigo_contable) REFERENCES job_plan_contable(codigo_contable) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+ALTER TABLE job_movimientos_auxilio_transporte   ADD CONSTRAINT movimiento_auxilio_plan_contable FOREIGN KEY(codigo_contable) REFERENCES job_plan_contable(codigo_contable) ON UPDATE CASCADE ON DELETE RESTRICT;

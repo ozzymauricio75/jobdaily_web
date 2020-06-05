@@ -1,0 +1,1 @@
+ mysqldump --skip-set-charset --default-character-set=latin1 -uelectro -pelectro electro > servidor20100729.sql

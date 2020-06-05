@@ -1,0 +1,17 @@
+CONDICIONES PARA GENERAR LOS MOVIMIENTOS DE HORAS E INCAPACIDADES EN CUANTO A ANEXOS Y AUXILIARES
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+* Para las incapacidades:
+
+1- Si el plan contable de la transaccion contable de la transaccion de tiempo no tiene anexo se va vacio
+
+2- Si el plan contable de la transaccion contable de la transaccion de tiempo maneja anexo y es el mismo del empleado muevale el auxiliar del empleado
+
+3- Si el plan contable de la transaccion contable de la transaccion de tiempo maneja anexo y no es el mismo del empleado pidalo por pantalla
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+* Para las horas normales, extras y recargos:
+
+1- Si el plan contable de la transaccion contable de la transaccion de tiempo no tiene anexo se va vacio
+
+2- Si el plan contable de la transaccion contable de la transaccion de tiempo maneja anexo el movimiento se va x lo que este en pantalla

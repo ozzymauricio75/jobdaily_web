@@ -1,0 +1,25 @@
+ALTER TABLE job_gastos_prestaciones_sociales DROP FOREIGN KEY gastos_prestaciones_sociales_transacciones_contables_empleado_10;
+ALTER TABLE job_gastos_prestaciones_sociales DROP FOREIGN KEY gastos_prestaciones_sociales_transacciones_contables_empleado_11;
+
+
+ALTER TABLE job_gastos_prestaciones_sociales CHANGE vacacion_pago_prestacion vacacion_pago_prestacion_disfrute INT( 8 ) UNSIGNED ZEROFILL NOT NULL DEFAULT '00000000' COMMENT 'Codigo de la transaccion contable';
+ALTER TABLE job_gastos_prestaciones_sociales CHANGE vacacion_pago_gasto vacacion_pago_gasto_disfrute INT( 8 ) UNSIGNED ZEROFILL NOT NULL DEFAULT '00000000' COMMENT 'Codigo de la transaccion contable';
+
+
+ALTER TABLE job_gastos_prestaciones_sociales ADD vacacion_pago_prestacion_liquidacion INT(8) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT 'Codigo de la transaccion contable' AFTER vacacion_pago_prestacion_disfrute;
+ALTER TABLE job_gastos_prestaciones_sociales ADD vacacion_pago_gasto_liquidacion INT(8) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT 'Codigo de la transaccion contable' AFTER vacacion_pago_gasto_disfrute;
+
+ALTER TABLE job_gastos_prestaciones_sociales ADD CONSTRAINT gastos_prestaciones_transacciones_contables_10_1 FOREIGN KEY(vacacion_pago_prestacion_disfrute) REFERENCES job_transacciones_contables_empleado(codigo) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE job_gastos_prestaciones_sociales ADD CONSTRAINT gastos_prestaciones_transacciones_contables_10_2 FOREIGN KEY(vacacion_pago_prestacion_liquidacion) REFERENCES job_transacciones_contables_empleado(codigo) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE job_gastos_prestaciones_sociales ADD CONSTRAINT gastos_prestaciones_transacciones_contables_11_1 FOREIGN KEY(vacacion_pago_gasto_disfrute) REFERENCES job_transacciones_contables_empleado(codigo) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE job_gastos_prestaciones_sociales ADD CONSTRAINT gastos_prestaciones_transacciones_contables_11_2 FOREIGN KEY(vacacion_pago_gasto_liquidacion) REFERENCES job_transacciones_contables_empleado(codigo) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+ALTER TABLE job_gastos_prestaciones_sociales ADD intereses_pago_prestacion INT(8) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT 'Codigo de la transaccion contable' AFTER cesantia_causacion_gasto;
+ALTER TABLE job_gastos_prestaciones_sociales ADD intereses_pago_gasto INT(8) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT 'Codigo de la transaccion contable' AFTER intereses_pago_prestacion;
+ALTER TABLE job_gastos_prestaciones_sociales ADD intereses_causacion_prestacion INT(8) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT 'Codigo de la transaccion contable' AFTER intereses_pago_gasto;
+ALTER TABLE job_gastos_prestaciones_sociales ADD intereses_causacion_gasto INT(8) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT 'Codigo de la transaccion contable' AFTER intereses_causacion_prestacion;
+
+ALTER TABLE job_gastos_prestaciones_sociales ADD CONSTRAINT gastos_prestaciones_sociales_transacciones_contables_empleado_14 FOREIGN KEY(intereses_pago_prestacion) REFERENCES job_transacciones_contables_empleado(codigo) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE job_gastos_prestaciones_sociales ADD CONSTRAINT gastos_prestaciones_sociales_transacciones_contables_empleado_15 FOREIGN KEY(intereses_pago_gasto) REFERENCES job_transacciones_contables_empleado(codigo) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE job_gastos_prestaciones_sociales ADD CONSTRAINT gastos_prestaciones_sociales_transacciones_contables_empleado_16 FOREIGN KEY(intereses_causacion_prestacion) REFERENCES job_transacciones_contables_empleado(codigo) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE job_gastos_prestaciones_sociales ADD CONSTRAINT gastos_prestaciones_sociales_transacciones_contables_empleado_17 FOREIGN KEY(intereses_causacion_gasto) REFERENCES job_transacciones_contables_empleado(codigo) ON UPDATE CASCADE ON DELETE RESTRICT;

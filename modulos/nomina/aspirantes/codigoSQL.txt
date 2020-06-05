@@ -1,0 +1,5 @@
+ALTER TABLE `job_conyugue_aspirante` CHANGE `documento_identidad` `documento_identidad` VARCHAR( 12 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT 'Numero del documento de identidad';
+
+ALTER TABLE `job_conyugue_aspirante` CHANGE `primer_nombre` `primer_nombre` VARCHAR( 20 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL COMMENT 'Primer nombre de la persona';
+
+ALTER TABLE `job_conyugue_aspirante` CHANGE `primer_apellido` `primer_apellido` VARCHAR( 20 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL COMMENT 'Primer apellido de la persona';

@@ -1,0 +1,34 @@
+SELECT 
+      pance_articulos_ordenes_compra.id,
+      pance_articulos_ordenes_compra.codigo_articulo,
+      pance_articulos_ordenes_compra.id_sucursal,
+      pance_articulos_ordenes_compra.id_orden, 
+      pance_articulos_ordenes_compra.id_proveedor,
+      pance_articulos_ordenes_compra.unidades
+FROM 
+      pance_articulos_ordenes_compra
+WHERE
+      pance_articulos_ordenes_compra.id_proveedor = '' AND 
+      (SELECT 
+	    pance_kardex.existencia 
+       FROM 
+	    pance_kardex
+       WHERE 
+	    pance_kardex.id_articulo = pance_articulos_ordenes_compra.codigo_articulo AND 
+	    ((pance_kardex.existencia-pance_articulos_ordenes_compra.unidades)<0)
+      )
+
+
+id 		codigo_articulo id_sucursal 	id_orden 	id_proveedor 	unidades 	obsequio 	fecha_despacho 	forma_pago 	numero_cuotas 	valor_compra 	precio_publico 
+000000008 	019097 		00002 		000000005 	000001 		000006 		0 		2009-04-27 	000001 		03 		1200000 	1350000
+
+
+
+
+
+SELECT 
+      (pance_kardex.existencia-pance_articulos_ordenes_compra.unidades)
+FROM
+      pance_kardex, pance_articulos_ordenes_compra
+WHERE
+      pance_kardex.id_articulo = pance_articulos_ordenes_compra.codigo_articulo

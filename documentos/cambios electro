@@ -1,0 +1,2 @@
+ALTER TABLE job_movimiento_entrada_mercancia ADD valor_base_impuesto DECIMAL(10,2) NOT NULL DEFAULT '0' COMMENT 'Valor base a partir del cual se aplica el porcentaje anterior' after valor_impuesto
+ALTER TABLE `job_movimiento_entrada_mercancia` CHANGE `valor_base_impuesto` `valor_base_impuesto` DECIMAL( 10, 2 ) NOT NULL DEFAULT '0' COMMENT 'Valor base a partir del cual se aplica el porcentaje anterior'

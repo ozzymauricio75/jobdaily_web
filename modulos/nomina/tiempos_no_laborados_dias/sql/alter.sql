@@ -1,0 +1,2 @@
+
+ALTER TABLE job_reporte_tiempo_no_laborado RENAME job_movimiento_tiempos_no_laborados_dias;

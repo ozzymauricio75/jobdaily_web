@@ -1,0 +1,5 @@
+ALTER TABLE `job_terceros` ADD `celular2` VARCHAR( 20 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT 'Numero de celular 2' AFTER `celular`;
+
+ALTER TABLE `job_terceros` ADD `correo2` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT 'Direccion de correo electronico 2' AFTER `correo`;
+
+ALTER TABLE `job_terceros` ADD `fecha_ingreso` DATE NOT NULL

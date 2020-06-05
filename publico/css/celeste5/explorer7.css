@@ -1,0 +1,21 @@
+* html #root-menu-div li {
+    height: 1.5em; /* Corregir fallo en IE6 */
+    font-weight: bold;
+    color: #000044;
+}
+
+*html .ui-datepicker-prompt {
+    width: 185px;
+}
+
+.ui-datepicker-cover {
+    display: none;
+    display/**/: block;
+    position: absolute;
+    z-index: -1;
+    filter: mask();
+    top: -4px;
+    left: -4px;
+    width: 193px;
+    height: 200px;
+}

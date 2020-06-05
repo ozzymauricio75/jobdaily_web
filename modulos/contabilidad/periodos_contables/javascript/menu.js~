@@ -1,0 +1,142 @@
+    $(document).ready(function() {
+        ejecutarFuncionesGlobales();
+    });
+
+    
+    function agregarItem() {
+
+	var id		= $('#id_procesoHijo').val();
+	var destino	= $('#URLFormulario').val();
+
+        /*** Descargar contenido del proceso hijo ***/
+        $.getJSON(destino, {recargar: true, id: id}, function(datos){
+            if (datos != ""){
+			   
+		var orden	= $('#orden').val();
+		var total	= parseInt($('#totalProceso').val());
+		var valor	= parseInt(datos[4]);
+		var boton 	= $('#removedor').html();
+
+		var valorClase = '';
+		if ($("#listaItems tr:last").hasClass("even")) {
+		    valorClase = 'odd';
+		} else {
+		    valorClase = 'even';
+		}
+    	   
+		var item  = '<tr id="fila_'+id+'" class="'+valorClase+'">'+
+				'<td align="center">'+
+				    '<input type="hidden" class="hijos" name="hijos['+id+']" value="'+id+'">'+
+				    '<input type="hidden" class="ordenes" name="ordenes['+id+']" value="'+orden+'">'+boton+
+				 '</td>'+
+				 '<td align="left">'+datos[1]+'</td>'+
+				 '<td align="left">'+datos[2]+'</td>'+
+				 '<td align="right">'+orden+'</td>'+
+				 '<td align="right">'+datos[3]+'</td>'+
+				 '<td align="right">'+datos[4]+'</td>'+
+			    '</tr>';
+
+		$('#listaItems').append(item);
+		$('#totalProceso').val(total+valor);
+		var listaHijos	= $('#idHijosLista').val();
+		$('#idHijosLista').val(listaHijos+','+id);
+		$('#selector2').val('');
+		$('#id_procesoHijo').val('');
+		$('#orden').val('');
+		
+	     }
+	});
+    }
+
+
+    function removerItem(boton) {
+        
+	var total	= parseInt($('#totalProceso').val());
+	var valor	= parseInt($(boton).parents('tr').children('td:last').text());
+	var listaHijos	= $('#idHijosLista').val().split(',');
+	var id		= $(boton).prevAll('input:last').val();
+	
+	for (t=0; t < listaHijos.length; t++) {
+	      if (listaHijos[t] == id) {
+		  listaHijos[t] = '';
+	      }
+	}
+
+	$('#idHijosLista').val(listaHijos);
+	$('#totalProceso').val(total-valor);
+	$(boton).parents('tr').remove();
+    }
+
+    function validarSeleccion(item) {
+
+	var id_item 	= $(item).attr('id');
+	//var selector1	= $('#selector1').val();
+	//var selector2	= $('#selector2').val();
+
+	if (id_item == 'id_procesoPadre') {
+	    validarHijo()
+	    validarPadre();
+	}
+
+	if (id_item == 'id_procesoHijo') {
+	    validarHijo();
+	}
+    }
+
+
+    function validarHijo() {
+	$('#errorDialogo').html('');
+	$('#errorDialogo').removeAttr('class','style');
+	$('#errorDialogo').css('display','block');
+
+	var destino	= $('#URLFormulario').val();
+	var id_hijo	= $('#id_procesoHijo').val();
+	var id_padre	= $('#id_procesoPadre').val();
+	var id_item 	= 'id_procesoHijo';
+	var listaHijos	= $('#idHijosLista').val().split(',');
+	var doble	= 0;
+
+	for (t=0; t < listaHijos.length; t++) {
+	      if ((listaHijos[t] == id_hijo) && (listaHijos[t] != '') ) {
+		  console.log(listaHijos[t]);
+		  console.log(id_hijo);
+		  doble = 1;
+	      }
+	}
+	
+	/*** Descargar contenido para el cuadro de diálogo ***/
+	$.getJSON(destino, {validar: true, item: id_item, doble: doble, idHijo: id_hijo, idPadre: id_padre}, function(mensaje) {
+	    if (mensaje) {
+		$('#selector2').val('');
+		$('#id_procesoHijo').val('');
+		$('#errorDialogo').html(mensaje).fadeOut(6000).addClass('mensajeError');
+	    }
+	});
+    }
+
+    function validarPadre() {
+	$('#errorDialogo').html('');
+	$('#errorDialogo').removeAttr('class','style');
+	$('#errorDialogo').css('display','block');
+
+	var destino 	= $('#URLFormulario').val();
+	var id_padre	= $('#id_procesoPadre').val();
+	var id_item	= 'id_procesoPadre';
+	
+	/*** Descargar contenido para el cuadro de diálogo ***/
+	$.getJSON(destino, {validar: true, item: id_item, idPadre: id_padre}, function(mensaje) {
+	    if (mensaje) {
+		if (isNaN(mensaje)) {
+		    $('#selector1').val('');
+		    $('#id_procesoPadre').val('');
+		    $('#errorDialogo').html(mensaje).fadeOut(6000).addClass('mensajeError');
+		} else {
+		    var valorAnterior	= parseInt($('#valorProcesoPadre').val());
+		    var total		= parseInt($('#totalProceso').val());
+		    var valorNuevo	= parseInt(mensaje);
+		    $('#valorProcesoPadre').val(mensaje);
+		    $('#totalProceso').val((total-valorAnterior)+valorNuevo);
+		}
+	    }
+	});
+    }

@@ -1,0 +1,16 @@
+Prestamos empleados
+Concepto del prestamo;Empleado;Transacción;Codigo contable;Sentido;Fecha pago;Total
+16937038 EDWIN  CALDERON ORTIZ;Educación;Prestamos calamidad doméstica;136525;C;2011-04-30;37500.00
+16631003 ALBERTO  GARCIA ESTUPIÑAN;Educación;Prestamos calamidad doméstica;136525;C;2011-04-30;100000.00
+94523300 JUAN CARLOS SUAREZ OJEDA;Educación;Préstamo Educación;136515;C;2011-04-15;37500.00
+16937038 EDWIN  CALDERON ORTIZ;Consumo Celular;Prestamos celular;13659501;C;2011-04-15;16596.00
+94530078 ELVER  CALDERON ORTIZ;Bonos de Consumo;Préstamos Ocasionales;13659503;C;2011-04-15;49884.00
+94530078 ELVER  CALDERON ORTIZ;Bonos de Consumo;Préstamos Ocasionales;13659503;C;2011-04-30;49884.00
+94523300 JUAN CARLOS SUAREZ OJEDA;Bonos de Consumo;Préstamos Ocasionales;13659503;C;2011-04-15;50000.00
+94523300 JUAN CARLOS SUAREZ OJEDA;Bonos de Consumo;Préstamos Ocasionales;13659503;C;2011-04-30;50000.00
+67015629 MONICA MARIA VALENCIA ARTUNDUAGA;Bonos de Consumo;Préstamos Ocasionales;13659503;C;2011-04-15;16600.00
+4852431 OSCAR ALIRIO SEGURA PEREZ;Calamidad Domestica;Prestamos calamidad doméstica;136525;C;2011-04-15;25000.00
+4852431 OSCAR ALIRIO SEGURA PEREZ;Calamidad Domestica;Prestamos calamidad doméstica;136525;C;2011-04-30;25000.00
+
+Prestamos terceros
+Tercero;Empleado;Transacción;Codigo contable;Sentido;Fecha pago;Total\N

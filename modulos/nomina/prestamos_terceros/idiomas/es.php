@@ -1,0 +1,206 @@
+<?php
+/**
+*
+* Copyright (C) 2020 Jobdaily
+* Raul Mauricio Oidor Lozano <ozzymauricio75@gmail.com>
+* Raul Mauricio Oidor Lozano <ozzymauricio75@gmail.com>
+*
+* Este archivo es parte de:
+* Jobdaily:: Sofware empresarial a la medida
+*
+* Este programa es software libre: usted puede redistribuirlo y/o
+* modificarlo  bajo los terminos de la Licencia Publica General GNU
+* publicada por la Fundacion para el Software Libre, ya sea la version 3
+* de la Licencia, o (a su eleccion) cualquier version posterior.
+*
+* Este programa se distribuye con la esperanza de que sea util, pero
+* SIN GARANTIA ALGUNA; ni siquiera la garantia implicita MERCANTIL o
+* de APTITUD PARA UN PROPOSITO DETERMINADO. Consulte los detalles de
+* la Licencia Publica General GNU para obtener una informacion mas
+* detallada.
+*
+* Deberia haber recibido una copia de la Licencia Publica General GNU
+* junto a este programa. En caso contrario, consulte:
+* <http://www.gnu.org/licenses/>.
+*
+**/
+
+$textos = array(
+    "GESTPTTE"                                  => "Prestamos terceros",
+    "ADICPTTE"                                  => "Adicionar Prestamo",
+    "MODIPTTE"                                  => "Modificar Prestamo",
+    "CONSPTTE"                                  => "Consultar Prestamo",
+    "ELIMPTTE"                                  => "Eliminar Prestamo",
+    "LISTPTTE"                                  => "Listado de Prestamos a terceros",
+
+    "PESTANA_SUCURSALES"                        => "Almacenes",
+    "SELECCIONAR_TODOS"                         => "Seleccionar todos",
+
+    "PESTANA_BASICA"                            => "Básica",
+    "EMPLEADO"                                  => "Empleado",
+    "AYUDA_EMPLEADOS"                           => "Empleado que solicita el prestamo",
+    "CONCEPTO_PRESTAMO"                         => "Concepto del prestamo",
+    "AYUDA_CONCEPTO_PRESTAMO"                   => "Concepto por el cual solicita el prestamo",
+    "SUCURSAL_LABORA"                           => "Almacen",
+    "AYUDA_SUCURSAL_LABORA"                     => "Almacen que genera el prestamo",
+
+    "TIPO_DOCUMENTO"                            => "Tipo de documento",
+    "NUMERO_DOCUMENTO"                          => "Numero de documento",
+    "VALOR_PRESTAMO"                            => "Valor del prestamo",
+    "AYUDA_VALOR_PRESTAMO"                      => "valor total del prestamo",
+    "PERIODO_PAGO"                              => "Periodo de pago",
+    "MENSUAL"                                   => "Mensual",
+    "VALOR_MENSUAL"                             => "Pago mensual",
+
+    "QUINCENAL"                                 => "Quincenal",
+    "PRIMERA_QUINCENA"                          => "Primera quincena",
+    "SEGUNDA_QUINCENA"                          => "segunda quincena",
+    "VALOR_PRIMERA_QUINCENA"                    => "Prrimera quincena",
+    "VALOR_SEGUNDA_QUINCENA"                    => "Segunda quincena",
+    "VALOR_PROPORCION_QUINCENA"                 => "Pago Proporcional quincenal",
+
+    "SEMANAL"                                   => "Semanal",
+    "PRIMERA_SEMANA"                            => "Primer semana",
+    "SEGUNDA_SEMANA"                            => "Segunda semana",
+    "TERCERA_SEMANA"                            => "Tercer semana",
+    "CUARTA_SEMANA"                             => "Cuarta semana",
+    "VALOR_PRIMERA_SEMANA"                      => "Pago primera semana",
+    "VALOR_SEGUNDA_SEMANA"                      => "Pago segunda semana",
+    "VALOR_TERCERA_SEMANA"                      => "Pago tercera semana",
+    "VALOR_CUARTA_SEMANA"                       => "Pago cuarta semana",
+    "VALOR_PROPORCION_SEMANAL"                  => "Pago proporcional semanal",
+
+    "OBSERVACIONES"                             => "Observaciones",
+    "AYUDA_OBSERVACIONES"                       => "Digite las observaciones para el prestamo",
+    "TRANSACCION_CONTABLE"                      => "Transaccion contable",
+    "AYUDA_TRANSACCION_CONTABLE"                => "Digite la transaccion contable que corresponde al prestamo",
+    "AMBAS_QUINCENAS"                           => "Proporcional quincenal",
+    "TODAS_SEMANAS"                             => "Proporcional semanal",
+    "USUARIO_SIN_PRIVILEGIOS"                   => "El usuario no tiene privilegios",
+    "AYUDA_VALOR_PRIMERA_QUINCENA"              => "Valor primera quincena",
+    "AYUDA_VALOR_SEGUNDA_QUINCENA"              => "Valor Segunda quincena",
+
+    "PRIMERA_SEMANA"                            => "Primera semana",
+    "SEGUNDA_SEMANA"                            => "Segunda semana",
+    "TERCERA_SEMANA"                            => "Tercera semana",
+    "CUARTA_SEMANA"                             => "Cuarta semana",
+    "QUINTA_SEMANA"                             => "Quinta semana",
+    "PROPOCIONAL"                               => "Dos quincenas",
+    "PRIMERA_QUINCENA"                          => "Primera quincena",
+    "SEGUNDA_QUINCENA"                          => "Segunda quincena",
+    "MENSUAL"                                   => "Mensual",
+    "AYUDA_PERIODO"                             => "Periodo en el que se va ha realizar el descuento",
+    "FORMA_PAGO"                                => "Forma de pago",
+    "AYUDA_VALOR_DESCUENTO"                     => "Valor que se va a descontar",
+    "VALOR_DESCUENTO"                           => "Valor de cuotas",
+    "FECHAS_GENERADAS"                          => "Fechas generadas",
+    "FECHA_DESCUENTO"                           => "Fecha de descuento",
+    "SALDO_ACTUAL"                              => "Saldo Actual",
+    "PERMITE_DESCUENTO"                         => "Permite descuento",
+    "GENERAR_FECHAS"                            => "Generar",
+    "ERROR_VACIO_EMPLEADO"                      => "No ha seleccionado un empleado",
+    "ERROR_VACIO_TERCERO"                       => "No ha seleccionado un tercero",
+    "ERROR_VACIO_OBLIGACION"                    => "No ha ingresado una obligacion",
+    "ERROR_VACIO_VALOR_TOPE"                    => "No ha ingresado un valor tope de descuento",
+    "ERROR_VACIO_TRANSACCION"                   => "No ha seleccionado una transacción contable",
+    "ERROR_VACIO_VALOR_PRESTAMO"                => "No ha ingresado un valor del prestamo",
+    "ERROR_VACIO_VALOR_ABONO"                   => "No ha ingresado un valor de cuota",
+    "ERROR_VACIO_VALOR_DESCUENTO"               => "No ha ingresado un valor de descuento",
+    "ERROR_VACIO_VALOR_DESCUENTOS"              => "No ha ingresado los valores de descuento de: \n \n ",
+    "ERROR_VACIO_VALOR_DESCUENTO_1"             => "- Valor descuento primera quincena \n ",
+    "ERROR_VACIO_VALOR_DESCUENTO_2"             => "- Valor descuento segunda quincena \n ",
+    "VALOR_CUOTA"                               => "Valor de cuota",
+    "PERMITE_DESCUENTO"                         => "No descontar",
+    "SALDO_ACTUAL"                              => "Valor de la deuda actual",
+    "FECHAS_INICIALES"                          => "fechas iniciales",
+    "ERROR_VALOR_PRESTAMO"                      => "El valor del pretamo no puede se menor a",
+    "ERROR_VALOR_CUOTA"                         => "El valor del la cuota no puede se menor a",
+    "AYUDA_TIPO_DOCUMENTO"                      => "Seleccione el tipo de documento para el movimiento",
+    "CUENTA_BANCARIA"                           => "Cuenta bancaria",
+    "CONSECUTIVO_CHEQUE"                        => "Consecutivo cheque",
+    "AYUDA_CONSECUTIVO_CHEQUE"                  => "Número del cheque que genera el documento",
+    "CUENTA"                                    => "Cuenta",
+    "AYUDA_CUENTA"                              => "Cuenta del plan contable a la que afecta el saldo",
+    "DEBITO"                                    => "Debito",
+    "CREDITO"                                   => "Credito",
+    "SENTIDO"                                   => "Sentido",
+    "AYUDA_SENTIDO"                             => "Sentido de la transacción",
+    "MENSAJE_PERIODO_CONTABLE"                  => "Este almacen tiene actualmente el periodo contable cerrado para esta operación",
+    "CONSECUTIVO_DOCUMENTO"                     => "Número documento",
+    "AYUDA_CONSECUTIVO_DOCUMENTO"               => "Número del documento que genera el saldo",
+    "CUENTAS_BANCARIAS_VACIAS"                  => "El tipo de documento seleccionado genera cheques y no existen cuentas bancarias\npara este documento en el almacen que genera seleccionada.\nFavor verifique",
+    "MENSAJE"                                   => "Verifique la existencia de los siguientes datos:\n\n",
+    "SUCURSALES"                                => "-Almacenes \n",
+    "EMPLEADOS"                                 => "-Empleados \n",
+    "TIPOS_DOCUMENTOS"                          => "-tipos de documentos \n",
+    "PLAN_CONTABLE"                             => "-Cuentas en el plan contable \n",
+    "CONCEPTO_PRESTAMOS"                        => "-Conceptos de prestamos \n",
+    "CONSECUTIVO_DOCUMENTO_VACIO"               => "Debe ingresar un número de consecutivo.",
+    "CONSECUTIVO_DOCUMENTO_EXISTE"              => "Ya existe un documento con el mismo consecutivo.",
+    "VALOR_CUOTA_MAYOR"                         => "El valor de la cuota no debe ser mayor al saldo.",
+    "FECHA_INICIO_DESCUENTO"                    => "fecha inicio",
+    "AYUDA_PRESTAMO"                            => "fecha inicio en que inicia el prestamo",
+    "MENSAJE_VACIO_CAMPOS"                      => "Los siguientes campos son obligatorios \n \n ",
+    "VACIO_VALOR_DESCONTAR"                     => " - Valor de cuotas \n ",
+    "VACIO_VALOR_PRESTAMO"                      => " - Valor del prestamo \n ",
+    "OBLIGACION"                                => "Obligacion",
+    "AYUDA_TERCERO"                             => "Tercero con el que contrajo la deuda el empleado",
+    "NOMBRE_TERCERO"                            => "Tercero",
+    "AYUDA_OBLIGACION"                          => "Motivo por el cual se realiza el descuento",
+    "VALOR_TOPE_DESCUENTO"                      => "Valor tope de descuento",
+    "AYUDA_VALOR_TOPE_DESCUENTO"                => "Valor tope de descuento hasta donde se permite el descuento.",
+    "FECHA_HASTA_DESCONTAR"                     => "fecha final de descuento",
+    "VALOR_DESCUENTO_PRIMERA_QUINCENA"          => "Valor descuento primera quincena:",
+    "VALOR_DESCUENTO_SEGUNDA_QUINCENA"          => "Valor descuento segunda quincena:",
+    "VALOR_DESCUENTO_TODO"                      => "Valor descontar:",
+    "ESTADO"                                    => "Estado",
+    "ESTADO_0"                                  => "Activo",
+    "ESTADO_1"                                  => "Suspendido",
+    "ESTADO_2"                                  => "Cancelado",
+    "DESCUENTO_FECHA"                           => "Fecha limite",
+    "DESCUENTO_TOPE"                            => "Valor tope",
+    "LIMITE_DESCUENTO"                          => "Limite de descuento",
+    "AYUDA_LIMITE_DESCUENTO"                    => "Limite de descuento que se descontara al empleado por nomina",
+    "DESCUENTO_ILIMITADO"                       => "Descuento ilimitado",
+    "AYUDA_ESTADO"                              => "Permite seguir descontando al el empleado por nomina",
+
+    "TRANSACCION_CONTABLE_DESCUENTO"            => "Transaccion contable por cobrar descuento",
+    "TRANSACCION_CONTABLE_EMPLEADO"             => "Transaccion contable por cobrar empleado",
+    "TRANSACCION_CONTABLE_PAGAR_TERCERO"        => "Transaccion contable por pagar tercero",
+    "TRANSACCION_CONTABLE_PAGO_TERCERO"         => "Transaccion contable pago tercero",
+    "TRANSACCION_CONTABLE"                      => "Transaccion contable",
+
+    "AYUDA_TRANSACCION_CONTABLE_DESCUENTO"      => "Transaccion contable cuenta por cobrar descuentos",
+    "AYUDA_TRANSACCION_CONTABLE_EMPLEADO"       => "Transaccion contable cuenta por cobrar empleado",
+    "AYUDA_TRANSACCION_CONTABLE_PAGAR_TERCERO"  => "Transaccion contable cuenta por pagar tercero",
+    "AYUDA_TRANSACCION_CONTABLE_PAGO_TERCERO"   => "Transaccion contable cuenta por pago tercero",
+    "PRESTAMO_CANCELADO"                        => "El movimiento no se puede modificar porque ya fue cancelado",
+    "MENSAJE_TRANSACION_DESCUENTO"              => "- Transaccion contable con concepto Descuentos-empleados, sentido Credito \n",
+    "MENSAJE_TRANSACION_EMPLEADO"               => "- Transaccion contable con concepto Descuentos-empleados, sentido Debito \n",
+    "MENSAJE_TRANSACION_PAGAR"                  => "- Transaccion contable con concepto Prestamos de terceros, sentido Credito \n",
+    "MENSAJE_TRANSACION_PAGO"                   => "- Transaccion contable con concepto Prestamos de terceros, sentido Debito \n",
+    "DESDE_HASTA"                                   => "Fecha desde&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fecha hasta",
+    "EMPLEADO"                                      => "Empleado",
+    "AYUDA_EMPLEADO"                                => "Digite la cedula o el nombre del empleado y seleccionelo de la lista",
+    "AYUDA_SUCURSAL"                                => "Seleccione el almacen",
+    "ERROR_SUCURSALES"                              => "-Sucursales",
+    "ERROR_EMPLEADOS"                               => "-Empleados",
+    "ERROR_SUCURSAL_VACIA"                          => "Seleccione un almacen",
+    "ERROR_FECHA_VACIA"                             => "Seleccione las fechas para listar la información",
+    "AYUDA_FECHA"                                   => "Seleccione las fechas para el listado",
+    "FECHAS"                                        => "Fechas",
+    "APELLIDO_NOMBRE"                               => "Apellido-Nombre",
+    "NOMBRE_APELLIDO"                               => "Nombre-Apellido",
+    "CEDULA"                                        => "Documento",
+    "PDF"                                           => "Pdf",
+    "PLANO"                                         => "Plano para excel",
+    "ORDEN_EMPLEADO"                                => "Orden empleado",
+    "AYUDA_ORDEN_EMPLEADO"                          => "Seleccione el orden en que aparecen los empleados",
+    "TIPO_LISTADO"                                  => "Tipo listado",
+    "AYUDA_TIPO_LISTADO"                            => "Seleccion el tipo de listado a generar",
+    "TOTAL_SUCURSAL"                                => "Total almacen",
+    "TOTAL_EMPLEADO"                                => "Total empleado",
+    "DOCUMENTO_EMPLEADO"                            => "Documento identidad",
+    "VALOR_DESCUENTO"                               => "Valor descuento"
+);
+?>

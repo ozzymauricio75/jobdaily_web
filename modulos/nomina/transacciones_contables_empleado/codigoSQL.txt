@@ -1,0 +1,14 @@
+ALTER TABLE `job_transacciones_contables_empleado` CHANGE `ibc_salud` `ibc_salud` ENUM( '0', '1', '2' ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '0' COMMENT '0->No 1->Si 2->Si mayor del 40%';
+
+ALTER TABLE `job_transacciones_contables_empleado` CHANGE `ibc_pension` `ibc_pension` ENUM( '0', '1', '2' ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '0' COMMENT '0->No 1->Si 2->Si mayor del 40%';
+
+
+
+UPDATE `desarrollo`.`job_conceptos_transacciones_contables_empleado` SET `descripcion` = 'Prestamos empresa' WHERE `job_conceptos_transacciones_contables_empleado`.`codigo` =0009;
+
+INSERT INTO `desarrollo`.`job_conceptos_transacciones_contables_empleado` (`codigo` ,`descripcion`) VALUES ('40', 'Prestamos de terceros');
+
+UPDATE job_transacciones_contables_empleado SET columna_planilla=9 WHERE columna_planilla=10;
+UPDATE job_transacciones_contables_empleado SET columna_planilla=10 WHERE columna_planilla=11;
+UPDATE job_transacciones_contables_empleado SET columna_planilla=11 WHERE columna_planilla=12;
+UPDATE job_transacciones_contables_empleado SET columna_planilla=12 WHERE columna_planilla=13;

@@ -1,0 +1,701 @@
+<?xml version="1.0"?>
+<project name="PANCE" company="ELECTROJAPONESA S.A." manager="JAMIR VALENCIA" phase="PROGRAMACION" project-start="20091128T000000Z" mrproject-version="2" calendar="1">
+  <properties/>
+  <phases>
+    <phase name="ANALISIS"/>
+    <phase name="PROGRAMACION"/>
+    <phase name="MIGRACION"/>
+    <phase name="CAPACITACION"/>
+    <phase name="MONTAJE"/>
+  </phases>
+  <calendars>
+    <day-types>
+      <day-type id="0" name="Jornada laboral" description="Un d&#xED;a de trabajo predeterminado"/>
+      <day-type id="1" name="Jornada de descanso" description="Un d&#xED;a predeterminado de descanso"/>
+      <day-type id="2" name="Usar base" description="Usar d&#xED;a del calendario base"/>
+      <day-type id="3" name="sabados" description=""/>
+    </day-types>
+    <calendar id="1" name="Predeterminado">
+      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="3" sun="1"/>
+      <overridden-day-types>
+        <overridden-day-type id="0">
+          <interval start="0800" end="1200"/>
+          <interval start="1300" end="1700"/>
+        </overridden-day-type>
+        <overridden-day-type id="3">
+          <interval start="0800" end="1200"/>
+        </overridden-day-type>
+      </overridden-day-types>
+      <days>
+        <day date="20091225" type="day-type" id="1"/>
+        <day date="20100101" type="day-type" id="1"/>
+        <day date="20091208" type="day-type" id="1"/>
+      </days>
+    </calendar>
+  </calendars>
+  <tasks>
+    <task id="1" name="INVENTARIOS" note="" work="201600" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="2" name="DATOS DE CONTROL" note="" work="201600" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="3" name="ARTICULOS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="4" name="REFERENCIAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="5" name="GRUPOS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="6" name="ESTRUCTURA DE GRUPOS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="7" name="MARCAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="8" name="TIPOS DE UNIDAD DE MEDIDA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="9" name="UNIDADES" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+      </task>
+    </task>
+    <task id="10" name="MODULO PROVEEDORES" note="" work="891000" start="20091128T000000Z" end="20100202T170000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="11" name="COMPRAS" note="" work="73800" start="20091128T000000Z" end="20091216T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="12" name="LACO" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="13" name="COMBOS" note="" work="3600" start="20091128T000000Z" end="20091128T090000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="14" name="LISTA DE PRECIOS" note="" work="1800" start="20091128T000000Z" end="20091128T083000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="15" name="ORDENES DE COMPRA" note="" work="7200" start="20091128T000000Z" end="20091128T100000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="16" name="ENTRADA DE MERCANCIA" note="" work="10800" start="20091128T000000Z" end="20091128T110000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="17" name="ENTRADAS EN CONSIGNACION" note="" work="21600" start="20091214T000000Z" end="20091216T120000Z" work-start="20091214T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="18" name="Adicionar" note="" work="14400" start="20091214T000000Z" end="20091214T170000Z" work-start="20091214T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091214T000000Z"/>
+          </task>
+          <task id="19" name="Consultar" note="" work="7200" start="20091216T000000Z" end="20091216T120000Z" work-start="20091216T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091216T000000Z"/>
+          </task>
+        </task>
+      </task>
+      <task id="20" name="CUENTAS POR PAGAR" note="" work="442800" start="20091207T000000Z" end="20100202T170000Z" work-start="20091207T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="21" name="FACTURACION PROVEEDORES" note="" work="100800" start="20091207T000000Z" end="20091211T120000Z" work-start="20091207T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="22" name="Adicionar" note="" work="86400" start="20091207T000000Z" end="20091210T170000Z" work-start="20091207T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091207T000000Z"/>
+          </task>
+          <task id="23" name="Consultar" note="" work="14400" start="20091211T000000Z" end="20091211T120000Z" work-start="20091211T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091211T000000Z"/>
+          </task>
+        </task>
+        <task id="24" name="FACTURACION MERCANCIA EN CONSIGNACION" note="" work="36000" start="20100130T000000Z" end="20100202T170000Z" work-start="20100130T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="25" name="Adicionar" note="" work="28800" start="20100201T000000Z" end="20100202T170000Z" work-start="20100201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100201T000000Z"/>
+          </task>
+          <task id="26" name="Consultar" note="" work="7200" start="20100130T000000Z" end="20100130T100000Z" work-start="20100130T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100130T000000Z"/>
+          </task>
+        </task>
+        <task id="27" name="PROGRAMACION DE PAGOS A PROVEEDORES" note="" work="118800" start="20091221T000000Z" end="20091230T170000Z" work-start="20091221T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="28" name="Adicionar" note="" work="72000" start="20091221T000000Z" end="20091228T120000Z" work-start="20091221T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091221T000000Z"/>
+          </task>
+          <task id="29" name="Consultar" note="" work="10800" start="20091226T000000Z" end="20091228T100000Z" work-start="20091226T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091226T000000Z"/>
+          </task>
+          <task id="30" name="Eliminar" note="" work="7200" start="20091228T000000Z" end="20091228T120000Z" work-start="20091228T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091228T000000Z"/>
+          </task>
+          <task id="31" name="Modificar" note="" work="28800" start="20091229T000000Z" end="20091230T170000Z" work-start="20091229T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091229T000000Z"/>
+          </task>
+        </task>
+        <task id="32" name="AUTORIZACION DE PAGOS" note="" work="43200" start="20100102T000000Z" end="20100106T120000Z" work-start="20100102T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100102T000000Z"/>
+        </task>
+        <task id="33" name="PAGOS A PROVEEDORES" note="" work="28800" start="20100107T000000Z" end="20100108T170000Z" work-start="20100107T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100107T000000Z"/>
+        </task>
+        <task id="34" name="PAGOS ANTICIPADOS" note="" work="43200" start="20100108T000000Z" end="20100111T170000Z" work-start="20100108T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="35" name="Adicionar" note="" work="28800" start="20100108T000000Z" end="20100111T120000Z" work-start="20100108T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100108T000000Z"/>
+          </task>
+          <task id="36" name="Consultar" note="" work="14400" start="20100111T000000Z" end="20100111T170000Z" work-start="20100111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100111T000000Z"/>
+          </task>
+        </task>
+        <task id="37" name="DEVOLUCION DE COMPRAS DE MERCANCIA" note="" work="72000" start="20100112T000000Z" end="20100118T100000Z" work-start="20100112T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="38" name="Adicionar" note="" work="57600" start="20100112T000000Z" end="20100115T170000Z" work-start="20100112T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100112T000000Z"/>
+          </task>
+          <task id="39" name="Consultar" note="" work="10800" start="20100116T000000Z" end="20100118T100000Z" work-start="20100116T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100116T000000Z"/>
+          </task>
+          <task id="40" name="Anular" note="" work="3600" start="20100118T000000Z" end="20100118T100000Z" work-start="20100118T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100118T000000Z"/>
+          </task>
+        </task>
+      </task>
+      <task id="41" name="DATOS DE CONTROL" note="" work="374400" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="42" name="Proveedores" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="43" name="Contactos" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="44" name="Periodos de Pago" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="45" name="Sucursales proveedores" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="46" name="Servicios" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="47" name="Facturaci&#xF3;n por publicidad" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="48" name="Competidores" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="49" name="M&#xE1;rgenes listas de precio detallistas" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="50" name="M&#xE1;rgenes listas de precio Mayoristas" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="51" name="Cargos" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="52" name="Marcas por proveedor" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="53" name="Plazos de Pago" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="54" name="Transportadores proveedores" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+      </task>
+    </task>
+    <task id="55" name="MODULO PRODUCCION" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="56" name="MODULO CLIENTES" note="" work="2318400" start="20091128T000000Z" end="20100218T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="57" name="CLIENTES MAYORISTAS" note="" work="1742400" start="20091128T000000Z" end="20100204T170000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="58" name="VENTAS" note="" work="604800" start="20091201T000000Z" end="20100104T120000Z" work-start="20091201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="59" name="PEDIDOS MAYORISTAS" note="" work="230400" start="20091201T000000Z" end="20091214T120000Z" work-start="20091201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <task id="60" name="Adicionar" note="" work="201600" start="20091201T000000Z" end="20091210T120000Z" work-start="20091201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091201T000000Z"/>
+            </task>
+            <task id="61" name="Consultar" note="" work="14400" start="20091214T000000Z" end="20091214T120000Z" work-start="20091214T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091214T000000Z"/>
+            </task>
+            <task id="62" name="Anular" note="" work="14400" start="20091214T000000Z" end="20091214T120000Z" work-start="20091214T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091214T000000Z"/>
+            </task>
+          </task>
+          <task id="63" name="PEDIDOS CLIENTES OCACIONALES" note="" work="86400" start="20091216T000000Z" end="20091218T120000Z" work-start="20091216T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <task id="64" name="Adicionar" note="" work="57600" start="20091216T000000Z" end="20091217T170000Z" work-start="20091216T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091216T000000Z"/>
+            </task>
+            <task id="65" name="Consultar" note="" work="14400" start="20091218T000000Z" end="20091218T120000Z" work-start="20091218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091218T000000Z"/>
+            </task>
+            <task id="66" name="anular" note="" work="14400" start="20091218T000000Z" end="20091218T120000Z" work-start="20091218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091218T000000Z"/>
+            </task>
+          </task>
+          <task id="67" name="AUTORIZACION PEDIDOS MAYORISTAS" note="" work="115200" start="20091219T000000Z" end="20091224T120000Z" work-start="20091219T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091219T000000Z"/>
+          </task>
+          <task id="68" name="CANCELACION PEDIDOS POR VENDEDOR" note="" work="14400" start="20091226T000000Z" end="20091226T120000Z" work-start="20091226T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091226T000000Z"/>
+          </task>
+          <task id="69" name="CANCELACION DE PEDIDOS SEPARADOS" note="" work="14400" start="20091226T000000Z" end="20091226T120000Z" work-start="20091226T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091226T000000Z"/>
+          </task>
+          <task id="70" name="DESPACHO VENTAS MAYORISTAS" note="" work="144000" start="20091228T000000Z" end="20100104T120000Z" work-start="20091228T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091228T000000Z"/>
+          </task>
+        </task>
+        <task id="71" name="COBRANZA" note="" work="907200" start="20091228T000000Z" end="20100204T170000Z" work-start="20091228T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="72" name="ANTICIPOS DE CLIENTES" note="" work="158400" start="20091228T000000Z" end="20100104T120000Z" work-start="20091228T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <task id="73" name="Adicionar" note="" work="144000" start="20091228T000000Z" end="20100104T120000Z" work-start="20091228T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091228T000000Z"/>
+            </task>
+            <task id="74" name="Consultar" note="" work="14400" start="20100102T000000Z" end="20100102T120000Z" work-start="20100102T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20100102T000000Z"/>
+            </task>
+          </task>
+          <task id="75" name="PAGOS EN CAJA" note="" work="144000" start="20100102T000000Z" end="20100108T120000Z" work-start="20100102T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100102T000000Z"/>
+          </task>
+          <task id="76" name="RECIBOS PROVISIONALES" note="" work="144000" start="20100108T000000Z" end="20100114T120000Z" work-start="20100108T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100108T000000Z"/>
+          </task>
+          <task id="77" name="TRANSFERENCIAS BANCARIAS" note="" work="57600" start="20100114T000000Z" end="20100115T170000Z" work-start="20100114T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100114T000000Z"/>
+          </task>
+          <task id="78" name="CONSIGNACION DE CLIENTES" note="" work="57600" start="20100116T000000Z" end="20100119T120000Z" work-start="20100116T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100116T000000Z"/>
+          </task>
+          <task id="79" name="CHEQUES DEVUELTOS" note="" work="57600" start="20100119T000000Z" end="20100120T170000Z" work-start="20100119T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100119T000000Z"/>
+          </task>
+          <task id="80" name="RECONSIGNACION DE CHEQUES" note="" work="28800" start="20100123T000000Z" end="20100125T120000Z" work-start="20100123T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100123T000000Z"/>
+          </task>
+          <task id="81" name="CAMBIO DE CHEQUES DEVUELTOS" note="" work="57600" start="20100125T000000Z" end="20100126T170000Z" work-start="20100125T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100125T000000Z"/>
+          </task>
+          <task id="82" name="DEVOLUCION DE DINERO A CLIENTES" note="" work="144000" start="20100127T000000Z" end="20100202T120000Z" work-start="20100127T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100127T000000Z"/>
+            <task id="83" name="adicionar devolucion anticipos" note="" work="57600" start="20100127T000000Z" end="20100128T170000Z" work-start="20100127T080000Z" percent-complete="95" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20100127T000000Z"/>
+            </task>
+            <task id="84" name="Autorizaci&#xF3;n devoluci&#xF3;n de dinero" note="" work="28800" start="20100129T000000Z" end="20100129T170000Z" work-start="20100129T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20100129T000000Z"/>
+            </task>
+            <task id="85" name="Comprobante de egreso con cheque" note="" work="57600" start="20100130T000000Z" end="20100202T120000Z" work-start="20100130T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20100130T000000Z"/>
+            </task>
+          </task>
+          <task id="86" name="TRASLADO DE CUENTAS" note="" work="28800" start="20100203T000000Z" end="20100203T170000Z" work-start="20100203T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100203T000000Z"/>
+          </task>
+          <task id="87" name="TRASLADO DE ANTICIPOS" note="" work="28800" start="20100204T000000Z" end="20100204T170000Z" work-start="20100204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100204T000000Z"/>
+          </task>
+        </task>
+        <task id="88" name="DATOS DE CONTROL" note="" work="230400" start="20091128T000000Z" end="20091216T170000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100216T000000Z"/>
+          <task id="89" name="INFORMACION CLIENTES MAYORISTAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="90" name="SUCURSALES MAYORISTAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="91" name="CONTACTOS MAYORISTAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="92" name="VENDEDORES / COBRADORES" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="93" name="ZONAS DE VENTA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="94" name="COMISIONES" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="95" name="TIPOS DE GARANTIA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="96" name="CONCEPTOS DE DEVOLUCION DE CHEQUES" note="" work="14400" start="20091216T000000Z" end="20091216T170000Z" work-start="20091216T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091216T000000Z"/>
+          </task>
+          <task id="97" name="CONTROL DE RECIBOS PROVISIONALES" note="" work="14400" start="20091216T000000Z" end="20091216T170000Z" work-start="20091216T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091216T000000Z"/>
+          </task>
+        </task>
+      </task>
+      <task id="98" name="CLIENTES MINORISTAS" note="" work="576000" start="20091128T000000Z" end="20100218T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="99" name="VENTAS" note="" work="14400" start="20100218T000000Z" end="20100218T120000Z" work-start="20100218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100218T000000Z"/>
+        </task>
+        <task id="100" name="CREDITOS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="101" name="COBRANZA" note="" work="14400" start="20100218T000000Z" end="20100218T120000Z" work-start="20100218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100218T000000Z"/>
+        </task>
+        <task id="102" name="DATOS DE CONTROL" note="" work="518400" start="20091219T000000Z" end="20100113T170000Z" work-start="20091219T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100218T000000Z"/>
+          <task id="103" name="Vendedores minoristas" note="" work="57600" start="20100112T000000Z" end="20100113T170000Z" work-start="20100112T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100112T000000Z"/>
+          </task>
+          <task id="104" name="Control Contrato vendedores minoristas" note="" work="57600" start="20100108T000000Z" end="20100111T120000Z" work-start="20100108T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100108T000000Z"/>
+          </task>
+          <task id="105" name="Forma de liquidaci'on vendedores minoristas" note="" work="57600" start="20100106T000000Z" end="20100107T170000Z" work-start="20100106T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100106T000000Z"/>
+          </task>
+          <task id="106" name="Rangos para bonificaciones en ventas" note="" work="57600" start="20100104T000000Z" end="20100105T170000Z" work-start="20100104T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100104T000000Z"/>
+          </task>
+          <task id="107" name="Bonificaciones jefes de venta" note="" work="57600" start="20091231T000000Z" end="20100104T120000Z" work-start="20091231T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091231T000000Z"/>
+          </task>
+          <task id="108" name="Cobradores" note="" work="57600" start="20091229T000000Z" end="20091230T170000Z" work-start="20091229T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091229T000000Z"/>
+          </task>
+          <task id="109" name="Zonas de cobro minoristas" note="" work="57600" start="20091224T000000Z" end="20091228T120000Z" work-start="20091224T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091224T000000Z"/>
+          </task>
+          <task id="110" name="Corresponsales de cobranza" note="" work="57600" start="20091222T000000Z" end="20091223T170000Z" work-start="20091222T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091222T000000Z"/>
+          </task>
+          <task id="111" name="Bonificaciones y comisiones cobranza" note="" work="57600" start="20091219T000000Z" end="20091222T120000Z" work-start="20091219T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091219T000000Z"/>
+          </task>
+        </task>
+      </task>
+    </task>
+    <task id="112" name="MODULO MERCADEO" note="" work="295200" start="20100201T000000Z" end="20100222T120000Z" work-start="20100201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="113" name="OPERACIONES" note="" work="266400" start="20100202T000000Z" end="20100222T120000Z" work-start="20100202T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="114" name="&#xD3;rdenes de servicio" note="" work="86400" start="20100202T000000Z" end="20100209T120000Z" work-start="20100202T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100202T000000Z"/>
+        </task>
+        <task id="115" name="Facturaci&#xF3;n de los proveedores de publicidad" note="" work="86400" start="20100208T000000Z" end="20100215T120000Z" work-start="20100208T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100208T000000Z"/>
+        </task>
+        <task id="116" name="Facturaci&#xF3;n a proveedores de merancia por publicidad" note="" work="93600" start="20100215T000000Z" end="20100222T120000Z" work-start="20100215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100215T000000Z"/>
+          <task id="117" name="Adicionar" note="" work="86400" start="20100215T000000Z" end="20100222T120000Z" work-start="20100215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100215T000000Z"/>
+          </task>
+          <task id="118" name="Autorizaci&#xF3;n descuentos" note="" work="7200" start="20100222T000000Z" end="20100222T120000Z" work-start="20100222T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20100222T000000Z"/>
+          </task>
+        </task>
+      </task>
+      <task id="119" name="DATOS DE CONTROL" note="" work="28800" start="20100201T000000Z" end="20100201T170000Z" work-start="20100201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="120" name="CONCEPTOS DE PUBLICIDAD" note="" work="28800" start="20100201T000000Z" end="20100201T170000Z" work-start="20100201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100201T000000Z"/>
+        </task>
+      </task>
+    </task>
+    <task id="121" name="MODULO FINANCIERA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="122" name="MODULO LOGISTICA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="123" name="MODULO GESTION HUMANA" note="" work="1260000" start="20091128T000000Z" end="20100130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="124" name="PARAMETROS NOMINA" note="" work="468000" start="20091128T000000Z" end="20091217T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="125" name="INFORMACION PERSONAL EMPLEADOS" note="" work="230400" start="20091207T000000Z" end="20091217T120000Z" work-start="20091207T080000Z" percent-complete="90" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20091207T000000Z"/>
+        </task>
+        <task id="126" name="DEPARTAMENTOS" note="" work="28800" start="20091209T000000Z" end="20091209T170000Z" work-start="20091209T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20091209T000000Z"/>
+        </task>
+        <task id="127" name="SECCIONES" note="" work="28800" start="20091210T000000Z" end="20091210T170000Z" work-start="20091210T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20091210T000000Z"/>
+        </task>
+        <task id="128" name="CARGOS" note="" work="28800" start="20091211T000000Z" end="20091211T170000Z" work-start="20091211T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20091211T000000Z"/>
+        </task>
+        <task id="129" name="AFICIONES" note="" work="28800" start="20091214T000000Z" end="20091214T170000Z" work-start="20091214T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20091214T000000Z"/>
+        </task>
+        <task id="130" name="DEPORTES" note="" work="28800" start="20091215T000000Z" end="20091215T170000Z" work-start="20091215T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20091215T000000Z"/>
+        </task>
+        <task id="131" name="ENTIDADES PARA FISCALES" note="" work="28800" start="20091212T000000Z" end="20091214T120000Z" work-start="20091212T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20091212T000000Z"/>
+        </task>
+        <task id="132" name="TIPOS DE CONTRATO" note="" work="7200" start="20091128T000000Z" end="20091128T100000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="133" name="TRANSACCIONES CONTABLES DE NOMINA" note="" work="14400" start="20091128T000000Z" end="20091128T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="134" name="TRANSACCIONES TIEMPO DE NOMINA" note="" work="3600" start="20091128T000000Z" end="20091128T090000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="135" name="PLANILLAS" note="" work="3600" start="20091128T000000Z" end="20091128T090000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="136" name="MOTIVOS DE INCAPACIDAD" note="" work="3600" start="20091128T000000Z" end="20091128T090000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="137" name="TURNOS LABORABLES" note="" work="3600" start="20091128T000000Z" end="20091128T090000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="138" name="MOTIVOS DE RETIRO" note="" work="28800" start="20091216T000000Z" end="20091216T170000Z" work-start="20091216T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20091216T000000Z"/>
+        </task>
+      </task>
+      <task id="139" name="OPERACIONES CON PLANILLAS" note="" work="298800" start="20091128T000000Z" end="20100122T170000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="140" name="REPORTE DE NOVEDADES PARA PLANILLA" note="" work="10800" start="20091128T000000Z" end="20091128T110000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="141" name="CALCULO DE PRODUCTIVIDAD" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="142" name="CALCULO DE NOVEDADES FIJAS" note="" work="21600" start="20100120T000000Z" end="20100120T150000Z" work-start="20100120T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100120T000000Z"/>
+        </task>
+        <task id="143" name="INTERFASE DE NOVEDADES DE TIEMPOS" note="" work="28800" start="20100120T000000Z" end="20100120T170000Z" work-start="20100120T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100120T000000Z"/>
+        </task>
+        <task id="144" name="SALUD Y PENSION EN PLANILLA" note="" work="28800" start="20100120T000000Z" end="20100120T170000Z" work-start="20100120T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100120T000000Z"/>
+        </task>
+        <task id="145" name="PRIMA EN PLANILLA" note="" work="21600" start="20100121T000000Z" end="20100121T150000Z" work-start="20100121T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100121T000000Z"/>
+        </task>
+        <task id="146" name="LISTA PLANILLA" note="" work="21600" start="20100121T000000Z" end="20100121T150000Z" work-start="20100121T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100121T000000Z"/>
+        </task>
+        <task id="147" name="PLANILLA PARA FIRMA" note="" work="7200" start="20100121T000000Z" end="20100121T100000Z" work-start="20100121T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100121T000000Z"/>
+        </task>
+        <task id="148" name="PAGO CON CHEQUE" note="" work="28800" start="20100122T000000Z" end="20100122T170000Z" work-start="20100122T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100122T000000Z"/>
+        </task>
+        <task id="149" name="PAGO CON TRANSFERENCIA BANCARIA" note="" work="28800" start="20100122T000000Z" end="20100122T170000Z" work-start="20100122T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100122T000000Z"/>
+        </task>
+        <task id="150" name="PAGO EN EFECTIVO" note="" work="28800" start="20100122T000000Z" end="20100122T170000Z" work-start="20100122T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100122T000000Z"/>
+        </task>
+        <task id="151" name="COMPROBANTE DE PAGO POR EMPLEADO" note="" work="21600" start="20100122T000000Z" end="20100122T150000Z" work-start="20100122T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100122T000000Z"/>
+        </task>
+        <task id="152" name="INTERESES DE CESANTIA EN PLANILLA" note="" work="21600" start="20100122T000000Z" end="20100122T150000Z" work-start="20100122T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100122T000000Z"/>
+        </task>
+      </task>
+      <task id="153" name="PROCESOS MENSUALES" note="" work="403200" start="20100123T000000Z" end="20100130T120000Z" work-start="20100123T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="154" name="PROVISION DE PRESTACIONES SOCIALES" note="" work="172800" start="20100123T000000Z" end="20100130T120000Z" work-start="20100123T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100123T000000Z"/>
+        </task>
+        <task id="155" name="PROVISION DE PARAFISCALES" note="" work="172800" start="20100123T000000Z" end="20100130T120000Z" work-start="20100123T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100123T000000Z"/>
+        </task>
+        <task id="156" name="GENERACION DE PLANOS PARAFISCALES" note="" work="28800" start="20100123T000000Z" end="20100125T120000Z" work-start="20100123T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100123T000000Z"/>
+        </task>
+        <task id="157" name="PAGO DE PARAFISCALES" note="" work="28800" start="20100123T000000Z" end="20100125T120000Z" work-start="20100123T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100123T000000Z"/>
+        </task>
+      </task>
+      <task id="158" name="PROCESOS ANUALES" note="" work="36000" start="20100125T000000Z" end="20100125T140000Z" work-start="20100125T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="159" name="CAMBIO DE SALARIO MINIMO" note="" work="18000" start="20100125T000000Z" end="20100125T140000Z" work-start="20100125T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100125T000000Z"/>
+        </task>
+        <task id="160" name="TRASLADO FONDO DE CESANTIAS" note="" work="18000" start="20100125T000000Z" end="20100125T140000Z" work-start="20100125T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100125T000000Z"/>
+        </task>
+      </task>
+      <task id="161" name="INFORMES DE NOMINA" note="" work="54000" start="20100126T000000Z" end="20100126T140000Z" work-start="20100126T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="162" name="PRESTACIONES SOCIALES" note="" work="18000" start="20100126T000000Z" end="20100126T140000Z" work-start="20100126T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100126T000000Z"/>
+        </task>
+        <task id="163" name="PROMEDIOS DE INGRESOS" note="" work="18000" start="20100126T000000Z" end="20100126T140000Z" work-start="20100126T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100126T000000Z"/>
+        </task>
+        <task id="164" name="CERTIFICADOS DE INGRESOS" note="" work="18000" start="20100126T000000Z" end="20100126T140000Z" work-start="20100126T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100126T000000Z"/>
+        </task>
+      </task>
+    </task>
+    <task id="165" name="MODULO CONTABILIDAD" note="" work="1319400" start="20091128T000000Z" end="20100308T170000Z" work-start="20091128T080000Z" percent-complete="0" priority="100" type="normal" scheduling="fixed-work">
+      <constraint type="must-start-on" time="20091130T000000Z"/>
+      <task id="166" name="OPERACIONES DIARIAS" note="" work="28800" start="20091204T000000Z" end="20091204T100000Z" work-start="20091204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="167" name="MOVIMIENTOS CONTABLES" note="" work="28800" start="20091204T000000Z" end="20091204T100000Z" work-start="20091204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="168" name="Adicionar" note="" work="7200" start="20091204T000000Z" end="20091204T100000Z" work-start="20091204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091204T000000Z"/>
+          </task>
+          <task id="169" name="Consultar" note="" work="7200" start="20091204T000000Z" end="20091204T100000Z" work-start="20091204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091204T000000Z"/>
+          </task>
+          <task id="170" name="Eliminar" note="" work="7200" start="20091204T000000Z" end="20091204T100000Z" work-start="20091204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091204T000000Z"/>
+          </task>
+          <task id="171" name="Modificar" note="" work="7200" start="20091204T000000Z" end="20091204T100000Z" work-start="20091204T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091204T000000Z"/>
+          </task>
+        </task>
+      </task>
+      <task id="172" name="BALANCES" note="" work="288000" start="20100208T000000Z" end="20100219T170000Z" work-start="20100208T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="173" name="BALANCE GENERAL" note="" work="144000" start="20100208T000000Z" end="20100212T170000Z" work-start="20100208T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100208T000000Z"/>
+        </task>
+        <task id="174" name="ESTADO DE GANACIAS Y PERDIDAS" note="" work="86400" start="20100215T000000Z" end="20100217T170000Z" work-start="20100215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100215T000000Z"/>
+        </task>
+        <task id="175" name="BALANCE DE COMPROBACION" note="" work="57600" start="20100218T000000Z" end="20100219T170000Z" work-start="20100218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100218T000000Z"/>
+        </task>
+      </task>
+      <task id="176" name="LISTADOS" note="" work="86400" start="20100222T000000Z" end="20100224T170000Z" work-start="20100222T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="177" name="ESTADO DE CUENTA" note="" work="86400" start="20100222T000000Z" end="20100224T170000Z" work-start="20100222T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100222T000000Z"/>
+        </task>
+      </task>
+      <task id="178" name="TRIBUTARIA" note="" work="181800" start="20100301T000000Z" end="20100308T170000Z" work-start="20100301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="179" name="INFORMACION EXOGENA" note="" work="115200" start="20100301T000000Z" end="20100304T170000Z" work-start="20100301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100301T000000Z"/>
+        </task>
+        <task id="180" name="CERTIFICADOS DE RETENCIONES" note="" work="9000" start="20100303T000000Z" end="20100303T103000Z" work-start="20100303T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100303T000000Z"/>
+        </task>
+        <task id="181" name="LIBRO DIARIO" note="" work="28800" start="20100305T000000Z" end="20100305T170000Z" work-start="20100305T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100305T000000Z"/>
+        </task>
+        <task id="182" name="MAYOR Y BALANCE" note="" work="28800" start="20100308T000000Z" end="20100308T170000Z" work-start="20100308T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="must-start-on" time="20100308T000000Z"/>
+        </task>
+      </task>
+      <task id="183" name="DATOS DE CONTROL" note="" work="734400" start="20091128T000000Z" end="20091218T170000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="184" name="GENERAL" note="" work="72000" start="20091128T000000Z" end="20091203T083000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="185" name="Plan contable" note="" work="7200" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <task id="186" name="Adicionar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="100" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="187" name="Consultar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="188" name="Eliminar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="189" name="Modificar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+          </task>
+          <task id="190" name="ANEXOS CONTABLES" note="" work="7200" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <task id="191" name="Adicionar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="192" name="Consultar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="193" name="Eliminar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="194" name="Modificar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+          </task>
+          <task id="195" name="AUXILIARES CONTABLES" note="" work="7200" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <task id="196" name="Adicionar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="197" name="Consultar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="198" name="Eliminar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="199" name="Modificar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+          </task>
+          <task id="200" name="TIPOS DE DOCUMENTO" note="" work="7200" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <task id="201" name="Adicionar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="202" name="Consultar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="203" name="Eliminar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="204" name="Modificar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+          </task>
+          <task id="205" name="TIPOS DE COMPROBANTE" note="" work="7200" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <task id="206" name="Adicionar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="207" name="Consultar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="208" name="Eliminar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="209" name="Modificar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+          </task>
+          <task id="210" name="PERIODOS CONTABLES" note="" work="7200" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <task id="211" name="Adicionar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="212" name="Consultar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="213" name="Eliminar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+            <task id="214" name="Modificar" note="" work="1800" start="20091203T000000Z" end="20091203T083000Z" work-start="20091203T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+              <constraint type="must-start-on" time="20091203T000000Z"/>
+            </task>
+          </task>
+          <task id="215" name="TIPOS DE DOCUMENTO BANCARIO" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        </task>
+        <task id="216" name="PROVEEDORES" note="" work="115200" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="217" name="TIPOS DE COMPRA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="218" name="TIPOS DE DEVOLUCION EN COMPRA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="219" name="CONCEPTOS DE CONTABILIZACION COMPRAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="220" name="CONCEPTOS DE CONTABILIZACION DEVOLUCIONES EN COMPRA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        </task>
+        <task id="221" name="CLIENTES" note="" work="144000" start="20091128T000000Z" end="20091218T170000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="222" name="TIPOS DE VENTA" note="" work="14400" start="20091209T000000Z" end="20091209T120000Z" work-start="20091209T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091209T000000Z"/>
+          </task>
+          <task id="223" name="TIPOS DE DEVOLUCION EN VENTA" note="" work="14400" start="20091209T000000Z" end="20091209T120000Z" work-start="20091209T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091209T000000Z"/>
+          </task>
+          <task id="224" name="TIPOS DE TARJETAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="225" name="CONCEPTOS DE CONTABILIZACION VENTAS" note="" work="28800" start="20091212T000000Z" end="20091214T120000Z" work-start="20091212T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091212T000000Z"/>
+          </task>
+          <task id="226" name="CONCEPTOS DE CONTABILIZACION DEVOLUCIONES EN VENTA" note="" work="28800" start="20091211T000000Z" end="20091211T170000Z" work-start="20091211T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091211T000000Z"/>
+          </task>
+          <task id="227" name="CHEQUES DEVUELTOS" note="" work="14400" start="20091218T000000Z" end="20091218T170000Z" work-start="20091218T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091218T000000Z"/>
+          </task>
+          <task id="228" name="ENTIDADES AUTORIZAN CHEQUES" note="" work="14400" start="20091215T000000Z" end="20091215T120000Z" work-start="20091215T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+            <constraint type="must-start-on" time="20091215T000000Z"/>
+          </task>
+        </task>
+        <task id="229" name="TRIBUTARIA" note="" work="144000" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="230" name="RESOLUCIONES DE LA DIAN" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="231" name="RESOLUCIONES ICA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="232" name="RESOLUCIONES AUTORETENCION" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="233" name="FORMATOS INFORMACION EXOGENA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="234" name="CONCEPTOS INFORMACION EXOGENA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        </task>
+        <task id="235" name="FINANCIERA" note="" work="172800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="236" name="ACTIVIDADES ECONOMICAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="237" name="CAJAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="238" name="BANCOS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="239" name="CONCEPTOS FLUJO DE EFECTIVO" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="240" name="TIPOS DE MONEDA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="241" name="TASAS DE CAMBIO" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        </task>
+        <task id="242" name="TASAS" note="" work="86400" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <task id="243" name="TASAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="244" name="VIGENCIA DE TASAS" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+          <task id="245" name="ICA POR ACTIVIDAD ECONOMICA" note="" work="28800" start="20091128T000000Z" end="20091130T120000Z" work-start="20091128T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        </task>
+      </task>
+    </task>
+  </tasks>
+  <resource-groups default_group="1">
+    <group id="1" name="ELECTRO" admin-name="JAMIR VALENCIA" admin-phone="3147942463" admin-email="jamirvalencia@gmail"/>
+  </resource-groups>
+  <resources>
+    <resource group="1" id="1" name="OMAR LONDO&#xD1;O" short-name="OMAR" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource group="1" id="2" name="JULIAN TRIVI&#xD1;O" short-name="JULIAN T." type="1" units="0" email="" note="" std-rate="0"/>
+    <resource group="1" id="3" name="WALTER ANDRES MARQUEZ" short-name="WALTER" type="1" units="0" email="" note="" std-rate="1250000"/>
+    <resource group="1" id="4" name="JULIAN MONDRAGON" short-name="JULIAN M." type="1" units="0" email="" note="" std-rate="450000"/>
+    <resource group="1" id="5" name="JIAVANY ANDRES" short-name="JIOVANNY" type="1" units="0" email="" note="" std-rate="850000"/>
+    <resource group="1" id="6" name="MAURICIO OIDOR" short-name="MAURO" type="1" units="0" email="" note="" std-rate="0"/>
+  </resources>
+  <allocations>
+    <allocation task-id="103" resource-id="2" units="100"/>
+    <allocation task-id="104" resource-id="2" units="100"/>
+    <allocation task-id="105" resource-id="2" units="100"/>
+    <allocation task-id="106" resource-id="2" units="100"/>
+    <allocation task-id="107" resource-id="2" units="100"/>
+    <allocation task-id="108" resource-id="2" units="100"/>
+    <allocation task-id="109" resource-id="2" units="100"/>
+    <allocation task-id="110" resource-id="2" units="100"/>
+    <allocation task-id="111" resource-id="2" units="100"/>
+    <allocation task-id="138" resource-id="2" units="100"/>
+    <allocation task-id="130" resource-id="2" units="100"/>
+    <allocation task-id="129" resource-id="2" units="100"/>
+    <allocation task-id="131" resource-id="2" units="100"/>
+    <allocation task-id="128" resource-id="2" units="100"/>
+    <allocation task-id="127" resource-id="2" units="100"/>
+    <allocation task-id="126" resource-id="2" units="100"/>
+    <allocation task-id="125" resource-id="2" units="100"/>
+    <allocation task-id="87" resource-id="3" units="100"/>
+    <allocation task-id="86" resource-id="3" units="100"/>
+    <allocation task-id="82" resource-id="3" units="100"/>
+    <allocation task-id="80" resource-id="3" units="100"/>
+    <allocation task-id="79" resource-id="3" units="100"/>
+    <allocation task-id="78" resource-id="3" units="100"/>
+    <allocation task-id="77" resource-id="3" units="100"/>
+    <allocation task-id="76" resource-id="3" units="100"/>
+    <allocation task-id="75" resource-id="3" units="100"/>
+    <allocation task-id="66" resource-id="3" units="100"/>
+    <allocation task-id="65" resource-id="3" units="100"/>
+    <allocation task-id="62" resource-id="3" units="100"/>
+    <allocation task-id="64" resource-id="3" units="100"/>
+    <allocation task-id="61" resource-id="3" units="100"/>
+    <allocation task-id="60" resource-id="3" units="100"/>
+    <allocation task-id="190" resource-id="3" units="100"/>
+    <allocation task-id="195" resource-id="3" units="100"/>
+    <allocation task-id="200" resource-id="3" units="100"/>
+    <allocation task-id="185" resource-id="3" units="100"/>
+    <allocation task-id="205" resource-id="3" units="100"/>
+    <allocation task-id="118" resource-id="4" units="50"/>
+    <allocation task-id="117" resource-id="4" units="50"/>
+    <allocation task-id="116" resource-id="4" units="100"/>
+    <allocation task-id="114" resource-id="4" units="50"/>
+    <allocation task-id="115" resource-id="4" units="50"/>
+    <allocation task-id="120" resource-id="4" units="100"/>
+    <allocation task-id="40" resource-id="4" units="50"/>
+    <allocation task-id="39" resource-id="4" units="50"/>
+    <allocation task-id="38" resource-id="4" units="50"/>
+    <allocation task-id="36" resource-id="4" units="50"/>
+    <allocation task-id="35" resource-id="4" units="50"/>
+    <allocation task-id="33" resource-id="4" units="50"/>
+    <allocation task-id="32" resource-id="4" units="50"/>
+    <allocation task-id="31" resource-id="4" units="50"/>
+    <allocation task-id="30" resource-id="4" units="50"/>
+    <allocation task-id="29" resource-id="4" units="50"/>
+    <allocation task-id="28" resource-id="4" units="50"/>
+    <allocation task-id="25" resource-id="4" units="50"/>
+    <allocation task-id="19" resource-id="4" units="50"/>
+    <allocation task-id="18" resource-id="4" units="50"/>
+    <allocation task-id="23" resource-id="4" units="100"/>
+    <allocation task-id="22" resource-id="4" units="100"/>
+    <allocation task-id="173" resource-id="4" units="100"/>
+    <allocation task-id="174" resource-id="4" units="100"/>
+    <allocation task-id="175" resource-id="4" units="100"/>
+    <allocation task-id="177" resource-id="4" units="100"/>
+    <allocation task-id="179" resource-id="4" units="100"/>
+    <allocation task-id="180" resource-id="4" units="100"/>
+    <allocation task-id="181" resource-id="4" units="100"/>
+    <allocation task-id="182" resource-id="4" units="100"/>
+    <allocation task-id="178" resource-id="4" units="100"/>
+    <allocation task-id="176" resource-id="4" units="100"/>
+    <allocation task-id="172" resource-id="4" units="100"/>
+    <allocation task-id="185" resource-id="4" units="100"/>
+    <allocation task-id="167" resource-id="4" units="100"/>
+    <allocation task-id="210" resource-id="4" units="100"/>
+    <allocation task-id="70" resource-id="5" units="100"/>
+    <allocation task-id="69" resource-id="5" units="100"/>
+    <allocation task-id="68" resource-id="5" units="100"/>
+    <allocation task-id="67" resource-id="5" units="100"/>
+    <allocation task-id="85" resource-id="5" units="100"/>
+    <allocation task-id="84" resource-id="5" units="100"/>
+    <allocation task-id="83" resource-id="5" units="100"/>
+    <allocation task-id="74" resource-id="5" units="100"/>
+    <allocation task-id="73" resource-id="5" units="100"/>
+    <allocation task-id="227" resource-id="5" units="50"/>
+    <allocation task-id="97" resource-id="5" units="50"/>
+    <allocation task-id="96" resource-id="5" units="50"/>
+    <allocation task-id="228" resource-id="5" units="100"/>
+    <allocation task-id="225" resource-id="5" units="100"/>
+    <allocation task-id="226" resource-id="5" units="100"/>
+    <allocation task-id="223" resource-id="5" units="100"/>
+    <allocation task-id="222" resource-id="5" units="100"/>
+  </allocations>
+</project>
