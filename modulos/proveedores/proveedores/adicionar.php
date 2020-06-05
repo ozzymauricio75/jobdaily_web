@@ -183,7 +183,7 @@ if (!empty($url_generar)) {
             $actividades[$llave] = $datos_actividades->descripcion;
         }
     }
-    
+
     $consulta_tipos_documentos = SQL::seleccionar(array("tipos_documento_identidad"), array("*"),"codigo != 0");
     if (SQL::filasDevueltas($consulta_tipos_documentos)){
         while($datos_tipos_documentos = SQL::filaEnObjeto($consulta_tipos_documentos)){
@@ -237,9 +237,10 @@ if (!empty($url_generar)) {
             "2" => $textos["FECHA_RECIBO"]
         );
         $forma_iva = array(
-            "1" => $textos["DISTRIBUIDO"],
+            "1" => $textos["TOTAL"],
             "2" => $textos["PRIMERA_CUOTA"],
-            "3" => $textos["SEPARADO"]
+            "3" => $textos["SEPARADO"],
+            "4" => $textos["DISTRIBUIDO"]
         );
 
         $forma_liquidacion_tasa_credito = array(
@@ -251,7 +252,6 @@ if (!empty($url_generar)) {
             "1" => $textos["AHORROS"],
             "2" => $textos["CORRIENTE"]
         );
-
 
         /*** Definición de pestañas para datos del tercero***/
         $formularios["PESTANA_TERCERO"] = array(
@@ -332,20 +332,19 @@ if (!empty($url_generar)) {
             array(
                 HTML::marcaChequeo("retiene_ica", $textos["RETIENE_ICA"])
             ),
-            array(
-                HTML::listaSeleccionSimple("*forma_iva", $textos["FORMA_IVA"], $forma_iva, "", array("title" => $textos["AYUDA_FORMA_IVA"]))
-            )
+            /*array(
+                HTML::listaSeleccionSimple("*forma_iva", $textos["FORMA_IVA"], $forma_iva, "1", array("title" => $textos["AYUDA_FORMA_IVA"]))
+            )*/
         );
         
-
         /*** Definición de pestaña PROVEEDOR ***/
         $funciones["PESTANA_PROVEEDOR"] = "recargarActividades()";
         $formularios["PESTANA_PROVEEDOR"] = array(
             array(
-                HTML::listaSeleccionSimple("id_actividad_principal", $textos["ACTIVIDAD_PRINCIPAL"], "", array("title" => $textos["AYUDA_ACTIVIDAD_PRINCIPAL"],"onBlur" => "validarItem(this);"))
+                HTML::listaSeleccionSimple("id_actividad_principal", $textos["ACTIVIDAD_PRINCIPAL"], $actividades, array("title" => $textos["AYUDA_ACTIVIDAD_PRINCIPAL"],"onBlur" => "validarItem(this);"))
             ),
             array(
-                HTML::listaSeleccionSimple("id_actividad_secundaria", $textos["ACTIVIDAD_SECUNDARIA"], "", "", array("title" => $textos["AYUDA_ACTIVIDAD_SECUNDARIA"],"onBlur" => "validarItem(this);"))
+                HTML::listaSeleccionSimple("id_actividad_secundaria", $textos["ACTIVIDAD_SECUNDARIA"], $actividades, "", array("title" => $textos["AYUDA_ACTIVIDAD_SECUNDARIA"],"onBlur" => "validarItem(this);"))
             ),
             array(
                 HTML::marcaChequeo("fabricante", $textos["FABRICANTE"])
@@ -386,13 +385,13 @@ if (!empty($url_generar)) {
         $formularios["PESTANA_PAGOS"] = array(
             array(
                 HTML::listaSeleccionSimple("codigo_plazo_pago_contado", $textos["FORMA_PAGO_CONTADO"], $plazos_pagos,"",array("title" => $textos["AYUDA_PAGO_CONTADO"]))
-            ),
-            array(
+            )
+           /*array(
                 HTML::listaSeleccionSimple("codigo_plazo_pago_credito", $textos["FORMA_PAGO_CREDITO"], $plazos_pagos,"",array("title" => $textos["AYUDA_PAGO_CREDITO"])),
                 HTML::campoTextoCorto("tasa_pago_credito", $textos["TASA_PAGO_CREDITO"], 6, 6, "", array("title" => $textos["AYUDA_TASA_CUOTAS_CREDITO"],"onBlur" => "validarItem(this);","onKeyPress" => "return campoDecimal(event)")),
                 HTML::listaSeleccionSimple("liquidacion_tasa_credito", $textos["LIQUIDACION_TASA_CREDITO"], $forma_liquidacion_tasa_credito, "", array("title" => $textos["AYUDA_LIQUIDACION_TASA_CREDITO"]))
-            ),
-            array(
+            )
+            /*array(
                 HTML::campoTextoCorto("porcentaje_primera_cuota", $textos["PRIMERA_CUOTA"], 6, 6, "", array("title" => $textos["AYUDA_PRIMERA_CUOTA"],"onBlur" => "validarItem(this);","onKeyPress" => "return campoDecimal(event)")),
                 HTML::campoTextoCorto("porcentaje_ultima_cuota", $textos["ULTIMA_CUOTA"], 6, 6, "", array("title" => $textos["AYUDA_ULTIMA_CUOTA"],"onBlur" => "validarItem(this);","onKeyPress" => "return campoDecimal(event)"))
             ),
@@ -428,7 +427,7 @@ if (!empty($url_generar)) {
                 ),
                 HTML::marcaSeleccion("liquidacion_descuento_global", $textos["NETO_CON_TOTAL"], 2, false, array("id" => "descuento_global_neto_total")),
                 HTML::marcaSeleccion("liquidacion_descuento_global", $textos["NETO_FINAL_FACTURA"], 3, false, array("id" => "descuento_global_neto_valor_final"))
-            )
+            )*/
         );
 
         //'1-> liquida el valor neto desde el valor unitario 2-> liquida el valor neto con el valor total 3-> realiza el calculo al final de la factura'"

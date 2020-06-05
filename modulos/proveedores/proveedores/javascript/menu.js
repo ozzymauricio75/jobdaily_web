@@ -328,20 +328,3 @@
             });
         }
     }
-
-    function recargarActividades(){
-
-        var destino = $('#URLFormulario').val();
-        var id_localidad = $('#id_localidad').val();
-
-        if (id_localidad !=''){
-            var lista   = '';
-            $.getJSON(destino, {recargarActividad: true, id_localidad: id_localidad}, function(datos){
-                jQuery.each(datos, function(valor, texto) {
-                    lista = lista+'<option value="'+valor+'">'+texto+'</option>';
-                });
-                $('#id_actividad_principal').html(lista);
-                $('#id_actividad_secundaria').html(lista);
-            });            
-        }
-    }

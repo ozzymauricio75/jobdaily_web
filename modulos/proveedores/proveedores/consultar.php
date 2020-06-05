@@ -58,9 +58,10 @@ if (!empty($url_generar)) {
             "2" => $textos["FECHA_RECIBO"]
         );
         $forma_iva = array(
-            "1" => $textos["DISTRIBUIDO"],
+            "1" => $textos["TOTAL"],
             "2" => $textos["PRIMERA_CUOTA"],
-            "3" => $textos["SEPARADO"]
+            "3" => $textos["SEPARADO"],
+            "4" => $textos["DISTRIBUIDO"]
         );
         $forma_liquidacion_tasa_credito = array(
             "1" => $textos["DESPUES_LINEA"],
@@ -147,7 +148,7 @@ if (!empty($url_generar)) {
                 $cuenta         = $datos_cuenta->cuenta;
                 $tipo_cuenta    = $tipos_cuenta[$datos_cuenta->tipo_cuenta];
 
-                $item_cuenta[] = array( $id_cuenta,
+                $item_cuenta[]  = array( $id_cuenta,
                                         $banco,
                                         $cuenta,
                                         $tipo_cuenta
@@ -229,9 +230,9 @@ if (!empty($url_generar)) {
             array(
                 HTML::mostrarDato("retiene_ica", $textos["RETIENE_ICA"], $textos["SI_NO_".intval($datosProveedor->retiene_ica)])
             ),
-            array(
+            /*array(
                 HTML::mostrarDato("forma_iva", $textos["FORMA_IVA"], $forma_iva[$datosProveedor->forma_iva])
-            )
+            )*/
         );
 
         /*** Definición de pestaña PROVEEDOR ***/
@@ -277,7 +278,7 @@ if (!empty($url_generar)) {
             array(
                 HTML::mostrarDato("id_forma_pago_contado", $textos["FORMA_PAGO_CONTADO"], $forma_pago_contado)
             ),
-            array(
+            /*array(
                 HTML::mostrarDato("id_forma_pago_credito", $textos["FORMA_PAGO_CREDITO"], $forma_pago_credito),
                 HTML::mostrarDato("tasa_pago_credito", $textos["TASA_PAGO_CREDITO"], $datosProveedor->tasa_pago_credito),
                 HTML::mostrarDato("liquidacion_tasa_credito", $textos["LIQUIDACION_TASA_CREDITO"], $forma_liquidacion_tasa_credito[$datosProveedor->forma_liquidacion_tasa_credito])
@@ -306,7 +307,7 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::mostrarDato("forma_descuento_global", $textos["TITULO_DESCUENTO_GLOBAL"], $textos["GLOBAL_".$datosProveedor->forma_liquidacion_descuento_global])
-            )
+            )*/
         );
 
         /*** Definición de pestaña de cuentas bancarias relacionadas ***/

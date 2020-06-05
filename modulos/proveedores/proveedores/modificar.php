@@ -145,7 +145,7 @@ if (isset($url_recargarActividad)){
     $codigo_dane_departamento = $llave_municipio[1];
     $codigo_dane_municipio    = $llave_municipio[2];
     $condicion                = "codigo_iso='$codigo_iso' AND codigo_dane_departamento='$codigo_dane_departamento' AND codigo_dane_municipio='$codigo_dane_municipio'";    
-    $consulta = SQL::seleccionar(array("actividades_economicas"),array("*"),$condicion);
+    $consulta = SQL::seleccionar(array("seleccion_actividades_economicas"),array("*"),$condicion);
 
     if (SQL::filasDevueltas($consulta)){
 
@@ -226,9 +226,10 @@ if (!empty($url_generar)) {
             "2" => $textos["FECHA_RECIBO"]
         );
         $forma_iva = array(
-            "1" => $textos["DISTRIBUIDO"],
+            "1" => $textos["TOTAL"],
             "2" => $textos["PRIMERA_CUOTA"],
-            "3" => $textos["SEPARADO"]
+            "3" => $textos["SEPARADO"],
+            "4" => $textos["DISTRIBUIDO"]
         );
         $forma_liquidacion_tasa_credito = array(
             "1" => $textos["DESPUES_LINEA"],
@@ -329,29 +330,29 @@ if (!empty($url_generar)) {
 
         if ($datosTercero->tipo_persona == '2' || $datosTercero->tipo_persona == '4') {
 
-            $nit   = $datosTercero->documento_identidad;
-            $pesos = array(3,7,13,17,19,23,29,37,41,43,47,53,59,67,71);
-
-            $suma    = 0;
-            $j       = 0;
-            $resto   = 0;
-            $digitoV = 0;
-
-            for ( $i = strlen($nit); $i >= 0; $i-- ) {
-                $suma += (int)(substr($nit,$i -1, 1)) * $pesos[$j];
-                $j++;
+            $nit     = $datosTercero->documento_identidad;
+            $array   = array(1 => 3, 4 => 17, 7 => 29, 10 => 43, 13 => 59, 2 => 7, 5 => 19, 8 => 37, 11 => 47, 14 => 67, 3 => 13,
+                             6 => 23, 9 => 41, 12 => 53, 15 => 71);
+            $x       = 0;
+            $y       = 0;
+            $z       = strlen($nit);
+            $digitoV = '';
+    
+            for ($i = 0; $i < $z; $i++) {
+                $y  = substr($nit, $i, 1);
+                $x += ($y*$array[$z-$i]);
             }
-
-            $resto = $suma % 11;
-            if ( $resto == 0 || $resto == 1 ) {
-                $digitoV = $resto;
+    
+            $y = $x%11;
+    
+            if ($y > 1) {
+                $digitoV = 11-$y;
+                return $digitoV;
             } else {
-                $digitoV = 11 - $resto;
+                $digitoV = $y;
             }
-        } else {
-            $digitoV = 0;
         }
-
+            
         /* Obtener cuentas bancarias relacionadas con el proveedor */
         $orden_lista_cuentas = 0;
         $item_cuenta = '';
@@ -385,7 +386,6 @@ if (!empty($url_generar)) {
             }
             $orden_lista_cuentas = $id_cuenta+1;
         }
-
 
         /*** Definición de pestañas para datos del tercero***/
         $formularios["PESTANA_TERCERO"] = array(
@@ -468,9 +468,9 @@ if (!empty($url_generar)) {
             array(
                 HTML::marcaChequeo("retiene_ica", $textos["RETIENE_ICA"],1, $datosProveedor->retiene_ica)
             ),
-            array(
+            /*array(
                 HTML::listaSeleccionSimple("forma_iva", $textos["FORMA_IVA"], $forma_iva, $datosProveedor->forma_iva, array("title" => $textos["AYUDA_FORMA_IVA"]))
-            )
+            )*/
         );
 
         /*** Definición de pestaña PROVEEDOR ***/
@@ -483,15 +483,21 @@ if (!empty($url_generar)) {
                 HTML::listaSeleccionSimple("id_actividad_secundaria", $textos["ACTIVIDAD_SECUNDARIA"], $actividad, $llave_actividad_secundaria, array("title" => $textos["AYUDA_ACTIVIDAD_SECUNDARIA"],"onBlur" => "validarItem(this);"))
             ),
             array(
-                HTML::marcaChequeo("fabricante", $textos["FABRICANTE"], 1, $datosProveedor->fabricante),
+                HTML::marcaChequeo("fabricante", $textos["FABRICANTE"], 1, $datosProveedor->fabricante)
+            ),
+            array(
                 HTML::marcaChequeo("distribuidor", $textos["DISTRIBUIDOR"], 1, $datosProveedor->distribuidor)
             ),
             array(
-                HTML::marcaChequeo("servicios_tecnicos", $textos["SERVICIOS_TECNICOS"], 1, $datosProveedor->servicios_tecnicos),
+                HTML::marcaChequeo("servicios_tecnicos", $textos["SERVICIOS_TECNICOS"], 1, $datosProveedor->servicios_tecnicos)
+            ),    
+            array(
                 HTML::marcaChequeo("transporte", $textos["TRANSPORTE"], 1, $datosProveedor->transporte)
             ),
             array(
-                HTML::marcaChequeo("publicidad", $textos["PUBLICIDAD"], 1, $datosProveedor->publicidad),
+                HTML::marcaChequeo("publicidad", $textos["PUBLICIDAD"], 1, $datosProveedor->publicidad)
+            ),
+            array(
                 HTML::marcaChequeo("servicios_especiales", $textos["SERVICIOS_ESPECIALES"], 1, $datosProveedor->servicios_especiales)
             ),
             array(
@@ -535,7 +541,7 @@ if (!empty($url_generar)) {
             array(
                 HTML::listaSeleccionSimple("codigo_plazo_pago_contado", $textos["FORMA_PAGO_CONTADO"], HTML::generarDatosLista("plazos_pago_proveedores", "codigo", "nombre","codigo>0"), $datosProveedor->codigo_plazo_pago_contado, array("title" => $textos["AYUDA_PAGO_CONTADO"])),
             ),
-            array(
+            /*array(
                 HTML::listaSeleccionSimple("codigo_plazo_pago_credito", $textos["FORMA_PAGO_CREDITO"], HTML::generarDatosLista("plazos_pago_proveedores", "codigo", "nombre","codigo>0"), $datosProveedor->codigo_plazo_pago_credito, array("title" => $textos["AYUDA_PAGO_CREDITO"])),
                 HTML::campoTextoCorto("tasa_pago_credito", $textos["TASA_PAGO_CREDITO"], 6, 6, $datosProveedor->tasa_pago_credito, array("title" => $textos["AYUDA_TASA_CUOTAS_CREDITO"],"onBlur" => "validarItem(this);","onKeyPress" => "return campoDecimal(event)")),
                 HTML::listaSeleccionSimple("liquidacion_tasa_credito", $textos["LIQUIDACION_TASA_CREDITO"], $forma_liquidacion_tasa_credito, $datosProveedor->forma_liquidacion_tasa_credito, array("title" => $textos["AYUDA_LIQUIDACION_TASA_CREDITO"]))
@@ -576,7 +582,7 @@ if (!empty($url_generar)) {
                 ),
                 HTML::marcaSeleccion("liquidacion_descuento_global", $textos["NETO_CON_TOTAL"], 2, $liquidacion_global_final_articulo, array("id" => "descuento_global_neto_total")),
                 HTML::marcaSeleccion("liquidacion_descuento_global", $textos["NETO_FINAL_FACTURA"], 3, $liquidacion_global_final_factura, array("id" => "descuento_global_neto_valor_final"))
-            )
+            )*/
         );
 
         /*** Definición de pestaña cuentas bancarias ***/

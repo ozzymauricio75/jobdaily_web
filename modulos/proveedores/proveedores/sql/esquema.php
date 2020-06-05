@@ -74,7 +74,7 @@ $tablas ["proveedores"] = array(
     "codigo_dian_secundario"                => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'id de la tabla actividades economicas DIAN'",
     "codigo_actividad_municipio_secundario" => "INT(5) UNSIGNED ZEROFILL NULL COMMENT'Codigo de la actividad economica del municipio'",
     /******/
-    "forma_iva"                            => "ENUM('1','2','3') NOT NULL DEFAULT '1' COMMENT 'Forma en que se le paga el IVA: 1->Distribuido 2->Primera cuota 3->Separado'",
+    "forma_iva"                            => "ENUM('1','2','3','4') NOT NULL DEFAULT '1' COMMENT 'Forma en que se le paga el IVA: 1->Total 2->Distribuido 3->Primera cuota 4->Separado'",
     "forma_liquidacion_descuento_en_linea" => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT '1-> liquida el valor neto desde el valor unitario 2-> liquida el valor neto con el valor total'",
     "forma_liquidacion_descuento_global"   => "ENUM('1','2','3') NOT NULL DEFAULT '1' COMMENT '1-> liquida el valor neto desde el valor unitario 2-> liquida el valor neto con el valor total 3-> realiza el calculo al final de la factura'",
     "forma_liquidacion_tasa_credito"       => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT '1-> liquida el valor despues descuentos en linea 2-> liquida el valor despues descuentos globales'"

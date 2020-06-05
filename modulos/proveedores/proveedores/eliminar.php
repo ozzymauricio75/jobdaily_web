@@ -58,9 +58,10 @@ if (!empty($url_generar)) {
             "2" => $textos["FECHA_RECIBO"]
         );
         $forma_iva = array(
-            "1" => $textos["DISTRIBUIDO"],
+            "1" => $textos["TOTAL"],
             "2" => $textos["PRIMERA_CUOTA"],
-            "3" => $textos["SEPARADO"]
+            "3" => $textos["SEPARADO"],
+            "4" => $textos["DISTRIBUIDO"]
         );
         $forma_liquidacion_tasa_credito = array(
             "1" => $textos["DESPUES_LINEA"],
@@ -229,9 +230,9 @@ if (!empty($url_generar)) {
             array(
                 HTML::mostrarDato("retiene_ica", $textos["RETIENE_ICA"], $textos["SI_NO_".intval($datosProveedor->retiene_ica)])
             ),
-            array(
+            /*array(
                 HTML::mostrarDato("forma_iva", $textos["FORMA_IVA"], $forma_iva[$datosProveedor->forma_iva])
-            )
+            )*/
         );
 
         /*** Definición de pestaña PROVEEDOR ***/
