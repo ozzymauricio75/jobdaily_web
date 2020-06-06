@@ -38,24 +38,11 @@ if (!empty($url_generar)) {
     } else {
         $vistaConsulta                  = "terceros";
         $columnas                       = SQL::obtenerColumnas($vistaConsulta);
-        $consulta                       = SQL::seleccionar(array($vistaConsulta), $columnas, "id = '$url_id'");
+        $consulta                       = SQL::seleccionar(array($vistaConsulta), $columnas, "documento_identidad = '$url_id'");
         $datos                          = SQL::filaEnObjeto($consulta);
         $error                          = "";
         $titulo                         = $componente->nombre; 
         $documento_identidad            = $datos->documento_identidad;
-        $tipo_documento_identidad       = SQL::obtenerValor("tipos_documento_identidad", "descripcion", "id = '$datos->id_tipo_documento'");
-        $nombre_municipio_documento     = SQL::obtenerValor("municipios", "nombre", "id = '$datos->id_municipio_documento'");
-        $departamento_documento         = SQL::obtenerValor("municipios", "id_departamento", "id = '$datos->id_municipio_documento'");
-        $nombre_departamento_documento  = SQL::obtenerValor("departamentos", "nombre", "id = '$departamento_documento'");
-        $pais_documento                 = SQL::obtenerValor("departamentos", "id_pais", "id = '$departamento_documento'");
-        $nombre_pais_documento          = SQL::obtenerValor("paises", "nombre", "id = '$pais_documento'");
-        $nombre_localidad_residencia    = SQL::obtenerValor("localidades", "nombre", "id = '$datos->id_municipio_residencia'");
-        $municipio_residencia           = SQL::obtenerValor("localidades", "id_municipio", "id = '$datos->id_municipio_residencia'");
-        $nombre_municipio_residencia    = SQL::obtenerValor("municipios", "nombre", "id = '$municipio_residencia'");
-        $departamento_residencia        = SQL::obtenerValor("municipios", "id_departamento", "id = '$municipio_residencia'");
-        $nombre_departamento_residencia = SQL::obtenerValor("departamentos", "nombre", "id = '$departamento_residencia'");
-        $pais_residencia                = SQL::obtenerValor("departamentos", "id_pais", "id = '$departamento_residencia'");
-        $nombre_pais_residencia         = SQL::obtenerValor("paises", "nombre", "id = '$pais_residencia'");
         
         $regimen = array(
             "1" => $textos["REGIMEN_COMUN"],
@@ -104,42 +91,17 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("documento_identidad", $textos["DOCUMENTO_COMPRADOR"], $datos->documento_identidad)
             ),
             array(
-                HTML::mostrarDato("tipo_persona", $textos["TIPO_PERSONA"], $tipo_persona[$datos->tipo_persona]),
-                HTML::mostrarDato("id_tipo_documento", $textos["TIPO_DOCUMENTO_IDENTIDAD"], $tipo_documento_identidad)
-            ),
-            array(
                 HTML::mostrarDato("primer_nombre", $textos["$primer_nombre"], $datos->primer_nombre),
                 HTML::mostrarDato("segundo_nombre", $textos["$segundo_nombre"], $datos->segundo_nombre),
                 HTML::mostrarDato("primer_apellido", $textos["$primer_apellido"], $datos->primer_apellido),
                 HTML::mostrarDato("segundo_apellido", $textos["$segundo_apellido"], $datos->segundo_apellido)
             ),
             array(
-                HTML::mostrarDato("pais_documento", $textos["PAIS"], $nombre_pais_documento),
-                HTML::mostrarDato("departamento_documento", $textos["DEPARTAMENTO"], $nombre_departamento_documento),
-                HTML::mostrarDato("municipio_documento", $textos["MUNICIPIO"], $nombre_municipio_documento),
-            )
-        );
-
-        /***Definición pestaña ubicacion***/
-        $formularios["PESTANA_UBICACION_COMPRADOR"] = array(
-            array(
-                HTML::mostrarDato("pais_residencia", $textos["PAIS"], $nombre_pais_residencia),
-                HTML::mostrarDato("departamento_residencia", $textos["DEPARTAMENTO"], $nombre_departamento_residencia)
+                HTML::mostrarDato("correo", $textos["CORREO"], $datos->correo)
             ),
             array(
-                HTML::mostrarDato("municipio_residencia", $textos["MUNICIPIO"], $nombre_municipio_residencia),
-                HTML::mostrarDato("localidad_residencia", $textos["LOCALIDAD"], $nombre_localidad_residencia)
-            ),
-            array(
-                HTML::mostrarDato("direccion_principal", $textos["DIRECCION"], $datos->direccion_principal),
-                HTML::mostrarDato("telefono_principal", $textos["TELEFONO_PRINCIPAL"], $datos->telefono_principal),
-                HTML::mostrarDato("fax", $textos["FAX"], $datos->fax),
                 HTML::mostrarDato("celular", $textos["CELULAR"], $datos->celular)
             ),
-            array(
-                HTML::mostrarDato("correo", $textos["CORREO"], $datos->correo),
-                HTML::mostrarDato("sitio_web", $textos["SITIO_WEB"], $datos->sitio_web)
-            )
         );
 
         /*** Definición de botones ***/
@@ -159,8 +121,8 @@ if (!empty($url_generar)) {
 
 /*** Eliminar el elemento seleccionado ***/
 } elseif (!empty($forma_procesar)) {  
-    $consulta_comprador = SQL::eliminar("compradores", "id_tercero = '$forma_id'");
-    $consulta           = SQL::eliminar("terceros", "id = '$forma_id'");
+    $consulta_comprador = SQL::eliminar("compradores", "documento_tercero = '$forma_id'");
+    $consulta           = SQL::eliminar("terceros", "documento_identidad = '$forma_id'");
 
     if ($consulta) {
         $error   = false;

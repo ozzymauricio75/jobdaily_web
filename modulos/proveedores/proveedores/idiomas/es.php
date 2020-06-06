@@ -202,6 +202,7 @@ $textos = array(
     "ERROR_PLAZOS_PAGOS"             => "-Plazos de pago\n",
     "CREAR_REGISTROS"                => "\nDebe crear por lo menos un registro para las tablas anteriores",
     "ERROR_ELIMINAR_CUENTA"          => "La cuenta no puede ser eliminada porque ya tiene movimientos contables",
-    "CUENTA_ELIMINADA"               => "Cuenta eliminada con exito"
+    "ERROR_DOCUMENTO_IDENTIDAD_EXISTE" => "Error, existe proveedor con ese documento, Verifique!!",
+    "CUENTA_ELIMINADA"                 => "Cuenta eliminada con exito"
 );
 ?>

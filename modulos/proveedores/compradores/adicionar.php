@@ -28,7 +28,7 @@ $tabla = "usuarios";
 $columnas                   = SQL::obtenerColumnas($tabla);
 $consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuario = '$sesion_usuario'");
 $datos                      = SQL::filaEnObjeto($consulta);
-$sesion_id_usuario_ingreso  = $datos->id;
+$sesion_id_usuario_ingreso  = $datos->codigo;
 /*** Devolver datos para autocompletar la búsqueda ***/
 if (isset($url_completar)) {
 
@@ -42,9 +42,29 @@ if (isset($url_completar)) {
 }
 /*** Devolver datos para cargar los elementos del formulario relacionados con el documento del cliente digitado***/
 if (isset($url_recargar)) {
-    if (!empty($url_origen)){
-        $respuesta = HTML::generarDatosLista("localidades","id","nombre","id_municipio = '$url_origen'");    
-        HTTP::enviarJSON($respuesta);
+
+
+if (!empty($url_documento_identidad_carga)) {
+
+        $consulta = SQL::seleccionar(array("terceros"), array("*"), "documento_identidad = '$url_documento_identidad_carga'", "", "documento_identidad", 1);
+        $tabla = array();
+
+        if (SQL::filasDevueltas($consulta)) {
+            $datos = SQL::filaEnObjeto($consulta);
+            $tabla = array(
+                //$datos->documento_identidad,
+                $datos->primer_nombre,
+                $datos->segundo_nombre,
+                $datos->primer_apellido,
+                $datos->segundo_apellido,
+                $datos->correo,
+                $datos->celular
+
+            );
+        } else {
+            $tabla[] = "";
+        }
+        HTTP::enviarJSON($tabla);
     }
     exit;
 }
@@ -113,25 +133,17 @@ if (!empty($url_generar)) {
         "N" => $textos["NO_APLICA"],
     );
     
-    $barrios_localidades = HTML::generarDatosLista("localidades", "id", "nombre");
-    $id_tipo_documento   = SQL::obtenerValor("tipos_documento_identidad", "id", "descripcion='NIT' or descripcion='Nit'");
+    $barrios_localidades = HTML::generarDatosLista("seleccion_localidades", "id", "nombre");
+    $id_tipo_documento   = SQL::obtenerValor("tipos_documento_identidad", "codigo", "descripcion='NIT' or descripcion='Nit'");
 
     /*** Definición de pestañas para datos del tercero***/
     $formularios["PESTANA_COMPRADOR"] = array(
         array(
             HTML::campoTextoCorto("*documento_identidad", $textos["DOCUMENTO_COMPRADOR"], 15, 15, "",array("title" => $textos["AYUDA_DOCUMENTO_PROVEEDOR"],"onblur" => "validarItem(this);","onchange" => "cargarDatos()"))
         ),
-        array(
-            HTML::campoTextoCorto("*selector1", $textos["MUNICIPIO_EXPEDICION"], 40, 255, "", array("title" => $textos["AYUDA_DOCUMENTO_MUNICIPIO"], "class" => "autocompletable")).HTML::campoOculto("id_municipio_documento", "")
-        ),
-        array(
-            HTML::listaSeleccionSimple("*id_tipo_documento", $textos["TIPO_DOCUMENTO_IDENTIDAD"], HTML::generarDatosLista("tipos_documento_identidad", "id", "descripcion"), $id_tipo_documento)
-        ),
-        array(
-            HTML::marcaSeleccion("tipo_persona", $textos["PERSONA_NATURAL"], 1, true, array("id" => "persona_natural", "onChange" => "activarNombres(1)")),
-            HTML::marcaSeleccion("tipo_persona", $textos["PERSONA_JURIDICA"], 2, false, array("id" => "persona_juridica", "onChange" => "activarNombres(2)")),
-            HTML::marcaSeleccion("tipo_persona", $textos["CODIGO_INTERNO"], 3, false, array("id" => "codigo_interno", "onChange" => "activarNombres(3)"))
-        ),
+        /*array(
+            HTML::listaSeleccionSimple("*id_tipo_documento", $textos["TIPO_DOCUMENTO_IDENTIDAD"], HTML::generarDatosLista("tipos_documento_identidad", "codigo", "descripcion"),$id_tipo_documento)
+        ),*/
         array(
             HTML::campoTextoCorto("*primer_nombre", $textos["PRIMER_NOMBRE"], 15, 15, "", array("title" => $textos["AYUDA_PRIMER_NOMBRE"], "onblur" => "validarItem(this)")),
             HTML::campoTextoCorto("segundo_nombre", $textos["SEGUNDO_NOMBRE"], 15, 15, "", array("title" => $textos["AYUDA_SEGUNDO_NOMBRE"], "onblur" => "validarItem(this)"))
@@ -140,22 +152,18 @@ if (!empty($url_generar)) {
             HTML::campoTextoCorto("*primer_apellido", $textos["PRIMER_APELLIDO"], 15, 15, "", array("title" => $textos["AYUDA_PRIMER_APELLIDO"], "onblur" => "validarItem(this)")),
             HTML::campoTextoCorto("segundo_apellido", $textos["SEGUNDO_APELLIDO"], 15, 15, "", array("title" => $textos["AYUDA_SEGUNDO_APELLIDO"], "onblur" => "validarItem(this)"))
         ),
-        array(   
-            HTML::listaSeleccionSimple("*genero", $textos["GENERO"], $genero, "", array("title" => $textos["AYUDA_GENERO"],"onBlur" => "validarItem(this);", "class" => "oculto"))
+        array(
+            HTML::campoTextoCorto("correo", $textos["CORREO"], 50, 255, "", array("title" => $textos["AYUDA_CORREO"], "onblur" => "validarItem(this)"))
         ),
         array(
-            HTML::campoTextoCorto("*razon_social", $textos["RAZON_SOCIAL"], 30, 100, "", array("title" => $textos["AYUDA_RAZON_SOCIAL"], "onblur" => "validarItem(this)")),
-            HTML::campoTextoCorto("nombre_comercial", $textos["NOMBRE_COMERCIAL"], 30, 60, "", array("title" => $textos["AYUDA_NOMBRE_COMERCIAL"], "onblur" => "validarItem(this)"))
+             HTML::campoTextoCorto("*celular", $textos["CELULAR"], 20, 20, "", array("title" => $textos["AYUDA_CELULAR"], "onblur" => "validarItem(this)"))
         ),
-        array(
-            HTML::campoTextoCorto("*fecha_ingreso", $textos["FECHA_INGRESO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_INGRESO"],"onBlur" => "validarItem(this);"))
-        )
     );
 
     /*** Definición de pestañas para la ubicación del tercero***/
-    $formularios["PESTANA_UBICACION_COMPRADOR"] = array(
+    /*$formularios["PESTANA_UBICACION_COMPRADOR"] = array(
         array(
-            HTML::campoTextoCorto("*selector2", $textos["MUNICIPIO_RESIDENCIA"], 50, 255, "", array("title" => $textos["AYUDA_DOCUMENTO_MUNICIPIO"], "class" => "autocompletable")).HTML::campoOculto("id_municipio_residencia", "")
+            HTML::campoTextoCorto("*selector2", $textos["LOCALIDAD"], 50, 255, "", array("title" => $textos["AYUDA_DOCUMENTO_MUNICIPIO"], "class" => "autocompletable")).HTML::campoOculto("id_municipio_residencia", "")
         ),
         array(
             HTML::campoTextoCorto("*direccion_principal", $textos["DIRECCION"], 50, 50, "", array("title" => $textos["AYUDA_DIRECCION"]))
@@ -172,7 +180,7 @@ if (!empty($url_generar)) {
         array(
             HTML::campoTextoCorto("sitio_web", $textos["SITIO_WEB"], 50, 50, "", array("title" => $textos["AYUDA_SITIO_WEB"]))
         )
-    );
+    );*/
 
    /*** Definición de botones ***/
     $botones = array(
@@ -192,14 +200,10 @@ if (!empty($url_generar)) {
     $respuesta = "";
 
     /*** Validar documento de identidad ***/
-    if ($url_item == "documento_identidad" && $url_valor) {
-        $existe_tercero = SQL::existeItem("terceros", "documento_identidad", $url_valor);
+    if ($url_item == "documento_identidad") {
+        $existe_tercero = SQL::existeItem("terceros", "documento_identidad", $url_valor,"documento_identidad !=0");
         if ($existe_tercero) {
-            $id_tercero = SQL::obtenerValor("terceros", "id", "documento_identidad = '$url_valor'");
-            $existe_proveedor = SQL::existeItem("proveedores", "id", $id_tercero);
-            if ($existe_proveedor) {
-                echo json_encode($textos["ERROR_EXISTE_TERCERO"]);
-            }
+            HTTP::enviarJSON($textos["ERROR_DOCUMENTO_IDENTIDAD_EXISTE"]);
         }
     }
 
@@ -209,54 +213,52 @@ if (!empty($url_generar)) {
     $error   = false;
     $mensaje = $textos["ITEM_ADICIONADO"];
     $valida_graba = false;
-
+    
+    /*** Validar el ingreso de campos requeridos ***/
     if (empty($forma_documento_identidad) ||
-        empty($forma_tipo_persona) ||
-        empty($forma_id_municipio_documento) ||
-        empty($forma_id_municipio_residencia) || 
-        empty($forma_direccion_principal) || 
-        empty($forma_id_tipo_documento) || (
+        empty($forma_celular) || (
         empty($forma_primer_nombre) && 
         empty($forma_primer_apellido) || 
         (!empty($forma_primer_nombre) && empty($forma_primer_apellido)))) {
 
         $error   = true;
         $mensaje = $textos["ERROR_DATOS_INCOMPLETOS"];
-
-    } else {
+    
+    }elseif($existe_tercero = SQL::existeItem("terceros", "documento_identidad", $forma_documento_identidad,"documento_identidad !=0")){
+        $error   = true;
+        $mensaje = $textos["ERROR_DOCUMENTO_IDENTIDAD_EXISTE"];
+    }else {
 
         $existe_tercero = SQL::existeItem("terceros", "documento_identidad", $forma_documento_identidad);
         if ($existe_tercero) {
-            $id_tercero = SQL::obtenerValor("terceros", "id", "documento_identidad = '$forma_documento_identidad'");
-        }
-
-        if ($forma_tipo_persona == 1){
-            $forma_razon_social = "";
-        }else{
-            $forma_primer_nombre    = "";
-            $forma_segundo_nombre   = "";
-            $forma_primer_apellido  = "";
-            $forma_segundo_apellido = "";
+            $documento_tercero = SQL::obtenerValor("terceros", "documento_identidad", "documento_identidad = '$forma_documento_identidad'");
         }
 
         $datos = array(
-            "documento_identidad"     => $forma_documento_identidad,
-            "tipo_persona"            => $forma_tipo_persona,
-            "id_tipo_documento"       => $forma_id_tipo_documento,
-            "primer_nombre"           => $forma_primer_nombre,
-            "segundo_nombre"          => $forma_segundo_nombre,
-            "primer_apellido"         => $forma_primer_apellido,
-            "segundo_apellido"        => $forma_segundo_apellido,
-            "fecha_ingreso"           => $forma_fecha_ingreso,
-            "direccion_principal"     => $forma_direccion_principal,
-            "telefono_principal"      => $forma_telefono_principal,
-            "telefono_secundario"     => $forma_telefono_secundario,
-            "fax"                     => $forma_fax,
-            "celular"                 => $forma_celular,
-            "sitio_web"               => $forma_sitio_web,
-            "id_municipio_documento"  => $forma_id_municipio_documento,
-            "id_municipio_residencia" => $forma_id_municipio_residencia,
-            "comprador"               => '1'
+            "documento_identidad"                => $forma_documento_identidad,
+            "tipo_persona"                       => '1',
+            "codigo_tipo_documento"              => '1',
+            "primer_nombre"                      => $forma_primer_nombre,
+            "segundo_nombre"                     => $forma_segundo_nombre,
+            "primer_apellido"                    => $forma_primer_apellido,
+            "segundo_apellido"                   => $forma_segundo_apellido,
+            "fecha_ingreso"                      => date("Y-m-d H:i:s"),
+            "direccion_principal"                => "",
+            "telefono_principal"                 => "",
+            "fax"                                => "",
+            "celular"                            => $forma_celular,
+            "genero"                             => 'N',
+            "sitio_web"                          => "",
+            "correo"                             => $forma_correo,
+            "codigo_iso_municipio_documento"     => "CO",
+            "codigo_dane_departamento_documento" => '76',
+            "codigo_dane_municipio_documento"    => '001',
+            "codigo_iso_localidad"               => "CO",
+            "codigo_dane_departamento_localidad" => '76',
+            "codigo_dane_municipio_localidad"    => '001',
+            "tipo_localidad"                     => 'B',
+            "codigo_dane_localidad"              => 'EL',
+            "comprador"                          => '1'
         );
 
         if (!$existe_tercero) {
@@ -266,9 +268,9 @@ if (!empty($url_generar)) {
                 $error   = true;
                 $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
             }
-            
+            $idAsignado = SQL::$ultimoId;
         }else{
-            $modificar = SQL::modificar("terceros", $datos, "id = '$id_tercero'");
+            $modificar = SQL::modificar("terceros", $datos, "id = '$idAsignado'");
             if ($modificar) {
                 $error   = false;
                 $mensaje = $textos["ITEM_MODIFICADO"];
@@ -281,10 +283,10 @@ if (!empty($url_generar)) {
             $columnas          = SQL::obtenerColumnas($tabla);
             $consulta          = SQL::seleccionar(array($tabla), $columnas, "documento_identidad = '$forma_documento_identidad'");
             $datos             = SQL::filaEnObjeto($consulta);
-            $id_tercero        = $datos->id;
+            $documento_tercero = $datos->documento_identidad;
 
             $datos_compradores = array(
-                "id_tercero"          => $id_tercero,
+                "documento_tercero"   => $documento_tercero,
                 "activo"              => "1",
                 "id_usuario_registra" => $sesion_id_usuario_ingreso,
                 "fecha_registra"      => date("Y-m-d H:i:s"),
@@ -296,7 +298,7 @@ if (!empty($url_generar)) {
                 $error   = true;
                 $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
                 if ($crear_tercero){
-                    $eliminar = SQL::eliminar("terceros","id='$id_tercero'");
+                    $eliminar = SQL::eliminar("terceros","documento_identidad='$documento_tercero'");
                 }
             }
     }

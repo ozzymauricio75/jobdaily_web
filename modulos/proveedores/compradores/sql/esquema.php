@@ -28,8 +28,8 @@ $borrarSiempre = array();
 
 $borrarSiempre["compradores"] = false;
 $tablas["compradores"] = array(
-    "codigo"                     => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Llave principal'",
-    "documento_tercero"          => "VARCHAR(12) NOT NULL COMMENT 'Id de la tabla terceros'",
+    "codigo"                     => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno'",
+    "documento_tercero"          => "VARCHAR(12) NOT NULL COMMENT 'Id de la tabla terceros, Llave principal'",
     "activo"                     => "ENUM('0','1') NOT NULL DEFAULT '1' COMMENT 'El comprador está activo 0=No, 1=Si'",
     "id_usuario_registra"        => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Id del usuario que genera el registro'",
     "fecha_registra"             => "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha ingreso al sistema'",
@@ -59,16 +59,6 @@ $llavesForaneas["compradores"] = array(
         // Nombre del campo clave en la tabla relacionada
         "codigo"
     ),
-    array(
-        // Nombre de la llave
-        "compradores_tercero",
-        // Nombre del campo clave de la tabla local
-        "documento_tercero",
-        // Nombre de la tabla relacionada
-        "terceros",
-        // Nombre del campo clave en la tabla relacionada
-        "documento_identidad"
-    )
 );
 
 //  Inserción de datos iniciales

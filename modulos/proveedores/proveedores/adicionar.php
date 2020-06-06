@@ -495,6 +495,18 @@ if (!empty($url_generar)) {
     $respuesta[2] = $contenido;
     HTTP::enviarJSON($respuesta);
 
+/*** Validar los datos provenientes del formulario ***/
+} elseif (!empty($url_validar)) {
+    $respuesta = "";
+
+    /*** Validar documento de identidad ***/
+    if ($url_item == "documento_identidad") {
+        $existe_tercero = SQL::existeItem("terceros", "documento_identidad", $url_valor,"documento_identidad !=0");
+        if ($existe_tercero) {
+            HTTP::enviarJSON($textos["ERROR_DOCUMENTO_IDENTIDAD_EXISTE"]);
+        }
+    }
+
 /*** Adicionar los datos provenientes del formulario ***/
 } elseif (!empty($forma_procesar)) {
     /*** Asumir por defecto que no hubo error ***/
@@ -532,7 +544,9 @@ if (!empty($url_generar)) {
 	}elseif(!empty($forma_correo) && !Cadena::validarCorreo($forma_correo)){
 		$error   = true;
 		$mensaje = $textos["ERROR_SINTAXIS_CORREO"];
-
+    }elseif($existe_tercero = SQL::existeItem("terceros", "documento_identidad", $forma_documento_identidad,"documento_identidad !=0")){
+        $error   = true;
+        $mensaje = $textos["ERROR_DOCUMENTO_IDENTIDAD_EXISTE"];    
     } else {
 
         $existe_tercero = SQL::existeItem("terceros", "documento_identidad", $forma_documento_identidad);

@@ -330,6 +330,7 @@ if (!empty($url_generar)) {
 
         if ($datosTercero->tipo_persona == '2' || $datosTercero->tipo_persona == '4') {
 
+            //Genera digito de verificacion en nit
             $nit     = $datosTercero->documento_identidad;
             $array   = array(1 => 3, 4 => 17, 7 => 29, 10 => 43, 13 => 59, 2 => 7, 5 => 19, 8 => 37, 11 => 47, 14 => 67, 3 => 13,
                              6 => 23, 9 => 41, 12 => 53, 15 => 71);
