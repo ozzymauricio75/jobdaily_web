@@ -90,6 +90,7 @@ $tablas["terceros"] = array(
     "sitio_web"                          => "VARCHAR(50) DEFAULT NULL COMMENT 'Dirección del sitio web'",
     "genero"                             => "ENUM('M','F','N') NOT NULL DEFAULT 'N' COMMENT 'Género: M=Masculino, F=Femenino, N=No aplica'",
     "activo"                             => "ENUM('0','1') NOT NULL DEFAULT '1' COMMENT 'El tercero está activo 0=No, 1=Si'",
+    "comprador"                          => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT 'Es comprador 0=No, 1=Si'",
     "fecha_ingreso"                      => "DATE NOT NULL DEFAULT '0000-00-00' COMMENT 'Fecha ingreso al sistema'"
 );
 

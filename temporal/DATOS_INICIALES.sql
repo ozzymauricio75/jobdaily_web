@@ -6741,11 +6741,11 @@ CREATE TABLE `job_vivienda_aspirante` (
 -- --------------------------------------------------------
 
 -- 
--- Estructura de tabla para la tabla `sem_totalizador_saldos_movimientos_contables`
+-- Estructura de tabla para la tabla `job_totalizador_saldos_movimientos_contables`
 -- 
 
-DROP TABLE IF EXISTS `sem_totalizador_saldos_movimientos_contables`;
-CREATE TABLE `sem_totalizador_saldos_movimientos_contables` (
+DROP TABLE IF EXISTS `job_totalizador_saldos_movimientos_contables`;
+CREATE TABLE `job_totalizador_saldos_movimientos_contables` (
   `id_tercero` varchar(12) default NULL,
   `id_cuenta` varchar(15) default NULL,
   `id_consecutivo` varbinary(38) default NULL,
@@ -6758,7 +6758,7 @@ CREATE TABLE `sem_totalizador_saldos_movimientos_contables` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
--- Volcar la base de datos para la tabla `sem_totalizador_saldos_movimientos_contables`
+-- Volcar la base de datos para la tabla `job_totalizador_saldos_movimientos_contables`
 -- 
 
 
