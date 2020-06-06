@@ -3,22 +3,23 @@
 /**
 *
 * Copyright (C) 2020 Jobdaily
-* Walter AndrÈs M·rquez GutiÈrrez <walteramg@gmail.com>
+* Raul Mauricio Oidor Lozano <ozzymauricio75@gmail.com>
+*
 * Este archivo es parte de:
-* Jobdaily:: Sofware empresarial a la medida
+* PANCE :: Plataforma para la Administraci√≥n del Nexo Cliente-Empresa
 *
 * Este programa es software libre: usted puede redistribuirlo y/o
-* modificarlo  bajo los tÈrminos de la Licencia P˙blica General GNU
-* publicada por la FundaciÛn para el Software Libre, ya sea la versiÛn 3
-* de la Licencia, o (a su elecciÛn) cualquier versiÛn posterior.
+* modificarlo  bajo los t√©rminos de la Licencia P√∫blica General GNU
+* publicada por la Fundaci√≥n para el Software Libre, ya sea la versi√≥n 3
+* de la Licencia, o (a su elecci√≥n) cualquier versi√≥n posterior.
 *
-* Este programa se distribuye con la esperanza de que sea ˙til, pero
-* SIN GARANTÕA ALGUNA; ni siquiera la garantÌa implÌcita MERCANTIL o
-* de APTITUD PARA UN PROP”ITO DETERMINADO. Consulte los detalles de
-* la Licencia P˙blica General GNU para obtener una informaciÛn m·s
+* Este programa se distribuye con la esperanza de que sea √∫til, pero
+* SIN GARANT√çA ALGUNA; ni siquiera la garant√≠a impl√≠cita MERCANTIL o
+* de APTITUD PARA UN PROP√ìSITO DETERMINADO. Consulte los detalles de
+* la Licencia P√∫blica General GNU para obtener una informaci√≥n m√°s
 * detallada.
 *
-* DeberÌa haber recibido una copia de la Licencia P˙blica General GNU
+* Deber√≠a haber recibido una copia de la Licencia P√∫blica General GNU
 * junto a este programa. En caso contrario, consulte:
 * <http://www.gnu.org/licenses/>.
 *
@@ -42,25 +43,21 @@ if (!empty($url_generar)) {
         $error         = "";
         $titulo        = $componente->nombre;
 
-        $url_id_buscador = explode("|",$url_id);
-        $condicion       = "codigo = '$url_id_buscador[0]'";
-
-        /*** DefiniciÛn de pestaÒas ***/
+        /*** Definici√≥n de pesta√±as ***/
         $formularios["PESTANA_GENERAL"] = array(
         	array(
-        		HTML::mostrarDato("*tasa", $textos["TASA"], SQL::obtenerValor("tasas", "descripcion", $condicion)),
-        		HTML::campoOculto("codigo_tasa", $url_id_buscador)
+        		HTML::listaSeleccionSimple("*tasa", $textos["TASA"], HTML::generarDatosLista("tasas", "codigo", "descripcion"), SQL::obtenerValor("vigencia_tasas", "codigo_tasa", $datos->codigo))
         	),
             array(
-                HTML::campoTextoCorto("*fecha", $textos["FECHA"], 10, 10, $datos->fecha, array("class" => "fechaNuevas", "title" => $textos["AYUDA_FECHA"]))
+                HTML::campoTextoCorto("*fecha", $textos["FECHA"], 10, 10, $datos->fecha, array("class" => "selectorFecha", "title" => $textos["AYUDA_FECHA"]))
             ),
             array(
-                HTML::campoTextoCorto("porcentaje", $textos["PORCENTAJE"], 5, 5, $datos->porcentaje, array("title" => $textos["AYUDA_PORCENTAJE"], "onKeyPress" => "return campoDecimal(event)")),
-                HTML::campoTextoCorto("valor_base", $textos["VALOR_BASE"], 10, 10, $datos->valor_base, array("title" => $textos["AYUDA_VALOR"], "onKeyPress" => "return campoDecimal(event)"))
+                HTML::campoTextoCorto("*porcentaje", $textos["PORCENTAJE"], 5, 5, $datos->porcentaje, array("title" => $textos["AYUDA_PORCENTAJE"])),
+                HTML::campoTextoCorto("valor_base", $textos["VALOR_BASE"], 10, 10, $datos->valor_base, array("title" => $textos["AYUDA_VALOR"]))
             )
         );
 
-        /*** DefiniciÛn de botones ***/
+        /*** DefiniciÔøΩn de botones ***/
         $botones = array(
             HTML::boton("botonAceptar", $textos["ACEPTAR"], "modificarItem('$url_id');", "aceptar")
         );
@@ -68,7 +65,7 @@ if (!empty($url_generar)) {
         $contenido = HTML::generarPestanas($formularios, $botones);
     }
 
-    /*** Enviar datos para la generaciÛn del formulario al script que originÛ la peticiÛn ***/
+    /*** Enviar datos para la generaciÔøΩn del formulario al script que originÔøΩ la peticiÔøΩn ***/
     $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $titulo;
@@ -81,38 +78,28 @@ if (!empty($url_generar)) {
     $error   = false;
     $mensaje = $textos["ITEM_MODIFICADO"];
 
-    if(empty($forma_fecha)){
+    if (empty($forma_tasa)|| empty($forma_fecha)){
         $error   = true;
-        $mensaje = $textos["FECHA_VACIO"];
+        $mensaje = $textos["ERROR_DATOS_INCOMPLETOS"];
     }else {
-		/*** Insertar datos ***/
-        $llave_principal = explode("|",$forma_id);
-        $codigo_tasa = $llave_principal[0];
-        $fecha       = $llave_principal[1];
-        
-        if (SQL::obtenerValor("vigencia_tasas","fecha","codigo_tasa='$codigo_tasa' AND fecha='$fecha'")){
-            $error   = true;
-            $mensaje = $textos["EXISTE_VIGENCIA"];
-        } else {
-            $datos = array(
-                "codigo_tasa"   => $codigo_tasa,
-                "fecha"         => $forma_fecha,
-                "porcentaje"    => $forma_porcentaje,
-                "valor_base"    => $forma_valor_base
-            );
-            
-            $consulta = SQL::modificar("vigencia_tasas", $datos, "codigo_tasa = '$codigo_tasa' AND fecha = '$fecha'");
+        $datos = array(
+            "codigo_tasa" => $forma_tasa,
+            "fecha"       => $forma_fecha,
+            "porcentaje"  => $forma_porcentaje,
+            "valor_base"  => $forma_valor_base
+        );
 
-            /*** Error inserciÛn ***/
-            if ($consulta) {
-                $error   = false;
-                $mensaje = $textos["ITEM_MODIFICADO"];
-            } else {
-                $error   = true;
-                $mensaje = $textos["ERROR_MODIFICAR_ITEM"];
-            }
+        $consulta = SQL::modificar("vigencia_tasas", $datos, "codigo_tasa = '$forma_id'");
+
+        if ($consulta) {
+            $error   = false;
+            $mensaje = $textos["ITEM_MODIFICADO"];
+        } else {
+            $error   = true;
+            $mensaje = $textos["ERROR_MODIFICAR_ITEM"];
         }
     }
+    
     /*** Enviar datos con la respuesta del proceso al script que originÔøΩ la peticiÔøΩn ***/
     $respuesta    = array();
     $respuesta[0] = $error;

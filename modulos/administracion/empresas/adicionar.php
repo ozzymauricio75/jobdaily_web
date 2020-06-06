@@ -141,7 +141,7 @@ if (isset($url_recargarActividad)){
     $codigo_dane_departamento = $llave_municipio[1];
     $codigo_dane_municipio    = $llave_municipio[2];
     $condicion                = "codigo_iso='$codigo_iso' AND codigo_dane_departamento='$codigo_dane_departamento' AND codigo_dane_municipio='$codigo_dane_municipio'";
-    $consulta = SQL::seleccionar(array("actividades_economicas"),array("*"),$condicion);
+    $consulta = SQL::seleccionar(array("actividades_economicas"),array("*"),"");
 
     if (SQL::filasDevueltas($consulta)){
 
@@ -171,7 +171,7 @@ if (!empty($url_generar)) {
         $completar = 1;
     }
 
-    $consulta_actividades = SQL::seleccionar(array("actividades_economicas"),array("*"),"codigo_actividad_municipio>0");
+    $consulta_actividades = SQL::seleccionar(array("actividades_economicas"),array("*"),"");
     if (!SQL::filasDevueltas($consulta_actividades)){
         $completar = 2;
     }
@@ -255,9 +255,9 @@ if (!empty($url_generar)) {
                 HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, "", array("title" => $textos["AYUDA_CODIGO"], "onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
                 HTML::listaSeleccionSimple("*activo", $textos["ACTIVO"], $activo, 1, array("title" => $textos["AYUDA_ACTIVO"], "onBlur" => "validarItem(this);"))
             ),
-            array(
+            /*array(
                 HTML::campoTextoCorto("*razon_social_empresa", $textos["RAZON_SOCIAL"], 60, 60, "", array("title" => $textos["AYUDA_RAZON_SOCIAL"], "onBlur" => "validarItem(this);"))
-            ),
+            ),*/
             array(
                 HTML::campoTextoCorto("nombre_corto", $textos["NOMBRE_CORTO"], 10, 10, "", array("title" => $textos["AYUDA_NOMBRE_CORTO"], "onBlur" => "validarItem(this);")),
                 HTML::campoTextoCorto("fecha_cierre", $textos["FECHA_CIERRE"], 10, 10, "", array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_CIERRE"], "onBlur" => "validarItem(this);"))
@@ -266,7 +266,7 @@ if (!empty($url_generar)) {
                 HTML::listaSeleccionSimple("*id_actividad_principal", $textos["ACTIVIDAD_PRINCIPAL"], "", "", array("title" => $textos["AYUDA_ACTIVIDAD_PRINCIPAL"]))
             ),
             array(
-                HTML::listaSeleccionSimple("*id_actividad_secundaria", $textos["ACTIVIDAD_SECUNDARIA"], "", "", array("title" => $textos["AYUDA_ACTIVIDAD_SECUNDARIA"]))
+                HTML::listaSeleccionSimple("id_actividad_secundaria", $textos["ACTIVIDAD_SECUNDARIA"], "", "", array("title" => $textos["AYUDA_ACTIVIDAD_SECUNDARIA"]))
             )
         );
 
@@ -335,7 +335,7 @@ if (!empty($url_generar)) {
         }
     }
     // Validar razon social
-    if ($url_item == "razon_social_empresa") {
+    if ($url_item == "razon_social") {
         $existe = SQL::existeItem("empresas", "razon_social", $url_valor, "razon_social !=''");
         if ($existe) {
             HTTP::enviarJSON($textos["ERROR_EXISTE_RAZON_SOCIAL"]);
@@ -356,7 +356,6 @@ if (!empty($url_generar)) {
           HTTP::enviarJSON($textos["ERROR_EXISTE_DOCUMENTO"]);
         }
     }
-
 
 // Adicionar los datos provenientes del formulario
 } elseif (!empty($forma_procesar)) {
@@ -391,7 +390,6 @@ if (!empty($url_generar)) {
         $forma_resolucion_gran_contribuyente = "0";
     }
 
-
     if ($forma_tipo_persona == 1) {
         $forma_razon_social     = "";
         $forma_nombre_comercial = "";
@@ -403,7 +401,6 @@ if (!empty($url_generar)) {
         $forma_primer_apellido  = "";
         $forma_segundo_apellido = "";
     }
-
 
     if(empty($forma_documento_identidad)){
         $error   = true;
@@ -449,7 +446,7 @@ if (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["ESTADO_VACIO"];
 
-    }elseif(empty($forma_razon_social_empresa)){
+    }elseif(empty($forma_razon_social)){
         $error   = true;
         $mensaje = $textos["RAZON_EMPRESA_VACIO"];
 
@@ -461,7 +458,7 @@ if (!empty($url_generar)) {
         $error   = true;
         $mensaje =  $textos["ERROR_EXISTE_CODIGO"];
 
-    }elseif (!empty($forma_razon_social_empresa) && SQL::existeItem("empresas", "razon_social", $forma_razon_social_empresa, "nombre_corto != ''")) {
+    }elseif (!empty($forma_razon_social) && SQL::existeItem("empresas", "razon_social", $forma_razon_social, "nombre_corto != ''")) {
         $error   = true;
         $mensaje =  $textos["ERROR_EXISTE_RAZON_SOCIAL"];
 
@@ -586,7 +583,7 @@ if (!empty($url_generar)) {
 
             $datos = array(
                 "codigo"                                => $forma_codigo,
-                "razon_social"                          => $forma_razon_social_empresa,
+                "razon_social"                          => $forma_razon_social,
                 "nombre_corto"                          => $forma_nombre_corto,
                 "fecha_cierre"                          => $forma_fecha_cierre,
                 "activo"                                => $forma_activo,

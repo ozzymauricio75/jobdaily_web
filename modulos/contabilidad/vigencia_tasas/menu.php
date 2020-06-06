@@ -28,7 +28,7 @@
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
 $vistaMenu     = "menu_vigencia_tasas";
 $vistaBuscador = "buscador_vigencia_tasas";
-$alineacion    = array("C","I","C","I","D");
+$alineacion    = array("I","I","I","I","I");
 
 /*** Devolver datos para autocompletar la búsqueda ***/
 if (isset($url_completar)) {
@@ -41,7 +41,6 @@ $botones  = HTML::boton("ADICVITA",$textos["ADICIONAR"],"ejecutarComando(this,40
 $botones .= HTML::boton("CONSVITA",$textos["CONSULTAR"],"ejecutarComando(this,400,310);","consultar");
 $botones .= HTML::boton("MODIVITA",$textos["MODIFICAR"],"ejecutarComando(this,400,310);","modificar");
 $botones .= HTML::boton("ELIMVITA",$textos["ELIMINAR"],"ejecutarComando(this,400,310);","eliminar");
-$botones .= HTML::boton("EXPOVITA",$textos["LISTAR"],"ejecutarComando(this,450,300);","exportar");
 
 /*** Obtener el nï¿½mero de la pï¿½gina actual ***/
 if (empty($url_pagina)) {

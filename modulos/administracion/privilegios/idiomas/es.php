@@ -41,6 +41,7 @@ $textos = array(
     "PERFIL"              => "Perfil",
     "PESTANA_GENERAL"     => "Información general",
     "PESTANA_COMPONENTES" => "Componentes",
+    "sucursales[]"        => "Sucursales",
     "AYUDA_USUARIO"       => "Nombre de usuario al que se le asignarán los privilegios",
     "AYUDA_SUCURSAL"      => "Sucursal en la que se asignarán los privilegios",
     "AYUDA_PERFIL"        => "Perfil a partir del cual se asignarán los privilegios iniciales",

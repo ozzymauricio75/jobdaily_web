@@ -36,7 +36,7 @@ if (!empty($url_generar)) {
     );
     $columnas = array(
         "codigo" => "c.codigo",
-        "nombre" => "c.nombre_corto"
+        "nombre" => "c.nombre"
     );
     $condicion = "codigo != 0";
     $consulta = SQL::seleccionar($tablas, $columnas, $condicion);        
@@ -78,7 +78,7 @@ if (!empty($url_generar)) {
             )
         );
         $formularios["PESTANA_SUCURSALES"] = $sucursales;
-
+        
         /*** Definición de botones ***/
         $botones = array(
             HTML::boton("botonAceptar", $textos["ACEPTAR"], "adicionarItem();", "aceptar")
@@ -106,7 +106,7 @@ if (!empty($url_generar)) {
         $mensaje = $textos["ERROR_DATOS_INCOMPLETOS"];
 
     }else {
-
+        
         foreach($forma_sucursales AS $sucursal){
 
             if (!SQL::existeItem("perfiles_usuario", "codigo_usuario", $forma_usuario, "codigo_sucursal = '$sucursal' AND id_perfil = '$forma_perfil'")) {
@@ -116,6 +116,7 @@ if (!empty($url_generar)) {
                     "codigo_sucursal" => $sucursal,
                     "id_perfil"       => $forma_perfil
                 );
+
                 $insertar = SQL::insertar("perfiles_usuario", $datos);
                 /*** Error de inserción ***/
                 if (!$insertar) {

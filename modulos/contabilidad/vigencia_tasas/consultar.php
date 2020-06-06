@@ -2,24 +2,24 @@
 
 /**
 *
-* Copyright (C) 2008 Felinux Ltda
+* Copyright (C) 2020 Jobdaily
 * Raul Mauricio Oidor Lozano <ozzymauricio75@gmail.com>
 *
 * Este archivo es parte de:
-* Jobdaily:: Sofware empresarial a la medida
+* PANCE :: Plataforma para la AdministraciÃ³n del Nexo Cliente-Empresa
 *
 * Este programa es software libre: usted puede redistribuirlo y/o
-* modificarlo  bajo los términos de la Licencia Pública General GNU
-* publicada por la Fundación para el Software Libre, ya sea la versión 3
-* de la Licencia, o (a su elección) cualquier versión posterior.
+* modificarlo  bajo los tÃ©rminos de la Licencia PÃºblica General GNU
+* publicada por la FundaciÃ³n para el Software Libre, ya sea la versiÃ³n 3
+* de la Licencia, o (a su elecciÃ³n) cualquier versiÃ³n posterior.
 *
-* Este programa se distribuye con la esperanza de que sea útil, pero
-* SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
-* de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de
-* la Licencia Pública General GNU para obtener una información más
+* Este programa se distribuye con la esperanza de que sea Ãºtil, pero
+* SIN GARANTÃA ALGUNA; ni siquiera la garantÃ­a implÃ­cita MERCANTIL o
+* de APTITUD PARA UN PROPÃ“SITO DETERMINADO. Consulte los detalles de
+* la Licencia PÃºblica General GNU para obtener una informaciÃ³n mÃ¡s
 * detallada.
 *
-* Debería haber recibido una copia de la Licencia Pública General GNU
+* DeberÃ­a haber recibido una copia de la Licencia PÃºblica General GNU
 * junto a este programa. En caso contrario, consulte:
 * <http://www.gnu.org/licenses/>.
 *
@@ -42,7 +42,7 @@ if (!empty($url_generar)) {
         $error         = "";
         $titulo        = $componente->nombre;
 
-        /*** Definición de pestañas ***/
+        /*** Definiciï¿½n de pestaï¿½as ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
                 HTML::mostrarDato("tasa", $textos["TASA"], $datos->tasa)
@@ -59,7 +59,7 @@ if (!empty($url_generar)) {
         $contenido = HTML::generarPestanas($formularios);
     }
 
-    /*** Enviar datos para la generación del formulario al script que originó la petición ***/
+    /*** Enviar datos para la generaciï¿½n del formulario al script que originï¿½ la peticiï¿½n ***/
     $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $titulo;

@@ -2,24 +2,24 @@
 
 /**
 *
-* Copyright (C) 2008 Felinux Ltda
+* Copyright (C) 2020 Jobdaily
 * Raul Mauricio Oidor Lozano <ozzymauricio75@gmail.com>
 *
 * Este archivo es parte de:
-* Jobdaily:: Sofware empresarial a la medida
+* PANCE :: Plataforma para la Administraciï¿½n del Nexo Cliente-Empresa
 *
 * Este programa es software libre: usted puede redistribuirlo y/o
-* modificarlo  bajo los términos de la Licencia Pública General GNU
-* publicada por la Fundación para el Software Libre, ya sea la versión 3
-* de la Licencia, o (a su elección) cualquier versión posterior.
+* modificarlo  bajo los tï¿½rminos de la Licencia Pï¿½blica General GNU
+* publicada por la Fundaciï¿½n para el Software Libre, ya sea la versiï¿½n 3
+* de la Licencia, o (a su elecciï¿½n) cualquier versiï¿½n posterior.
 *
-* Este programa se distribuye con la esperanza de que sea útil, pero
-* SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
-* de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de
-* la Licencia Pública General GNU para obtener una información más
+* Este programa se distribuye con la esperanza de que sea ï¿½til, pero
+* SIN GARANTï¿½A ALGUNA; ni siquiera la garantï¿½a implï¿½cita MERCANTIL o
+* de APTITUD PARA UN PROPï¿½SITO DETERMINADO. Consulte los detalles de
+* la Licencia Pï¿½blica General GNU para obtener una informaciï¿½n mï¿½s
 * detallada.
 *
-* Debería haber recibido una copia de la Licencia Pública General GNU
+* Deberï¿½a haber recibido una copia de la Licencia Pï¿½blica General GNU
 * junto a este programa. En caso contrario, consulte:
 * <http://www.gnu.org/licenses/>.
 *
@@ -42,7 +42,7 @@ if (!empty($url_generar)) {
         $error         = "";
         $titulo        = $componente->nombre;
 
-        /*** Definición de pestañas ***/
+        /*** Definiciï¿½n de pestaï¿½as ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
                 HTML::mostrarDato("tasa", $textos["TASA"], $datos->tasa)
@@ -56,7 +56,7 @@ if (!empty($url_generar)) {
             )
         );
 
-        /*** Definición de botones ***/
+        /*** Definiciï¿½n de botones ***/
         $botones = array(
             HTML::boton("botonAceptar", $textos["ACEPTAR"], "eliminarItem('$url_id');", "aceptar")
         );
@@ -64,7 +64,7 @@ if (!empty($url_generar)) {
         $contenido = HTML::generarPestanas($formularios, $botones);
     }
 
-    /*** Enviar datos para la generación del formulario al script que originó la petición ***/
+    /*** Enviar datos para la generaciï¿½n del formulario al script que originï¿½ la peticiï¿½n ***/
     $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $titulo;
@@ -73,22 +73,17 @@ if (!empty($url_generar)) {
 
 /*** Eliminar el elemento seleccionado ***/
 } elseif (!empty($forma_procesar)) {
+    $consulta = SQL::eliminar("vigencia_tasas", "codigo_tasa = '$forma_id'");
 
-    $error   = false;
-    $mensaje = $textos["ITEM_ELIMINADO"];
-
-    $llave_pricipal = explode("|",$forma_id);
-    $codigo_tasa    = $llave_pricipal[0];
-    $fecha          = $llave_pricipal[1];
-    
-    $consulta = SQL::eliminar("vigencia_tasas", "codigo_tasa = '$codigo_tasa' AND fecha = '$fecha'");
-
-    if (!$consulta) {
+    if ($consulta) {
+        $error   = false;
+        $mensaje = $textos["ITEM_ELIMINADO"];
+    } else {
         $error   = true;
         $mensaje = $textos["ERROR_ELIMINAR_ITEM"];
     }
 
-    /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
+    /*** Enviar datos con la respuesta del proceso al script que originï¿½ la peticiï¿½n ***/
     $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $mensaje;

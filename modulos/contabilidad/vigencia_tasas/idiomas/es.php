@@ -33,6 +33,7 @@ $textos = array(
     "ELIMVITA"         => "Eliminar vigencia de tasa",
     "TASA"             => "Tasa",
     "FECHA"            => "Fecha inicio de vigencia",
+    "FECHA_VIGENCIA"   => "Fecha inicio de vigencia",
     "PORCENTAJE"       => "Porcentaje",
     "VALOR_BASE"       => "Valor Base",
     "PESTANA_GENERAL"  => "Informacion general",

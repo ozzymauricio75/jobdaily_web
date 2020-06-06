@@ -3,9 +3,11 @@
 /**
 *
 * Copyright (C) 2020 Jobdaily
-* Walter Andrés Márquez Gutiérrez <walteramg@gmail.com>
+* Raul Mauricio Oidor Lozano <ozzymauricio75@gmail.com>
+* Mauricio Oidor L. <ozzymauricio75@gmail.com>
+*
 * Este archivo es parte de:
-* Jobdaily:: Sofware empresarial a la medida
+* PANCE :: Plataforma para la Administración del Nexo Cliente-Empresa
 *
 * Este programa es software libre: usted puede redistribuirlo y/o
 * modificarlo  bajo los términos de la Licencia Pública General GNU
@@ -14,7 +16,7 @@
 *
 * Este programa se distribuye con la esperanza de que sea útil, pero
 * SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
-* de APTITUD PARA UN PROPÓITO DETERMINADO. Consulte los detalles de
+* de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de
 * la Licencia Pública General GNU para obtener una información más
 * detallada.
 *
@@ -24,38 +26,31 @@
 *
 **/
 
-
 /*** Generar el formulario para la captura de datos ***/
 if (!empty($url_generar)) {
     $error  = "";
     $titulo = $componente->nombre;
 
-    $consulta_tasas = SQL::seleccionar(array("tasas"),array("*"),"codigo>0");
-    if (SQL::filasDevueltas($consulta_tasas)){
-        /*** Definición de pestañas general ***/
-        $formularios["PESTANA_GENERAL"] = array(
-            array(
-                HTML::listaSeleccionSimple("*tasa", $textos["TASA"], HTML::generarDatosLista("tasas", "codigo", "descripcion","codigo != 0"), "", array("title" => $textos["AYUDA_TASA"]))
-            ),
-            array(
-                HTML::campoTextoCorto("*fecha", $textos["FECHA"], 10, 10, date("Y-m-d"), array("class" => "fechaNuevas", "title" => $textos["AYUDA_FECHA"]))
-            ),
-            array(
-                HTML::campoTextoCorto("porcentaje", $textos["PORCENTAJE"], 5, 5, "", array("title" => $textos["AYUDA_PORCENTAJE"], "onKeyPress" => "return campoDecimal(event)")),
-                HTML::campoTextoCorto("valor_base", $textos["VALOR_BASE"], 10, 10, "", array("title" => $textos["AYUDA_VALOR"], "onKeyPress" => "return campoDecimal(event)"))
-            )
-        );
+    /*** Definición de pestañas general ***/
+    $formularios["PESTANA_GENERAL"] = array(
+    	array(
+    		HTML::listaSeleccionSimple("*tasa", $textos["TASA"], HTML::generarDatosLista("tasas", "codigo", "descripcion"))
+    	),
+        array(
+            HTML::campoTextoCorto("*fecha", $textos["FECHA_VIGENCIA"], 10, 10, "", array("class" => "selectorFecha", "title" => $textos["AYUDA_FECHA"]))
+        ),
+        array(
+            HTML::campoTextoCorto("*porcentaje", $textos["PORCENTAJE"], 5, 5, "", array("title" => $textos["AYUDA_PORCENTAJE"])),
+            HTML::campoTextoCorto("valor_base", $textos["VALOR_BASE"], 15, 15, "", array("title" => $textos["AYUDA_VALOR"]))
+        )
+    );
 
-        /*** Definición de botones ***/
-        $botones = array(
-            HTML::boton("botonAceptar", $textos["ACEPTAR"], "adicionarItem();", "aceptar")
-        );
+    /*** Definición de botones ***/
+    $botones = array(
+        HTML::boton("botonAceptar", $textos["ACEPTAR"], "adicionarItem();", "aceptar")
+    );
 
-        $contenido = HTML::generarPestanas($formularios, $botones);
-    } else {
-        $error     = $textos["CREAR_TASAS"];
-        $contenido = "";
-    }
+    $contenido = HTML::generarPestanas($formularios, $botones);
 
     /*** Enviar datos para la generación del formulario al script que originó la petición ***/
     $respuesta[0] = $error;
@@ -68,26 +63,17 @@ if (!empty($url_generar)) {
     $error   = false;
     $mensaje = $textos["ITEM_ADICIONADO"];
 
-    if(empty($forma_tasa)){
-		$error   = true;
-		$mensaje = $textos["TASA_VACIO"];
-
-	}elseif(empty($forma_fecha)){
+    if (empty($forma_tasa)|| empty($forma_fecha)){
         $error   = true;
-        $mensaje = $textos["FECHA_VACIO"];
-
-    }else if (SQL::obtenerValor("vigencia_tasas","fecha","codigo_tasa='$forma_tasa' AND fecha='$forma_fecha'")){
-        $error   = true;
-        $mensaje = $textos["EXISTE_VIGENCIA"];
-
+        $mensaje = $textos["ERROR_DATOS_INCOMPLETOS"];
     }else {
-		/*** Insertar datos ***/
         $datos = array(
             "codigo_tasa" => $forma_tasa,
             "fecha"       => $forma_fecha,
             "porcentaje"  => $forma_porcentaje,
             "valor_base"  => $forma_valor_base
         );
+
         $insertar = SQL::insertar("vigencia_tasas", $datos);
 
         /*** Error de inserción ***/
@@ -96,6 +82,7 @@ if (!empty($url_generar)) {
             $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
         }
     }
+    
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
     $respuesta    = array();
     $respuesta[0] = $error;
