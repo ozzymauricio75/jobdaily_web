@@ -42,14 +42,8 @@ if (!empty($url_generar)) {
         $error         = "";
         $titulo        = $componente->nombre;
 
-        $consulta      = SQL::seleccionar(array("imagenes"), array("id_asociado","ancho","alto"), "id_asociado = '$url_id' AND categoria = '2'");
-        $imagen        = SQL::filaEnObjeto($consulta);
-        if ($imagen){
-            $muestra_imagen = HTML::imagen(HTTP::generarURL("VISUIMAG")."&id=".$imagen->id_asociado, array("width" => $imagen->ancho, "height" => $imagen->alto));
-        } else {
-            $muestra_imagen = "";
-        }
-        
+        $consulta_imagen = SQL::seleccionar(array("imagenes"), array("id_asociado","categoria","ancho","alto"), "id_asociado = '$url_id' AND categoria ='2'");
+        $imagen        = SQL::filaEnObjeto($consulta_imagen);
 
         /***Obtener datos de la tabla de articulos ***/
         $impuesto_compra        = SQL::obtenerValor("tasas", "descripcion", "codigo = '$datos->codigo_impuesto_compra'");
@@ -108,19 +102,18 @@ if (!empty($url_generar)) {
             }
         }
 
-
         /*** Definición de pestaña general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::mostrarDato("codigo   ", $textos["CODIGO"], $datos->codigo),
+                HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo),
                 HTML::mostrarDato("tipo_articulo", $textos["TIPO_ARTICULO"], $tipo_articulo[$datos->tipo_articulo])
             ),
             array(
                 HTML::mostrarDato("id_proveedor", $textos["PROVEEDOR"], $nombre_proveedor)
             ),
             array(
-                HTML::mostrarDato("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], $datos->codigo_alfanumerico),
-                HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $datos->codigo_barras)
+                HTML::mostrarDato("referencia", $textos["REFERENCIA"], $referencia),
+                HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $codigo_barras)
             ),
             array(
                 HTML::mostrarDato("descripcion", $textos["DESCRIPCION"], $datos->descripcion)
@@ -136,10 +129,6 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("ancho", $textos["ANCHO"], $datos->ancho),
                 HTML::mostrarDato("profundidad", $textos["PROFUNDIDAD"], $datos->profundidad),
                 HTML::mostrarDato("peso", $textos["PESO"], $datos->peso)
-            ),
-            array(
-                HTML::mostrarDato("foto", $textos["FOTO"], ""),
-                $muestra_imagen
             )
         );
 
@@ -152,14 +141,10 @@ if (!empty($url_generar)) {
 
         /*** Definición de pestaña de datos operativos de articulos***/
         $formularios["PESTANA_DATOS"] = array(
-            array(
-                HTML::mostrarDato("referencia", $textos["REFERENCIA"], $referencia),
-                HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $codigo_barras)
-            ),
-            array(
+            /*array(
                 HTML::mostrarDato("garantia", $textos["GARANTIA"], $datos->garantia),
                 HTML::mostrarDato("garantia_partes", $textos["GARANTIA_PARTES"], $datos->garantia_partes)
-            ),
+            ),*/
             array(
                 HTML::mostrarDato("impuesto_compra", $textos["IMPUESTO_COMPRA"], $impuesto_compra),
                 HTML::mostrarDato("impuesto_venta", $textos["IMPUESTO_VENTA"], $impuesto_venta)
@@ -171,15 +156,25 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("manejo_inventario", $textos["MANEJO_INVENTARIO"], $manejo_inventario[$datos->manejo_inventario])
             ),
             array(
-                HTML::mostrarDato("unidad_venta", $textos["UNIDAD_VENTA"], $unidad_venta),
+            //    HTML::mostrarDato("unidad_venta", $textos["UNIDAD_VENTA"], $unidad_venta),
                 HTML::mostrarDato("unidad_compra", $textos["UNIDAD_COMPRA"], $unidad_compra),
-                HTML::mostrarDato("unidad_presentacion", $textos["UNIDAD_PRESENTACION"], $unidad_presentacion)
+            //    HTML::mostrarDato("unidad_presentacion", $textos["UNIDAD_PRESENTACION"], $unidad_presentacion)
             ),
             array(
                 HTML::mostrarDato("pais", $textos["PAIS"], $pais),
                 HTML::mostrarDato("activo", $textos["ESTADO"], $activo[$datos->activo])
             )
         );
+
+        if ($imagen) {
+            $id_imagen = $imagen->id_asociado."|".$imagen->categoria;
+
+            $formularios["PESTANA_IMAGEN"] = array(
+                array(
+                    HTML::imagen(HTTP::generarURL("VISUIMAG")."&id=".$id_imagen, array("width" => $imagen->ancho, "height" => $imagen->alto))
+                )
+            );
+        }
 
         if(isset($item_referencias)){
             $formularios["PESTANA_REFERENCIA"] = array(

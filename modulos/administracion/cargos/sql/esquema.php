@@ -31,15 +31,7 @@ $tablas["cargos"] = array(
     "nombre"  => "VARCHAR(50) NOT NULL COMMENT 'Nombre del cargo'",
     "interno" => "ENUM('0','1') NOT NULL DEFAULT '1' COMMENT 'Cargo interno 0->No, 1->Si'"
 );
-/*
-$tablas["documentos"] = array(
-    "tabla"
-    "llave_tabla"
-    "consecutivo"
-    "nombre_archivo"
-    "ruta"
-    "titulo"
-);*/
+
 // Definición de llaves primarias
 $llavesPrimarias["cargos"]   = "codigo";
 
@@ -56,7 +48,6 @@ $registros["cargos"] = array(
         "interno" => "0"
     )
 );
-
 
 $registros["componentes"] = array(
     array(

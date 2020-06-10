@@ -110,10 +110,8 @@ if (!empty($url_generar)) {
     if (!isset($mensajes_error)){
 
         $tipo_articulo= array(
-            "1" => $textos["PRODUCTO_TERMINADO"],
-            "2" => $textos["OBSEQUIO"],
-            "3" => $textos["ACTIVO_FIJO"],
-            "4" => $textos["MATERIA_PRIMA"]
+            "1" => $textos["MATERIA_PRIMA"],
+            "2" => $textos["PRODUCTO_TERMINADO"]
         );
 
         $manejo_inventario = array(
@@ -167,8 +165,8 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::marcaSeleccion("formato_imprime",$textos["SIEMPRE_IMPRIME"],1,true,array("id"=>"siempre_imprime")),
-                HTML::marcaSeleccion("formato_imprime",$textos["OCASIONALMENTE_IMPRIME"],2,false,array("id"=>"ocasionalmente_imprime")),
-                HTML::marcaSeleccion("formato_imprime",$textos["NUNCA_IMPRIME"],3,false,array("id"=>"nunca_imprime"))
+            //    HTML::marcaSeleccion("formato_imprime",$textos["OCASIONALMENTE_IMPRIME"],2,false,array("id"=>"ocasionalmente_imprime")),
+            //    HTML::marcaSeleccion("formato_imprime",$textos["NUNCA_IMPRIME"],3,false,array("id"=>"nunca_imprime"))
             ),
             array(
                 HTML::selectorArchivo("imagen", $textos["FOTO"], array("title" => $textos["AYUDA_FOTO"]))
@@ -187,24 +185,24 @@ if (!empty($url_generar)) {
      
         /*** Definición de pestaña datos operativos de articulo ***/
         $formularios["PESTANA_DATOS"] = array(
-            array(
+            /*array(
                 HTML::campoTextoCorto("garantia", $textos["GARANTIA"], 20, 255, "", array("title" => $textos["AYUDA_GARANTIA"],"onBlur" => "validarItem(this);")),
                 HTML::campoTextoCorto("garantia_partes", $textos["GARANTIA_PARTES"], 20, 255, "", array("title" => $textos["AYUDA_GARANTIA_PARTES"],"onBlur" => "validarItem(this);"))
-            ),
+            ),*/
             array(
-                HTML::listaSeleccionSimple("*codigo_impuesto_compra", $textos["IMPUESTO_COMPRA"], HTML::generarDatosLista("tasas", "codigo", "descripcion", "codigo!='0'"),$preferencias_globales["impuesto_compra"], array("title" => $textos["AYUDA_IMPUESTO_COMPRA"])),
-                HTML::listaSeleccionSimple("*codigo_impuesto_venta", $textos["IMPUESTO_VENTA"], HTML::generarDatosLista("tasas", "codigo", "descripcion", "codigo!='0'"),$preferencias_globales["impuesto_venta"], array("title" => $textos["AYUDA_IMPUESTO_VENTA"]))
+                HTML::listaSeleccionSimple("*codigo_impuesto_compra", $textos["IMPUESTO_COMPRA"], HTML::generarDatosLista("tasas", "codigo", "descripcion", "codigo!='0'"), $preferencias_globales["impuesto_compra"], array("title" => $textos["AYUDA_IMPUESTO_COMPRA"])),
+                HTML::listaSeleccionSimple("*codigo_impuesto_venta", $textos["IMPUESTO_VENTA"], HTML::generarDatosLista("tasas", "codigo", "descripcion", "codigo!='0'"), $preferencias_globales["impuesto_venta"], array("title" => $textos["AYUDA_IMPUESTO_VENTA"]))
             ),
             array(
                 HTML::listaSeleccionSimple("*codigo_marca", $textos["MARCA"], HTML::generarDatosLista("marcas", "codigo", "descripcion", "codigo!='0'"), "",array("title" => $textos["AYUDA_MARCA"]))
             ),
-            array(
+            /*array(
                 HTML::listaSeleccionSimple("*manejo_inventario", $textos["MANEJO_INVENTARIO"], $manejo_inventario,"", array("title" => $textos["AYUDA_MANEJO_INVENTARIO"]))
-            ),
+            ),*/
             array(
-                HTML::listaSeleccionSimple("*codigo_unidad_venta", $textos["UNIDAD_VENTA"], HTML::generarDatosLista("unidades", "codigo", "nombre", "codigo!='0'"), $preferencias["unidad_venta"], array("title" => $textos["AYUDA_UNIDAD_VENTA"])),
+                /*HTML::listaSeleccionSimple("*codigo_unidad_venta", $textos["UNIDAD_VENTA"], HTML::generarDatosLista("unidades", "codigo", "nombre", "codigo!='0'"), $preferencias["unidad_venta"], array("title" => $textos["AYUDA_UNIDAD_VENTA"])),*/
                 HTML::listaSeleccionSimple("*codigo_unidad_compra", $textos["UNIDAD_COMPRA"], HTML::generarDatosLista("unidades", "codigo", "nombre", "codigo!='0'"), $preferencias["unidad_compra"], array("title" => $textos["AYUDA_UNIDAD_COMPRA"])),
-                HTML::listaSeleccionSimple("*codigo_unidad_presentacion", $textos["UNIDAD_PRESENTACION"], HTML::generarDatosLista("unidades", "codigo", "nombre", "codigo!='0'"), $preferencias["unidad_presentacion"], array("title" => $textos["AYUDA_UNIDAD_PRESENTACION"]))
+                /*HTML::listaSeleccionSimple("*codigo_unidad_presentacion", $textos["UNIDAD_PRESENTACION"], HTML::generarDatosLista("unidades", "codigo", "nombre", "codigo!='0'"), $preferencias["unidad_presentacion"], array("title" => $textos["AYUDA_UNIDAD_PRESENTACION"]))*/
             ),
             array(
                 HTML::listaSeleccionSimple("*codigo_iso", $textos["PAIS"], HTML::generarDatosLista("paises", "codigo_iso", "nombre", "codigo_iso!=''"),"", array("title" => $textos["AYUDA_PAIS"]))
@@ -337,21 +335,21 @@ if (!empty($url_generar)) {
 		$error   = true;
 		$mensaje = $textos["ESTRUCTURA_VACIO"]; 
 
-	}elseif(empty($forma_codigo_unidad_venta)){
+	/*}elseif(empty($forma_codigo_unidad_venta)){
       $error = true;
       $mensaje = $textos["UNIDAD_VENTA_VACIO"];   
-	
+	*/
 	}elseif(empty($forma_codigo_unidad_compra)){
       $error = true;
       $mensaje = $textos["UNIDAD_COMPRA_VACIO"];   
 	
-	}elseif(empty($forma_codigo_unidad_presentacion)){
+	/*}elseif(empty($forma_codigo_unidad_presentacion)){
       $error = true;
       $mensaje = $textos["UNIDAD_PRESENTACION_VACIO"];   
-	
+	*/
 	}elseif(empty($forma_documento_identidad_proveedor)){
       $error = true;
-      $mensaje = $textos["PREVEEDOR_VACIO"];   
+      $mensaje = $textos["PROVEEDOR_VACIO"];   
            
     }elseif($existe = SQL::existeItem("articulos", "codigo", $forma_codigo)){
 	    $error   = true;
@@ -369,7 +367,7 @@ if (!empty($url_generar)) {
 
         $datos = array(
             "codigo"                     => $forma_codigo,
-            "codigo_alfanumerico"        => $forma_codigo_alfanumerico,
+            "codigo_proveedor"           => $forma_documento_identidad_proveedor,
             "codigo_barras"              => $forma_codigo_barras,
             "descripcion"                => $forma_descripcion,
             "tipo_articulo"              => $forma_tipo_articulo,
@@ -384,13 +382,14 @@ if (!empty($url_generar)) {
             "codigo_impuesto_venta"      => $forma_codigo_impuesto_venta,
             "codigo_marca"               => $forma_codigo_marca,
             "codigo_estructura_grupo"    => $forma_codigo_estructura_grupo,
-            "manejo_inventario"          => $forma_manejo_inventario,
-            "codigo_unidad_venta"        => $forma_codigo_unidad_venta,
+            "manejo_inventario"          => '1',
+            "codigo_unidad_venta"        => '1',
             "codigo_unidad_compra"       => $forma_codigo_unidad_compra,
-            "codigo_unidad_presentacion" => $forma_codigo_unidad_presentacion,
+            "codigo_unidad_presentacion" => '1',
             "codigo_iso"                 => $forma_codigo_iso,
             "activo"                     => 1,
-            "imprime_listas"             => 1
+            "imprime_listas"             => 1,
+            "fecha_creacion"             => date("Y-m-d H:i:s")
         );
 
         $insertar = SQL::insertar("articulos", $datos);

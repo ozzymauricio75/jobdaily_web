@@ -115,7 +115,7 @@ $registros["componentes"] = array(
     )
 );
 
-$vistas = array(
+/*$vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_marcas_prueba AS
         SELECT  job_marcas.codigo AS id,
@@ -130,7 +130,7 @@ $vistas = array(
         FROM    job_marcas
         WHERE   job_marcas.codigo != 0;"
     )
-);
+);*/
 
 $vistas = array(     
     array(

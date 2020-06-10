@@ -34,7 +34,7 @@ $tablas["articulos"] = array(
     "codigo_proveedor"           => "VARCHAR(20) NOT NULL COMMENT 'Referencia o codigo del proveedor o codigo asignado por la empresa'",
     "codigo_barras"              => "BIGINT(13) UNSIGNED ZEROFILL NULL COMMENT 'Referencia o codigo del proveedor o codigo asignado por la empresa'",
     "descripcion"                => "VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Descripcion del arti­culo'",
-    "tipo_articulo"              => "ENUM('1','2','3','4') NOT NULL DEFAULT '1' COMMENT '1->Producto terminado, 2->Obsequio(solo se maneja en el kardex), 3->Activo fijo, 4->Materia prima'",
+    "tipo_articulo"              => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT '1->Materia prima, 2->Producto terminado'",
     "ficha_tecnica"              => "TEXT NOT NULL DEFAULT '' COMMENT 'Caracteristicas tecnicas de un articulo'",
     "alto"                       => "INT(8) UNSIGNED COMMENT 'Altura del producto en milimetros'",
     "ancho"                      => "INT(8) UNSIGNED COMMENT 'Ancho del producto en milimetros'",
@@ -54,7 +54,7 @@ $tablas["articulos"] = array(
     "codigo_iso"                 => "VARCHAR(2) NOT NULL COMMENT 'Llave foranea a la tabla paises'",
     "activo"                     => "ENUM('0','1') NOT NULL DEFAULT '1' COMMENT '0->El codigo esta inactivo, 1->El codigo esta activo'",
     "imprime_listas"             => "ENUM('1','2','3') NOT NULL DEFAULT '1' COMMENT '1->Siempre imprime, 2->Solo sí hay existencia, 3->Nunca imprime'",
-    "fecha_creacion"             => "DATE NOT NULL COMMENT 'Fecha en la cual se crea el articulo'"
+    "fecha_creacion"             => "DATE NULL COMMENT 'Fecha en la cual se crea el articulo'"
 );
 
 // Definición de llaves primarias
@@ -319,6 +319,7 @@ $vistas = array(
         WHERE  	job_articulos.codigo_marca = job_marcas.codigo AND
                 job_articulos.codigo = job_referencias_proveedor.codigo_articulo AND
                 job_proveedores.documento_identidad = job_referencias_proveedor.documento_identidad_proveedor AND
+                job_referencias_proveedor.principal = '1' AND
                 job_proveedores.documento_identidad = job_terceros.documento_identidad AND
                 job_articulos.codigo != '';"
     ),

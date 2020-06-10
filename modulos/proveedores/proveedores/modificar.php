@@ -362,12 +362,12 @@ if (!empty($url_generar)) {
 
             while ($datos_cuenta = SQL::filaEnObjeto($consulta_cuentas)) {
 
-                $id_cuenta  = $datos_cuenta->documento_identidad_proveedor."|".$datos_cuenta->codigo_banco."|";
+                $id_cuenta   = $datos_cuenta->documento_identidad_proveedor."|".$datos_cuenta->codigo_banco."|";
                 $id_cuenta  .= $datos_cuenta->cuenta."|".$datos_cuenta->tipo_cuenta;
-                $id_banco   = $datos_cuenta->codigo_banco;
-                $banco      = SQL::obtenerValor("bancos","descripcion","codigo= '$id_banco'");
-                $cuenta     = $datos_cuenta->cuenta;
-                $tipo       = $tipo_cuenta[$datos_cuenta->tipo_cuenta];
+                $id_banco    = $datos_cuenta->codigo_banco;
+                $banco       = SQL::obtenerValor("bancos","descripcion","codigo= '$id_banco'");
+                $cuenta      = $datos_cuenta->cuenta;
+                $tipo        = $tipo_cuenta[$datos_cuenta->tipo_cuenta];
 
                 $co1 = HTML::campoOculto("cuentas[".$id_cuenta."]", $id_cuenta, array("class"=>"cuentas"));
                 $co2 = HTML::campoOculto("bancos[".$id_cuenta."]", $id_banco, array("class"=>"bancos"));
@@ -376,7 +376,7 @@ if (!empty($url_generar)) {
                 $co5 = HTML::campoOculto("estadoModificar[".$id_cuenta."]", '1', array("class"=>"estadoModificar"));
 
                 $remover = HTML::boton("botonRemoverCuenta", "", "removerItem(this);", "eliminar");
-                $celda = $co1.$co2.$co3.$co4.$co5.$remover;
+                $celda   = $co1.$co2.$co3.$co4.$co5.$remover;
 
                 $item_cuenta[] = array( $id_cuenta,
                                         $celda,

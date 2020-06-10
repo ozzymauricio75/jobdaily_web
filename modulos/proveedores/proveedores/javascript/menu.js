@@ -327,4 +327,5 @@
                 }
             });
         }
+        $(boton).parents('tr').remove();
     }
