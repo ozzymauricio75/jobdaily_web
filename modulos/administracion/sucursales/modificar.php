@@ -47,9 +47,12 @@ if (!empty($url_generar)) {
         $columnas      = SQL::obtenerColumnas($vistaConsulta);
         $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, $condicion);
         $datos         = SQL::filaEnObjeto($consulta);
+        $tipo          = $datos->tipo;
+        $valor_tipo    = false;
+
         $error         = "";
         $titulo        = $componente->nombre;
-        
+
         $activo = array(
             "0" => $textos["ESTADO_INACTIVA"],
             "1" => $textos["ESTADO_ACTIVA"]
@@ -74,8 +77,20 @@ if (!empty($url_generar)) {
         $municipio = explode("|",$municipio);
         $municipio = $municipio[0];
 
-        
+        if ($tipo == '0'){
+            $valor_tipo_principal = true;
+            $valor_tipo_sucursal  = false;
+            $valor_tipo_union     = false;
 
+        }if ($tipo == '1'){
+            $valor_tipo_principal = false;
+            $valor_tipo_sucursal  = true;
+            $valor_tipo_union     = false;
+        }if ($tipo == '2'){
+            $valor_tipo_principal = false;
+            $valor_tipo_sucursal  = false;
+            $valor_tipo_union     = true;
+        }
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
@@ -90,6 +105,11 @@ if (!empty($url_generar)) {
             array(
                 HTML::campoTextoCorto("nombre_corto", $textos["NOMBRE_CORTO"], 10, 10, $datos->nombre_corto, array("title" => $textos["AYUDA_NOMBRE_CORTO"],"onBlur" => "validarItem(this);")),
                 HTML::listaSeleccionSimple("activo", $textos["ESTADO"], $activo, $datos->activo, array("title" => $textos["AYUDA_ACTIVO"],"onBlur" => "validarItem(this);"))
+            ),
+            array(
+                HTML::marcaSeleccion("tipo", $textos["PRINCIPAL"], 0, $valor_tipo_principal, ""),
+                HTML::marcaSeleccion("tipo", $textos["SUCURSAL"], 1, $valor_tipo_sucursal, ""),
+                HTML::marcaSeleccion("tipo", $textos["UNION_TEMPORAL"], 2, $valor_tipo_union, "")
             )
         );
 
@@ -112,7 +132,7 @@ if (!empty($url_generar)) {
         );
 
         /*** Definición de pestañas tributaria ***/
-        $formularios["PESTANA_CONTABLE"] = array(
+        /*$formularios["PESTANA_CONTABLE"] = array(
             array(
                 HTML::campoTextoCorto("codigo_empresa_consolida", $textos["EMPRESA_CONSOLIDA"], 3, 3, $datos->codigo_empresa_consolida, array("title" => $textos["AYUDA_EMPRESA_CONSOLIDA"], "onKeyPress" => "return campoEntero(event)")),
                 HTML::campoTextoCorto("codigo_sucursal_consolida", $textos["ALMACEN_CONSOLIDA"], 5, 5, $datos->codigo_sucursal_consolida, array("title" => $textos["AYUDA_ALMACEN_CONSOLIDA"], "onKeyPress" => "return campoEntero(event)")),
@@ -146,7 +166,7 @@ if (!empty($url_generar)) {
             array(
                 HTML::marcaChequeo("contabilidad", $textos["CONTABILIDAD"], 1,$datos->contabilidad)
             )
-        );
+        );*/
 
         /*** Definición de botones ***/
         $botones = array(
@@ -316,7 +336,8 @@ if (!empty($url_generar)) {
             "cartera_clientes_detallistas" => $forma_cartera_clientes_detallistas,
             "cuentas_pagar_proveedores"    => $forma_cuentas_pagar_proveedores,
             "nomina"                       => $forma_nomina,
-            "contabilidad"                 => $forma_contabilidad
+            "contabilidad"                 => $forma_contabilidad,
+            "tipo"                         => $forma_tipo
         );
 
         $consulta = SQL::modificar("sucursales", $datos, "codigo = '$forma_id'");

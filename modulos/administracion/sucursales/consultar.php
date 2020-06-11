@@ -38,7 +38,16 @@ if (!empty($url_generar)) {
         $columnas      = SQL::obtenerColumnas($vistaConsulta);
         $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
         $datos         = SQL::filaEnObjeto($consulta);
+        $tipo          = $datos->tipo;
 
+        if ($tipo == 1){
+            $tipo = $textos["SUCURSAL"];
+        }elseif ($tipo == 2) {
+            $tipo = $textos["UNION_TEMPORAL"];
+        }else{
+            $tipo = $textos["PRINCIPAL"];
+        }
+        
         $error         = "";
         $titulo        = $componente->nombre;
 
@@ -83,6 +92,9 @@ if (!empty($url_generar)) {
             array(
                 HTML::mostrarDato("nombre_corto", $textos["NOMBRE_CORTO"], $datos->nombre_corto),
                 HTML::mostrarDato("activo", $textos["ESTADO"], $textos["ACTIVO_".intval($datos->activo)])
+            ),
+            array(
+                HTML::mostrarDato("tipo", $textos["TIPO"], $tipo),
             )
         );
 
@@ -105,7 +117,7 @@ if (!empty($url_generar)) {
         );
 
         /*** Definición de pestañas tributaria ***/
-        $formularios["PESTANA_CONTABLE"] = array(
+        /*$formularios["PESTANA_CONTABLE"] = array(
             array(
                 HTML::mostrarDato("codigo_empresa_consolida", $textos["EMPRESA_CONSOLIDA"], $datos->codigo_empresa_consolida),
                 HTML::mostrarDato("codigo_sucursal_consolida", $textos["ALMACEN_CONSOLIDA"], $datos->codigo_sucursal_consolida),
@@ -139,7 +151,7 @@ if (!empty($url_generar)) {
             array(
                 HTML::mostrarDato("contabilidad", $textos["CONTABILIDAD"], $textos["SI_NO_".intval($datos->contabilidad)])
             )
-        );
+        );*/
 
         $contenido = HTML::generarPestanas($formularios);
     }

@@ -57,11 +57,19 @@ if (!empty($url_generar)) {
             "0" => $textos["INDICADOR_NO"],
             "1" => $textos["INDICADOR_SI"]
         );
+        
+        //Asignar codigo siguiente de la tabla 
+        $codigo = SQL::obtenerValor("sucursales","MAX(codigo)","codigo>0");
 
+        if ($codigo){
+            $codigo++;
+        } else {
+            $codigo = 1;
+        }
          /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, "", array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
+                HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, $codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
                 HTML::listaSeleccionSimple("*id_empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social","codigo != 0"), "", array("title" => $textos["AYUDA_EMPRESAS"],"onBlur" => "validarItem(this);"))
             ),
             array(
@@ -70,6 +78,11 @@ if (!empty($url_generar)) {
             array(
                 HTML::campoTextoCorto("nombre_corto", $textos["NOMBRE_CORTO"], 10, 10, "", array("title" => $textos["AYUDA_NOMBRE_CORTO"],"onBlur" => "validarItem(this);")),
                 HTML::listaSeleccionSimple("activo", $textos["ESTADO"], $activo, 1, array("title" => $textos["AYUDA_ACTIVO"],"onBlur" => "validarItem(this);"))
+            ),
+            array(
+                HTML::marcaSeleccion("tipo", $textos["PRINCIPAL"], 0, false, ""),
+                HTML::marcaSeleccion("tipo", $textos["SUCURSAL"], 1, true, ""),
+                HTML::marcaSeleccion("tipo", $textos["UNION_TEMPORAL"], 2, false, "")
             )
         );
 
@@ -93,7 +106,7 @@ if (!empty($url_generar)) {
         );
 
         /*** Definición de pestañas tributaria ***/
-        $formularios["PESTANA_CONTABLE"] = array(
+        /*$formularios["PESTANA_CONTABLE"] = array(
             array(
                 HTML::campoTextoCorto("codigo_empresa_consolida", $textos["EMPRESA_CONSOLIDA"], 3, 3, "", array("title" => $textos["AYUDA_EMPRESA_CONSOLIDA"], "onKeyPress" => "return campoEntero(event)")),
                 HTML::campoTextoCorto("codigo_sucursal_consolida", $textos["ALMACEN_CONSOLIDA"], 5, 5, "", array("title" => $textos["AYUDA_ALMACEN_CONSOLIDA"], "onKeyPress" => "return campoEntero(event)")),
@@ -127,7 +140,7 @@ if (!empty($url_generar)) {
             array(
                 HTML::marcaChequeo("contabilidad", $textos["CONTABILIDAD"])
             )
-        );
+        );*/
 
         /*** Definicion de botones ***/
         $botones = array(
@@ -302,7 +315,8 @@ if (!empty($url_generar)) {
             "cartera_clientes_detallistas" => $forma_cartera_clientes_detallistas,
             "cuentas_pagar_proveedores"    => $forma_cuentas_pagar_proveedores,
             "nomina"                       => $forma_nomina,
-            "contabilidad"                 => $forma_contabilidad
+            "contabilidad"                 => $forma_contabilidad,
+            "tipo"                         => $forma_tipo
         );
         $insertar = SQL::insertar("sucursales", $datos);
 
