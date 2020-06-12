@@ -2,7 +2,7 @@
 
 /**
 *
-* Copyright (C) 2008 Felinux Ltda
+* Copyright (C) 2020 Jobdaily
 * Raul Mauricio Oidor Lozano <ozzymauricio75@gmail.com>
 *
 * Este archivo es parte de:
@@ -27,10 +27,10 @@
 
 $textos = array(
     "GESTSUCU"                          => "Consorcio - Union Temporal",
-    "ADICSUCU"                          => "Adicionar Consorcio",
-    "CONSSUCU"                          => "Consultar Consorcio",
-    "MODISUCU"                          => "Modificar Consorcio",
-    "ELIMSUCU"                          => "Eliminar Consorcio",
+    "ADICSUCU"                          => "Adicionar Consorcio - Union temporal",
+    "CONSSUCU"                          => "Consultar Consorcio - Union temporal",
+    "MODISUCU"                          => "Modificar Consorcio - Union temporal",
+    "ELIMSUCU"                          => "Eliminar Consorcio - Union temporal",
     "CODIGO"                            => "Código",
     "SUCURSAL"                          => "Consorcio",
     "EMPRESA"                           => "Empresa",

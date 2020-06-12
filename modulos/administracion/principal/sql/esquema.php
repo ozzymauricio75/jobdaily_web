@@ -294,6 +294,12 @@ $registros["modulos"] = array(
         "carpeta"     => "contabilidad"
     ),
     array(
+        "id"          => "PROYECTOS",
+        "nombre"      => "Proyectos",
+        "descripcion" => "Menu de proyectos",
+        "carpeta"     => "proyectos"
+    ),
+    array(
         "id"          => "EXTENSIONES",
         "nombre"      => "Extensiones",
         "descripcion" => "Extensiones de uso general de la aplicación",
@@ -467,6 +473,16 @@ $registros["componentes"] = array(
         "id_modulo" => "ADMINISTRACION",
         "visible"   => "1",
         "orden"     => "900",
+        "carpeta"   => "principal",
+        "archivo"   => "NULL",
+        "global"    => "0"
+    ),
+    array(
+        "id"        => "MENUPROY",
+        "padre"     => "NULL",
+        "id_modulo" => "ADMINISTRACION",
+        "visible"   => "1",
+        "orden"     => "700",
         "carpeta"   => "principal",
         "archivo"   => "NULL",
         "global"    => "0"

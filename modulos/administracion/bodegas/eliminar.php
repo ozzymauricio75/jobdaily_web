@@ -2,7 +2,7 @@
 
 /**
 *
-* Copyright (C) 2008 Felinux Ltda
+* Copyright (C) 2020 Jobdaily
 * Raul Mauricio Oidor Lozano <ozzymauricio75@gmail.com>
 *
 * Este archivo es parte de:

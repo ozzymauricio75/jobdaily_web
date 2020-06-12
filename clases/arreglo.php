@@ -4,7 +4,7 @@
 *
 * Copyright (C) 2020 Jobdaily
 * Raul Mauricio Oidor Lozano <ozzymauricio75@gmail.com>
-* Edier Andrés Villaneda N. <eandres164@gmail.com>
+*                                                 
 *
 * Este archivo es parte de:
 * Jobdaily:: Sofware empresarial a la medida

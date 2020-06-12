@@ -193,7 +193,16 @@ if (!empty($url_generar)) {
             "2" => $textos["JURIDICA"],
             "3" => $textos["INTERNO"]
         );
+        
+        //Asignar codigo siguiente de la tabla 
+        $codigo = SQL::obtenerValor("empresas","MAX(codigo)","codigo>0");
 
+        if ($codigo){
+            $codigo++;
+        } else {
+            $codigo = 1;
+        }
+        
         // Definicion de pestanas para datos del tercero
         $formularios["PESTANA_TERCERO"] = array(
             array(
@@ -252,7 +261,7 @@ if (!empty($url_generar)) {
         $funciones["PESTANA_GENERAL"]   = "recargarActividades()";
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, "", array("title" => $textos["AYUDA_CODIGO"], "onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
+                HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, $codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"], "onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
                 HTML::listaSeleccionSimple("*activo", $textos["ACTIVO"], $activo, 1, array("title" => $textos["AYUDA_ACTIVO"], "onBlur" => "validarItem(this);"))
             ),
             /*array(

@@ -44,6 +44,7 @@ $textos = array(
     "MENUPROV"                  => "Proveedores",
     "MENUPROD"                  => "Producción",
     "MENUCLIE"                  => "Clientes",
+    "MENUPROY"                  => "Proyectos",
     "MENUMERC"                  => "Mercadeo",
     "MENUFINA"                  => "Financiera",
     "MENULOGI"                  => "Logística",

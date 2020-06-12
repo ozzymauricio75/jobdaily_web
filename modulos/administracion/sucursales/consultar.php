@@ -69,7 +69,6 @@ if (!empty($url_generar)) {
         );
 
         /*** Obtener valores ***/
-
         $llave_primaria_municipio = $datos -> codigo_iso.",".$datos->codigo_dane_departamento.",".$datos -> codigo_dane_municipio;
 
         $municipio = SQL::obtenerValor("seleccion_municipios","nombre","llave_primaria = '$llave_primaria_municipio'");
