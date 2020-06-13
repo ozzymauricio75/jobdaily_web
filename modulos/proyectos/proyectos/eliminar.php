@@ -35,10 +35,11 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
-        $vistaConsulta = "proyectos";
-        $columnas      = SQL::obtenerColumnas($vistaConsulta);
-        $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
-        $datos         = SQL::filaEnObjeto($consulta);
+        $vistaConsulta  = "proyectos";
+        $columnas       = SQL::obtenerColumnas($vistaConsulta);
+        $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
+        $datos          = SQL::filaEnObjeto($consulta);
+        $valor_proyecto = number_format($datos->valor_proyecto,0);
 
         /*Obtener Valores*/
         $empresa            = $datos->codigo_empresa_ejecuta;
@@ -72,8 +73,16 @@ if (!empty($url_generar)) {
             $estado = "Abierto";
         }
 
-        /*** Obtener valores ***/
+        //Coloca texto del tipo de sucursal
+        if($tipo ==1){
+            $tipo = "Consorcio";
+        }elseif ($tipo ==2) {
+            $tipo = "Unión temporal";
+        }elseif ($tipo ==0) {
+            $tipo = "Principal";
+        }
 
+        /*** Obtener valores ***/
         $llave_primaria_municipio = $datos -> codigo_iso.",".$datos->codigo_dane_departamento.",".$datos -> codigo_dane_municipio;
 
         $municipio = SQL::obtenerValor("seleccion_municipios","nombre","llave_primaria = '$llave_primaria_municipio'");
@@ -90,16 +99,17 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::mostrarDato("empresa", $textos["EMPRESA"], $nombre_empresa),
-                HTML::mostrarDato("sucursal", $textos["CONSORCIO"], $nombre_sucursal)
+            ),
+            array(   
+                HTML::mostrarDato("sucursal", $textos["CONSORCIO"], $nombre_sucursal),
+                HTML::mostrarDato("tipo", $textos["TIPO"], $tipo)
             ),
             array(
-                HTML::mostrarDato("nombre", $textos["NOMBRE"], $datos->nombre)
-            ),
-            array(
-                HTML::mostrarDato("valor_proyecto", $textos["VALOR_PROYECTO"], $datos->valor_proyecto)
-            ),
-            array(
-                 HTML::mostrarDato("estado", $textos["ESTADO"], $estado),
+                HTML::mostrarDato("nombre", $textos["NOMBRE"], $datos->nombre),
+
+                HTML::mostrarDato("valor_proyecto", $textos["VALOR_PROYECTO"], $valor_proyecto),
+
+                HTML::mostrarDato("estado", $textos["ESTADO"], $estado),
             )
         );
 

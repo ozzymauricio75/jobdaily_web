@@ -92,7 +92,7 @@ elseif (!empty($url_generar)) {
                 HTML::campoTextoCorto("*nombre", $textos["NOMBRE"], 40, 60, "", array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);"))
             ),
             array(
-                HTML::campoTextoCorto("*valor_proyecto", $textos["VALOR_PROYECTO"], 15, 15, "", array("title" => $textos["AYUDA_VALOR_PROYECTO"],"class" => "numero","onBlur" => "validarItem(this);","onKeyPress" => "return campoEntero(event)"))
+                HTML::campoTextoCorto("*valor_proyecto", $textos["VALOR_PROYECTO"], 15, 15, "", array("title" => $textos["AYUDA_VALOR_PROYECTO"],"class" => "numero","onBlur" => "validarItem(this);","onKeyPress" => "return campoEntero(event)", "onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
             ),
             array(
                 HTML::listaSeleccionSimple("activo", $textos["ESTADO"], $activo, 1, array("title" => $textos["AYUDA_ACTIVO"],"onBlur" => "validarItem(this);"))
@@ -108,43 +108,6 @@ elseif (!empty($url_generar)) {
                 HTML::campoTextoCorto("*direccion_proyecto", $textos["DIRECCION_RESIDENCIA"], 40, 60, "", array("title" => $textos["AYUDA_DIRECCION"],"onBlur" => "validarItem(this);"))
             )
         );
-
-        /*** Definición de pestañas tributaria ***/
-        /*$formularios["PESTANA_CONTABLE"] = array(
-            array(
-                HTML::campoTextoCorto("codigo_empresa_consolida", $textos["EMPRESA_CONSOLIDA"], 3, 3, "", array("title" => $textos["AYUDA_EMPRESA_CONSOLIDA"], "onKeyPress" => "return campoEntero(event)")),
-                HTML::campoTextoCorto("codigo_sucursal_consolida", $textos["ALMACEN_CONSOLIDA"], 5, 5, "", array("title" => $textos["AYUDA_ALMACEN_CONSOLIDA"], "onKeyPress" => "return campoEntero(event)")),
-                HTML::listaSeleccionSimple("tipo_empresa", $textos["TIPO_EMPRESA"], $tipoEmpresa, "", array("title" => $textos["AYUDA_TIPO_EMPRESA"]))
-            ),
-            array(
-                HTML::campoTextoCorto("orden", $textos["ORDEN"], 3, 3, "", array("title" => $textos["AYUDA_ORDEN"], "onKeyPress" => "return campoEntero(event)")),
-                HTML::campoTextoCorto("fecha_cierre", $textos["FECHA_CIERRE"], 8, 8, "", array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_CIERRE"],"onBlur" => "validarItem(this);"))
-            ),
-            array(
-                HTML::marcaChequeo("maneja_kardex", $textos["MANEJA_KARDEX"])
-            ),
-            array(
-                HTML::marcaChequeo("realiza_orden_compra", $textos["REALIZA_ORDEN_COMPRA"])
-            ),
-            array(
-                HTML::marcaChequeo("inventarios_mercancia", $textos["MANEJA_INVENTARIOS_MERCANCIA"])
-            ),
-            array(
-                HTML::marcaChequeo("cartera_clientes_mayoristas", $textos["CARTERA_CLIENTES_MAYORISTAS"])
-            ),
-            array(
-                HTML::marcaChequeo("cartera_clientes_detallistas", $textos["CARTERA_CLIENTES_DETALLISTAS"])
-            ),
-            array(
-                HTML::marcaChequeo("cuentas_pagar_proveedores", $textos["CUENTAS_PAGAR_PROVEEDORES"])
-            ),
-            array(
-                HTML::marcaChequeo("nomina", $textos["NOMINA"])
-            ),
-            array(
-                HTML::marcaChequeo("contabilidad", $textos["CONTABILIDAD"])
-            )
-        );*/
 
         /*** Definicion de botones ***/
         $botones = array(
@@ -243,6 +206,19 @@ elseif (!empty($url_generar)) {
          $codigo_dane_departamento   = $datos_municipio -> departamento;
          $codigo_dane_municipio      = $datos_municipio -> codigo;
 
+         /*** Quitar separador de miles a un numero ***/
+        function quitarMiles($cadena){
+            $valor = array();
+            for ($i = 0; $i < strlen($cadena); $i++) {
+                if (substr($cadena, $i, 1) != ".") {
+                    $valor[$i] = substr($cadena, $i, 1);
+                }
+            }
+            $valor = implode($valor);
+            return $valor;
+        }
+
+        $forma_valor_proyecto = quitarMiles($forma_valor_proyecto);
 
         /*** Insertar datos ***/
         $datos = array(

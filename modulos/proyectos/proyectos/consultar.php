@@ -44,6 +44,7 @@ if (!empty($url_generar)) {
         $sucursal           = $datos->codigo_sucursal_ejecuta;
         $direccion_proyecto = $datos->direccion_proyecto;
         $activo             = $datos->activo;
+        $valor_proyecto     = number_format($datos->valor_proyecto,0);
 
         $nombre_empresa  = SQL::obtenerValor("empresas","razon_social", "codigo = '$empresa'");
         $nombre_sucursal = SQL::obtenerValor("sucursales","nombre", "codigo = '$sucursal' AND codigo_empresa = '$empresa'");
@@ -106,7 +107,7 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::mostrarDato("nombre", $textos["NOMBRE"], $datos->nombre),
-                HTML::mostrarDato("valor_proyecto", $textos["VALOR_PROYECTO"], $datos->valor_proyecto),
+                HTML::mostrarDato("valor_proyecto", $textos["VALOR_PROYECTO"], $valor_proyecto),
                 HTML::mostrarDato("estado", $textos["ESTADO"], $estado),
             )
         );

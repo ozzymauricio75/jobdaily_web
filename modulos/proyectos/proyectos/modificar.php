@@ -54,14 +54,15 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
-        $vistaConsulta = "proyectos";
-        $condicion     = "codigo = '$url_id'";
-        $columnas      = SQL::obtenerColumnas($vistaConsulta);
-        $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, $condicion);
-        $datos         = SQL::filaEnObjeto($consulta);
+        $vistaConsulta  = "proyectos";
+        $condicion      = "codigo = '$url_id'";
+        $columnas       = SQL::obtenerColumnas($vistaConsulta);
+        $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, $condicion);
+        $datos          = SQL::filaEnObjeto($consulta);
+        $valor_proyecto = number_format($datos->valor_proyecto,0);
 
-        $error         = "";
-        $titulo        = $componente->nombre;
+        $error          = "";
+        $titulo         = $componente->nombre;
 
         $activo = array(
             "0" => $textos["ESTADO_INACTIVA"],
@@ -117,7 +118,7 @@ if (!empty($url_generar)) {
                 HTML::campoTextoCorto("*nombre", $textos["NOMBRE"], 40, 60, $datos->nombre, array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);"))
             ),
             array(
-                HTML::campoTextoCorto("*valor_proyecto", $textos["VALOR_PROYECTO"], 15, 15, $datos->valor_proyecto, array("title" => $textos["AYUDA_VALOR_PROYECTO"],"onBlur" => "validarItem(this);","onKeyPress" => "return campoEntero(event)"))
+                HTML::campoTextoCorto("*valor_proyecto", $textos["VALOR_PROYECTO"], 15, 15, $valor_proyecto, array("title" => $textos["AYUDA_VALOR_PROYECTO"],"class" => "numero", "onBlur" => "validarItem(this);","onKeyPress" => "return campoEntero(event)", "onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
             ),
             array(
                 HTML::listaSeleccionSimple("activo", $textos["ESTADO"], $activo, $datos->activo, array("title" => $textos["AYUDA_ACTIVO"],"onBlur" => "validarItem(this);"))
@@ -222,6 +223,19 @@ if (!empty($url_generar)) {
        $codigo_dane_departamento   = $datos_municipio -> departamento;
        $codigo_dane_municipio      = $datos_municipio -> codigo;
 
+       /*** Quitar separador de miles a un numero ***/
+        function quitarMiles($cadena){
+            $valor = array();
+            for ($i = 0; $i < strlen($cadena); $i++) {
+                if (substr($cadena, $i, 1) != ".") {
+                    $valor[$i] = substr($cadena, $i, 1);
+                }
+            }
+            $valor = implode($valor);
+            return $valor;
+        }
+
+        $forma_valor_proyecto = quitarMiles($forma_valor_proyecto);
 
         /*** Insertar datos ***/
         $datos = array(

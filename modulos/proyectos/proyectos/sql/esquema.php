@@ -171,7 +171,7 @@ $vistas = array(
         SELECT  job_proyectos.codigo AS id,
                 job_proyectos.codigo AS CODIGO,
                 job_proyectos.nombre AS NOMBRE,
-                job_proyectos.valor_proyecto AS VALOR_PROYECTO,
+                FORMAT(job_proyectos.valor_proyecto,0) AS VALOR_PROYECTO,
                 job_terceros.razon_social AS EMPRESA,
                 job_sucursales.nombre AS CONSORCIO,
                 job_terceros.documento_identidad AS TERCERO,
