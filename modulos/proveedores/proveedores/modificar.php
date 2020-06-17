@@ -253,7 +253,7 @@ if (!empty($url_generar)) {
         $columnasTercero = SQL::obtenerColumnas($vistaTercero);
         $consultaTercero = SQL::seleccionar(array($vistaTercero), $columnasTercero, "documento_identidad = '$datosProveedor->documento_identidad'");
         $datosTercero    = SQL::filaEnObjeto($consultaTercero);
-        
+       
         if ($datosTercero->tipo_persona == 1){
             $valor_persona_natural  = true;
             $valor_oculto_natural   = "";
@@ -541,49 +541,7 @@ if (!empty($url_generar)) {
         $formularios["PESTANA_PAGOS"] = array(
             array(
                 HTML::listaSeleccionSimple("codigo_plazo_pago_contado", $textos["FORMA_PAGO_CONTADO"], HTML::generarDatosLista("plazos_pago_proveedores", "codigo", "nombre","codigo>0"), $datosProveedor->codigo_plazo_pago_contado, array("title" => $textos["AYUDA_PAGO_CONTADO"])),
-            ),
-            /*array(
-                HTML::listaSeleccionSimple("codigo_plazo_pago_credito", $textos["FORMA_PAGO_CREDITO"], HTML::generarDatosLista("plazos_pago_proveedores", "codigo", "nombre","codigo>0"), $datosProveedor->codigo_plazo_pago_credito, array("title" => $textos["AYUDA_PAGO_CREDITO"])),
-                HTML::campoTextoCorto("tasa_pago_credito", $textos["TASA_PAGO_CREDITO"], 6, 6, $datosProveedor->tasa_pago_credito, array("title" => $textos["AYUDA_TASA_CUOTAS_CREDITO"],"onBlur" => "validarItem(this);","onKeyPress" => "return campoDecimal(event)")),
-                HTML::listaSeleccionSimple("liquidacion_tasa_credito", $textos["LIQUIDACION_TASA_CREDITO"], $forma_liquidacion_tasa_credito, $datosProveedor->forma_liquidacion_tasa_credito, array("title" => $textos["AYUDA_LIQUIDACION_TASA_CREDITO"]))
-            ),
-            array(
-                HTML::campoTextoCorto("porcentaje_primera_cuota", $textos["PRIMERA_CUOTA"], 6, 6, $datosProveedor->porcentaje_primera_cuota, array("title" => $textos["AYUDA_PRIMERA_CUOTA"],"onKeyPress" => "return campoDecimal(event)")),
-                HTML::campoTextoCorto("porcentaje_ultima_cuota", $textos["ULTIMA_CUOTA"], 6, 6, $datosProveedor->porcentaje_ultima_cuota, array("title" => $textos["AYUDA_ULTIMA_CUOTA"],"onKeyPress" => "return campoDecimal(event)"))
-            ),
-            array(
-                HTML::marcaChequeo("pagos_anticipados", $textos["PAGOS_ANTICIPADOS"],1, $datosProveedor->pagos_anticipados)
-            ),
-            array(
-                HTML::marcaChequeo("pagos_efectivo", $textos["PAGOS_EFECTIVOS"], 1, $datosProveedor->pagos_efectivo)
-            ),
-            array(
-                HTML::marcaChequeo("transferencia_electronica", $textos["TRANSFERENCIA_ELECTRONICA"], 1, $datosProveedor->transferencia_electronica)
-            ),
-            array(
-                HTML::marcaChequeo("tarjeta_credito", $textos["TARJETA_CREDITO"], 1, $datosProveedor->tarjeta_credito)
-            ),
-            array(
-                HTML::marcaChequeo("triangulacion_bancaria", $textos["TRIANGULACION_BANCARIA"], 1, $datosProveedor->triangulacion_bancaria)
-            ),
-            array(
-                HTML::mostrarDato("dato_vacio", $textos["TITULO_DESCUENTO_LINEA"], $textos["DATO_VACIO"])
-            ),
-            array(
-                HTML::marcaSeleccion("liquidacion_descuento_en_linea", $textos["VALOR_NETO_UNITARIO"], 1, $liquidacion_linea_inicio_articulo, array("id" => "descuento_linea_neto_unitario",  "onChange" => "GlobalUnitario(0)")),
-                HTML::marcaSeleccion("liquidacion_descuento_en_linea", $textos["VALOR_NETO_TOTAL"], 2, $liquidacion_linea_final_articulo, array("id" => "descuento_linea_neto_global", "onChange" => "GlobalUnitario(1)" ))
-            ),
-            array(
-                HTML::mostrarDato("dato_vacio", $textos["TITULO_DESCUENTO_GLOBAL"], $textos["DATO_VACIO"])
-            ),
-            array(
-                HTML::contenedor(
-                    HTML::marcaSeleccion("liquidacion_descuento_global", $textos["NETO_DESDE_UNITARIO"], 1, $liquidacion_global_inicio_articulo, array("id" => "descuento_global_neto_unitario")),
-                    array("id" => "descuentos_globales")
-                ),
-                HTML::marcaSeleccion("liquidacion_descuento_global", $textos["NETO_CON_TOTAL"], 2, $liquidacion_global_final_articulo, array("id" => "descuento_global_neto_total")),
-                HTML::marcaSeleccion("liquidacion_descuento_global", $textos["NETO_FINAL_FACTURA"], 3, $liquidacion_global_final_factura, array("id" => "descuento_global_neto_valor_final"))
-            )*/
+            )
         );
 
         /*** Definición de pestaña cuentas bancarias ***/
@@ -719,7 +677,7 @@ if (!empty($url_generar)) {
             "sitio_web"                          => $forma_sitio_web
         );
         
-        $consulta = SQL::modificar("terceros", $datos, "documento_identidad = '$forma_id'");
+        $consulta = SQL::modificar("terceros", $datos, "documento_identidad = '$forma_documento_identidad'");
 
         if (!isset($forma_retiene_fuente)) {
             $forma_retiene_fuente = "0";
@@ -851,7 +809,7 @@ if (!empty($url_generar)) {
         );
 
 
-        $consulta = SQL::modificar("proveedores", $datos, "documento_identidad = '$forma_id'");
+        $consulta = SQL::modificar("proveedores", $datos, "documento_identidad = '$forma_documento_identidad'");
 
         if ($consulta) {
             $error   = false;

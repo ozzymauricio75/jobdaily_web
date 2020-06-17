@@ -268,23 +268,11 @@ $registros["componentes"] = array(
         "tipo_enlace"     => "1"
     ),
     array(
-        "id"              => "EXISARTI",
-        "padre"           => "GESTARTI",
-        "id_modulo"       => "INVENTARIO",
-        "visible"         => "0",
-        "orden"           => "12",
-        "carpeta"         => "articulos",
-        "archivo"         => "existente",
-        "requiere_item"   => "0",
-        "tabla_principal" => "articulos",
-        "tipo_enlace"     => "1"
-    ),
-    array(
         "id"        	  => "MODIARTI",
         "padre"     	  => "GESTARTI",
         "id_modulo" 	  => "INVENTARIO",
         "visible"  	      => "0",
-        "orden"     	  => "15",
+        "orden"     	  => "10",
         "carpeta"   	  => "articulos",
         "archivo"  	 	  => "modificar",
         "requiere_item"   => "1",
@@ -323,9 +311,9 @@ $vistas = array(
         SELECT 	job_articulos.codigo AS id,
                 job_articulos.codigo AS CODIGO_INTERNO,
                 job_referencias_proveedor.referencia AS CODIGO_PROVEEDOR,
-                /*CONCAT(
+                CONCAT(
                     (
-                        IF (
+                        if (
                             (
                                 SELECT descripcion FROM job_estructura_grupos WHERE codigo =
                                 (
@@ -345,8 +333,7 @@ $vistas = array(
                     ),
                     ' ',
                     job_articulos.descripcion
-                )  AS DESCRIPCION,*/
-                job_articulos.descripcion AS DESCRIPCION,
+                )  AS DESCRIPCION,
                 job_marcas.descripcion AS MARCA,
                 CONCAT(
                     if(job_terceros.primer_nombre is not null, job_terceros.primer_nombre, ''),' ',
@@ -354,9 +341,7 @@ $vistas = array(
                     if(job_terceros.primer_apellido is not null, job_terceros.primer_apellido, ''),' ',
                     if(job_terceros.segundo_apellido is not null, job_terceros.segundo_apellido, ''),' ',
                     if(job_terceros.razon_social is not null, job_terceros.razon_social, '')
-                ) AS PROVEEDOR,
-                job_referencias_proveedor.documento_identidad_proveedor AS NIT
-
+                ) AS PROVEEDOR
         FROM 	job_articulos,
                 job_marcas,
                 job_referencias_proveedor,

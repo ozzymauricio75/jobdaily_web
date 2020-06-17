@@ -28,7 +28,6 @@
 $textos = array(
     "GESTARTI"                    => "Articulos",
     "ADICARTI"                    => "Adicionar articulo",
-    "EXISARTI"                    => "Agregar articulo existente",
     "CONSARTI"                    => "Consultar articulo",
     "MODIARTI"                    => "Modificar articulo",
     "ELIMARTI"                    => "Eliminar articulo",
@@ -37,7 +36,6 @@ $textos = array(
     "CODIGO_PROVEEDOR"            => "Código articulo",
     "REFERENCIA_PROVEEDOR"        => "Código o referencia del proveedor",
     "DESCRIPCION"                 => "Descripción",
-    "NIT"                         => "Nit",
     "FICHA_TECNICA"               => "Ficha tecnica",
     "FOTO"                        => "Foto",
     "ALTO"                        => "Altura(mm)",

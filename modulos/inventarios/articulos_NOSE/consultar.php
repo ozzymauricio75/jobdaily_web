@@ -43,7 +43,7 @@ if (!empty($url_generar)) {
         $titulo        = $componente->nombre;
 
         $consulta_imagen = SQL::seleccionar(array("imagenes"), array("id_asociado","categoria","ancho","alto"), "id_asociado = '$url_id' AND categoria ='2'");
-        $imagen          = SQL::filaEnObjeto($consulta_imagen);
+        $imagen        = SQL::filaEnObjeto($consulta_imagen);
 
         /***Obtener datos de la tabla de articulos ***/
         $impuesto_compra        = SQL::obtenerValor("tasas", "descripcion", "codigo = '$datos->codigo_impuesto_compra'");
@@ -54,11 +54,9 @@ if (!empty($url_generar)) {
         $unidad_presentacion    = SQL::obtenerValor("unidades", "nombre", "codigo = '$datos->codigo_unidad_presentacion'");
         $pais                   = SQL::obtenerValor("paises", "nombre", "codigo_iso = '$datos->codigo_iso'");        
         $id_proveedor           = SQL::obtenerValor("referencias_proveedor", "documento_identidad_proveedor", "codigo_articulo='$url_id' LIMIT 0,1");
-        
         $nombre_proveedor       = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$id_proveedor'");
         $nombre_proveedor       = explode("|",$nombre_proveedor);
         $nombre_proveedor       = $nombre_proveedor[0];
-
         $referencia             = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal = '1'");
         $codigo_barras          = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "codigo_articulo = '$url_id' AND principal = '1'");
 

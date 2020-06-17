@@ -30,36 +30,38 @@ $borrarSiempre = false;
 // Definición de tablas
 
 $tablas["articulos"] = array(
-    "codigo"                        => "VARCHAR(20) NOT NULL  COMMENT 'Codigo del articulo asignado por la empresa'",
-    "descripcion"                   => "VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Descripcion del arti­culo'",
-    "tipo_articulo"                 => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT '1->Materia prima, 2->Producto terminado'",
-    "ficha_tecnica"                 => "TEXT NOT NULL DEFAULT '' COMMENT 'Caracteristicas tecnicas de un articulo'",
-    "alto"                          => "INT(8) UNSIGNED COMMENT 'Altura del producto en milimetros'",
-    "ancho"                         => "INT(8) UNSIGNED COMMENT 'Ancho del producto en milimetros'",
-    "profundidad"                   => "INT(8) UNSIGNED COMMENT 'Profundidad del producto en milimetros'",
-    "peso"                          => "INT(8) UNSIGNED COMMENT 'Peso del producto en gramos'",   
-    "garantia"                      => "VARCHAR(255) NULL COMMENT 'Detalle que describe la garantia de un producto'",
-    "garantia_partes"               => "VARCHAR(255) NULL COMMENT 'Detalle que describe la garantia de las partes mas importantes'",
-    "codigo_impuesto_compra"        => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL DEFAULT '000' COMMENT 'llave foranea a la tabla tasas'",
-    "codigo_impuesto_venta"         => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL DEFAULT '000' COMMENT 'llave foranea a la tabla tasas'",
-    "codigo_marca"                  => "SMALLINT(4) UNSIGNED ZEROFILL NULL DEFAULT '0000' COMMENT 'llave foranea a la tabla marcas'",
-    "codigo_estructura_grupo"       => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL DEFAULT '0000' COMMENT 'llave foranea a la tabla estructura de grupos'",
-    "manejo_inventario"             => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT 'Manejo inventario: 1->Inventario valorizado 2->Solo maneja Kardex'",
-    "detalle_kardex"                => "ENUM('1','2') NOT NULL COMMENT '1->Lleva kardex por codigo interno, 2->Lleva kardex por serie'",
-    "codigo_unidad_venta"           => "INT(6) UNSIGNED ZEROFILL NOT NULL DEFAULT '000' COMMENT 'Llave foranea a la tabla unidades'",
-    "codigo_unidad_compra"          => "INT(6) UNSIGNED ZEROFILL NOT NULL DEFAULT '000' COMMENT 'Llave foranea a la tabla unidades'",
-    "codigo_unidad_presentacion"    => "INT(6) UNSIGNED ZEROFILL NOT NULL DEFAULT '000' COMMENT 'Llave foranea a la tabla unidades'",
-    "codigo_iso"                    => "VARCHAR(2) NOT NULL COMMENT 'Llave foranea a la tabla paises'",
-    "activo"                        => "ENUM('0','1') NOT NULL DEFAULT '1' COMMENT '0->El codigo esta inactivo, 1->El codigo esta activo'",
-    "imprime_listas"                => "ENUM('1','2','3') NOT NULL DEFAULT '1' COMMENT '1->Siempre imprime, 2->Solo sí hay existencia, 3->Nunca imprime'",
-    "fecha_creacion"                => "DATE NULL COMMENT 'Fecha en la cual se crea el articulo'"
+    "codigo"                     => "VARCHAR(20) NOT NULL  COMMENT 'Codigo del articulo asignado por la empresa'",
+    "codigo_proveedor"           => "VARCHAR(20) NOT NULL COMMENT 'Referencia o codigo del proveedor o codigo asignado por la empresa'",
+    "codigo_barras"              => "BIGINT(13) UNSIGNED ZEROFILL NULL COMMENT 'Referencia o codigo del proveedor o codigo asignado por la empresa'",
+    "descripcion"                => "VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Descripcion del arti­culo'",
+    "tipo_articulo"              => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT '1->Materia prima, 2->Producto terminado'",
+    "ficha_tecnica"              => "TEXT NOT NULL DEFAULT '' COMMENT 'Caracteristicas tecnicas de un articulo'",
+    "alto"                       => "INT(8) UNSIGNED COMMENT 'Altura del producto en milimetros'",
+    "ancho"                      => "INT(8) UNSIGNED COMMENT 'Ancho del producto en milimetros'",
+    "profundidad"                => "INT(8) UNSIGNED COMMENT 'Profundidad del producto en milimetros'",
+    "peso"                       => "INT(8) UNSIGNED COMMENT 'Peso del producto en gramos'",   
+    "garantia"                   => "VARCHAR(255) NULL COMMENT 'Detalle que describe la garantia de un producto'",
+    "garantia_partes"            => "VARCHAR(255) NULL COMMENT 'Detalle que describe la garantia de las partes mas importantes'",
+    "codigo_impuesto_compra"     => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL DEFAULT '000' COMMENT 'llave foranea a la tabla tasas'",
+    "codigo_impuesto_venta"      => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL DEFAULT '000' COMMENT 'llave foranea a la tabla tasas'",
+    "codigo_marca"               => "SMALLINT(4) UNSIGNED ZEROFILL NULL DEFAULT '0000' COMMENT 'llave foranea a la tabla marcas'",
+    "codigo_estructura_grupo"    => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL DEFAULT '0000' COMMENT 'llave foranea a la tabla estructura de grupos'",
+    "manejo_inventario"          => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT 'Manejo inventario: 1->Inventario valorizado 2->Solo maneja Kardex'",
+    "detalle_kardex"             => "ENUM('1','2') NOT NULL COMMENT '1->Lleva kardex por codigo interno, 2->Lleva kardex por serie'",
+    "codigo_unidad_venta"        => "INT(6) UNSIGNED ZEROFILL NOT NULL DEFAULT '000' COMMENT 'Llave foranea a la tabla unidades'",
+    "codigo_unidad_compra"       => "INT(6) UNSIGNED ZEROFILL NOT NULL DEFAULT '000' COMMENT 'Llave foranea a la tabla unidades'",
+    "codigo_unidad_presentacion" => "INT(6) UNSIGNED ZEROFILL NOT NULL DEFAULT '000' COMMENT 'Llave foranea a la tabla unidades'",
+    "codigo_iso"                 => "VARCHAR(2) NOT NULL COMMENT 'Llave foranea a la tabla paises'",
+    "activo"                     => "ENUM('0','1') NOT NULL DEFAULT '1' COMMENT '0->El codigo esta inactivo, 1->El codigo esta activo'",
+    "imprime_listas"             => "ENUM('1','2','3') NOT NULL DEFAULT '1' COMMENT '1->Siempre imprime, 2->Solo sí hay existencia, 3->Nunca imprime'",
+    "fecha_creacion"             => "DATE NULL COMMENT 'Fecha en la cual se crea el articulo'"
 );
 
 // Definición de llaves primarias
 $llavesPrimarias["articulos"] = "codigo";
 
 // Definición de llaves unicas
-$llavesPrimarias["articulos"] = "codigo,descripcion";
+$llavesPrimarias["articulos"] = "codigo,codigo_proveedor";
 
 // Definición de llaves foráneas
 $llavesForaneas["articulos"] = array(
@@ -180,39 +182,6 @@ $llavesForaneas["referencias_proveedor"] = array(
     )
 );
 
-// Definición de tablas
-$tablas["articulos_proveedor"] = array(
-    "codigo_articulo"               => "VARCHAR(20) NOT NULL  COMMENT 'Codigo de la tabla de articulos'",
-    "documento_identidad_proveedor" => "VARCHAR(12) NOT NULL COMMENT 'Documento identidad del proveedor'",
-    "fecha_modificacion"            => "DATE NULL COMMENT 'Fecha en la cual se modifica el articulo'"
-);
-
-// Definición de llaves primarias
-$llavesPrimarias["articulos_proveedor"] = "codigo_articulo,documento_identidad_proveedor";
-
-$llavesForaneas["articulos_proveedor"] = array(
-    array(
-        // Nombre de la llave
-        "codigo_articulo",
-        // Nombre del campo clave de la tabla local
-        "codigo_articulo",
-        // Nombre de la tabla relacionada
-        "articulos",
-        // Nombre del campo clave en la tabla relacionada
-        "codigo"
-    ),
-    array(
-        // Nombre de la llave
-        "articulo_tercero",
-        // Nombre del campo clave de la tabla local
-        "documento_identidad_proveedor",
-        // Nombre de la tabla relacionada
-        "proveedores",
-        // Nombre del campo clave en la tabla relacionada
-        "documento_identidad"
-    )
-);
-
 // Inserción de datos iniciales
 $registros["articulos"] = array(
     array(
@@ -268,23 +237,11 @@ $registros["componentes"] = array(
         "tipo_enlace"     => "1"
     ),
     array(
-        "id"              => "EXISARTI",
-        "padre"           => "GESTARTI",
-        "id_modulo"       => "INVENTARIO",
-        "visible"         => "0",
-        "orden"           => "12",
-        "carpeta"         => "articulos",
-        "archivo"         => "existente",
-        "requiere_item"   => "0",
-        "tabla_principal" => "articulos",
-        "tipo_enlace"     => "1"
-    ),
-    array(
         "id"        	  => "MODIARTI",
         "padre"     	  => "GESTARTI",
         "id_modulo" 	  => "INVENTARIO",
         "visible"  	      => "0",
-        "orden"     	  => "15",
+        "orden"     	  => "10",
         "carpeta"   	  => "articulos",
         "archivo"  	 	  => "modificar",
         "requiere_item"   => "1",
@@ -321,11 +278,11 @@ $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_articulos AS
         SELECT 	job_articulos.codigo AS id,
-                job_articulos.codigo AS CODIGO_INTERNO,
-                job_referencias_proveedor.referencia AS CODIGO_PROVEEDOR,
-                /*CONCAT(
+                job_articulos.codigo AS CODIGO,
+                job_referencias_proveedor.referencia AS REFERENCIA,
+                CONCAT(
                     (
-                        IF (
+                        if (
                             (
                                 SELECT descripcion FROM job_estructura_grupos WHERE codigo =
                                 (
@@ -345,8 +302,7 @@ $vistas = array(
                     ),
                     ' ',
                     job_articulos.descripcion
-                )  AS DESCRIPCION,*/
-                job_articulos.descripcion AS DESCRIPCION,
+                )  AS DESCRIPCION,
                 job_marcas.descripcion AS MARCA,
                 CONCAT(
                     if(job_terceros.primer_nombre is not null, job_terceros.primer_nombre, ''),' ',
@@ -354,9 +310,7 @@ $vistas = array(
                     if(job_terceros.primer_apellido is not null, job_terceros.primer_apellido, ''),' ',
                     if(job_terceros.segundo_apellido is not null, job_terceros.segundo_apellido, ''),' ',
                     if(job_terceros.razon_social is not null, job_terceros.razon_social, '')
-                ) AS PROVEEDOR,
-                job_referencias_proveedor.documento_identidad_proveedor AS NIT
-
+                ) AS PROVEEDOR
         FROM 	job_articulos,
                 job_marcas,
                 job_referencias_proveedor,
@@ -406,20 +360,7 @@ $vistas = array(
             job_articulos	
         WHERE
             job_articulos.codigo != '';"
-    ),
-    array(
-        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_seleccion_referencias_proveedor AS
-        SELECT  job_referencias_proveedor.codigo_articulo AS id,
-                job_referencias_proveedor.documento_identidad_proveedor AS proveedor,
-                CONCAT(
-                    job_referencias_proveedor.referencia,
-                    '|',job_referencias_proveedor.documento_identidad_proveedor
-                ) AS referencia
-        FROM
-            job_referencias_proveedor   
-        WHERE
-            job_referencias_proveedor.codigo_articulo != '';"
-    ) 
+    )
 );
 /***
     DROP TABLE IF EXISTS job_menu_articulos;

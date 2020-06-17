@@ -42,8 +42,9 @@ if (!empty($url_generar)) {
         $error         = "";
         $titulo        = $componente->nombre;
 
-        $consulta      = SQL::seleccionar(array("imagenes"), array("id_asociado","ancho","alto"), "id_asociado = '$url_id' AND categoria = '2'");
-        $imagen        = SQL::filaEnObjeto($consulta);
+        $consulta_imagen = SQL::seleccionar(array("imagenes"), array("id_asociado","categoria","ancho","alto"), "id_asociado = '$url_id' AND categoria ='2'");
+        $imagen        = SQL::filaEnObjeto($consulta_imagen);
+
         if ($imagen){
             $muestra_imagen = HTML::imagen(HTTP::generarURL("VISUIMAG")."&id=".$imagen->id_asociado, array("width" => $imagen->ancho, "height" => $imagen->alto));
         } else {
@@ -108,7 +109,6 @@ if (!empty($url_generar)) {
             }
         }
 
-
         /*** Definición de pestaña general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
@@ -136,10 +136,6 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("ancho", $textos["ANCHO"], $datos->ancho),
                 HTML::mostrarDato("profundidad", $textos["PROFUNDIDAD"], $datos->profundidad),
                 HTML::mostrarDato("peso", $textos["PESO"], $datos->peso)
-            ),
-            array(
-                HTML::mostrarDato("foto", $textos["FOTO"], ""),
-                $muestra_imagen
             )
         );
 
@@ -180,6 +176,16 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("activo", $textos["ESTADO"], $activo[$datos->activo])
             )
         );
+
+        if ($imagen) {
+            $id_imagen = $imagen->id_asociado."|".$imagen->categoria;
+
+            $formularios["PESTANA_IMAGEN"] = array(
+                array(
+                    HTML::imagen(HTTP::generarURL("VISUIMAG")."&id=".$id_imagen, array("width" => $imagen->ancho, "height" => $imagen->alto))
+                )
+            );
+        }
 
         if(isset($item_referencias)){
             $formularios["PESTANA_REFERENCIA"] = array(

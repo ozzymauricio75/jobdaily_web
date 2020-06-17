@@ -107,7 +107,7 @@ if(isset($url_eliminarReferencia) && isset($url_indice_tabla)){
         $mensaje = $textos["REFERENCIA_ELIMINADA"];
     }else{
         $error   = 0;
-        $mensaje = $textos["ERROR_REFERENCIA"];
+        $mensaje = $textos["ERROR_REFERENCIA_CUENTA"];
     }
     
     $datos   = array();
@@ -171,7 +171,7 @@ if (!empty($url_generar)) {
 
         // Obtener datos de la referencias del codigo
         $referencia_principal = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal ='1'");
-        $codigo_barras        = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "codigo_articulo = '$url_id' AND principal ='1'");
+
         // Obtener la marca del articulo
         $codigo_marca = SQL::obtenerValor("articulos", "codigo_marca", "codigo = '$url_id'");
 
@@ -223,7 +223,7 @@ if (!empty($url_generar)) {
             array(
                 HTML::campoTextoCorto("referencia_principal", $textos["REFERENCIA_PROVEEDOR"], 20, 20, $referencia_principal, array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"])),
 
-                HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, $codigo_barras,array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)"))
+                HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, $datos->codigo_barras,array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)"))
             ),
             array(
                 HTML::campoTextoCorto("*descripcion", $textos["DESCRIPCION"], 55, 255, htmlentities(stripslashes($datos->descripcion)), array("title" => $textos["AYUDA_DESCRIPCION"]))
@@ -259,7 +259,7 @@ if (!empty($url_generar)) {
             array(
                 HTML::listaSeleccionSimple("*codigo_impuesto_compra", $textos["IMPUESTO_COMPRA"], HTML::generarDatosLista("tasas", "codigo", "descripcion"), $codigo_impuesto_compra, array("title" => $textos["AYUDA_IMPUESTO_COMPRA"])),
 
-                //HTML::listaSeleccionSimple("*codigo_impuesto_venta", $textos["IMPUESTO_VENTA"], HTML::generarDatosLista("tasas", "codigo", "descripcion"), $codigo_impuesto_venta, array("title" => $textos["AYUDA_IMPUESTO_VENTA"]))
+                HTML::listaSeleccionSimple("*codigo_impuesto_venta", $textos["IMPUESTO_VENTA"], HTML::generarDatosLista("tasas", "codigo", "descripcion"), $codigo_impuesto_venta, array("title" => $textos["AYUDA_IMPUESTO_VENTA"]))
             ),
             array(
                 HTML::listaSeleccionSimple("codigo_marca", $textos["MARCA"], HTML::generarDatosLista("marcas", "codigo", "descripcion","codigo>0"), $codigo_marca, array("title" => $textos["AYUDA_MARCA"]))
@@ -418,170 +418,155 @@ if (!empty($url_generar)) {
     }
     exit();
 
-/*** Modificar el elemento seleccionado ***/
+    /*** Modificar el elemento seleccionado ***/
 } 
 
-/*** Asumir por defecto que no hubo error ***/
-$error   = false;
-$mensaje = $textos["ITEM_MODIFICADO"];
+    /*** Asumir por defecto que no hubo error ***/
+    $error   = false;
+    $mensaje = $textos["ITEM_MODIFICADO"];
 
-/*** Validar campos requeridos ***/
-if(empty($forma_codigo)){
-    $error   = true;
-    $mensaje = $textos["CODIGO_VACIO"];  
+   /*** Validar campos requeridos ***/
+   if(empty($forma_codigo)){
+		$error   = true;
+		$mensaje = $textos["CODIGO_VACIO"];  
 		
-}elseif(empty($forma_descripcion)){
-	$error   = true;
-	$mensaje = $textos["DESCRIPCION_VACIO"]; 
+	}elseif(empty($forma_descripcion)){
+		$error   = true;
+		$mensaje = $textos["DESCRIPCION_VACIO"]; 
 		
-}elseif(empty($forma_referencia_principal)){
-	$error   = true;
-	$mensaje = $textos["REFERENCIA_VACIO"];   
-}elseif(empty($forma_codigo_unidad_compra)){
-    $error = true;
-    $mensaje = $textos["UNIDAD_COMPRA_VACIO"];   
-}elseif(empty($forma_documento_identidad_proveedor)){
-    $error = true;
-    $mensaje = $textos["PROVEEDOR_VACIO"];   
+	}elseif(empty($forma_referencia_principal)){
+		$error   = true;
+		$mensaje = $textos["REFERENCIA_VACIO"];   
+	}elseif(empty($forma_codigo_unidad_compra)){
+      $error = true;
+      $mensaje = $textos["UNIDAD_COMPRA_VACIO"];   
+	}elseif(empty($forma_documento_identidad_proveedor)){
+      $error = true;
+      $mensaje = $textos["PROVEEDOR_VACIO"];   
     
-}elseif($existe = SQL::existeItem("articulos", "codigo", $forma_codigo,"codigo != '$forma_codigo'")){
-    $error   = true;
-    $mensaje = $textos["ERROR_EXISTE_CODIGO"]; 
+    }elseif($existe = SQL::existeItem("articulos", "codigo", $forma_codigo,"codigo != '$forma_codigo'")){
+	    $error   = true;
+        $mensaje = $textos["ERROR_EXISTE_CODIGO"]; 
 
-}else {
+    } else {
 
-    $datos = array(
-        "codigo"                     => $forma_codigo,
-        "descripcion"                => $forma_descripcion,
-        "tipo_articulo"              => $forma_tipo_articulo,
-        "ficha_tecnica"              => $forma_ficha_tecnica,
-        "alto"                       => $forma_alto,
-        "ancho"                      => $forma_ancho,
-        "profundidad"                => $forma_profundidad,
-        "peso"                       => $forma_peso,
-        "garantia"                   => "",
-        "garantia_partes"            => "",
-        "codigo_impuesto_compra"     => $forma_codigo_impuesto_compra,
-        "codigo_impuesto_venta"      => $forma_codigo_impuesto_compra,
-        "codigo_marca"               => $forma_codigo_marca,
-        "codigo_estructura_grupo"    => $forma_codigo_estructura_grupo,
-        "manejo_inventario"          => '1',
-        "codigo_unidad_venta"        => '1',
-        "codigo_unidad_compra"       => $forma_codigo_unidad_compra,
-        "codigo_unidad_presentacion" => '1',
-        "codigo_iso"                 => $forma_codigo_iso,
-        "activo"                     => $forma_activo,
-        "imprime_listas"             => '1'
-    );
+        $datos = array(
+            "codigo"                     => $forma_codigo,
+            "codigo_proveedor"           => $forma_documento_identidad_proveedor,
+            "codigo_barras"              => $forma_codigo_barras,
+            "descripcion"                => $forma_descripcion,
+            "tipo_articulo"              => $forma_tipo_articulo,
+            "ficha_tecnica"              => $forma_ficha_tecnica,
+            "alto"                       => $forma_alto,
+            "ancho"                      => $forma_ancho,
+            "profundidad"                => $forma_profundidad,
+            "peso"                       => $forma_peso,
+            "garantia"                   => "",
+            "garantia_partes"            => "",
+            "codigo_impuesto_compra"     => $forma_codigo_impuesto_compra,
+            "codigo_impuesto_venta"      => $forma_codigo_impuesto_venta,
+            "codigo_marca"               => $forma_codigo_marca,
+            "codigo_estructura_grupo"    => $forma_codigo_estructura_grupo,
+            "manejo_inventario"          => '1',
+            "codigo_unidad_venta"        => '1',
+            "codigo_unidad_compra"       => $forma_codigo_unidad_compra,
+            "codigo_unidad_presentacion" => '1',
+            "codigo_iso"                 => $forma_codigo_iso,
+            "activo"                     => $forma_activo,
+            "imprime_listas"             => '1'
+        );
 
-    $consulta = SQL::modificar("articulos", $datos, "codigo = '$forma_codigo'");
+        $consulta = SQL::modificar("articulos", $datos, "codigo = '$forma_codigo'");
 
-    $datos_articulo = array(
-        "codigo_articulo"               => $forma_codigo,
-        "documento_identidad_proveedor" => $forma_documento_identidad_proveedor,
-        "fecha_modificacion"            => date("Y-m-d H:i:s")
-    );
+        if ($consulta) {
+            $error   = false;
+            $mensaje = $textos["ITEM_MODIFICADO"];
 
-    $modificar_articulo = SQL::modificar("articulos_proveedor", $datos_articulo,"codigo_articulo = '$forma_codigo'");
+            $registros = 0;
 
-    $datos = array(
-        "codigo_articulo"               => $forma_codigo,
-        "referencia"                    => $forma_referencia_principal,
-        "documento_identidad_proveedor" => $forma_documento_identidad_proveedor,
-        "codigo_barras"                 => $forma_codigo_barras,
-        "principal"                     => 1
-    );
-                        
-    $condicion  = "documento_identidad_proveedor = '$forma_documento_identidad_proveedor' AND codigo_articulo='$forma_codigo' AND principal = '1'";
+            if (!empty($_FILES["imagen"]["name"])) {
+                $original   = $_FILES["imagen"]["name"];
+                $temporal   = $_FILES["imagen"]["tmp_name"];
+                $extension  = strtolower(substr($original, (strrpos($original, ".") - strlen($original)) + 1));
 
-    $insertar   = SQL::modificar("referencias_proveedor", $datos, $condicion);
+                if (strtolower($extension) != "png" && strtolower($extension) != "jpg" && strtolower($extension) != "gif") {
+                    $error   = true;
+                    $mensaje = $textos["ERROR_FORMATO_IMAGEN"];
 
-    if ($insertar) {
-        $error   = false;
-        $mensaje = $textos["ITEM_MODIFICADO"];
-
-        if (!empty($_FILES["imagen"]["name"])) {
-            $original   = $_FILES["imagen"]["name"];
-            $temporal   = $_FILES["imagen"]["tmp_name"];
-            $extension  = strtolower(substr($original, (strrpos($original, ".") - strlen($original)) + 1));
-
-            if (strtolower($extension) != "png" && strtolower($extension) != "jpg" && strtolower($extension) != "gif") {
-                $error   = true;
-                $mensaje = $textos["ERROR_FORMATO_IMAGEN"];
-
-            } else {
-                list($ancho, $alto, $tipo) = getimagesize($temporal);
-
-                $datos   = array(
-                    "categoria"   => "2",
-                    "id_asociado" => $forma_codigo,
-                    "contenido"   => file_get_contents($temporal),
-                    "tipo"        => $tipo,
-                    "extension"   => $extension,
-                    "ancho"       => $ancho,
-                    "alto"        => $alto
-                );
-
-                $consulta = SQL::eliminar("imagenes", "categoria = '2' AND id_asociado = '$forma_codigo'");
-                $insertar = SQL::insertarArchivo("imagenes", $datos);
-            }
-
-        } if (isset($forma_referencias)) {
-            foreach ($forma_referencias as $id_referencias_alternas) {
-                    
-                $id_referencia  = $id_referencias_alternas;
-                $referencia     = $forma_referencias_alternas[$id_referencia];
-                $codigo_barras  = $forma_codigo_barras_referencia[$id_referencia];
-                $estado         = $forma_estadoModificar[$id_referencia];
-
-                $datos = array(
-                    "codigo_articulo"               => $forma_codigo,
-                    "referencia"                    => $referencia,
-                    "documento_identidad_proveedor" => $forma_documento_identidad_proveedor,
-                    "codigo_barras"                 => $codigo_barras,
-                    "principal"                     => 0
-                );
-
-                if ($estado != '1'){
-                    $insertar = SQL::insertar("referencias_proveedor", $datos);
                 } else {
+                    list($ancho, $alto, $tipo) = getimagesize($temporal);
 
-                    $llave                          = explode("|",$forma_referencias);
-                    $codigo_articulo                = $llave[0];
-                    $referencia                     = $llave[1];
-                    $documento_identidad_proveedor  = $llave[2];
-                    $codigo_barras                  = $llave[3];
-                    $principal                      = $llave[4];
-
-                    $datos = array(
-                        "codigo_articulo"               => $codigo_articulo,
-                        "referencia"                    => $referencia,
-                        "documento_identidad_proveedor" => $forma_documento_identidad_proveedor,
-                        "codigo_barras"                 => $forma_codigo_barras,
-                        "principal"                     => 0
+                    $datos   = array(
+                        "categoria"   => "2",
+                        "id_asociado" => $forma_codigo,
+                        "contenido"   => file_get_contents($temporal),
+                        "tipo"        => $tipo,
+                        "extension"   => $extension,
+                        "ancho"       => $ancho,
+                        "alto"        => $alto
                     );
-                        
-                    $condicion  = "documento_identidad_proveedor = '$forma_documento_identidad_proveedor' AND codigo_articulo='$codigo_articulo' AND principal = '0'";
-    
-                    $insertar   = SQL::modificar("referencias_proveedor", $datos, $condicion);
-                    /*** Error de insercón ***/
-                    if (!$insertar) {
-                        $error     = true;
-                        $mensaje   = $textos["ERROR_MODIFICAR_ITEM"];
-                    }
+
+                    $consulta = SQL::eliminar("imagenes", "categoria = '2' AND id_asociado = '$forma_codigo'");
+                    $insertar = SQL::insertarArchivo("imagenes", $datos);
                 }
             }
-        }
-    }else {
-        $error   = true;
-        $mensaje = $textos["ERROR_MODIFICAR_ITEM"];
+
+            if (isset($forma_referencias)) {
+                foreach ($forma_referencias as $id_referencias_alternas) {
+                    
+                    $id_referencia  = $id_referencias_alternas;
+                    $referencia     = $forma_referencias_alternas[$id_referencia];
+                    $codigo_barras  = $forma_codigo_barras_referencia[$id_referencia];
+                    $estado         = $forma_estadoModificar[$id_referencia];
+
+                        $datos = array(
+                            "codigo_articulo"               => $forma_codigo,
+                            "referencia"                    => $referencia,
+                            "documento_identidad_proveedor" => $forma_documento_identidad_proveedor,
+                            "codigo_barras"                 => $codigo_barras,
+                            "principal"                     => 0
+                        );
+
+                        if ($estado != '1'){
+                            $insertar = SQL::insertar("referencias_proveedor", $datos);
+                        } else {
+
+                            $llave                          = explode("|",$forma_referencias);
+                            $codigo_articulo                = $llave[0];
+                            $referencia                     = $llave[1];
+                            $documento_identidad_proveedor  = $llave[2];
+                            $codigo_barras                  = $llave[3];
+                            $principal                      = $llave[4];
+
+                            $datos = array(
+                                "codigo_articulo"               => $forma_codigo,
+                                "referencia"                    => $referencia,
+                                "documento_identidad_proveedor" => $documento_identidad_proveedor,
+                                "codigo_barras"                 => $codigo_barras,
+                                "principal"                     => 0
+                            );
+                        
+                            $condicion = "documento_identidad_proveedor = '$documento_identidad_proveedor' AND codigo_articulo='$forma_codigo'";
+                            $condicion .= " AND codigo_barras = '$codigo_barras'";
+                            $insertar = SQL::modificar("referencias_proveedor", $datos, $condicion);
+                        }
+
+                        /*** Error de insercón ***/
+                        if (!$insertar) {
+                            $error     = true;
+                            $mensaje   = $textos["ERROR_ADICIONAR_ITEM"];
+                        }
+                    }
+                }
+            } else {
+                $error   = true;
+                $mensaje = $textos["ERROR_MODIFICAR_ITEM"];
+        }   
     }
-} 
 
-/*** Enviar datos con la respuesta del proceso al script que originï¿½ la peticiï¿½n ***/
-$respuesta    = array();
-$respuesta[0] = $error;
-$respuesta[1] = $mensaje;
-HTTP::enviarJSON($respuesta);
-
+    /*** Enviar datos con la respuesta del proceso al script que originï¿½ la peticiï¿½n ***/
+    $respuesta    = array();
+    $respuesta[0] = $error;
+    $respuesta[1] = $mensaje;
+    HTTP::enviarJSON($respuesta);
 ?>

@@ -42,8 +42,14 @@ if (!empty($url_generar)) {
         $error         = "";
         $titulo        = $componente->nombre;
 
-        $consulta_imagen = SQL::seleccionar(array("imagenes"), array("id_asociado","categoria","ancho","alto"), "id_asociado = '$url_id' AND categoria ='2'");
-        $imagen          = SQL::filaEnObjeto($consulta_imagen);
+        $consulta      = SQL::seleccionar(array("imagenes"), array("id_asociado","ancho","alto"), "id_asociado = '$url_id' AND categoria = '2'");
+        $imagen        = SQL::filaEnObjeto($consulta);
+        if ($imagen){
+            $muestra_imagen = HTML::imagen(HTTP::generarURL("VISUIMAG")."&id=".$imagen->id_asociado, array("width" => $imagen->ancho, "height" => $imagen->alto));
+        } else {
+            $muestra_imagen = "";
+        }
+        
 
         /***Obtener datos de la tabla de articulos ***/
         $impuesto_compra        = SQL::obtenerValor("tasas", "descripcion", "codigo = '$datos->codigo_impuesto_compra'");
@@ -54,11 +60,9 @@ if (!empty($url_generar)) {
         $unidad_presentacion    = SQL::obtenerValor("unidades", "nombre", "codigo = '$datos->codigo_unidad_presentacion'");
         $pais                   = SQL::obtenerValor("paises", "nombre", "codigo_iso = '$datos->codigo_iso'");        
         $id_proveedor           = SQL::obtenerValor("referencias_proveedor", "documento_identidad_proveedor", "codigo_articulo='$url_id' LIMIT 0,1");
-        
         $nombre_proveedor       = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$id_proveedor'");
         $nombre_proveedor       = explode("|",$nombre_proveedor);
         $nombre_proveedor       = $nombre_proveedor[0];
-
         $referencia             = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal = '1'");
         $codigo_barras          = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "codigo_articulo = '$url_id' AND principal = '1'");
 
@@ -104,18 +108,19 @@ if (!empty($url_generar)) {
             }
         }
 
+
         /*** Definición de pestaña general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo),
+                HTML::mostrarDato("codigo   ", $textos["CODIGO"], $datos->codigo),
                 HTML::mostrarDato("tipo_articulo", $textos["TIPO_ARTICULO"], $tipo_articulo[$datos->tipo_articulo])
             ),
             array(
                 HTML::mostrarDato("id_proveedor", $textos["PROVEEDOR"], $nombre_proveedor)
             ),
             array(
-                HTML::mostrarDato("referencia", $textos["REFERENCIA"], $referencia),
-                HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $codigo_barras)
+                HTML::mostrarDato("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], $datos->codigo_alfanumerico),
+                HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $datos->codigo_barras)
             ),
             array(
                 HTML::mostrarDato("descripcion", $textos["DESCRIPCION"], $datos->descripcion)
@@ -131,6 +136,10 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("ancho", $textos["ANCHO"], $datos->ancho),
                 HTML::mostrarDato("profundidad", $textos["PROFUNDIDAD"], $datos->profundidad),
                 HTML::mostrarDato("peso", $textos["PESO"], $datos->peso)
+            ),
+            array(
+                HTML::mostrarDato("foto", $textos["FOTO"], ""),
+                $muestra_imagen
             )
         );
 
@@ -143,10 +152,14 @@ if (!empty($url_generar)) {
 
         /*** Definición de pestaña de datos operativos de articulos***/
         $formularios["PESTANA_DATOS"] = array(
-            /*array(
+            array(
+                HTML::mostrarDato("referencia", $textos["REFERENCIA"], $referencia),
+                HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $codigo_barras)
+            ),
+            array(
                 HTML::mostrarDato("garantia", $textos["GARANTIA"], $datos->garantia),
                 HTML::mostrarDato("garantia_partes", $textos["GARANTIA_PARTES"], $datos->garantia_partes)
-            ),*/
+            ),
             array(
                 HTML::mostrarDato("impuesto_compra", $textos["IMPUESTO_COMPRA"], $impuesto_compra),
                 HTML::mostrarDato("impuesto_venta", $textos["IMPUESTO_VENTA"], $impuesto_venta)
@@ -158,25 +171,15 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("manejo_inventario", $textos["MANEJO_INVENTARIO"], $manejo_inventario[$datos->manejo_inventario])
             ),
             array(
-            //    HTML::mostrarDato("unidad_venta", $textos["UNIDAD_VENTA"], $unidad_venta),
+                HTML::mostrarDato("unidad_venta", $textos["UNIDAD_VENTA"], $unidad_venta),
                 HTML::mostrarDato("unidad_compra", $textos["UNIDAD_COMPRA"], $unidad_compra),
-            //    HTML::mostrarDato("unidad_presentacion", $textos["UNIDAD_PRESENTACION"], $unidad_presentacion)
+                HTML::mostrarDato("unidad_presentacion", $textos["UNIDAD_PRESENTACION"], $unidad_presentacion)
             ),
             array(
                 HTML::mostrarDato("pais", $textos["PAIS"], $pais),
                 HTML::mostrarDato("activo", $textos["ESTADO"], $activo[$datos->activo])
             )
         );
-
-        if ($imagen) {
-            $id_imagen = $imagen->id_asociado."|".$imagen->categoria;
-
-            $formularios["PESTANA_IMAGEN"] = array(
-                array(
-                    HTML::imagen(HTTP::generarURL("VISUIMAG")."&id=".$id_imagen, array("width" => $imagen->ancho, "height" => $imagen->alto))
-                )
-            );
-        }
 
         if(isset($item_referencias)){
             $formularios["PESTANA_REFERENCIA"] = array(
@@ -190,14 +193,40 @@ if (!empty($url_generar)) {
                 )
             );
         }
-        $contenido = HTML::generarPestanas($formularios);
+
+        /*** Definición de botones ***/
+        $botones = array(
+            HTML::boton("botonAceptar", $textos["ACEPTAR"], "eliminarItem('$url_id');", "aceptar")
+        );
+
+        $contenido = HTML::generarPestanas($formularios, $botones);
     }
 
-    /*** Enviar datos para la generación del formulario al script que originï¿½ la peticiï¿½n ***/
+    /*** Enviar datos para la generación del formulario al script que originó la petición ***/
     $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $titulo;
     $respuesta[2] = $contenido;
+    HTTP::enviarJSON($respuesta);
+
+/*** Eliminar el elemento seleccionado ***/
+} elseif (!empty($forma_procesar)) {
+    $consulta = SQL::eliminar("referencias_proveedor", "codigo_articulo = '$forma_id'");
+    $consulta = SQL::eliminar("imagenes", "id_asociado = '$forma_id' AND categoria = '2'");
+    $consulta = SQL::eliminar("articulos", "codigo = '$forma_id'");
+
+    if ($consulta) {
+        $error   = false;
+        $mensaje = $textos["ITEM_ELIMINADO"];
+    } else {
+        $error   = true;
+        $mensaje = $textos["ERROR_ELIMINAR_ITEM"];
+    }
+
+    /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
+    $respuesta    = array();
+    $respuesta[0] = $error;
+    $respuesta[1] = $mensaje;
     HTTP::enviarJSON($respuesta);
 }
 ?>

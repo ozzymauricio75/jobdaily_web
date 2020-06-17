@@ -108,6 +108,7 @@ $imagenesGlobales["cargando"]            = $rutasGlobales["imagenes"]."/cargando
 $imagenesGlobales["buscar"]              = $rutasGlobales["imagenes"]."/buscar.png";
 $imagenesGlobales["restaurar"]           = $rutasGlobales["imagenes"]."/restaurar.png";
 $imagenesGlobales["adicionar"]           = $rutasGlobales["imagenes"]."/adicionar.png";
+$imagenesGlobales["existente"]           = $rutasGlobales["imagenes"]."/modificar.png";
 $imagenesGlobales["consultar"]           = $rutasGlobales["imagenes"]."/consultar.png";
 $imagenesGlobales["modificar"]           = $rutasGlobales["imagenes"]."/modificar.png";
 $imagenesGlobales["eliminar"]            = $rutasGlobales["imagenes"]."/eliminar.png";

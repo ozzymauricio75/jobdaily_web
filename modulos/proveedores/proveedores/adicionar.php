@@ -338,7 +338,7 @@ if (!empty($url_generar)) {
         );
         
         /*** Definición de pestaña PROVEEDOR ***/
-        $funciones["PESTANA_PROVEEDOR"] = "recargarActividades()";
+        //$funciones["PESTANA_PROVEEDOR"] = "recargarActividades()";
         $formularios["PESTANA_PROVEEDOR"] = array(
             array(
                 HTML::listaSeleccionSimple("id_actividad_principal", $textos["ACTIVIDAD_PRINCIPAL"], $actividades, array("title" => $textos["AYUDA_ACTIVIDAD_PRINCIPAL"],"onBlur" => "validarItem(this);"))
@@ -386,51 +386,7 @@ if (!empty($url_generar)) {
             array(
                 HTML::listaSeleccionSimple("codigo_plazo_pago_contado", $textos["FORMA_PAGO_CONTADO"], $plazos_pagos,"",array("title" => $textos["AYUDA_PAGO_CONTADO"]))
             )
-           /*array(
-                HTML::listaSeleccionSimple("codigo_plazo_pago_credito", $textos["FORMA_PAGO_CREDITO"], $plazos_pagos,"",array("title" => $textos["AYUDA_PAGO_CREDITO"])),
-                HTML::campoTextoCorto("tasa_pago_credito", $textos["TASA_PAGO_CREDITO"], 6, 6, "", array("title" => $textos["AYUDA_TASA_CUOTAS_CREDITO"],"onBlur" => "validarItem(this);","onKeyPress" => "return campoDecimal(event)")),
-                HTML::listaSeleccionSimple("liquidacion_tasa_credito", $textos["LIQUIDACION_TASA_CREDITO"], $forma_liquidacion_tasa_credito, "", array("title" => $textos["AYUDA_LIQUIDACION_TASA_CREDITO"]))
-            )
-            /*array(
-                HTML::campoTextoCorto("porcentaje_primera_cuota", $textos["PRIMERA_CUOTA"], 6, 6, "", array("title" => $textos["AYUDA_PRIMERA_CUOTA"],"onBlur" => "validarItem(this);","onKeyPress" => "return campoDecimal(event)")),
-                HTML::campoTextoCorto("porcentaje_ultima_cuota", $textos["ULTIMA_CUOTA"], 6, 6, "", array("title" => $textos["AYUDA_ULTIMA_CUOTA"],"onBlur" => "validarItem(this);","onKeyPress" => "return campoDecimal(event)"))
-            ),
-            array(
-                HTML::marcaChequeo("pagos_anticipados", $textos["PAGOS_ANTICIPADOS"])
-            ),
-            array(
-                HTML::marcaChequeo("pagos_efectivo", $textos["PAGOS_EFECTIVOS"])
-            ),
-            array(
-                HTML::marcaChequeo("transferencia_electronica", $textos["TRANSFERENCIA_ELECTRONICA"])
-            ),
-            array(
-                HTML::marcaChequeo("tarjeta_credito", $textos["TARJETA_CREDITO"])
-            ),
-            array(
-                HTML::marcaChequeo("triangulacion_bancaria", $textos["TRIANGULACION_BANCARIA"])
-            ),
-            array(
-                HTML::mostrarDato("dato_vacio", $textos["TITULO_DESCUENTO_LINEA"], $textos["DATO_VACIO"])
-            ),
-            array(
-                HTML::marcaSeleccion("liquidacion_descuento_en_linea", $textos["VALOR_NETO_UNITARIO"], 1, true, array("id" => "descuento_linea_neto_unitario",  "onChange" => "GlobalUnitario(0)")),
-                HTML::marcaSeleccion("liquidacion_descuento_en_linea", $textos["VALOR_NETO_TOTAL"], 2, false, array("id" => "descuento_linea_neto_global", "onChange" => "GlobalUnitario(1)"))
-            ),
-            array(
-                HTML::mostrarDato("dato_vacio", $textos["TITULO_DESCUENTO_GLOBAL"], $textos["DATO_VACIO"])
-            ),
-            array(
-                HTML::contenedor(
-                    HTML::marcaSeleccion("liquidacion_descuento_global", $textos["NETO_DESDE_UNITARIO"], 1, true, array("id" => "descuento_global_neto_unitario")),
-                    array("id" => "descuentos_globales")
-                ),
-                HTML::marcaSeleccion("liquidacion_descuento_global", $textos["NETO_CON_TOTAL"], 2, false, array("id" => "descuento_global_neto_total")),
-                HTML::marcaSeleccion("liquidacion_descuento_global", $textos["NETO_FINAL_FACTURA"], 3, false, array("id" => "descuento_global_neto_valor_final"))
-            )*/
         );
-
-        //'1-> liquida el valor neto desde el valor unitario 2-> liquida el valor neto con el valor total 3-> realiza el calculo al final de la factura'"
 
         /*** Definición de pestaña cuentas bancarias ***/
         $formularios["PESTANA_CUENTAS"] = array(

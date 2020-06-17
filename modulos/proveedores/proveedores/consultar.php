@@ -93,6 +93,7 @@ if (!empty($url_generar)) {
         $columnasTercero = SQL::obtenerColumnas($vistaTercero);
         $consultaTercero = SQL::seleccionar(array($vistaTercero), $columnasTercero, "documento_identidad = '$datosProveedor->documento_identidad'");
         $datosTercero    = SQL::filaEnObjeto($consultaTercero);
+        
         if(($datosTercero->tipo_persona) == 1){
             $primer_nombre    = "PRIMER_NOMBRE";
             $segundo_nombre   = "SEGUNDO_NOMBRE";
