@@ -60,7 +60,7 @@
                     $('#codigo_unidad_compra').append('<option value="'+codigo_unidad_compra+'">' +nombre_unidad_compra+ '</option>');
                     $('#codigo_iso').val(datos[16]);
 
-                }else{
+                }/*else{
                     $('#codigo').val('');
                     $('#codigo').val(codigo);
                     $('#codigo_alfanumerico').val('');
@@ -79,7 +79,7 @@
                     $('#codigo_iso').val('');
                     $('#referencia').val('');
                     $('#codigo_barras_alterna').val('');
-                }
+                }*/
             }
         });
     } 

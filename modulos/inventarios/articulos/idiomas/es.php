@@ -69,6 +69,7 @@ $textos = array(
     "ERROR_EXISTE_ALFANUMERICO"   => "Ya existe código",
     "ERROR_EXISTE_DESCRIPCION"    => "Ya existe un artículo con esa descripción",
     "ERROR_EXISTE_REFERENCIA"     => "Ya existe una referencia para un código", 
+    "ERROR_EXISTE_PROVEEDOR"      => "Ya existe un codigo para ese proveedor", 
     "ERROR_DATO_ALTO"             => "Digite un valor numerico",
     "AYUDA_CODIGO"                => "Código del artículo",
     "AYUDA_DESCRIPCION"           => "Detalle que describe el artículo",

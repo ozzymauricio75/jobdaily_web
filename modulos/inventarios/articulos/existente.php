@@ -83,14 +83,16 @@ if (!empty($url_verificarReferencia) && !empty($url_documento_identidad) && !emp
 if (isset($url_recargar)) {
 
     if (!empty($url_referencia_carga)) {
+        
+        $referencia = $url_referencia_carga;
 
-        $codigo_articulo               = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$url_referencia_carga' AND principal = '1'");
+        $codigo_articulo               = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$referencia' AND principal = '1' LIMIT 1");
 
         $estructura_grupos             = SQL::obtenerValor("articulos", "codigo_estructura_grupo", "codigo = '$codigo_articulo'");
         $nodo_estructura_grupos        = SQL::obtenerValor("estructura_grupos", "codigo_padre", "codigo = '$estructura_grupos'");
         $grupo_estructura_grupos       = SQL::obtenerValor("estructura_grupos", "codigo_grupo", "codigo = '$estructura_grupos'");
 
-        $codigo_barras                 = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "referencia = '$url_referencia_carga' AND principal = '1'");
+        $codigo_barras                 = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "referencia = '$url_referencia_carga' AND principal = '1' LIMIT 1");
         $documento_identidad_proveedor = SQL::obtenerValor("referencias_proveedor", "documento_identidad_proveedor", "referencia = '$url_referencia_carga' AND principal = '1'");     
 
         $documento_identidad_proveedor = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
@@ -244,7 +246,7 @@ if (!empty($url_generar)) {
                 HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 8, 8, $codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"], "onblur" => "validarItem(this);"))
             ),
             array(
-                HTML::campoTextoCorto("selector2", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"],"class" => "autocompletable", "onblur" => "validarItem(this);", "onchange" => "cargarDatosArticulo()"))
+                HTML::campoTextoCorto("selector2", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"],"class" => "autocompletable", "onblur" => "validarItem(this)", "onchange" => "cargarDatosArticulo()"))
                 .HTML::campoOculto("codigo_alfanumerico", ""),
 
                 HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, "",array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)"))
@@ -380,9 +382,10 @@ if (!empty($url_generar)) {
     $error   = false;
     $mensaje = $textos["ITEM_ADICIONADO"];
 
-    $forma_codigo    = $forma_selector2;
-    $codigo_articulo = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$forma_codigo' AND principal = '1'");
-    
+    $forma_codigo        = $forma_selector2;
+    $codigo_articulo     = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$forma_codigo' AND principal = '1' LIMIT 1");
+    $forma_codigo_barras = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "referencia = '$forma_codigo' AND principal = '1' LIMIT 1");
+
     /*** Validar campos requeridos ***/
     if(empty($forma_selector2)){
 		$error   = true;
@@ -405,7 +408,7 @@ if (!empty($url_generar)) {
         /*** Error de inserción ***/
         if (!$insertar_articulo) {
             $error   = true;
-            $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
+            $mensaje = $textos["ERROR_EXISTE_PROVEEDOR"];
         } else {
 
             $datos = array(

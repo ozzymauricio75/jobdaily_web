@@ -35,6 +35,10 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
+        $llave                         = explode("|",$url_id);
+        $url_id                        = $llave[0];
+        $documento_identidad_proveedor = $llave[1];
+
         $vistaConsulta = "articulos";
         $columnas      = SQL::obtenerColumnas($vistaConsulta);
         $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
@@ -60,18 +64,15 @@ if (!empty($url_generar)) {
         $unidad_compra          = SQL::obtenerValor("unidades", "nombre", "codigo = '$datos->codigo_unidad_compra'");
         $unidad_presentacion    = SQL::obtenerValor("unidades", "nombre", "codigo = '$datos->codigo_unidad_presentacion'");
         $pais                   = SQL::obtenerValor("paises", "nombre", "codigo_iso = '$datos->codigo_iso'");        
-        $id_proveedor           = SQL::obtenerValor("referencias_proveedor", "documento_identidad_proveedor", "codigo_articulo='$url_id' LIMIT 0,1");
-        $nombre_proveedor       = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$id_proveedor'");
+        $nombre_proveedor       = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
         $nombre_proveedor       = explode("|",$nombre_proveedor);
         $nombre_proveedor       = $nombre_proveedor[0];
-        $referencia             = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal = '1'");
-        $codigo_barras          = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "codigo_articulo = '$url_id' AND principal = '1'");
+        $referencia             = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal = '1' AND documento_identidad_proveedor = '$documento_identidad_proveedor'");
+        $codigo_barras          = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "codigo_articulo = '$url_id' AND principal = '1' AND documento_identidad_proveedor = '$documento_identidad_proveedor'");
 
-        $tipo_articulo = array(
-            "1" => $textos["PRODUCTO_TERMINADO"],
-            "2" => $textos["OBSEQUIO"],
-            "3" => $textos["ACTIVO_FIJO"],
-            "4" => $textos["MATERIA_PRIMA"]
+        $tipo_articulo= array(
+            "1" => $textos["MATERIA_PRIMA"],
+            "2" => $textos["PRODUCTO_TERMINADO"]
         );
 
         $manejo_inventario = array(
@@ -119,8 +120,8 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("id_proveedor", $textos["PROVEEDOR"], $nombre_proveedor)
             ),
             array(
-                HTML::mostrarDato("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], $datos->codigo_alfanumerico),
-                HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $datos->codigo_barras)
+                HTML::mostrarDato("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], $referencia),
+                HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $codigo_barras)
             ),
             array(
                 HTML::mostrarDato("descripcion", $textos["DESCRIPCION"], $datos->descripcion)
@@ -149,14 +150,6 @@ if (!empty($url_generar)) {
         /*** Definición de pestaña de datos operativos de articulos***/
         $formularios["PESTANA_DATOS"] = array(
             array(
-                HTML::mostrarDato("referencia", $textos["REFERENCIA"], $referencia),
-                HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $codigo_barras)
-            ),
-            array(
-                HTML::mostrarDato("garantia", $textos["GARANTIA"], $datos->garantia),
-                HTML::mostrarDato("garantia_partes", $textos["GARANTIA_PARTES"], $datos->garantia_partes)
-            ),
-            array(
                 HTML::mostrarDato("impuesto_compra", $textos["IMPUESTO_COMPRA"], $impuesto_compra),
                 HTML::mostrarDato("impuesto_venta", $textos["IMPUESTO_VENTA"], $impuesto_venta)
             ),
@@ -167,9 +160,7 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("manejo_inventario", $textos["MANEJO_INVENTARIO"], $manejo_inventario[$datos->manejo_inventario])
             ),
             array(
-                HTML::mostrarDato("unidad_venta", $textos["UNIDAD_VENTA"], $unidad_venta),
-                HTML::mostrarDato("unidad_compra", $textos["UNIDAD_COMPRA"], $unidad_compra),
-                HTML::mostrarDato("unidad_presentacion", $textos["UNIDAD_PRESENTACION"], $unidad_presentacion)
+                HTML::mostrarDato("unidad_compra", $textos["UNIDAD_COMPRA"], $unidad_compra)
             ),
             array(
                 HTML::mostrarDato("pais", $textos["PAIS"], $pais),

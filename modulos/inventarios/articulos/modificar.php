@@ -128,6 +128,10 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
+        $llave                         = explode("|",$url_id);
+        $url_id                        = $llave[0];
+        $documento_identidad_proveedor = $llave[1];
+
         $vistaConsulta = "articulos";
         $condicion     = "codigo = '$url_id'";
         $columnas      = SQL::obtenerColumnas($vistaConsulta);
@@ -147,7 +151,6 @@ if (!empty($url_generar)) {
         $imagen   = SQL::filaEnObjeto($consulta);
 
         /***Obtener datos de la tabla de articulos ***/
-        $documento_identidad_proveedor = SQL::obtenerValor("referencias_proveedor", "documento_identidad_proveedor", "codigo_articulo = '$url_id' LIMIT 1");
         $nombre_proveedor       = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
         $nombre_proveedor       = explode("|",$nombre_proveedor);
         $nombre_proveedor       = $nombre_proveedor[0];
@@ -170,13 +173,13 @@ if (!empty($url_generar)) {
         /*******************************************************************/
 
         // Obtener datos de la referencias del codigo
-        $referencia_principal = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal ='1'");
-        $codigo_barras        = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "codigo_articulo = '$url_id' AND principal ='1'");
+        $referencia_principal = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal ='1' AND documento_identidad_proveedor = '$documento_identidad_proveedor'");
+        $codigo_barras        = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "codigo_articulo = '$url_id' AND principal ='1' AND documento_identidad_proveedor = '$documento_identidad_proveedor'");
         // Obtener la marca del articulo
         $codigo_marca = SQL::obtenerValor("articulos", "codigo_marca", "codigo = '$url_id'");
 
         // Obtener referencias del proveedor y articulo
-        $referencia_alterna = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal ='0'");
+        $referencia_alterna = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal ='0' AND principal = '1' AND documento_identidad_proveedor = '$documento_identidad_proveedor'");
 
         $imprimir = $datos->imprime_listas;
         switch($imprimir){

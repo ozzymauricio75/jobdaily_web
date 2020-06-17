@@ -320,32 +320,12 @@ $registros["componentes"] = array(
 $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_articulos AS
-        SELECT 	job_articulos.codigo AS id,
+        SELECT 	CONCAT(
+                    job_referencias_proveedor.codigo_articulo,
+                    '|',job_referencias_proveedor.documento_identidad_proveedor
+                ) AS id,
                 job_articulos.codigo AS CODIGO_INTERNO,
                 job_referencias_proveedor.referencia AS CODIGO_PROVEEDOR,
-                /*CONCAT(
-                    (
-                        IF (
-                            (
-                                SELECT descripcion FROM job_estructura_grupos WHERE codigo =
-                                (
-                                    SELECT codigo_padre FROM job_estructura_grupos WHERE codigo=job_articulos.codigo_estructura_grupo
-                                )
-                            )
-                            IS NULL,
-                            '',
-                            (
-                                SELECT codigo_padre FROM job_estructura_grupos WHERE codigo=job_articulos.codigo_estructura_grupo
-                            )
-                        )
-                    ),
-                    ' ',
-                    (
-                        SELECT descripcion FROM job_estructura_grupos WHERE codigo=job_articulos.codigo_estructura_grupo
-                    ),
-                    ' ',
-                    job_articulos.descripcion
-                )  AS DESCRIPCION,*/
                 job_articulos.descripcion AS DESCRIPCION,
                 job_marcas.descripcion AS MARCA,
                 CONCAT(

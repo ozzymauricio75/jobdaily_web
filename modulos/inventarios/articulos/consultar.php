@@ -35,6 +35,11 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
+        
+        $llave                         = explode("|",$url_id);
+        $url_id                        = $llave[0];
+        $documento_identidad_proveedor = $llave[1];
+
         $vistaConsulta = "articulos";
         $columnas      = SQL::obtenerColumnas($vistaConsulta);
         $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
@@ -53,20 +58,17 @@ if (!empty($url_generar)) {
         $unidad_compra          = SQL::obtenerValor("unidades", "nombre", "codigo = '$datos->codigo_unidad_compra'");
         $unidad_presentacion    = SQL::obtenerValor("unidades", "nombre", "codigo = '$datos->codigo_unidad_presentacion'");
         $pais                   = SQL::obtenerValor("paises", "nombre", "codigo_iso = '$datos->codigo_iso'");        
-        $id_proveedor           = SQL::obtenerValor("referencias_proveedor", "documento_identidad_proveedor", "codigo_articulo='$url_id' LIMIT 0,1");
         
-        $nombre_proveedor       = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$id_proveedor'");
+        $nombre_proveedor       = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
         $nombre_proveedor       = explode("|",$nombre_proveedor);
         $nombre_proveedor       = $nombre_proveedor[0];
 
-        $referencia             = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal = '1'");
-        $codigo_barras          = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "codigo_articulo = '$url_id' AND principal = '1'");
+        $referencia             = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal = '1' AND documento_identidad_proveedor = '$documento_identidad_proveedor'");
+        $codigo_barras          = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "codigo_articulo = '$url_id' AND principal = '1' AND principal = '1' AND documento_identidad_proveedor = '$documento_identidad_proveedor'");
 
-        $tipo_articulo = array(
-            "1" => $textos["PRODUCTO_TERMINADO"],
-            "2" => $textos["OBSEQUIO"],
-            "3" => $textos["ACTIVO_FIJO"],
-            "4" => $textos["MATERIA_PRIMA"]
+        $tipo_articulo= array(
+            "1" => $textos["MATERIA_PRIMA"],
+            "2" => $textos["PRODUCTO_TERMINADO"]
         );
 
         $manejo_inventario = array(
