@@ -13,7 +13,7 @@
 * de la Licencia, o (a su elección) cualquier versión posterior.
 *
 * Este programa se distribuye con la esperanza de que sea útil, pero
-* SIN GARANÃA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
+* SIN GARANTIA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
 * de APTITUD PARA UN PROPOSITO DETERMINADO. Consulte los detalles de
 * la Licencia Pública General GNU para obtener una información mÃ¡s
 * detallada.

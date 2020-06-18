@@ -6,7 +6,7 @@
 * Mauricio Oidor L. <ozzymauricio75@gmail.com>
 *
 * Este archivo es parte de:
-* PANCE :: Plataforma para la Administración del Nexo Cliente-Empresa
+* Jobdaily :: Software empresarial a la medida
 *
 * Este programa es software libre: usted puede redistribuirlo y/o
 * modificarlo  bajo los términos de la Licencia Pública General GNU
