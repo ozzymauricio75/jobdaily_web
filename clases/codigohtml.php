@@ -254,6 +254,30 @@ class HTML {
         return $elemento;
     }
 
+    /*** Crear un cuadro de leyenda ***/
+    public static function agrupador($contenido, $titulo = "", $opciones ="") {
+        $elemento = "<fieldset ";
+        if (!empty($opciones)) {
+            $listaOpciones = array();
+
+            foreach ($opciones as $atributo => $valor) {
+                $listaOpciones[] = "$atributo=\"$valor\"";
+            }
+
+            $opciones = implode(" ", $listaOpciones);
+            $elemento .= " $opciones";
+        }
+        $elemento .= ">";
+        $elemento .= "<legend>$titulo</legend>";
+        $celdas = "";
+        foreach ($contenido AS $filas){
+            $celdas .= self::filaFormulario($filas);
+        }
+        $elemento .= $celdas;
+        $elemento .= "</fieldset>\n";
+        return $elemento;
+    }
+
     /*** Crear código para insertar un rectángulo (div) ***/
     public static function contenedor($contenido, $opciones = "") {
         $elemento = "<div";

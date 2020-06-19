@@ -3,10 +3,25 @@
     });
 
     /*** Adicionar combinaciones de teclas para el manejo de botones***/
-    $(document).bind('keydown', 'Ctrl+a', function(evt) {$('#ADICCARA').click(); return false;});
-    $(document).bind('keydown', 'Ctrl+c', function(evt) {$('#CONSCARA').click(); return false;});
-    $(document).bind('keydown', 'Ctrl+m', function(evt) {$('#MODICARA').click(); return false;});
-    $(document).bind('keydown', 'Ctrl+e', function(evt) {$('#ELIMCARA').click(); return false;});
+    $(document).bind('keydown', 'Ctrl+a', function(evt) {$('#ADICOCPR').click(); return false;});
+    $(document).bind('keydown', 'Ctrl+c', function(evt) {$('#CONSOCPR').click(); return false;});
+    //$(document).bind('keydown', 'Ctrl+m', function(evt) {$('#MODICARA').click(); return false;});
+    //$(document).bind('keydown', 'Ctrl+e', function(evt) {$('#ELIMCARA').click(); return false;});
+
+    function recargarListaEmpresas(){
+        var destino                 = $('#URLFormulario').val();
+        var codigo_empresa_proyecto = $('#empresa').val();
+        var sucursal                = $('#sucursal').val();   
+        var lista                   = '';
+
+        $.getJSON(destino, {recargar: true, codigo: codigo_empresa_proyecto, elemento: 'sucursal', codigo_empresa : sucursal}, function(datos) {
+            jQuery.each(datos, function(valor, texto) {
+                lista = lista+'<option value="'+valor+'">'+texto+'</option>';
+            });
+            $('#sucursal').html(lista);
+            //$('#sucursal').val('');
+        });
+    }
 
     function activaCampos(tipo,descuento){
         if (tipo == 1){
