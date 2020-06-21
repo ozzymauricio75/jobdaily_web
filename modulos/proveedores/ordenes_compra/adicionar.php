@@ -35,6 +35,12 @@ if (isset($url_completar)) {
     if ($url_item == "selector3") {
         echo SQL::datosAutoCompletar("seleccion_bancos", $url_q);
     }
+    if (($url_item) == "selector4") {
+        echo SQL::datosAutoCompletar("seleccion_proveedores", $url_q);
+    }
+    if (($url_item) == "selector5") {
+        echo SQL::datosAutoCompletar("seleccion_referencias_proveedor", $url_q);
+    }
     exit;
 
 }elseif (!empty($url_recargar)) {
@@ -138,11 +144,13 @@ if (!empty($url_generar)){
             }
         }
 
-        $tipos_documentos  = HTML::generarDatosLista("tipos_documentos","codigo","descripcion","codigo > '0'");
-        $unidades          = HTML::generarDatosLista("unidades","codigo","nombre","codigo > '0'");
-        $monedas           = HTML::generarDatosLista("tipos_moneda","codigo","nombre","codigo > '0'");
-        $tasas             = HTML::generarDatosLista("tasas", "codigo", "descripcion","codigo > '0'");
-        $tipo_comprobante  = HTML::generarDatosLista("tipos_comprobantes", "codigo", "descripcion","codigo > '0'");
+        $tipos_documentos      = HTML::generarDatosLista("tipos_documentos","codigo","descripcion","codigo > '0'");
+        $unidades              = HTML::generarDatosLista("unidades","codigo","nombre","codigo > '0'");
+        $monedas               = HTML::generarDatosLista("tipos_moneda","codigo","nombre","codigo > '0'");
+        $tasas                 = HTML::generarDatosLista("tasas", "codigo", "descripcion","codigo > '0'");
+        $tipo_comprobante      = HTML::generarDatosLista("tipos_comprobantes", "codigo", "descripcion","codigo > '0'");
+
+        $tipos_documento_orden = SQL::obtenerValor("tipos_documentos","descripcion","codigo = '1' AND abreviaturas = 'OC'");
   
         $regimen = array(
             "1" => $textos["COMUN"],
@@ -161,11 +169,15 @@ if (!empty($url_generar)){
                 HTML::campoTextoCorto("*razon_social_proveedor",$textos["RAZON_SOCIAL_PROVEEDOR"], 45, 255, "", array("title"=>$textos["AYUDA_RAZON_SOCIAL_PROVEEDOR"],"class"=>"autocompletable", "onFocus" => "acProveedor(this)"))
             )
         );
-
+        
         $formularios["PESTANA_DATOS_PEDIDO"] = array(
             array(
                 HTML::agrupador(
                     array(
+                        array(
+                            HTML::campoTextoCorto("*selector4", $textos["PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_PROVEEDOR"], "class" => "autocompletable"))
+                            .HTML::campoOculto("documento_identidad_proveedor", "")
+                        ),
                         array(
                             HTML::listaSeleccionSimple("*regimen",$textos["REGIMEN"], $regimen, "", array("title",$textos["AYUDA_REGIMEN"], "class"=>"regimen","onChange"=>"activaIva()"))
                         ),
@@ -190,25 +202,22 @@ if (!empty($url_generar)){
             array(
                 HTML::agrupador(
                     array(
-                        array(
-                            HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social","codigo != 0"), "", array("title" => $textos["AYUDA_EMPRESAS"],"onChange" => "recargarLista('codigo_empresa','codigo_sucursal');recargarListaEmpresas();")),
-
-                            HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre","codigo != 0 AND tipo != '0'"), "", array("title" => $textos["AYUDA_CONSORCIO"],"onChange" => "recargarListaEmpresas();")),
-                            //HTML::listaSeleccionSimple("codigo_sucursal_lista",$textos["SUCURSAL"], $sucursales, "", array("title",$textos["AYUDA_SUCURSAL"], "")),
-                            HTML::campoOculto("id_sucursal", "")
-                        ),
-                        array(
-                            HTML::mostrarDato("fecha_documento_mostrar",$textos["FECHA_DOCUMENTO"], "", "", array("class"=>"oculto")),
+                                             array(
+                            //HTML::mostrarDato("fecha_documento_mostrar",$textos["FECHA_DOCUMENTO"], "", "", array("class"=>"oculto")),
                             HTML::contenedor(
                                 HTML::campoTextoCorto("fecha_documento",$textos["FECHA_DOCUMENTO"], 8, 8, date("Y-m-d"), array("title"=>$textos["AYUDA_FECHA"],"onChange"=>"activaFechaFinal()", "readOnly"=>"true"))
                                 .HTML::campoOculto("minDate", date("Y-m-d")),
                                 
                                 array("id"=>"fecha_pedido","class"=>"fecha_pedido")
-                            )
+                            ),
+                            HTML::mostrarDato("tipo_documento_ordenes",$textos["TIPO_DOCUMENTO"], $tipos_documento_orden),
+                            HTML::campoOculto("id_tipo_documento", $tipos_documento_orden),
                         ),
                         array(
-                            HTML::mostrarDato("tipo_documento_ordenes",$textos["TIPO_DOCUMENTO"], $tipo_documento_ordenes),
-                            HTML::campoOculto("id_tipo_documento", $tipo_documento_ordenes),
+                            HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social","codigo != 0"), "", array("title" => $textos["AYUDA_EMPRESAS"],"onChange" => "recargarLista('codigo_empresa','codigo_sucursal');recargarListaEmpresas();")),
+
+                            HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre","codigo != 0 AND tipo != '0'"), "", array("title" => $textos["AYUDA_CONSORCIO"],"onChange" => "recargarListaEmpresas();")),
+                            HTML::campoOculto("id_sucursal", "")
                         )
                     ),
                     $textos["DATOS_DOCUMENTO"]

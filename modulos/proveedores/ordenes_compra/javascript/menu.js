@@ -8,6 +8,41 @@
     //$(document).bind('keydown', 'Ctrl+m', function(evt) {$('#MODICARA').click(); return false;});
     //$(document).bind('keydown', 'Ctrl+e', function(evt) {$('#ELIMCARA').click(); return false;});
 
+    function cargarProveedor(){
+        var destino       = $('#URLFormulario').val();
+        var nit_proveedor = parseInt($('#nit_proveedor').val());
+        var razon_social_proveedor = $('#razon_social_proveedor').val();
+        $.getJSON(destino, {cargarProveedor: true, nit_proveedor: nit_proveedor}, function(datos) {
+            if (datos[0]) {
+                $("#razon_social_proveedor").val(datos[0]);
+                $("#municipio_proveedor").val(datos[1]);
+                $("#id_municipio").val(datos[2]);
+                $("#direccion").val(datos[3]);
+                $("#telefono").val(datos[4]);
+                $("#celular").val(datos[5]);
+                $("#correo_electronico").val(datos[6]);
+                $("#regimen").val(datos[7]);
+                $("#participacion").val(datos[8]);
+                if (datos[7] == "2"){
+                    $(".iva_incluido").removeAttr('checked');
+                    $(".iva_incluido").attr("disabled","disabled");
+                    $(".iva_incluido").parent().hide();
+                    $("#regimen_actual").val("2");
+                    $("#participacion").val(0);
+                    $("#participacion").parent().hide();
+                    $("#participacion").attr("disabled","disabled");
+                } else {
+                    $(".iva_incluido").removeAttr('disabled');
+                    $(".iva_incluido").removeAttr('checked');
+                    $(".iva_incluido").parent().show();
+                    $("#regimen_actual").val("1");
+                    $("#participacion").parent().show();
+                    $("#participacion").removeAttr("disabled");
+                }
+            }
+        });
+    }
+    
     function recargarListaEmpresas(){
         var destino                 = $('#URLFormulario').val();
         var codigo_empresa_proyecto = $('#empresa').val();
