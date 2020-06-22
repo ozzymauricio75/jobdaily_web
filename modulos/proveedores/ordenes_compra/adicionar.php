@@ -36,14 +36,44 @@ if (isset($url_completar)) {
         echo SQL::datosAutoCompletar("seleccion_bancos", $url_q);
     }
     if (($url_item) == "selector4") {
-        echo SQL::datosAutoCompletar("seleccion_proveedores", $url_q);
+        echo SQL::datosAutoCompletar("menu_proveedores", $url_q);
     }
     if (($url_item) == "selector5") {
         echo SQL::datosAutoCompletar("seleccion_referencias_proveedor", $url_q);
     }
     exit;
 
-}elseif (!empty($url_recargar)) {
+} elseif (!empty($url_cargarProveedor)) {
+    if (!empty($url_nit_proveedor)) {
+        var_dump($url_nit_proveedor);
+        if ($datosTercero->tipo_persona == '2' || $datosTercero->tipo_persona == '4') {
+
+            //Genera digito de verificacion en nit
+            $nit     = $datosTercero->documento_identidad;
+            $array   = array(1 => 3, 4 => 17, 7 => 29, 10 => 43, 13 => 59, 2 => 7, 5 => 19, 8 => 37, 11 => 47, 14 => 67, 3 => 13,
+                             6 => 23, 9 => 41, 12 => 53, 15 => 71);
+            $x       = 0;
+            $y       = 0;
+            $z       = strlen($nit);
+            $digitoV = '';
+    
+            for ($i = 0; $i < $z; $i++) {
+                $y  = substr($nit, $i, 1);
+                $x += ($y*$array[$z-$i]);
+            }
+    
+            $y = $x%11;
+    
+            if ($y > 1) {
+                $digitoV = 11-$y;
+                return $digitoV;
+            } else {
+                $digitoV = $y;
+            }
+        }
+    }
+
+} elseif (!empty($url_recargar)) {
 
     if ($url_elemento == "empresa") {
        $respuesta = HTML::generarDatosLista("empresas", "codigo", "nombre", "codigo = '$url_origen'");
@@ -52,7 +82,6 @@ if (isset($url_completar)) {
     if ($url_elemento == "sucursal") {
        $respuesta = HTML::generarDatosLista("sucursales", "codigo", "nombre", "codigo_empresa = '".$url_codigo."' AND codigo !='0' AND tipo != '0'");
     }
-
     HTTP::enviarJSON($respuesta);
 }
 
@@ -64,6 +93,7 @@ if (!empty($url_generar)){
     if ($sesion_usuario_maestro_ingreso){
         $sucursales  = SQL::obtenerValor("sucursales","codigo","codigo > '0' AND activo ='0' LIMIT 0,1");
         $compradores = SQL::obtenerValor("compradores","codigo","codigo > '0' AND activo ='1' LIMIT 0,1");
+        $vendedores  = SQL::obtenerValor("vendedores_proveedor","codigo","codigo > '0' AND activo ='1' LIMIT 0,1");
     } else {
         $tablas_sucursales = array(
             "s"   => "sucursales",
@@ -115,6 +145,7 @@ if (!empty($url_generar)){
         if ($sesion_usuario_maestro_ingreso){
             $sucursales  = HTML::generarDatosLista("sucursales","codigo","nombre_corto","codigo > '0' AND activo = '0'");
             $compradores = HTML::generarDatosLista("menu_compradores","id","NOMBRE_COMPLETO","id > '0' AND id_activo = '1'");
+            $vendedores  = HTML::generarDatosLista("menu_vendedores_proveedor","id","NOMBRE_COMPLETO","id > '0' AND ACTIVO = Activo'");
         } else {
             $tablas_sucursales = array(
                 "pu"  => "perfiles_usuario",
@@ -175,54 +206,61 @@ if (!empty($url_generar)){
                 HTML::agrupador(
                     array(
                         array(
-                            HTML::campoTextoCorto("*selector4", $textos["PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_PROVEEDOR"], "class" => "autocompletable"))
-                            .HTML::campoOculto("documento_identidad_proveedor", "")
+                            HTML::campoTextoCorto("fecha_documento",$textos["FECHA_DOCUMENTO"], 8, 8, date("Y-m-d"), array("title"=>$textos["AYUDA_FECHA"],"onChange"=>"activaFechaFinal()", "readOnly"=>"true"))
+                                .HTML::campoOculto("minDate", date("Y-m-d")),
+
+                            HTML::campoTextoCorto("fecha_entrega", $textos["FECHA_ENTREGA"], 10, 10, "", array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_ENTREGA"], "onBlur" => "validarItem(this);")),
+
+                            HTML::listaSeleccionSimple("*codigo_comprador",$textos["COMPRADOR"], $compradores, "", array("title",$textos["AYUDA_COMPRADOR"])),
+
+                            HTML::mostrarDato("numero_orden",$textos["NUMERO_ORDEN_COMPRA"], "", "", array("class"=>"oculto"))
+                        ),
+                        array(    
+                            HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social","codigo != 0"), "", array("title" => $textos["AYUDA_EMPRESAS"],"onChange" => "recargarLista('codigo_empresa','codigo_sucursal');recargarListaEmpresas();")),
+                            HTML::mostrarDato("nit_empresa",$textos["NIT"], "", "", array("class"=>"oculto")),
                         ),
                         array(
-                            HTML::listaSeleccionSimple("*regimen",$textos["REGIMEN"], $regimen, "", array("title",$textos["AYUDA_REGIMEN"], "class"=>"regimen","onChange"=>"activaIva()"))
+                            HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre","codigo != 0 AND tipo != '0'"), "", array("title" => $textos["AYUDA_CONSORCIO"],"onChange" => "recargarListaEmpresas();")),
+                            HTML::campoOculto("id_sucursal", "")
                         ),
                         array(
-                            HTML::campoTextoCorto("*selector1",$textos["MUNICIPIO"], 40, 255, "", array("title",$textos["AYUDA_MUNICIPIO"], "class"=>"autocompletable")).
-                            HTML::campoOculto("id_municipio","")
-                        ),
-                        array(
-                            HTML::campoTextoCorto("*direccion",$textos["DIRECCION"], 40, 255, "", array("title",$textos["AYUDA_DIRECCION"]))
-                        ),
-                        array(
-                            HTML::campoTextoCorto("*telefono",$textos["TELEFONO"], 15, 15, "", array("title",$textos["AYUDA_TELEFONO"])),
-                            HTML::campoTextoCorto("celular",$textos["CELULAR"], 15, 15, "", array("title",$textos["AYUDA_CELULAR"]))
-                        ),
-                        array(
-                            HTML::campoTextoCorto("correo_electronico",$textos["CORREO_ELECTRONICO"], 40, 255, "", array("title",$textos["AYUDA_CORREO_ELECTRONICO"]))
+                           HTML::listaSeleccionSimple("*proyecto", $textos["PROYECTO"], HTML::generarDatosLista("proyectos", "codigo", "nombre","codigo != 0"), "", array("title" => $textos["AYUDA_EMPRESAS"], "")),
+
+                           HTML::campoTextoCorto("*solicitante",$textos["SOLICITANTE"], 40, 255, "", array("title",$textos["AYUDA_SOLICITANTE"]))
+                            //HTML::mostrarDato("fecha_documento_mostrar",$textos["FECHA_DOCUMENTO"], "", "", array("class"=>"oculto")),
                         ),
                     ),
-                    $textos["DATOS_PROVEEDOR"]
+                    $textos["DATOS_FACTURACION"]
                 )
             ),
             array(
                 HTML::agrupador(
                     array(
-                                             array(
-                            //HTML::mostrarDato("fecha_documento_mostrar",$textos["FECHA_DOCUMENTO"], "", "", array("class"=>"oculto")),
-                            HTML::contenedor(
-                                HTML::campoTextoCorto("fecha_documento",$textos["FECHA_DOCUMENTO"], 8, 8, date("Y-m-d"), array("title"=>$textos["AYUDA_FECHA"],"onChange"=>"activaFechaFinal()", "readOnly"=>"true"))
-                                .HTML::campoOculto("minDate", date("Y-m-d")),
-                                
-                                array("id"=>"fecha_pedido","class"=>"fecha_pedido")
-                            ),
-                            HTML::mostrarDato("tipo_documento_ordenes",$textos["TIPO_DOCUMENTO"], $tipos_documento_orden),
-                            HTML::campoOculto("id_tipo_documento", $tipos_documento_orden),
+                        array(
+                            HTML::campoTextoCorto("*selector4",$textos["NIT_PROVEEDOR"], 15, 15, "", array("title"=>$textos["AYUDA_NIT_PROVEEDOR"],"class" => "autocompletable", "onKeyPress"=>"return campoEntero(event)", "onBlur"=>"cargarProveedor()")),
+
+                            HTML::campoTextoCorto("digito_verificacion", $textos["DIGITO_VERIFICACION"], 1, 1, "", array("readonly" => "true","Class" => "oculto"))
+                            .HTML::campoOculto("documento_identidad_proveedor", ""),
+
+                            HTML::campoTextoCorto("*razon_social_proveedor",$textos["RAZON_SOCIAL_PROVEEDOR"], 45, 255, "", array("title"=>$textos["AYUDA_RAZON_SOCIAL_PROVEEDOR"],"class"=>"autocompletable", "onFocus" => "acProveedor(this)")),
+
+                            HTML::listaSeleccionSimple("*codigo_vendedor", $textos["VENDEDOR"], HTML::generarDatosLista("menu_vendedores_proveedor", "id", "NOMBRE_COMPLETO", "id!='0'"), "", array("title",$textos["AYUDA_VENDEDOR"]))
                         ),
                         array(
-                            HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social","codigo != 0"), "", array("title" => $textos["AYUDA_EMPRESAS"],"onChange" => "recargarLista('codigo_empresa','codigo_sucursal');recargarListaEmpresas();")),
+                            HTML::campoTextoCorto("*direccion",$textos["DIRECCION"], 40, 255, "", array("title",$textos["AYUDA_DIRECCION"])),
+                            
+                            HTML::campoTextoCorto("*selector1",$textos["MUNICIPIO"], 40, 255, "", array("title",$textos["AYUDA_MUNICIPIO"], "class"=>"autocompletable"))
+                            .HTML::campoOculto("id_municipio","")
+                        ),    
+                        array(
+                            HTML::campoTextoCorto("*correo_electronico",$textos["CORREO_ELECTRONICO"], 40, 255, "", array("title",$textos["AYUDA_CORREO_ELECTRONICO"])),
 
-                            HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre","codigo != 0 AND tipo != '0'"), "", array("title" => $textos["AYUDA_CONSORCIO"],"onChange" => "recargarListaEmpresas();")),
-                            HTML::campoOculto("id_sucursal", "")
+                            HTML::campoTextoCorto("*celular",$textos["CELULAR"], 15, 15, "", array("title",$textos["AYUDA_CELULAR"]))
                         )
                     ),
-                    $textos["DATOS_DOCUMENTO"]
+                    $textos["DATOS_PROVEEDOR"]
                 )
-            )
+            ),
         );
         $formularios["PESTANA_NEGOCIACION"] = array(
             array(
