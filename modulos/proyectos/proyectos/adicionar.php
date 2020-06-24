@@ -105,7 +105,7 @@ elseif (!empty($url_generar)) {
                 HTML::campoTextoCorto("*selector1", $textos["MUNICIPIO"], 40, 255, "", array("title" => $textos["AYUDA_MUNICIPIOS"], "class" => "autocompletable")).HTML::campoOculto("id_municipio", "")
             ),
             array(
-                HTML::campoTextoCorto("*direccion_proyecto", $textos["DIRECCION_RESIDENCIA"], 40, 60, "", array("title" => $textos["AYUDA_DIRECCION"],"onBlur" => "validarItem(this);"))
+                HTML::campoTextoCorto("*direccion_proyecto", $textos["DIRECCION_PROYECTO"], 40, 60, "", array("title" => $textos["AYUDA_DIRECCION"],"onBlur" => "validarItem(this);"))
             )
         );
 
@@ -206,7 +206,7 @@ elseif (!empty($url_generar)) {
          $codigo_dane_departamento   = $datos_municipio -> departamento;
          $codigo_dane_municipio      = $datos_municipio -> codigo;
 
-         /*** Quitar separador de miles a un numero ***/
+        /*** Quitar separador de miles a un numero ***/
         function quitarMiles($cadena){
             $valor = array();
             for ($i = 0; $i < strlen($cadena); $i++) {

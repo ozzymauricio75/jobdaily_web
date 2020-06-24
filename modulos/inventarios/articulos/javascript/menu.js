@@ -236,22 +236,32 @@
         }
     }
 
-    function removerItem(boton) {
+function removerItem(boton) {
 
-        var destino      = $('#URLFormulario').val();
-        //var cantidad     = $(".referencia_tabla").length;
-        var indice_tabla = $(boton).parents('tr:first').attr('id').split('_')[1];
-        var principal    = $("input[name='estadoModificar["+indice_tabla+"]']").val();
+    var destino      = $('#URLFormulario').val();
+    //var cantidad     = $(".referencia_tabla").length;
+    var indice_tabla = $(boton).parents('tr:first').attr('id').split('_')[1];
+    var principal    = $("input[name='estadoModificar["+indice_tabla+"]']").val();
 
-        if(principal=='1'){
-            $.getJSON(destino,{eliminarReferencia:true, indice_tabla:indice_tabla}, function(datos){
-                if(parseInt(datos[0]) == 1){
-                    $(boton).parents('tr').remove();
-                }else{
-                    alert(datos[1]);
-                }
-            });
-        }
-        $(boton).parents('tr').remove();
+    if(principal=='1'){
+        $.getJSON(destino,{eliminarReferencia:true, indice_tabla:indice_tabla}, function(datos){
+            if(parseInt(datos[0]) == 1){
+                $(boton).parents('tr').remove();
+            }else{
+                alert(datos[1]);
+            }
+        });
     }
-   
+    $(boton).parents('tr').remove();
+}
+
+function formatoMiles(input){
+    var num = input.value.replace(/\./g,'');
+        if(!isNaN(num)){
+            num = num.toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
+            num = num.split('').reverse().join('').replace(/^[\.]/,'');
+            input.value = num;
+        } else{ alert('Solo se permiten numeros');
+            input.value = input.value.replace(/[^\d\.]*/g,'');
+    }
+}   

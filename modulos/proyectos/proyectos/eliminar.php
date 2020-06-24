@@ -118,7 +118,7 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("municipio", $textos["MUNICIPIO"], $municipio)
             ),
             array(
-                HTML::mostrarDato("*direccion_residencia", $textos["DIRECCION_RESIDENCIA"], $direccion_proyecto)
+                HTML::mostrarDato("*direccion_residencia", $textos["DIRECCION_PROYECTO"], $direccion_proyecto)
             )
         );
 

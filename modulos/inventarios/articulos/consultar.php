@@ -57,7 +57,9 @@ if (!empty($url_generar)) {
         $unidad_venta           = SQL::obtenerValor("unidades", "nombre", "codigo = '$datos->codigo_unidad_venta'");
         $unidad_compra          = SQL::obtenerValor("unidades", "nombre", "codigo = '$datos->codigo_unidad_compra'");
         $unidad_presentacion    = SQL::obtenerValor("unidades", "nombre", "codigo = '$datos->codigo_unidad_presentacion'");
-        $pais                   = SQL::obtenerValor("paises", "nombre", "codigo_iso = '$datos->codigo_iso'");        
+        $pais                   = SQL::obtenerValor("paises", "nombre", "codigo_iso = '$datos->codigo_iso'");
+        $costo                  = SQL::obtenerValor("lista_precio_articulos", "costo", "codigo_articulo = '$url_id'");     
+        $costo                  = number_format($costo,0);  
         
         $nombre_proveedor       = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
         $nombre_proveedor       = explode("|",$nombre_proveedor);
@@ -120,7 +122,8 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $codigo_barras)
             ),
             array(
-                HTML::mostrarDato("descripcion", $textos["DESCRIPCION"], $datos->descripcion)
+                HTML::mostrarDato("descripcion", $textos["DESCRIPCION"], $datos->descripcion),
+                HTML::mostrarDato("costo", $textos["COSTO"], $costo),
             ),
             array(
                 HTML::mostrarDato("imprime", $textos["ESTADO_IMPRESION"], $texto_imprime)

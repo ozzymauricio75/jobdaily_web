@@ -25,6 +25,12 @@
 *
 **/
 $indicador = 0;
+$tabla                      = "usuarios";
+$columnas                   = SQL::obtenerColumnas($tabla);
+$consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuario = '$sesion_usuario'");
+$datos                      = SQL::filaEnObjeto($consulta);
+$sesion_id_usuario_ingreso  = $datos->codigo;
+
 /*** Devolver datos para autocompletar la búsqueda ***/
 if (isset($url_completar)) {
 
@@ -234,10 +240,11 @@ if (!empty($url_generar)) {
                 .HTML::campoOculto("codigo_maximo", $codigo),
             ),
             array(
-                HTML::campoTextoCorto("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"],"onblur" => "validarItem(this);","onchange" => "cargarDatos()","onKeyPress" => "return campoEntero(event)"))
-                .HTML::campoOculto("codigo_alfanumerico", ""),
+                HTML::campoTextoCorto("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"],"onblur" => "validarItem(this)","onchange" => "cargarDatos()","onKeyPress" => "return campoEntero(event)")),
 
-                HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, "",array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)"))
+                HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, "",array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)")),
+
+                HTML::campoTextoCorto("costo", $textos["COSTO"], 15, 15, "",array("title" => $textos["AYUDA_COSTO"],"onKeyPress" => "return campoEntero(event)","onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
             ),
             array(
                 HTML::campoTextoCorto("*descripcion", $textos["DESCRIPCION"], 51, 255, "", array("title" => $textos["AYUDA_DESCRIPCION"],"onBlur" => "validarItem(this);"))
@@ -412,6 +419,10 @@ if (!empty($url_generar)) {
 		$error   = true;
 		$mensaje = $textos["DESCRIPCION_VACIO"]; 
 
+    }elseif(empty($forma_costo)){
+        $error   = true;
+        $mensaje = $textos["COSTO_VACIO"]; 
+
 	}elseif(empty($forma_codigo_estructura_grupo)){
 		$error   = true;
 		$mensaje = $textos["ESTRUCTURA_VACIO"]; 
@@ -428,10 +439,20 @@ if (!empty($url_generar)) {
 	    $error   = true;
         $mensaje = $textos["ERROR_EXISTE_CODIGO"];   
     }else {
-        
-        if (empty($forma_codigo_alfanumerico)){
-            $forma_codigo_alfanumerico = $forma_codigo;            
+
+        /*** Quitar separador de miles a un numero ***/
+        function quitarMiles($cadena){
+            $valor = array();
+            for ($i = 0; $i < strlen($cadena); $i++) {
+                if (substr($cadena, $i, 1) != ".") {
+                    $valor[$i] = substr($cadena, $i, 1);
+                }
+            }
+            $valor = implode($valor);
+            return $valor;
         }
+
+        $forma_costo = quitarMiles($forma_costo);
 
         $datos = array(
             "codigo"                     => $forma_codigo,
@@ -467,6 +488,17 @@ if (!empty($url_generar)) {
         );
 
         $insertar_articulo = SQL::insertar("articulos_proveedor", $datos_articulo);
+
+        $datos_listas = array(
+            "codigo_articulo"            => $forma_codigo,
+            "fecha"                      => date("Y-m-d H:i:s"),
+            "costo"                      => $forma_costo,
+            "codigo_usuario_registra"    => $sesion_id_usuario_ingreso,
+            "fecha_registra"             => date("Y-m-d H:i:s"),
+            "fecha_modificacion"         => ""
+        );        
+
+        $insertar_listas = SQL::insertar("lista_precio_articulos", $datos_listas);
 
         /*** Error de inserción ***/
         if (!$insertar) {

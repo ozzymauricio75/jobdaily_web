@@ -197,35 +197,28 @@
     function cargarProveedor(){
         var destino                = $('#URLFormulario').val();
         var nit_proveedor          = parseInt($('#selector4').val());
-        var razon_social_proveedor = $('#razon_social_proveedor').val();
 
         $.getJSON(destino, {cargarProveedor: true, nit_proveedor: nit_proveedor}, function(datos) {
-            if (datos[0]) {
+            var codigo_vendedor = datos[2];
+            var nombre_vendedor = datos[3];
+            if(datos[0] != ""){ 
                 $("#razon_social_proveedor").val(datos[0]);
-                $("#municipio_proveedor").val(datos[1]);
-                $("#id_municipio").val(datos[2]);
-                $("#direccion").val(datos[3]);
-                $("#telefono").val(datos[4]);
-                $("#celular").val(datos[5]);
-                $("#correo_electronico").val(datos[6]);
-                $("#regimen").val(datos[7]);
-                $("#participacion").val(datos[8]);
-                if (datos[7] == "2"){
-                    $(".iva_incluido").removeAttr('checked');
-                    $(".iva_incluido").attr("disabled","disabled");
-                    $(".iva_incluido").parent().hide();
-                    $("#regimen_actual").val("2");
-                    $("#participacion").val(0);
-                    $("#participacion").parent().hide();
-                    $("#participacion").attr("disabled","disabled");
-                } else {
-                    $(".iva_incluido").removeAttr('disabled');
-                    $(".iva_incluido").removeAttr('checked');
-                    $(".iva_incluido").parent().show();
-                    $("#regimen_actual").val("1");
-                    $("#participacion").parent().show();
-                    $("#participacion").removeAttr("disabled");
-                }
+                $("#digito_verificacion").parent().show();
+                $("#digito_verificacion").val(datos[1]);
+                $('#vendedor_proveedor').html('');
+                $('#vendedor_proveedor').append('<option value="'+codigo_vendedor+'">' +nombre_vendedor+ '</option>');
+                $("#direccion").val(datos[4]);
+                $("#correo_electronico").val(datos[5]);
+                $("#celular").val(datos[6]);
+                $("#selector1").val(datos[7]);
+            } else {
+                $("#razon_social_proveedor").val('');
+                $("#digito_verificacion").val('');
+                $("#vendedor_proveedor").val('');
+                $("#direccion").val('');
+                $("#correo_electronico").val('');
+                $("#celular").val('');
+                $("#selector1").val('');
             }
         });
     }
@@ -259,7 +252,6 @@
         $(".concepto").html('');
         $(".colores").parent().hide();
         $(".colores").attr('disabled','disabled');
-        //$("#id_color").val(0);
         $("#id_color").val("");
         $(".detalle_pedido").parent().hide();
         $(".detalle_pedido").attr('disabled','disabled');
@@ -320,6 +312,7 @@
             $(".maneja_criterio_articulo").parent().hide();
             $(".maneja_criterio_articulo").attr("disabled","disabled");
         } else {
+            $("#selector6").parent().hide();
             $(".articulo_existe").parent().show();
             $(".articulo_existe").removeAttr("disabled");
             $(".maneja_criterio_articulo").parent().show();
@@ -1860,3 +1853,21 @@
             alert(mensaje_pantalla);
         }
     }
+function cargarDatosArticulo(){
+    var destino    = $('#URLFormulario').val();
+    var referencia = $('#selector7').val();
+
+    /*** Descargar contenido  ***/
+    $.getJSON(destino, {cargarDatosArticuloCreado: true, referencia_carga: referencia}, function(datos){
+        if (datos != ""){
+            if(datos[0] != ""){
+                var codigo_unidad_compra   = datos[14];
+                var nombre_unidad_compra   = datos[27];
+
+                $('#descripcion').val(datos[1]).attr("disabled","disabled");
+                $('#id_unidad_compra').html('');
+                $('#id_unidad_compra').append('<option value="'+codigo_unidad_compra+'">' +nombre_unidad_compra+ '</option>').attr("disabled","disabled");
+            }
+        }
+    });
+}

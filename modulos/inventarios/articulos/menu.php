@@ -28,7 +28,7 @@
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
 $vistaMenu     = "menu_articulos";
 $vistaBuscador = "buscador_articulos";
-$alineacion    = array("I","I","I","I","I","I");
+$alineacion    = array("I","I","I","I","D","I","I");
 
 /*** Devolver datos para autocompletar la b�squeda ***/
 if (isset($url_completar)) {

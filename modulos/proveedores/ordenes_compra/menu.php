@@ -36,7 +36,7 @@ if (isset($url_completar)){
 }
 
 // Generar botones de comandos
-$botones  = HTML::boton("ADICOCPR",$textos["ADICIONAR"],"ejecutarComando(this,850,600);","adicionar");
+$botones  = HTML::boton("ADICOCPR",$textos["ADICIONAR"],"ejecutarComando(this,910,600);","adicionar");
 $botones .= HTML::boton("CONSOCPR",$textos["CONSULTAR"],"ejecutarComando(this,900,600);","consultar");
 
 // Obtener el numero de la pagina actual

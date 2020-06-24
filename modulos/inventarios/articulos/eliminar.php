@@ -209,6 +209,7 @@ if (!empty($url_generar)) {
 /*** Eliminar el elemento seleccionado ***/
 } elseif (!empty($forma_procesar)) {
     $consulta = SQL::eliminar("referencias_proveedor", "codigo_articulo = '$forma_id'");
+    $consulta = SQL::eliminar("articulos_proveedor", "codigo_articulo = '$forma_id'");
     $consulta = SQL::eliminar("imagenes", "id_asociado = '$forma_id' AND categoria = '2'");
     $consulta = SQL::eliminar("articulos", "codigo = '$forma_id'");
 

@@ -213,6 +213,39 @@ $llavesForaneas["articulos_proveedor"] = array(
     )
 );
 
+// Definición de tablas
+$tablas["lista_precio_articulos"] = array(
+    "codigo"                  => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Llave primaria'",
+    "codigo_articulo"         => "VARCHAR(20) NOT NULL COMMENT 'Id de la tabla articulos'",
+    "fecha"                   => "DATE NOT NULL COMMENT 'Fecha en que inicia la lista de precio'",
+    "costo"                   => "DECIMAL(11,4) NOT NULL COMMENT 'Precio'",
+    "codigo_usuario_registra" => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Id del usuario que genera el registro'",
+    "fecha_registra"          => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
+    "fecha_modificacion"      => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificación'"
+);
+
+// Definición de llaves primarias
+$llavesPrimarias["lista_precio_articulos"] = "codigo";
+
+$llavesUnicas["lista_precio_articulos"] = array(
+    "codigo_articulo,fecha"
+);
+
+$llavesForaneas["lista_precio_articulos"] = array(
+    array(
+        "lista_precio_articulos_codigo_articulo",
+        "codigo_articulo",
+        "articulos",
+        "codigo"
+    ),
+    array(
+        "lista_precio_articulos_usuarios",
+        "codigo_usuario_registra",
+        "usuarios",
+        "codigo"
+    )
+);
+
 // Inserción de datos iniciales
 $registros["articulos"] = array(
     array(
@@ -328,6 +361,7 @@ $vistas = array(
                 job_referencias_proveedor.referencia AS CODIGO_PROVEEDOR,
                 job_articulos.descripcion AS DESCRIPCION,
                 job_marcas.descripcion AS MARCA,
+                FORMAT(job_lista_precio_articulos.costo,0) AS COSTO,
                 CONCAT(
                     if(job_terceros.primer_nombre is not null, job_terceros.primer_nombre, ''),' ',
                     if(job_terceros.segundo_nombre is not null, job_terceros.segundo_nombre, ''),' ',
@@ -341,12 +375,14 @@ $vistas = array(
                 job_marcas,
                 job_referencias_proveedor,
                 job_terceros,
-                job_proveedores
+                job_proveedores,
+                job_lista_precio_articulos
         WHERE  	job_articulos.codigo_marca = job_marcas.codigo AND
                 job_articulos.codigo = job_referencias_proveedor.codigo_articulo AND
                 job_proveedores.documento_identidad = job_referencias_proveedor.documento_identidad_proveedor AND
                 job_referencias_proveedor.principal = '1' AND
                 job_proveedores.documento_identidad = job_terceros.documento_identidad AND
+                job_articulos.codigo = job_lista_precio_articulos.codigo_articulo AND
                 job_articulos.codigo != '';"
     ),
     array(
@@ -356,6 +392,7 @@ $vistas = array(
                 job_articulos.descripcion AS descripcion,
                 job_marcas.descripcion AS marca,
                 job_referencias_proveedor.referencia AS referencia,
+                FORMAT(job_lista_precio_articulos.costo,0) AS costo,
                 CONCAT(
                     if(job_terceros.primer_nombre is not null, job_terceros.primer_nombre, ''),' ',
                     if(job_terceros.segundo_nombre is not null, job_terceros.segundo_nombre, ''),' ',
@@ -367,11 +404,13 @@ $vistas = array(
                 job_marcas,
                 job_referencias_proveedor,
                 job_terceros,
-                job_proveedores
+                job_proveedores,
+                job_lista_precio_articulos
         WHERE  	job_articulos.codigo_marca = job_marcas.codigo AND
                 job_articulos.codigo = job_referencias_proveedor.codigo_articulo AND
                 job_proveedores.documento_identidad = job_referencias_proveedor.documento_identidad_proveedor AND
                 job_proveedores.documento_identidad = job_terceros.documento_identidad AND
+                job_articulos.codigo = job_lista_precio_articulos.codigo_articulo AND
                 job_articulos.codigo != 0;"
     ),
     array(
