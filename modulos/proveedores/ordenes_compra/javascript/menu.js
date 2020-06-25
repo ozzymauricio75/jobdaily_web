@@ -663,219 +663,65 @@
     };
 
     function agregarArticulo(){
-        var destino = $('#URLFormulario').val();
-        var continuar = true;
-        var mensajes = new Array();
+        var destino           = $('#URLFormulario').val();
+        var continuar         = true;
+        var mensajes          = new Array();
         var contador_mensajes = 1;
 
-        /////////// Encabezado ///////////////////
-        var nit_proveedor = parseInt($("#nit_proveedor").val());
-        if (nit_proveedor == undefined || isNaN(nit_proveedor)|| nit_proveedor == 0){
-            continuar = false;
-            mensajes[contador_mensajes] = $("#error_nit_proveedor").val();
-            contador_mensajes++;
-        }
-        var razon_social_proveedor = $("#razon_social_proveedor").val();
-        if (razon_social_proveedor == undefined || razon_social_proveedor == ""){
-            continuar = false;
-            mensajes[contador_mensajes] = $("#error_razon_social_proveedor").val();
-            contador_mensajes++;
-        }
-
         /////////// Pestaña Datos generales ///////////////////
-        var id_municipio = parseInt($("#id_municipio").val());
-        if (id_municipio == undefined || isNaN(id_municipio) || id_municipio == ""){
-            continuar = false;
+        /*var id_municipio                = parseInt($("#selector1").val());
+        if (id_municipio                == undefined || isNaN(id_municipio) || id_municipio == ""){
+            continuar                   = false;
             mensajes[contador_mensajes] = $("#error_municipio").val();
             contador_mensajes++;
         }
-        var direccion = $("#direccion").val();
-        if (direccion == undefined|| direccion == ""){
-            continuar = false;
+        var direccion                   = $("#direccion").val();
+        if (direccion                   == undefined|| direccion == ""){
+            continuar                   = false;
             mensajes[contador_mensajes] = $("#error_direccion").val();
             contador_mensajes++;
-        }
-        var telefono = $("#telefono").val();
-        if (telefono == undefined || telefono == ""){
-            continuar = false;
-            mensajes[contador_mensajes] = $("#error_telefono").val();
+        }*/
+        var celular                     = $("#celular").val();
+        var correo_electronico          = $("#correo_electronico").val();
+        var empresa_orden               = $("#empresa").val();
+        var id_sucursal_orden           = $("#sucursal").val();
+        var fecha_entrega_orden         = $("#fecha_entrega").val();
+        var id_comprador                = $("#codigo_comprador").val();
+        if (fecha_entrega_orden         == undefined || fecha_entrega_orden == ""){
+            continuar                   = false;
+            mensajes[contador_mensajes] = $("#error_fecha_orden").val();
             contador_mensajes++;
         }
-        var celular = $("#celular").val();
-        var correo_electronico = $("#correo_electronico").val();
-        var id_sucursal_pedido = $("#id_sucursal").val();
-        var fecha_pedido = $("#fecha_documento").val();
-        if (fecha_pedido == undefined || fecha_pedido == ""){
-            continuar = false;
-            mensajes[contador_mensajes] = $("#error_fecha_pedido").val();
-            contador_mensajes++;
-        }
-        var id_tipo_documento = $("#id_tipo_documento").val();
-        var id_tipo_entrada_salida = $("#id_tipo_entrada_salida").val();
-        /////////// Pestaña Datos negociación ///////////////////
-        var id_comprador = $("#id_comprador").val();
-        var participacion = parseFloat($("#participacion").val());
-        if (participacion == undefined || isNaN(participacion) || participacion == ""){
-            participacion = 0;
-        }
-        var descuento_financiero_fijo = 0;
-        if ($(".descuento_financiero_fijo").is(':checked')){
-            descuento_financiero_fijo = parseFloat($("#descuento_financiero_fijo").val());
-            if (descuento_financiero_fijo == undefined || isNaN(descuento_financiero_fijo) || descuento_financiero_fijo==0){
-                continuar = false;
-                mensajes[contador_mensajes] = $("#error_descuento_financiero_fijo").val();
-                contador_mensajes++;
-            }
-        }
-        var descuento_financiero_pronto_pago = 0;
-        if ($(".descuento_financiero_pronto_pago").is(':checked')){
-            descuento_financiero_pronto_pago = parseFloat($("#descuento_financiero_pronto_pago").val());
-            if (descuento_financiero_pronto_pago == undefined || isNaN(descuento_financiero_pronto_pago) || descuento_financiero_pronto_pago==0){
-                continuar = false;
-                mensajes[contador_mensajes] = $("#error_descuento_financiero_pronto_pago").val();
-                contador_mensajes++;
-            }
-        }
-        var descuento_global1 = 0;
-        if ($(".aplica_descuento_global1").is(':checked')){
-            descuento_global1 = parseFloat($("#descuento_global1").val());
-            if (descuento_global1 == undefined || isNaN(descuento_global1) || descuento_global1==0){
-                continuar = false;
-                mensajes[contador_mensajes] = $("#error_descuento_global1").val();
-                contador_mensajes++;
-            }
-        }
-        var descuento_global2 = 0;
-        if ($(".aplica_descuento_global2").is(':checked')){
-            descuento_global2 = parseFloat($("#descuento_global2").val());
-            if (descuento_global2 == undefined || isNaN(descuento_global2) || descuento_global2==0){
-                continuar = false;
-                mensajes[contador_mensajes] = $("#error_descuento_global2").val();
-                contador_mensajes++;
-            }
-        }
-        var descuento_global3 = 0;
-        if ($(".aplica_descuento_global3").is(':checked')){
-            descuento_global3 = parseFloat($("#descuento_global3").val());
-            if (descuento_global3 == undefined || isNaN(descuento_global3) || descuento_global3==0){
-                continuar = false;
-                mensajes[contador_mensajes] = $("#error_descuento_global3").val();
-                contador_mensajes++;
-            }
-        }
-        var iva_incluido = false;
-        if ($(".iva_incluido").is(':checked')){
-            iva_incluido = true;
-        }
-        var numero_dias_pago = $("#numero_dias_pago").val();
-        if (numero_dias_pago == undefined){
-            numero_dias_pago = 0;
-        }
-        var numero_entregas = parseInt($("#numero_entregas").val());
-        var fecha_final_entregas = "0000-00-00";
-        if (numero_entregas == undefined || isNaN(numero_entregas) || numero_entregas == 0){
-            numero_entregas = 0;
-        } else if(numero_entregas > 0){
-            fecha_final_entregas = $("#fecha_final_entregas").val();
-            if (fecha_final_entregas == undefined || fecha_final_entregas == ""){
-                continuar = false;
-                mensajes[contador_mensajes] = $("#error_fecha_final_entregas").val();
-                contador_mensajes++;
-            }
-        }
-        var observaciones = $("#observaciones").val();
+        
         /////////// Pestaña pedidos de articulos ///////////////////
         var crear_articulo = false;
         if ($(".crear_articulo").is(':checked')){
             crear_articulo = true;
         }
         // datos articulo existe //
-        var id_articulo = parseInt($("#id_articulo").val());
-        var articulo = $("#articulo").val();
+        var id_articulo = parseInt($("#codigo_articulo").val());
+        var articulo    = $("#selector7").val();
         if (!crear_articulo && (id_articulo == undefined || isNaN(id_articulo) || id_articulo == 0)){
-            continuar = false;
+            continuar   = false;
             mensajes[contador_mensajes] = $("#error_articulo").val();
             contador_mensajes++;
         }
         // datos articulo nuevo //
-        var id_detalle = parseInt($("#id_detalle").val());
+        var id_detalle          = parseInt($("#id_detalle").val());
         var id_estructura_grupo = parseInt($("#id_estructura_grupo").val());
-        var referencia = $("#referencia").val();
-        var detalle = $("#detalle").val();
-        var id_tasa = parseInt($("#id_tasa").val());
-        var maneja_color = false;
-        if ($(".maneja_color").is(':checked')){
-            maneja_color = true;
-        }
-        var maneja_criterio = false;
-        var id_criterio_subnivel_articulo = 0;
-        if ($(".maneja_criterio").is(':checked') || $(".maneja_criterio_articulo").is(':checked')){
-            maneja_criterio = true;
-            id_criterio_subnivel_articulo = parseInt($("#id_criterio_subnivel_articulo").val());
-        }
-        var maneja_caracteristicas = false;
-        if ($(".maneja_caracteristicas").is(':checked')){
-            maneja_caracteristicas = true;
-        }
+        var referencia          = $("#selector8").val();
+        var detalle             = $("#descripcion").val();
+        var id_tasa             = parseInt($("#id_tasa").val());
+       
         if (crear_articulo){
             if (id_estructura_grupo == undefined || isNaN(id_estructura_grupo) || id_estructura_grupo == 0){
                 continuar = false;
                 mensajes[contador_mensajes] = $("#error_estructura_grupo").val();
                 contador_mensajes++;
             } else {
-                var id_categoria = $("#id_categoria").val();
-                if (id_categoria==undefined || isNaN(id_categoria)){
-                    id_categoria = "0";
-                }
-                var id_grupo1 = $("#id_grupo1").val();
-                if (id_grupo1==undefined || isNaN(id_grupo1)){
-                    id_grupo1 = "0";
-                }
-                var id_grupo2 = $("#id_grupo2").val();
-                if (id_grupo2==undefined || isNaN(id_grupo2)){
-                    id_grupo2 = "0";
-                }
-                var id_grupo3 = $("#id_grupo3").val();
-                if (id_grupo3==undefined || isNaN(id_grupo3)){
-                    id_grupo3 = "0";
-                }
-                var id_grupo4 = $("#id_grupo4").val();
-                if (id_grupo4==undefined || isNaN(id_grupo4)){
-                    id_grupo4 = "0";
-                }
-                var id_grupo5 = $("#id_grupo5").val();
-                if (id_grupo5==undefined || isNaN(id_grupo5)){
-                    id_grupo5 = "0";
-                }
-                var id_grupo6 = $("#id_grupo6").val();
-                if (id_grupo6==undefined || isNaN(id_grupo6)){
-                    id_grupo6 = "0";
-                }
-                var nivel = $("#nivel").val();
-
-                var continuar_estructura = true;
-                if (nivel == 2 && id_grupo1 == 0){
-                    continuar_estructura = false;
-                }
-                if (nivel == 3 && id_grupo2 == 0){
-                    continuar_estructura = false;
-                }
-                if (nivel == 4 && id_grupo3 == 0){
-                    continuar_estructura = false;
-                }
-                if (nivel == 5 && id_grupo4 == 0){
-                    continuar_estructura = false;
-                }
-                if (nivel == 6 && id_grupo5 == 0){
-                    continuar_estructura = false;
-                }
-                if (nivel == 7 && id_grupo6 == 0){
-                    continuar_estructura = false;
-                }
-                if (!continuar_estructura){
-                    continuar = false;
-                    mensajes[contador_mensajes] = $("#error_estructura_grupo").val();
-                    contador_mensajes++;
+                var id_arbolGrupos = $("#arbolGrupos").val();
+                if (id_arbolGrupos==undefined || isNaN(id_arbolGrupos)){
+                    id_arbolGrupos = "0";
                 }
             }
             if (referencia == undefined || referencia == ""){
@@ -893,77 +739,42 @@
                 mensajes[contador_mensajes] = $("#error_tasa").val();
                 contador_mensajes++;
             }
-            if (maneja_criterio && (id_criterio_subnivel_articulo == undefined || isNaN(id_criterio_subnivel_articulo) || id_criterio_subnivel_articulo == 0)){
-                continuar = false;
-                mensajes[contador_mensajes] = $("#error_criterio").val();
-                contador_mensajes++;
-            }
-            if (maneja_caracteristicas){
-                existe_caracteristica = false;
-                $("#listaCaracteristica").find('.id_caracteristica_tabla').each(function () {
-                    existe_caracteristica = true;
-                });
-                $("#listaCaracteristica tbody tr td").find(".")
-                if (!existe_caracteristica){
-                    continuar = false;
-                    mensajes[contador_mensajes] = $("#error_caracteristica").val();
-                    contador_mensajes++;
-                }
-            }
         }
 
         // datos pedido //
-        var cantidad_total_articulo = parseFloat($("#cantidad_total_articulo").val());
-        if (cantidad_total_articulo == undefined || isNaN(cantidad_total_articulo) || cantidad_total_articulo == 0){
-            continuar = false;
+        var cantidad_total_articulo     = parseFloat($("#cantidad_total_articulo").val());
+        if (cantidad_total_articulo     == undefined || isNaN(cantidad_total_articulo) || cantidad_total_articulo == 0){
+            continuar                   = false;
             mensajes[contador_mensajes] = $("#error_cantidad_total").val();
             contador_mensajes++;
         }
-        var cantidad_total_control = parseFloat($("#cantidad_total_control").val());
-        var id_unidad = $("#id_unidad").val();
-        var valor_unitario = parseFloat($("#valor_unitario").val());
-        if (valor_unitario == undefined || isNaN(valor_unitario) || valor_unitario == 0){
-            continuar = false;
+        var cantidad_total_control      = parseFloat($("#cantidad_total_control").val());
+        var id_unidad                   = $("#id_unidad_compra").val();
+        var valor_unitario              = parseFloat($("#costo_unitario").val());
+        if (valor_unitario              == undefined || isNaN(valor_unitario) || valor_unitario == 0){
+            continuar                   = false;
             mensajes[contador_mensajes] = $("#error_valor_unitario").val();
             contador_mensajes++;
         }
-        var descuento_linea = false;
+        var descuento_linea            = false;
         var porcentaje_descuento_linea = 0;
+
         if ($(".descuento_linea").is(':checked')){
-            descuento_linea = true;
-            porcentaje_descuento_linea = parseFloat($("#descuento_linea").val());
-            if (porcentaje_descuento_linea == undefined || isNaN(porcentaje_descuento_linea) || porcentaje_descuento_linea == 0){
-                continuar = false;
+            descuento_linea                 = true;
+            porcentaje_descuento_linea      = parseFloat($("#descuento").val());
+            if (porcentaje_descuento_linea  == undefined || isNaN(porcentaje_descuento_linea) || porcentaje_descuento_linea == 0){
+                continuar                   = false;
                 mensajes[contador_mensajes] = $("#error_porcentaje_descuento_linea").val();
                 contador_mensajes++;
             }
         }
         var observaciones_articulo = $("#observaciones_articulo").val();
-        var id_sucursal_destino = $("#id_sucursal_destino").val();
-        var cantidad_detalle = parseFloat($("#cantidad_detalle").val());
-        if (cantidad_detalle == undefined || isNaN(cantidad_detalle) ||  cantidad_detalle == 0){
-            continuar = false;
+        var id_sucursal_destino    = $("#id_sucursal_destino").val();
+        var cantidad_detalle       = parseFloat($("#cantidad_total_articulo").val());
+
+        if (cantidad_detalle            == undefined || isNaN(cantidad_detalle) ||  cantidad_detalle == 0){
+            continuar                   = false;
             mensajes[contador_mensajes] = $("#error_cantidad_detalle").val();
-            contador_mensajes++;
-        }
-        var id_concepto_criterio_subnivel_articulo = parseInt($("#id_concepto_criterio_subnivel_articulo").val());
-        if (maneja_criterio && (id_concepto_criterio_subnivel_articulo == undefined || isNaN(id_concepto_criterio_subnivel_articulo) ||  id_concepto_criterio_subnivel_articulo == 0)){
-            continuar = false;
-            mensajes[contador_mensajes] = $("#error_concepto").val();
-            contador_mensajes++;
-        }
-        //var id_color = parseInt($("#id_color").val());
-        //if (maneja_color && (id_color == undefined || isNaN(id_color) ||  id_color == 0)){
-        var id_color = $("#id_color").val();
-        if (maneja_color && (id_color == undefined || id_color == "")){
-            continuar = false;
-            mensajes[contador_mensajes] = $("#error_color").val();
-            contador_mensajes++;
-        }
-        var fecha_entrega_articulo = $("#fecha_entrega_articulo").val();
-        if (fecha_entrega_articulo == undefined || fecha_entrega_articulo == ""){
-            continuar = false;
-            mensajes[contador_mensajes] = $("#error_fecha_entrega_articulo").val();
             contador_mensajes++;
         }
 
@@ -973,39 +784,14 @@
             contador_mensajes++;
         }
 
-        var regimen = $("#regimen_actual").val();
-        if (regimen == "2"){
-            $(".iva_incluido").removeAttr('checked');
-            $(".iva_incluido").attr("disabled","disabled");
-            $(".iva_incluido").parent().hide();
-        } else {
-            $(".iva_incluido").removeAttr('checked');
-            $(".iva_incluido").removeAttr("disabled");
-            $(".iva_incluido").parent().show();
-        }
-
         if (continuar){
             if (cantidad_total_articulo == cantidad_total_control){
-                $("#id_unidad_actual").val($("#id_unidad").val());
+                $("#id_unidad_actual").val($("#id_unidad_compra").val());
                 $("#aplica_descuento_linea_actual").val($(descuento_linea));
-                $("#id_categoria_actual").val(id_categoria);
-                $("#id_grupo1_actual").val(id_grupo1);
-                $("#id_grupo2_actual").val(id_grupo2);
-                $("#id_grupo3_actual").val(id_grupo3);
-                $("#id_grupo4_actual").val(id_grupo4);
-                $("#id_grupo5_actual").val(id_grupo5);
-                $("#id_grupo6_actual").val(id_grupo6);
                 $("#referencia_actual").val(referencia);
                 $("#detalle_actual").val(detalle);
                 $("#id_tasa_actual").val(id_tasa);
-                $("#maneja_color_actual").val(maneja_color);
-                $("#id_criterio_subnivel_articulo_actual").val(id_criterio_subnivel_articulo);
-                $("#maneja_caracteristica_actual").val(maneja_caracteristicas);
                 $("#valor_unitario_actual").val(valor_unitario);
-                $("#descuento_global1_actual").val(descuento_global1);
-                $("#descuento_global2_actual").val(descuento_global2);
-                $("#descuento_global3_actual").val(descuento_global3);
-                $("#descuento_linea_actual").val(porcentaje_descuento_linea);
             }
             $(".agregar_articulo").parent().hide();
             $(".agregar_articulo").attr("disabled","disabled");
@@ -1018,14 +804,9 @@
                 data: {insertar_movimiento: true},
                 success: function(datos) {
                     if (datos[0]){
-                        var id_propuesta_pedido = $("#id_propuesta_pedido").val();
-                        /*$(".aplica_descuento_global1").attr("disabled","disabled");
-                        $("#descuento_global1").attr("readOnly","true");
-                        $(".aplica_descuento_global2").attr("disabled","disabled");
-                        $("#descuento_global2").attr("readOnly","true");
-                        $(".aplica_descuento_global3").attr("disabled","disabled");
-                        $("#descuento_global3").attr("readOnly","true");*/
-                        if (id_propuesta_pedido == 0){
+                        var id_orden_compra = $("#id_orden_compra").val();
+
+                        /*if (id_orden_compra == 0){
                             // Deshabilitar campos del encabezado
                             $("#nit_proveedor_mostrar").html($("#nit_proveedor").val());
                             $("#razon_social_proveedor_mostrar").html($("#razon_social_proveedor").val());
@@ -1050,36 +831,17 @@
                             $("#numero_propuesta").attr("disabled","disabled");
                             $("#numero_propuesta").parent().show();
                             $("#numero_propuesta").html(datos[17]);
-                        }
+                        }*/
                         var cantidad_pendiente = cantidad_total_control - cantidad_detalle;
+                        
                         $("#cantidad_total_control").val(cantidad_pendiente);
                         $("#cantidad_pendiente").html(cantidad_pendiente);
+
                         if (cantidad_pendiente > 0){
-                            $("#id_categoria").attr("disabled","disabled");
-                            $("#id_grupo1").attr("disabled","disabled");
-                            $("#id_grupo2").attr("disabled","disabled");
-                            $("#id_grupo3").attr("disabled","disabled");
-                            $("#id_grupo4").attr("disabled","disabled");
-                            $("#id_grupo5").attr("disabled","disabled");
-                            $("#id_grupo6").attr("disabled","disabled");
                             $("#referencia").attr("readOnly","true");
-                            $("#detalle").attr("readOnly","true");
+                            $("#descripcion").attr("readOnly","true");
                             $("#id_tasa").attr("disabled","disabled");
-                            $(".maneja_color").attr("disabled","disabled");
-                            $(".maneja_criterio").attr("disabled","disabled");
-                            $(".maneja_criterio_articulo").attr("disabled","disabled");
-                            $("#id_subnivel_articulo").attr("disabled","disabled");
-                            $("#id_criterio_subnivel_articulo").attr("disabled","disabled");
-                            $(".maneja_caracteristicas").attr("disabled","disabled");
-                            $("#id_caracteristica").parent().hide();
-                            $("#id_caracteristica").attr("disabled","disabled");
-                            $(".item_caracteristica").parent().hide();
-                            $(".item_caracteristica").attr("disabled","disabled");
-                            var id_lista_caracteristica = $("#listaCaracteristica thead tr th:first-child").attr("id");
-                            if (id_lista_caracteristica == ""){
-                                $("#listaCaracteristica thead tr th:first-child").hide();
-                            }
-                            $("#articulo").attr("readOnly","true");
+                            $("#selector7").attr("readOnly","true");
                             $("#cantidad_total_articulo").attr("readOnly","true");
                             $("#valor_unitario").attr("readOnly","true");
                             $("#id_unidad").attr("disabled","disabled");
@@ -1096,71 +858,21 @@
                             $(".detalle_pedido").attr("disabled","disabled");
                             $("#cantidad_total_control").val(0);
                             $("#cantidad_pendiente").html(0);
-                            $("#articulo").val('');
-                            $("#id_articulo").val('');
+                            $("#selector7").val('');
+                            $("#codigo_articulo").val('');
                             $("#cantidad_total_articulo").val('');
                             $("#cantidad_total_control").val('');
-                            $(".concepto").parent().hide();
-                            $(".concepto").attr('disabled','disabled');
-                            $(".concepto").html('');
-                            $(".colores").parent().hide();
-                            $(".colores").attr('disabled','disabled');
-                            //$("#id_color").val(0);
-                            $("#id_color").val("");
                             $(".detalle_pedido").parent().hide();
                             $(".detalle_pedido").attr('disabled','disabled');
                             $("#cantidad_detalle").val('');
                             $(".descuento_linea").removeAttr('checked');
-                            $(".linea").parent().hide();
-                            $(".linea").attr('disabled','disabled');
                             $("#descuento_linea").val('');
                             $("#observaciones_articulo").val('');
                             $("#valor_unitario").val('');
                             $("#cantidad_pendiente").html('');
                             $("#id_unidad").removeAttr('disabled');
-                            $("#id_categoria").val(0);
-                            $("#id_categoria").removeAttr('disabled');
-                            $("#grupo1").val(0);
-                            $(".grupo1").parent().hide();
-                            $(".grupo1").attr('disabled','disabled');
-                            $("#grupo2").val(0);
-                            $(".grupo2").parent().hide();
-                            $(".grupo2").attr('disabled','disabled');
-                            $("#grupo3").val(0);
-                            $(".grupo3").parent().hide();
-                            $(".grupo3").attr('disabled','disabled');
-                            $("#grupo4").val(0);
-                            $(".grupo4").parent().hide();
-                            $(".grupo4").attr('disabled','disabled');
-                            $("#grupo5").val(0);
-                            $(".grupo5").parent().hide();
-                            $(".grupo5").attr('disabled','disabled');
-                            $("#grupo6").val(0);
-                            $(".grupo6").parent().hide();
-                            $(".grupo6").attr('disabled','disabled');
                             $("#referencia").val('');
-                            $("#detalle").val('');
-                            $(".maneja_criterio").removeAttr('checked');
-                            $(".maneja_criterio_articulo").removeAttr('checked');
-                            $(".criterio").parent().hide();
-                            $(".criterio").attr('disabled','disabled');
-                            $(".criterio").html('');
-                            $("#id_subnivel_articulo").parent().hide();
-                            $("#id_subnivel_articulo").attr('disabled','disabled');
-                            $("#id_subnivel_articulo").html('');
-                            $("#id_subnivel_articulo").val('0');
-                            $(".maneja_criterio_articulo").parent().hide();
-                            $(".maneja_criterio_articulo").attr('disabled','disabled');
-                            $(".maneja_criterio_articulo").html('');
-                            $(".maneja_color").removeAttr('disabled');
-                            $(".maneja_color").removeAttr('checked');
-                            $(".id_color").val('');
-                            $(".colores").parent().hide();
-                            $(".colores").val('');
-                            $(".maneja_caracteristicas").removeAttr('checked');
-                            $("#listaCaracteristica tbody").parents('tr').remove();
-                            $(".caracteristica").parent().hide();
-                            $(".caracteristica").attr('disabled','disabled');
+                            $("#descripcion").val('');
                             $("#foto_articulo").val('');
                             $(".articulo_existe").parent().show();
                             $(".articulo_existe").removeAttr("disabled");
@@ -1172,7 +884,6 @@
                             $("#detalle").removeAttr("readOnly");
                             $("#descuento_linea").removeAttr("readOnly");
                             $("#listaCaracteristica thead tr th:first-child").show();
-                            $("#id_unidad").val($("#id_unidad_medida_pedidos").val());
                         }
                         var valorClase = '';
                         if ($("#listaArticulos tbody tr:first-child").hasClass("even")) {
@@ -1181,15 +892,16 @@
                             valorClase = 'even';
                         }
                         var removerArticulo = $('#removerArticulo').html();
-                        var modificar = $('#modificarArticulo').html();
-                        if (datos[13] == ""){
-                            var foto = '<td align="right"></td>';
+                        var modificar       = $('#modificarArticulo').html();
+
+                        if (datos[6] == ""){
+                            var foto  = '<td align="right"></td>';
                         } else {
-                            var foto = '<td align="center"><a target="_new" href="'+datos[13]+'">[Descargar]</a></td>';
+                            var foto  = '<td align="center"><a target="_new" href="'+datos[6]+'">[Descargar]</a></td>';
                         }
-                        var item = '<tr id="'+datos[16]+'" class="'+valorClase+'">'+
+                        var item = '<tr id="'+datos[14]+'" class="'+valorClase+'">'+
                                         '<td align="center">'+
-                                            '<input type="hidden" name="id_movimiento_tabla['+datos[16]+']" value="'+datos[16]+'">'+
+                                            '<input type="hidden" name="id_movimiento_tabla['+datos[14]+']" value="'+datos[14]+'">'+
                                             modificar+
                                         '</td>'+
                                         '<td align="center">'+
@@ -1204,10 +916,6 @@
                                         '<td align="right">'+datos[6]+'</td>'+
                                         '<td align="left">'+datos[7]+'</td>'+
                                         '<td align="right">'+datos[8]+'</td>'+
-                                        '<td align="right">'+datos[9]+'</td>'+
-                                        '<td align="right">'+datos[10]+'</td>'+
-                                        '<td align="right">'+datos[11]+'</td>'+
-                                        '<td align="center">'+datos[12]+'</td>'+
                                         foto+
                                         '<td align="left">'+observaciones_articulo+'</td>'+
                                     '</tr>';
@@ -1226,16 +934,7 @@
                     $('#indicadorEsperaFormulario').css("display","none");
                     $(".agregar_articulo").parent().show();
                     $(".agregar_articulo").removeAttr("disabled");
-                    $("#id_propuesta_pedido").val(datos[15]);
-                    if (regimen == "2"){
-                        $(".iva_incluido").attr("disabled","disabled");
-                        $(".iva_incluido").removeAttr('checked');
-                        $(".iva_incluido").parent().hide();
-                    } else {
-                        $(".iva_incluido").removeAttr("disabled");
-                        $(".iva_incluido").removeAttr('checked');
-                        $(".iva_incluido").parent().show();
-                    }
+                    $("#id_orden_compra").val(datos[15]);
                 }
             });
         } else {
@@ -1853,21 +1552,185 @@
             alert(mensaje_pantalla);
         }
     }
+
+function quitarMiles($cadena){
+    $valor = array();
+    for ($i = 0; $i < strlen($cadena); $i++) {
+        if (substr($cadena, $i, 1) != ".") {
+            $valor[$i] = substr($cadena, $i, 1);
+        }
+    }
+    $valor = implode($valor);
+    return $valor;
+}
+
+function numberFormat(numero){
+    // Variable que contendra el resultado final
+    var resultado = "";
+    // Si el numero empieza por el valor "-" (numero negativo)
+    if(numero[0]=="-"){
+        // Cogemos el numero eliminando los posibles puntos que tenga, y sin el signo negativo
+        nuevoNumero=numero.replace(/\./g,'').substring(1);
+
+    }else{
+        // Cogemos el numero eliminando los posibles puntos que tenga
+        nuevoNumero = numero.replace(/\./g,'');
+    }
+    // Si tiene decimales, se los quitamos al numero
+    if(numero.indexOf(",")>=0)
+        nuevoNumero = nuevoNumero.substring(0,nuevoNumero.indexOf(","));
+        // Ponemos un punto cada 3 caracteres
+        for (var j, i = nuevoNumero.length - 1, j = 0; i >= 0; i--, j++)
+            resultado = nuevoNumero.charAt(i) + ((j > 0) && (j % 3 == 0)? ".": "") + resultado;
+        // Si tiene decimales, se lo añadimos al numero una vez formateado con los separadores de miles
+        if(numero.indexOf(",")>=0)
+            resultado+=numero.substring(numero.indexOf(","));
+            if(numero[0]=="-"){
+            // Devolvemos el valor añadiendo al inicio el signo negativo
+            return "-"+resultado;
+        }else{
+            return resultado;
+        }
+}
+
 function cargarDatosArticulo(){
-    var destino    = $('#URLFormulario').val();
-    var referencia = $('#selector7').val();
+    var destino       = $('#URLFormulario').val();
+    var referencia    = $('#selector7').val();
+    var nit_proveedor = parseInt($('#selector4').val());
 
     /*** Descargar contenido  ***/
-    $.getJSON(destino, {cargarDatosArticuloCreado: true, referencia_carga: referencia}, function(datos){
+    $.getJSON(destino, {cargarDatosArticuloCreado: true, referencia_carga: referencia, nit_proveedor: nit_proveedor}, function(datos){
         if (datos != ""){
             if(datos[0] != ""){
                 var codigo_unidad_compra   = datos[14];
                 var nombre_unidad_compra   = datos[27];
+                var costo                  = datos[31];
+                costo                      = costo;
 
                 $('#descripcion').val(datos[1]).attr("disabled","disabled");
+                $('#costo_unitario').val(costo);
                 $('#id_unidad_compra').html('');
                 $('#id_unidad_compra').append('<option value="'+codigo_unidad_compra+'">' +nombre_unidad_compra+ '</option>').attr("disabled","disabled");
             }
         }
     });
+}
+
+function formato_numero(valor){
+        var valor_formato = '';
+        for ( m=0; m < valor.length; m++) {
+
+            if (valor.charAt(m) != ',') {
+                valor_formato = valor_formato + valor.charAt(m);
+            }
+        }
+        return valor_formato;
+    };
+    
+    
+    function ponerMiles(valor) {
+        var valorMiles = '';
+        valor          = valor.toString();
+        cont           = 0;
+
+        for ( m=valor.length; m>=0; m--) {
+            if (cont != 3) {
+                valorMiles = valor.charAt(m-1)+valorMiles;
+                cont++;
+            } else {
+                cont = 0;
+                if (m != 0) {
+                    valorMiles = ','+valorMiles;
+                    m++;
+                }
+            }
+        }
+        return valorMiles;
+    };
+
+function formatoMiles(input){
+    var num = input.value.replace(/\./g,'');
+        if(!isNaN(num)){
+            num = num.toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
+            num = num.split('').reverse().join('').replace(/^[\.]/,'');
+            input.value = num;
+        } else{ alert('Solo se permiten numeros');
+            input.value = input.value.replace(/[^\d\.]*/g,'');
+    }
+}   
+
+function calcularSubtotal() {
+    var destino                 = $('#URLformulario').val();
+    var cantidad_total_articulo = $('#cantidad_total_articulo').val();
+    var costo_unitario          = $('#costo_unitario').val();
+    var subtotal                = 0;
+
+    subtotal = costo_unitario * cantidad_total_articulo;
+    subtotal = ponerMiles(subtotal);
+    $('#subtotal').val(subtotal);
+
+}
+
+function agregarItemArticulo() {
+
+    var destino                 = $('#URLformulario').val();
+    var indice                  = $('#indice').val();
+    var referencia              = $('#selector8').val();
+    var descripcion             = $('#descripcion').val();
+    var cantidad_total_articulo = $('#cantidad_total_articulo').val();
+    var id_unidad_compra        = $('#id_unidad_compra').val();
+    var costo_unitario          = $('#costo_unitario').val();
+    
+    var existe_referencia   = 0;
+    var existe_principal    = 0;
+    var campo_principal     = "";
+
+    $(destino).find(".referencia_tabla").each(function(){
+        var referencia_tabla = $(this).val();
+        if (referencia == referencia_tabla){
+            existe_referencia = 1;
+        }
+    });
+
+    if (referencia && codigo_alfanumerico && codigo_alfanumerico!=referencia && existe_referencia==0) {
+                                            
+        var boton      = $('#removedor').html();
+        var valorClase = 'even';
+        if ($("#lista_items tr:last").hasClass("even")) {
+            valorClase = 'odd';
+        }
+
+        var item  = '<tr id="fila_'+indice+'" class="'+valorClase+'">'+
+            '<td align="center">'+
+                '<input type="hidden" class="referencia_tabla" name="referencia_tabla['+indice+']" value="'+referencia+'">'+
+                '<input type="hidden" class="codigo_barras_tabla" name="codigo_barras_tabla['+indice+']" value="'+codigo_barras+'">'+boton+
+            '</td>'+
+            '<td align="left">'+referencia+'</td>'+
+            '<td align="left">'+codigo_barras+'</td>'+
+        '</tr>';
+
+        $('#lista_items').append(item);
+        $('#referencia').val('');
+        $('#codigo_barras_alterna').val('');
+        indice++;
+        $('#indice').val(indice);
+            
+    } else {
+        if(existe_referencia == 1){
+            var error = $('#existe_referencia').val();
+
+        } else if(referencia==''){
+            var error = $('#digite_referencia').val();
+
+        } else if(codigo ==''){
+            var error = $('#digite_codigo').val();
+
+        } else if(codigo_alfanumerico ==''){
+            var error = $('#digite_codigo_alfanumerico').val();
+
+        } else if(codigo_alfanumerico == referencia){
+            var error = $('#referencia_diferente').val();
+        }
+        alert(error);
+    }
 }

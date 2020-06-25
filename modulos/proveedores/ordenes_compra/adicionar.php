@@ -54,7 +54,7 @@ if (isset($url_completar)) {
 
 } elseif (isset($url_cargarProveedor)) {
     if (!empty($url_nit_proveedor)) {
-      
+
         $tipo_persona = SQL::obtenerValor("terceros", "tipo_persona", "documento_identidad = '$url_nit_proveedor' AND activo = '1'");
            
         if ($tipo_persona == '2' || $tipo_persona == '4') {
@@ -133,14 +133,14 @@ if (isset($url_completar)) {
 } elseif (isset($url_cargarDatosArticuloCreado)) {
 
     if (!empty($url_referencia_carga)) {
-
-        $codigo_articulo               = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$url_referencia_carga' AND principal = '1'");
+        $nit_proveedor                 = $url_nit_proveedor;
+        $codigo_articulo               = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$url_referencia_carga' AND principal = '1' AND documento_identidad_proveedor = '$nit_proveedor'");
 
         $estructura_grupos             = SQL::obtenerValor("articulos", "codigo_estructura_grupo", "codigo = '$codigo_articulo'");
         $nodo_estructura_grupos        = SQL::obtenerValor("estructura_grupos", "codigo_padre", "codigo = '$estructura_grupos'");
         $grupo_estructura_grupos       = SQL::obtenerValor("estructura_grupos", "codigo_grupo", "codigo = '$estructura_grupos'");
 
-        $codigo_barras                 = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "referencia = '$url_referencia_carga' AND principal = '1'");
+        $codigo_barras                 = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "referencia = '$url_referencia_carga' AND principal = '1' AND documento_identidad_proveedor = '$nit_proveedor'");
         $documento_identidad_proveedor = SQL::obtenerValor("referencias_proveedor", "documento_identidad_proveedor", "referencia = '$url_referencia_carga' AND principal = '1'");     
 
         $documento_identidad_proveedor = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
@@ -156,6 +156,7 @@ if (isset($url_completar)) {
         $codigo_estructura_grupo = SQL::obtenerValor("articulos", "codigo_estructura_grupo", "codigo = '$codigo_articulo'");
         $codigo_padre            = SQL::obtenerValor("estructura_grupos", "codigo_padre", "codigo = '$codigo_estructura_grupo'");
         $codigo_grupo            = SQL::obtenerValor("estructura_grupos", "codigo_grupo", "codigo = '$codigo_estructura_grupo'");
+        $costo                   = SQL::obtenerValor("lista_precio_articulos", "costo", "codigo_articulo = '$codigo_articulo'");
 
         $tabla = array();
 
@@ -196,7 +197,8 @@ if (isset($url_completar)) {
                 $nombre_unidad_compra,
                 $codigo_estructura_grupo,
                 $codigo_padre,
-                $codigo_grupo
+                $codigo_grupo,
+                $costo
             );
         } else {
             $tabla[] = "";
@@ -371,82 +373,26 @@ if (!empty($url_generar)){
                             HTML::campoTextoCorto("digito_verificacion", $textos["DIGITO_VERIFICACION"], 1, 1, "", array("readonly" => "true","Class" => "oculto"))
                             .HTML::campoOculto("documento_identidad_proveedor", ""),
 
-                            HTML::campoTextoCorto("*razon_social_proveedor",$textos["RAZON_SOCIAL_PROVEEDOR"], 45, 255, "", array("title"=>$textos["AYUDA_RAZON_SOCIAL_PROVEEDOR"],"")),
+                            HTML::campoTextoCorto("*razon_social_proveedor",$textos["RAZON_SOCIAL_PROVEEDOR"], 45, 255, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_RAZON_SOCIAL_PROVEEDOR"],"")),
 
-                            HTML::listaSeleccionSimple("*vendedor_proveedor", $textos["VENDEDOR"], HTML::generarDatosLista("menu_vendedores_proveedor", "id", "NOMBRE_COMPLETO", "id >'0'"), "", array("title",$textos["AYUDA_VENDEDOR"]))
+                            HTML::listaSeleccionSimple("*vendedor_proveedor", $textos["VENDEDOR"], HTML::generarDatosLista("menu_vendedores_proveedor", "id", "NOMBRE_COMPLETO", "id >'0'"), "", array("readonly" => "true"), array("title",$textos["AYUDA_VENDEDOR"]))
                         ),
                         array(
-                            HTML::campoTextoCorto("*direccion",$textos["DIRECCION"], 40, 255, "", array("title",$textos["AYUDA_DIRECCION"])),
+                            HTML::campoTextoCorto("*direccion",$textos["DIRECCION"], 40, 255, "", array("readonly" => "true"), array("title",$textos["AYUDA_DIRECCION"])),
                             
-                            HTML::campoTextoCorto("*selector1",$textos["MUNICIPIO"], 40, 255, "", array("title",$textos["AYUDA_MUNICIPIO"], "class"=>"autocompletable"))
+                            HTML::campoTextoCorto("*selector1",$textos["MUNICIPIO"], 40, 255, "", array("readonly" => "true"), array("title",$textos["AYUDA_MUNICIPIO"], "class"=>"autocompletable"))
                             .HTML::campoOculto("id_municipio","")
                         ),    
                         array(
-                            HTML::campoTextoCorto("*correo_electronico",$textos["CORREO_ELECTRONICO"], 40, 255, "", array("title",$textos["AYUDA_CORREO_ELECTRONICO"])),
+                            HTML::campoTextoCorto("*correo_electronico",$textos["CORREO_ELECTRONICO"], 40, 255, "", array("readonly" => "true"), array("title",$textos["AYUDA_CORREO_ELECTRONICO"])),
 
-                            HTML::campoTextoCorto("*celular",$textos["CELULAR"], 15, 15, "", array("title",$textos["AYUDA_CELULAR"]))
+                            HTML::campoTextoCorto("*celular",$textos["CELULAR"], 15, 15, "", array("readonly" => "true"), array("title",$textos["AYUDA_CELULAR"]))
                         )
                     ),
                     $textos["DATOS_PROVEEDOR"]
                 )
             ),
-        );
-        $formularios["PESTANA_NEGOCIACION"] = array(
             array(
-                HTML::listaSeleccionSimple("*codigo_comprador",$textos["COMPRADOR"], $compradores, "", array("title",$textos["AYUDA_COMPRADOR"]))
-            ),
-            array(
-                HTML::marcaChequeo("iva_incluido",$textos["IVA_INCLUIDO"], 1, false, array("title"=>$textos["AYUDA_IVA_INCLUIDO"], "class"=>"iva_incluido"))
-            ),
-            array(
-                HTML::listaSeleccionSimple("*id_moneda",$textos["MONEDA"], $monedas, "", array("title",$textos["AYUDA_MONEDA"]))
-            ),
-            array(
-                HTML::agrupador(
-                    array(
-                        array(
-                            HTML::marcaChequeo("aplica_descuento_financiero_fijo",$textos["DESCUENTO_FINANCIERO_FIJO"], 1, false, array("title"=>$textos["AYUDA_APLICA_DESCUENTO_FINANCIERO_FIJO"], "class"=>"descuento_financiero_fijo","onClick"=>"activaCampos(2,0)")),
-                            HTML::campoTextoCorto("descuento_financiero_fijo","", 6, 8, "", array("title"=>$textos["AYUDA_DESCUENTO_FINANCIERO_FIJO"],"onKeyPress"=>"return campoDecimal(event)", "class"=>"fijo oculto")),
-                            HTML::marcaChequeo("aplica_solo_factura_descuento_fijo",$textos["APLICA_FACTURA"], 1, false, array("title"=>$textos["AYUDA_APLICA_FACTURA"], "class"=>"fijo oculto")),
-                        ),
-                        array(
-                            HTML::marcaChequeo("aplica_descuento_financiero_pronto_pago",$textos["DESCUENTO_FINANCIERO_PRONTO"], 1, false, array("title"=>$textos["AYUDA_APLICA_DESCUENTO_FINANCIERO_PRONTO"], "class"=>"descuento_financiero_pronto_pago","onClick"=>"activaCampos(3,0)")),
-                            HTML::campoTextoCorto("descuento_financiero_pronto_pago","", 6, 8, "", array("title"=>$textos["AYUDA_DESCUENTO_FINANCIERO_PRONTO"],"onKeyPress"=>"return campoDecimal(event)", "class"=>"pronto_pago oculto")),
-                            HTML::campoTextoCorto("numero_dias_pronto_pago",$textos["NUMERO_DIAS_PRONTO_PAGO"], 8, 3, "", array("title"=>$textos["AYUDA_NUMERO_DIAS_PRONTO_PAGO"], "onKeyPress"=>"return campoEntero(event)", "class"=>"pronto_pago oculto")),
-                            HTML::marcaChequeo("aplica_solo_factura_descuento_pronto_pago",$textos["APLICA_FACTURA"], 1, false, array("title"=>$textos["AYUDA_APLICA_FACTURA"], "class"=>"pronto_pago oculto")),
-                        ),
-                        array(
-                            HTML::marcaChequeo("aplica_descuento_global1",$textos["DESCUENTO_GLOBAL1"], 1, false, array("title"=>$textos["AYUDA_APLICA_DESCUENTO_GLOBAL1"], "class"=>"aplica_descuento_global1","onClick"=>"activaCampos(1,1)")),
-                            HTML::campoTextoCorto("descuento_global1","", 6, 8, "", array("title"=>$textos["AYUDA_DESCUENTO_GLOBAL1"],"onKeyPress"=>"return campoDecimal(event)", "class"=>"global1 oculto")),
-                            HTML::marcaChequeo("aplica_solo_factura_descuento_global1",$textos["APLICA_FACTURA"], 1, false, array("title"=>$textos["AYUDA_APLICA_FACTURA"], "class"=>"global1 oculto")),
-                            HTML::marcaChequeo("descuento_global1_iva_incluido",$textos["GLOBAL1_IVA_INCLUIDO"], 1, false, array("title"=>$textos["AYUDA_GLOBAL1_IVA_INCLUIDO"], "class"=>"global1 oculto")),
-                        ),
-                        array(
-                            HTML::marcaChequeo("aplica_descuento_global2",$textos["DESCUENTO_GLOBAL2"], 1, false, array("title"=>$textos["AYUDA_APLICA_DESCUENTO_GLOBAL2"], "class"=>"aplica_descuento_global2 oculto","onClick"=>"activaCampos(1,2)")),
-                            HTML::campoTextoCorto("descuento_global2","", 6, 8, "", array("title"=>$textos["AYUDA_DESCUENTO_GLOBAL2"],"onKeyPress"=>"return campoDecimal(event)", "class"=>"global2 oculto")),
-                            HTML::marcaChequeo("aplica_solo_factura_descuento_global2",$textos["APLICA_FACTURA"], 1, false, array("title"=>$textos["AYUDA_APLICA_FACTURA"], "class"=>"global2 oculto")),
-                        ),
-                        array(
-                            HTML::marcaChequeo("aplica_descuento_global3",$textos["DESCUENTO_GLOBAL3"], 1, false, array("title"=>$textos["AYUDA_APLICA_DESCUENTO_GLOBAL3"], "class"=>"aplica_descuento_global3 oculto","onClick"=>"activaCampos(1,3)")),
-                            HTML::campoTextoCorto("descuento_global3","", 6, 8, "", array("title"=>$textos["AYUDA_DESCUENTO_GLOBAL3"],"onKeyPress"=>"return campoDecimal(event)", "class"=>"global3 oculto")),
-                            HTML::marcaChequeo("aplica_solo_factura_descuento_global3",$textos["APLICA_FACTURA"], 1, false, array("title"=>$textos["AYUDA_APLICA_FACTURA"], "class"=>"global3 oculto")),
-                        )
-                    ),
-                    $textos["DESCUENTOS"]
-                )
-            ),
-            array(
-                HTML::campoTextoCorto("numero_dias_pago",$textos["NUMERO_DIAS_PAGO"], 8, 3, "", array("title"=>$textos["AYUDA_NUMERO_DIAS_PAGO"], "onKeyPress"=>"return campoEntero(event)"))
-            ),
-            array(
-                HTML::campoTextoCorto("numero_entregas",$textos["NUMERO_ENTREGAS"], 8, 3, "", array("title"=>$textos["AYUDA_NUMERO_ENTREGAS"], "onKeyPress"=>"return campoEntero(event)", "onKeyUp"=>"activaFechaFinal()")),
-                HTML::contenedor(
-                    HTML::campoTextoCorto("fecha_final_entregas", $textos["FECHA_FINAL_ENTREGAS"], 8, 8, "", array("title"=>$textos["AYUDA_FECHA_FINAL_ENTREGAS"], "class"=>"fecha_final_entregas")),
-                    array("id"=>"fechas_entregas","class"=>"fechas_entregas oculto")
-                )
-            ),
-            array(
-                HTML::campoTextoLargo("observaciones",$textos["OBSERVACIONES"], 2, 95, "", array("title"=>$textos["AYUDA_OBSERVACIONES"])),
                 HTML::campoOculto("datos_incompletos_estructura",$textos["SELECCIONAR_ESTRUCTURA_COMPLETA"]),
                 HTML::campoOculto("existe_caracteristica",$textos["EXISTE_CARACTERISTICA"]),
                 HTML::campoOculto("seleccionar_caracteristica",$textos["SELECCIONAR_CARACTERISTICA"]),
@@ -457,7 +403,7 @@ if (!empty($url_generar)){
                 HTML::campoOculto("error_municipio",$textos["ERROR_MUNICIPIO"]),
                 HTML::campoOculto("error_direccion",$textos["ERROR_DIRECCION"]),
                 HTML::campoOculto("error_telefono",$textos["ERROR_TELEFONO"]),
-                HTML::campoOculto("error_fecha_pedido",$textos["ERROR_FECHA_PEDIDO"]),
+                HTML::campoOculto("error_fecha_orden",$textos["ERROR_FECHA_ORDEN"]),
                 HTML::campoOculto("error_fecha_final_entregas",$textos["ERROR_FECHA_FINAL_ENTREGAS"]),
                 HTML::campoOculto("error_articulo",$textos["ERROR_ARTICULO"]),
                 HTML::campoOculto("error_estructura_grupo",$textos["ERROR_ESTRUCTURA_GRUPO"]),
@@ -467,7 +413,7 @@ if (!empty($url_generar)){
                 HTML::campoOculto("error_criterio",$textos["ERROR_CRITERIO"]),
                 HTML::campoOculto("error_caracteristica",$textos["ERROR_CARACTERISTICA"]),
                 HTML::campoOculto("error_cantidad_total",$textos["ERROR_CANTIDAD_TOTAL"]),
-                HTML::campoOculto("error_valor_unitario",$textos["ERROR_VALOR_UNITARIO"]),
+                HTML::campoOculto("error_valor_unitario",$textos["ERROR_COSTO_UNITARIO"]),
                 HTML::campoOculto("error_porcentaje_descuento_linea",$textos["ERROR_PORCENTAJE_DESCUENTO_LINEA"]),
                 HTML::campoOculto("error_cantidad_detalle",$textos["ERROR_CANTIDAD_DETALLE"]),
                 HTML::campoOculto("error_concepto",$textos["ERROR_CONCEPTO"]),
@@ -508,10 +454,11 @@ if (!empty($url_generar)){
                 HTML::campoOculto("descuento_global2_actual",0),
                 HTML::campoOculto("descuento_global3_actual",0),
                 HTML::campoOculto("regimen_actual","1"),
-                HTML::campoOculto("id_propuesta_pedido",0)
+                HTML::campoOculto("id_propuesta_pedido",0),
+                HTML::campoOculto("id_orden_compra",0)
             )
         );
-
+        
         $funciones["PESTANA_ARTICULOS"]   = "cargarDatosArticulo()";
         $formularios["PESTANA_ARTICULOS"] = array(
             array(
@@ -526,7 +473,7 @@ if (!empty($url_generar)){
                         array(
                             array(
                                 HTML::campoTextoCorto("+selector7",$textos["REFERENCIA"], 30, 30, "", array("title"=>$textos["AYUDA_REFERENCIA_PROVEEDOR"],"class"=>"autocompletable articulo_existe modificar","onblur" => "validarItem(this)","onblur" => "cargarDatosArticulo()","onKeyPress" => "return campoEntero(event)"))
-                                .HTML::campoOculto("referencia","")
+                                .HTML::campoOculto("codigo_articulo","")
                             ),
                             array(
                                 HTML::campoTextoCorto("+descripcion",$textos["DESCRIPCION"], 50, 255, "", array("title"=>$textos["AYUDA_DETALLE"],"class"=>"articulo_existe modificar_articulo")),
@@ -561,10 +508,12 @@ if (!empty($url_generar)){
                             array(
                                 HTML::listaSeleccionSimple("+id_unidad_compra",$textos["UNIDAD_MEDIDA"], $unidades, $id_unidad_medida_pedidos, array("title"=>$textos["AYUDA_UNIDAD"])),
 
-                                HTML::campoTextoCorto("+cantidad_total_articulo",$textos["CANTIDAD_TOTAL"], 5, 15, "", array("title"=>$textos["AYUDA_CANTIDAD_TOTAL"], "onKeyPress"=>"return campoDecimal(event)", "onKeyUp"=>"activaDetalle()", "onBlur"=>"cargarCantidad()", "class"=>"movimiento")),
+                                HTML::campoTextoCorto("+costo_unitario",$textos["COSTO_UNITARIO"], 10, 15, "", array("readonly" => "true"),array("title"=>$textos["AYUDA_COSTO_UNITARIO"], "onKeyPress"=>"return campoEntero(event)","onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)")),
+                                HTML::campoOculto("cantidad_total_control",0),
 
-                                HTML::campoTextoCorto("+valor_unitario",$textos["VALOR_UNITARIO"], 10, 15, "", array("title"=>$textos["AYUDA_VALOR_UNITARIO"], "onKeyPress"=>"return campoDecimal(event)")),
-                                HTML::campoOculto("cantidad_total_control",0)
+                                HTML::campoTextoCorto("+cantidad_total_articulo",$textos["CANTIDAD_TOTAL"], 5, 15, "", array("title"=>$textos["AYUDA_CANTIDAD_TOTAL"], "onKeyPress"=>"return campoEntero(event)", "onKeyUp"=>"activaDetalle()", "onKeyUp"=>"calcularSubtotal()", "class"=>"movimiento")),
+
+                                HTML::campoTextoCorto("+subtotal",$textos["SUBTOTAL"], 10, 15, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_SUBTOTAL"], "onKeyPress"=>"return campoDecimal(event)"))
                             ),
                             array(
                                 HTML::marcaChequeo("aplica_descuento",$textos["DESCUENTO"], 1, false, array("title"=>$textos["AYUDA_APLICA_DESCUENTO"], "class"=>"descuento_linea modificar","onClick"=>"activaCampos(4,0)")),
@@ -573,8 +522,8 @@ if (!empty($url_generar)){
                             ),
                             array(    
                                 HTML::campoTextoCorto("observaciones_articulo",$textos["OBSERVACIONES"], 50, 78, "", array("title"=>$textos["AYUDA_OBSERVACIONES"], "class"=>"movimiento")),
-                                
-                                HTML::boton("botonAgregarArticulo", $textos["AGREGAR_ARTICULO"], "agregarArticulo();", "adicionar",array("class"=>"agregar_articulo"),"etiqueta")
+
+                                HTML::boton("botonAgregarArticulo", $textos["AGREGAR_ARTICULO"], "agregarItemArticulo();", "adicionar",array("class"=>"agregar_articulo"),"etiqueta")
                             ),
                             array(
                                 HTML::selectorArchivo("foto_articulo", $textos["FOTO"], array("title" => $textos["AYUDA_FOTO"], "class"=>" articulo_nuevo oculto"))
@@ -636,6 +585,16 @@ if (!empty($url_generar)){
                 HTML::campoOculto("id_pedido_detalle_modificar",""),
                 HTML::campoOculto("fecha_entrega_modificar",""),
                 HTML::campoOculto("id_unidad_modificar",""),
+                HTML::campoOculto("digite_codigo",$textos["CODIGO_VACIO"]),
+                HTML::campoOculto("digite_codigo_alfanumerico",$textos["CODIGO_ALFANUMERICO_VACIO"]),
+                HTML::campoOculto("existe_referencia_codigo",$textos["EXISTE_REFERENCIA_CODIGO"]),
+                HTML::campoOculto("existe_referencia",$textos["EXISTE_REFERENCIA"]),
+                HTML::campoOculto("existe_referencia_principal",$textos["EXISTE_REFERENCIA_PRINCIPAL"]),
+                HTML::campoOculto("digite_referencia",$textos["DIGITE_REFRENCIA"]),
+                HTML::campoOculto("principal_si",$textos["SI_NO_1"]),
+                HTML::campoOculto("principal_no",$textos["SI_NO_0"]),
+                HTML::campoOculto("referencia_diferente",$textos["REFERENCIA_DIFERENTE"]),
+                HTML::campoOculto("indice","",0)
             )
         );
 
