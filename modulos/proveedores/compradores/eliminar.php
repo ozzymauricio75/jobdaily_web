@@ -43,6 +43,9 @@ if (!empty($url_generar)) {
         $error                          = "";
         $titulo                         = $componente->nombre; 
         $documento_identidad            = $datos->documento_identidad;
+
+        $codigo_empresa                 = SQL::obtenerValor("compradores", "codigo_empresa", "documento_identidad = '$url_id'");
+        $razon_social                   = SQL::obtenerValor("empresas", "razon_social", "codigo = '$codigo_empresa'");
         
         $regimen = array(
             "1" => $textos["REGIMEN_COMUN"],
@@ -70,31 +73,20 @@ if (!empty($url_generar)) {
             "0" => $textos["INACTIVO"],
             "1" => $textos["ACTIVO"]
         );
-        
-        if(($datos->tipo_persona) == 1){
-            $primer_nombre    = "PRIMER_NOMBRE";
-            $segundo_nombre   = "SEGUNDO_NOMBRE";
-            $primer_apellido  = "PRIMER_APELLIDO";
-            $segundo_apellido = "SEGUNDO_APELLIDO";
-            $razon_social     = "DATO_VACIO";
-        }else{
-            $razon_social     = "RAZON_SOCIAL";
-            $primer_nombre    = "DATO_VACIO";
-            $segundo_nombre   = "DATO_VACIO";
-            $primer_apellido  = "DATO_VACIO";
-            $segundo_apellido = "DATO_VACIO";
-        }
 
         /*** Definición de pestañas ***/
         $formularios["PESTANA_COMPRADOR"] = array(
             array(
+                HTML::mostrarDato("empresa", $textos["RAZON_SOCIAL"], $razon_social)
+            ),
+            array(
                 HTML::mostrarDato("documento_identidad", $textos["DOCUMENTO_COMPRADOR"], $datos->documento_identidad)
             ),
             array(
-                HTML::mostrarDato("primer_nombre", $textos["$primer_nombre"], $datos->primer_nombre),
-                HTML::mostrarDato("segundo_nombre", $textos["$segundo_nombre"], $datos->segundo_nombre),
-                HTML::mostrarDato("primer_apellido", $textos["$primer_apellido"], $datos->primer_apellido),
-                HTML::mostrarDato("segundo_apellido", $textos["$segundo_apellido"], $datos->segundo_apellido)
+                HTML::mostrarDato("primer_nombre", $textos["PRIMER_NOMBRE"], $datos->primer_nombre),
+                HTML::mostrarDato("segundo_nombre", $textos["SEGUNDO_NOMBRE"], $datos->segundo_nombre),
+                HTML::mostrarDato("primer_apellido", $textos["PRIMER_APELLIDO"], $datos->primer_apellido),
+                HTML::mostrarDato("segundo_apellido", $textos["SEGUNDO_APELLIDO"], $datos->segundo_apellido)
             ),
             array(
                 HTML::mostrarDato("correo", $textos["CORREO"], $datos->correo)
@@ -121,9 +113,9 @@ if (!empty($url_generar)) {
 
 /*** Eliminar el elemento seleccionado ***/
 } elseif (!empty($forma_procesar)) {  
-    $consulta_comprador = SQL::eliminar("compradores", "documento_tercero = '$forma_id'");
+    $consulta_comprador = SQL::eliminar("compradores", "documento_identidad = '$forma_id'");
     $consulta           = SQL::eliminar("terceros", "documento_identidad = '$forma_id'");
-
+    
     if ($consulta) {
         $error   = false;
         $mensaje = $textos["ITEM_ELIMINADO"];

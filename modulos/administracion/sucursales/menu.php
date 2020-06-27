@@ -28,7 +28,7 @@
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
 $vistaMenu     = "menu_sucursales";
 $vistaBuscador = "buscador_sucursales";
-$alineacion    = array("C","C","I","I","I");
+$alineacion    = array("C","I","I");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {
@@ -52,7 +52,7 @@ if (empty($url_pagina)) {
 /*** Datos por defecto para realizar la consulta ***/
 $condicion      = SQL::evaluarBusqueda($vistaBuscador, $vistaMenu);
 $agrupamiento   = "";
-$ordenamiento   = SQL::ordenColumnas("ORDEN ASC");
+$ordenamiento   = SQL::ordenColumnas("CODIGO ASC");
 $numeroFilas    = SQL::$filasPorConsulta;
 $columnas       = SQL::obtenerColumnas($vistaMenu);
 $totalRegistros = SQL::filasDevueltas(SQL::seleccionar(array($vistaMenu), $columnas, $condicion, $agrupamiento, $ordenamiento));

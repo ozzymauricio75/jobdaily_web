@@ -8,18 +8,104 @@
     //$(document).bind('keydown', 'Ctrl+m', function(evt) {$('#MODICARA').click(); return false;});
     //$(document).bind('keydown', 'Ctrl+e', function(evt) {$('#ELIMCARA').click(); return false;});
 
+    function lanzarOpciones(){
+        recargarListaEmpresas();
+        recargarComprador();
+        recargarProyectos();
+    }
+
+    function cargaNit(){
+        var destino = $('#URLFormulario').val();
+        var empresa = $('#empresa').val();
+
+        $.getJSON(destino, {cargarNit: true, codigo_empresa: empresa}, function(datos) {
+            if(datos != ""){
+               var nit = datos;
+                $('#nit_empresa').val(nit);
+                $('#nit_empresa').attr("disabled","disabled");
+            } 
+        });    
+    }
+    
     function recargarListaEmpresas(){
         var destino                 = $('#URLFormulario').val();
         var codigo_empresa_proyecto = $('#empresa').val();
         var sucursal                = $('#sucursal').val();   
         var lista                   = '';
 
-        $.getJSON(destino, {recargar: true, codigo: codigo_empresa_proyecto, elemento: 'sucursal', codigo_empresa : sucursal}, function(datos) {
+        $.getJSON(destino, {recargar: true, codigo: codigo_empresa_proyecto, elemento: 'sucursal'}, function(datos) {
             jQuery.each(datos, function(valor, texto) {
                 lista = lista+'<option value="'+valor+'">'+texto+'</option>';
             });
             $('#sucursal').html(lista);
+            recargarProyectos();
             //$('#sucursal').val('');
+        });
+    }
+
+    function recargarComprador(){
+        var destino        = $('#URLFormulario').val();
+        var codigo_empresa = $('#empresa').val();  
+
+        $.getJSON(destino, {recargarComprador: true, empresa: codigo_empresa}, function(elementos) {
+          
+            if (elementos) {
+                var documento    = elementos[0];
+                vector_documento = documento.split('-');
+                var nombre       = elementos[1];
+                vector_nombre    = nombre.split('-');
+                $('#codigo_comprador').html('');
+
+                for(var i=0; i<vector_documento.length; i++){
+                    
+                    $('#codigo_comprador').append('<option value="'+vector_documento[i]+'">' +vector_nombre[i]+ '</option>');
+                }
+            }
+            $('#sucursal').removeAttr('disabled');
+            $('#codigo_comprador').removeAttr('disabled');
+        });
+    }
+
+    function recargarProyectos(){
+        var destino         = $('#URLFormulario').val();
+        var codigo_empresa = $('#empresa').val();  
+
+        $.getJSON(destino, {recargarProyecto: true, empresa: codigo_empresa}, function(elementos) {
+          
+            if (elementos) {
+                var codigo       = elementos[0];
+                vector_codigo    = codigo.split('-');
+                var nombre       = elementos[1];
+                vector_nombre    = nombre.split('-');
+                $('#proyecto').html('');
+
+                for(var i=0; i<vector_documento.length; i++){
+                    
+                    $('#proyecto').append('<option value="'+vector_codigo[i]+'">' +vector_nombre[i]+ '</option>');
+                }
+            }
+            $('#proyecto').removeAttr('disabled');
+        });
+    }
+
+    function recargarVendedores(){
+        var destino  = $('#URLFormulario').val();
+        var nit      = parseInt($('#selector4').val());  
+
+        $.getJSON(destino, {recargarVendedor: true, nit_proveedor: nit}, function(elementos) {
+          
+            if (elementos) {
+                var id           = elementos[0];
+                vector_id        = id.split('-');
+                var nombre       = elementos[1];
+                vector_nombre    = nombre.split('-');
+                $('#vendedor_proveedor').html('');
+
+                for(var i=0; i<vector_id.length; i++){ 
+                    $('#vendedor_proveedor').append('<option value="'+vector_id[i]+'">' +vector_nombre[i]+ '</option>');
+                }
+            }
+            $('#vendedor_proveedor').removeAttr('disabled');
         });
     }
 
@@ -195,18 +281,18 @@
     }
 
     function cargarProveedor(){
-        var destino                = $('#URLFormulario').val();
-        var nit_proveedor          = parseInt($('#selector4').val());
+        var destino       = $('#URLFormulario').val();
+        var nit_proveedor = parseInt($('#selector4').val());
 
         $.getJSON(destino, {cargarProveedor: true, nit_proveedor: nit_proveedor}, function(datos) {
+            
             var codigo_vendedor = datos[2];
             var nombre_vendedor = datos[3];
+            
             if(datos[0] != ""){ 
                 $("#razon_social_proveedor").val(datos[0]);
                 $("#digito_verificacion").parent().show();
                 $("#digito_verificacion").val(datos[1]);
-                $('#vendedor_proveedor').html('');
-                $('#vendedor_proveedor').append('<option value="'+codigo_vendedor+'">' +nombre_vendedor+ '</option>');
                 $("#direccion").val(datos[4]);
                 $("#correo_electronico").val(datos[5]);
                 $("#celular").val(datos[6]);
@@ -214,7 +300,6 @@
             } else {
                 $("#razon_social_proveedor").val('');
                 $("#digito_verificacion").val('');
-                $("#vendedor_proveedor").val('');
                 $("#direccion").val('');
                 $("#correo_electronico").val('');
                 $("#celular").val('');

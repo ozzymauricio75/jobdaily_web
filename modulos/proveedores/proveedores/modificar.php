@@ -24,6 +24,11 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
+$tabla                      = "usuarios";
+$columnas                   = SQL::obtenerColumnas($tabla);
+$consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuario = '$sesion_usuario'");
+$datos                      = SQL::filaEnObjeto($consulta);
+$sesion_id_usuario_ingreso  = $datos->codigo;
 /*** Devolver datos para autocompletar la búsqueda ***/
 if (isset($url_completar)) {
 
@@ -40,7 +45,8 @@ if (isset($url_completar)) {
 }
 
 /*** Devolver datos para cargar los elementos del formulario relacionados con el documento del cliente digitado***/
-if (isset($url_recargar)) {
+elseif (isset($url_recargar)) {
+
 
     if (!empty($url_documento_identidad_carga)) {
 
@@ -98,9 +104,8 @@ if (isset($url_recargar)) {
         HTTP::enviarJSON($tabla);
     }
     exit;
-}
 
-if (isset($url_recargarMunicipioDocumento)){
+}elseif (isset($url_recargarMunicipioDocumento)){
 
     if(!empty($url_municipio_documento)){
 
@@ -117,9 +122,8 @@ if (isset($url_recargarMunicipioDocumento)){
         HTTP::enviarJSON($nombre_municipio_documento);
     }
     exit;
-}
 
-if (isset($url_recargarMunicipioResidencia)){
+}elseif (isset($url_recargarMunicipioResidencia)){
 
     if(!empty($url_municipio_residencia)){
 
@@ -136,9 +140,8 @@ if (isset($url_recargarMunicipioResidencia)){
         HTTP::enviarJSON($nombre_municipio_residencia);
     }
     exit;
-}
 
-if (isset($url_recargarActividad)){
+}elseif (isset($url_recargarActividad)){
 
     $llave_municipio          = explode(",",$url_id_localidad);
     $codigo_iso               = $llave_municipio[0];
@@ -161,9 +164,9 @@ if (isset($url_recargarActividad)){
         $actividad = "";
     }    
     HTTP::enviarJSON($actividad);
-}
+    exit;
 
-if(isset($url_eliminarCuenta) && isset($url_id_cuenta_bancaria)){
+}elseif(isset($url_eliminarCuenta) && isset($url_id_cuenta_bancaria)){
     
     $llave = explode("|",$url_id_cuenta_bancaria);
     $documento_identidad_proveedor = $llave[0];
@@ -204,36 +207,16 @@ if (!empty($url_generar)) {
         $vistaConsulta = "buscador_proveedores";
         $condicion     = "id = '$url_id'";
         $columnas      = SQL::obtenerColumnas($vistaConsulta);
+        
         $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "id = '$url_id'");
         $datos         = SQL::filaEnObjeto($consulta);
+
         $error         = "";
         $titulo        = $componente->nombre;
 
         $regimen = array(
             "1" => $textos["REGIMEN_COMUN"],
             "2" => $textos["REGIMEN_SIMPLIFICADO"]
-        );
-
-        $tipo_persona = array(
-            "1" => $textos["NATURAL"],
-            "2" => $textos["JURIDICA"],
-            "3" => $textos["INTERNO"],
-            "4" => $textos["NATURAL_COMERCIANTE"]
-        );
-
-        $inicio_cobro = array(
-            "1" => $textos["FECHA_FACTURA"],
-            "2" => $textos["FECHA_RECIBO"]
-        );
-        $forma_iva = array(
-            "1" => $textos["TOTAL"],
-            "2" => $textos["PRIMERA_CUOTA"],
-            "3" => $textos["SEPARADO"],
-            "4" => $textos["DISTRIBUIDO"]
-        );
-        $forma_liquidacion_tasa_credito = array(
-            "1" => $textos["DESPUES_LINEA"],
-            "2" => $textos["DESPUES_GLOBAL"]
         );
 
         $tipo_cuenta = array(
@@ -253,7 +236,7 @@ if (!empty($url_generar)) {
         $columnasTercero = SQL::obtenerColumnas($vistaTercero);
         $consultaTercero = SQL::seleccionar(array($vistaTercero), $columnasTercero, "documento_identidad = '$datosProveedor->documento_identidad'");
         $datosTercero    = SQL::filaEnObjeto($consultaTercero);
-       
+
         if ($datosTercero->tipo_persona == 1){
             $valor_persona_natural  = true;
             $valor_oculto_natural   = "";
@@ -289,31 +272,33 @@ if (!empty($url_generar)) {
         }
         
         /**Datos de los selectores**/
-        $llave_primaria_municipio = $datosTercero -> codigo_iso_municipio_documento.",". $datosTercero -> codigo_dane_departamento_documento.",".$datosTercero -> codigo_dane_municipio_documento;
+        $llave_primaria_municipio = $datosTercero->codigo_iso_municipio_documento.",". $datosTercero->codigo_dane_departamento_documento.",".$datosTercero->codigo_dane_municipio_documento;
         $descripcion_municipio    = SQL::obtenerValor("seleccion_municipios","nombre","llave_primaria ='$llave_primaria_municipio'");
         $descripcion_municipio    = explode("|",$descripcion_municipio);
         $descripcion_municipio    = $descripcion_municipio[0];
 
-        $llave_primaria_localidad = $datosTercero -> codigo_iso_localidad.",". $datosTercero -> codigo_dane_departamento_localidad.",".$datosTercero -> codigo_dane_municipio_localidad.",".$datosTercero -> tipo_localidad.",".$datosTercero -> codigo_dane_localidad;
+        $llave_primaria_localidad = $datosTercero->codigo_iso_localidad.",". $datosTercero->codigo_dane_departamento_localidad.",".$datosTercero->codigo_dane_municipio_localidad.",".$datosTercero->tipo_localidad.",".$datosTercero->codigo_dane_localidad;
         $descripcion_localidad    = SQL::obtenerValor("seleccion_localidades","nombre","llave_primaria ='$llave_primaria_localidad'");
         $descripcion_localidad    = explode("|",$descripcion_localidad);
         $descripcion_localidad    = $descripcion_localidad[0];
 
-        $condicion = "codigo_iso ='$datosTercero->codigo_iso_localidad' AND codigo_dane_departamento = '$datosTercero->codigo_dane_departamento_localidad'";
+        $condicion  = "codigo_iso ='$datosTercero->codigo_iso_localidad' AND codigo_dane_departamento = '$datosTercero->codigo_dane_departamento_localidad'";
         $condicion .= " AND codigo_dane_municipio='$datosTercero->codigo_dane_municipio_localidad'";
-        $consulta  = SQL::seleccionar(array("actividades_economicas"),array("*"),$condicion);
+        $consulta   = SQL::seleccionar(array("actividades_economicas"),array("*"), $condicion);
 
 
-        $llave_actividad_primaria = $datosProveedor->codigo_iso_principal."|".$datosProveedor->codigo_dane_departamento_principal."|".$datosProveedor->codigo_dane_municipio_principal."|";
-        $llave_actividad_primaria .= $datosProveedor->codigo_dian_principal."|".$datosProveedor->codigo_actividad_municipio_principal;
-        if ($llave_actividad_primaria == '||0000|00000'){
-            $llave_actividad_primaria = 0;
+        $llave_actividad_primaria      = $datosProveedor->codigo_iso_principal."|".$datosProveedor->codigo_dane_departamento_principal."|".$datosProveedor->codigo_dane_municipio_principal."|";
+        $llave_actividad_primaria     .= $datosProveedor->codigo_dian_principal."|".$datosProveedor->codigo_actividad_municipio_principal;
+        
+        if ($llave_actividad_primaria  == '||0000|00000'){
+            $llave_actividad_primaria  = 0;
         }
 
-        $llave_actividad_secundaria = $datosProveedor->codigo_iso_secundario."|".$datosProveedor->codigo_dane_departamento_secundario."|".$datosProveedor->codigo_dane_municipio_secundario."|";
-        $llave_actividad_secundaria .= $datosProveedor->codigo_dian_secundario."|".$datosProveedor->codigo_actividad_municipio_secundario;
+        $llave_actividad_secundaria     = $datosProveedor->codigo_iso_secundario."|".$datosProveedor->codigo_dane_departamento_secundario."|".$datosProveedor->codigo_dane_municipio_secundario."|";
+        $llave_actividad_secundaria    .= $datosProveedor->codigo_dian_secundario."|".$datosProveedor->codigo_actividad_municipio_secundario;
+        
         if ($llave_actividad_secundaria == '||0000|00000'){
-            $llave_actividad_primaria = 0;
+            $llave_actividad_primaria   = 0;
         }
 
         if (SQL::filasDevueltas($consulta)){
@@ -338,25 +323,25 @@ if (!empty($url_generar)) {
             $y       = 0;
             $z       = strlen($nit);
             $digitoV = '';
-    
+ 
             for ($i = 0; $i < $z; $i++) {
                 $y  = substr($nit, $i, 1);
                 $x += ($y*$array[$z-$i]);
             }
     
             $y = $x%11;
-    
+
             if ($y > 1) {
                 $digitoV = 11-$y;
-                return $digitoV;
+                //return $digitoV;
             } else {
                 $digitoV = $y;
             }
         }
-            
+           
         /* Obtener cuentas bancarias relacionadas con el proveedor */
         $orden_lista_cuentas = 0;
-        $item_cuenta = '';
+        $item_cuenta         = '';
         $consulta_cuentas = SQL::seleccionar(array("cuentas_bancarias_proveedores"), array("*"), "documento_identidad_proveedor = '$url_id'", "", "");
         if (SQL::filasDevueltas($consulta_cuentas)) {
 
@@ -502,8 +487,7 @@ if (!empty($url_generar)) {
                 HTML::marcaChequeo("servicios_especiales", $textos["SERVICIOS_ESPECIALES"], 1, $datosProveedor->servicios_especiales)
             ),
             array(
-                HTML::listaSeleccionSimple("codigo_servicio", $textos["TIPO_SERVICIO"], HTML::generarDatosLista("servicios", "codigo", "descripcion"), $datosProveedor->codigo_servicio, array("title" => $textos["AYUDA_TIPO_SERVICIO"])),
-                HTML::listaSeleccionSimple("fecha_inicio_cobro", $textos["FECHA_INICIO_COBRO"], $inicio_cobro, $datosProveedor->fecha_inicio_cobro, array("title" => $textos["AYUDA_INICIO_COBRO"]))
+                HTML::listaSeleccionSimple("codigo_servicio", $textos["TIPO_SERVICIO"], HTML::generarDatosLista("servicios", "codigo", "descripcion"), $datosProveedor->codigo_servicio, array("title" => $textos["AYUDA_TIPO_SERVICIO"]))
             ),
             array(
                 HTML::campoTextoCorto("tiempo_respuesta", $textos["TIEMPO_RESPUESTA"], 3, 3, $datosProveedor->tiempo_respuesta, array("title" => $textos["AYUDA_TIEMPO_RESPUESTA"],"onBlur" => "validarItem(this);","onKeyPress" => "return campoEntero(event)"))
@@ -786,12 +770,12 @@ if (!empty($url_generar)) {
             "publicidad"                            => $forma_publicidad,
             "servicios_especiales"                  => $forma_servicios_especiales,
             "codigo_servicio"                       => $forma_codigo_servicio,
-            "fecha_inicio_cobro"                    => $forma_fecha_inicio_cobro,
+            "fecha_inicio_cobro"                    => '1',
             "codigo_plazo_pago_contado"             => $forma_codigo_plazo_pago_contado,
             "codigo_plazo_pago_credito"             => $forma_codigo_plazo_pago_credito,
-            "tasa_pago_credito"                     => $forma_tasa_pago_credito,
-            "porcentaje_primera_cuota"              => $forma_porcentaje_primera_cuota,
-            "porcentaje_ultima_cuota"               => $forma_porcentaje_ultima_cuota,
+            "tasa_pago_credito"                     => '0',
+            "porcentaje_primera_cuota"              => '0',
+            "porcentaje_ultima_cuota"               => '0',
             "pagos_anticipados"                     => $forma_pagos_anticipados,
             "pagos_efectivo"                        => $forma_pagos_efectivo,
             "transferencia_electronica"             => $forma_transferencia_electronica,
@@ -802,10 +786,10 @@ if (!empty($url_generar)) {
             "valor_flete"                           => $forma_valor_flete,
             "porcentaje_seguro"                     => $forma_porcentaje_seguro,
             "valor_seguro"                          => $forma_valor_seguro,
-            "forma_iva"                             => $forma_forma_iva,
-            "forma_liquidacion_descuento_en_linea"  => $forma_liquidacion_descuento_en_linea,
-            "forma_liquidacion_descuento_global"    => $forma_liquidacion_descuento_global,
-            "forma_liquidacion_tasa_credito"        => $forma_liquidacion_tasa_credito
+            "forma_iva"                             => '1',
+            "forma_liquidacion_descuento_en_linea"  => '1',
+            "forma_liquidacion_descuento_global"    => '1',
+            "forma_liquidacion_tasa_credito"        => '1'
         );
 
 

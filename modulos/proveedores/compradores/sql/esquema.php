@@ -28,22 +28,33 @@ $borrarSiempre = array();
 
 $borrarSiempre["compradores"] = false;
 $tablas["compradores"] = array(
-    "codigo"                     => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno'",
-    "documento_tercero"          => "VARCHAR(12) NOT NULL COMMENT 'Id de la tabla terceros, Llave principal'",
-    "activo"                     => "ENUM('0','1') NOT NULL DEFAULT '1' COMMENT 'El comprador está activo 0=No, 1=Si'",
-    "id_usuario_registra"        => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Id del usuario que genera el registro'",
-    "fecha_registra"             => "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha ingreso al sistema'",
-    "fecha_modificacion"         => "TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha ultima modificación'"
+    "codigo"               => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno'",
+    "codigo_empresa"       => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla empresas, Llave principal'",
+    "documento_identidad"  => "VARCHAR(12) NOT NULL COMMENT 'Número del documento de identidad del tercero'",
+    "activo"               => "ENUM('0','1') NOT NULL DEFAULT '1' COMMENT 'El comprador está activo 0=No, 1=Si'",
+    "id_usuario_registra"  => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Id del usuario que genera el registro'",
+    "fecha_registra"       => "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha ingreso al sistema'",
+    "fecha_modificacion"   => "TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha ultima modificación'"
 );
 
-$llavesPrimarias["compradores"] = "codigo";
+$llavesPrimarias["compradores"] = "codigo,codigo_empresa,documento_identidad";
 
 $llavesForaneas["compradores"] = array(
     array(
         // Nombre de la llave
-        "compradores_documento_tercero",
+        "compradores_empresas",
         // Nombre del campo clave de la tabla local
-        "documento_tercero",
+        "codigo_empresa",
+        // Nombre de la tabla relacionada
+        "empresas",
+        // Nombre del campo clave en la tabla relacionada
+        "codigo"
+    ),
+    array(
+        // Nombre de la llave
+        "compradores_terceros",
+        // Nombre del campo clave de la tabla local
+        "documento_identidad",
         // Nombre de la tabla relacionada
         "terceros",
         // Nombre del campo clave en la tabla relacionada
@@ -122,9 +133,9 @@ $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_compradores AS
         SELECT
-            job_terceros.documento_identidad AS id,
-            job_compradores.activo AS id_activo,
-            job_terceros.documento_identidad AS DOCUMENTO_IDENTIDAD,
+            job_compradores.documento_identidad AS id,
+            job_terceros.documento_identidad AS DOCUMENTO,
+            job_empresas.razon_social AS RAZON_SOCIAL,
             CONCAT(IF(job_terceros.primer_nombre IS NOT NULL,job_terceros.primer_nombre,''),' ',
                     IF(job_terceros.segundo_nombre IS NOT NULL,job_terceros.segundo_nombre,''),' ',
                     IF(job_terceros.primer_apellido IS NOT NULL,job_terceros.primer_apellido,''),' ',
@@ -136,19 +147,21 @@ $vistas = array(
             ) AS ACTIVO
         FROM
             job_terceros,
-            job_compradores
+            job_compradores,
+            job_empresas
         WHERE
-            job_compradores.documento_tercero = job_terceros.documento_identidad AND
-            job_terceros.comprador > 0
+            job_compradores.codigo_empresa = job_empresas.codigo AND
+            job_compradores.documento_identidad = job_terceros.documento_identidad AND
+            job_terceros.comprador > '0'
         ORDER BY
             job_terceros.primer_nombre, job_terceros.razon_social;"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_compradores AS
         SELECT
-            job_terceros.documento_identidad AS id,
-            job_compradores.activo AS id_activo,
-            job_terceros.documento_identidad AS DOCUMENTO_IDENTIDAD,
+            job_compradores.documento_identidad AS id,
+            job_terceros.documento_identidad AS DOCUMENTO,
+            job_empresas.razon_social AS RAZON_SOCIAL,
             CONCAT(IF(job_terceros.primer_nombre IS NOT NULL,job_terceros.primer_nombre,''),' ',
                     IF(job_terceros.segundo_nombre IS NOT NULL,job_terceros.segundo_nombre,''),' ',
                     IF(job_terceros.primer_apellido IS NOT NULL,job_terceros.primer_apellido,''),' ',
@@ -160,10 +173,12 @@ $vistas = array(
             ) AS ACTIVO
         FROM
             job_terceros,
-            job_compradores
+            job_compradores,
+            job_empresas
         WHERE
-            job_compradores.documento_tercero = job_terceros.documento_identidad AND
-            job_terceros.comprador > 0
+            job_compradores.codigo_empresa = job_empresas.codigo AND
+            job_compradores.documento_identidad = job_terceros.documento_identidad AND
+            job_terceros.comprador > '0'
         ORDER BY
             job_terceros.primer_nombre, job_terceros.razon_social;"
     ),

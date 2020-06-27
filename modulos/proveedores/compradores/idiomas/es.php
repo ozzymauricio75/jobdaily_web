@@ -96,6 +96,7 @@ $textos = array(
     "AYUDA_ESTADO"                          => "Seleecione el estado del tercero",
     //Errores
     "ERROR_DOCUMENTO_IDENTIDAD_VACIO"       => "Error, Documento de identidad no puede quedar vacio",
+    "ERROR_CODIGO_EXISTE"                   => "Error, Código ya existe, verifique",
     "ERROR_DOCUMENTO_IDENTIDAD_EXISTE"      => "Error, Documento de identidad ya existe, verifique",
     "ERROR_NOMBRE_APELLIDO_VACIO"           => "Error, Primer nombre o Primer apellido no pueden quedar vacios",
     "ERROR_RAZON_SOCIAL_VACIO"              => "Error, Razon social no puede quedar vacio",

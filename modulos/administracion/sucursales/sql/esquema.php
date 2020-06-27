@@ -188,18 +188,22 @@ $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_sucursales AS
         SELECT 	job_sucursales.codigo AS id,
-                job_sucursales.orden AS ORDEN,
                 job_sucursales.codigo AS CODIGO,
                 job_sucursales.nombre AS NOMBRE,
-                job_empresas.razon_social AS EMPRESA,
-                job_terceros.documento_identidad AS TERCERO
-
+                IF (job_sucursales.tipo ='0',
+                    'Principal',
+                    IF (job_sucursales.tipo ='1',
+                        'Consorcio',
+                        'Unión temporal'
+                    )
+                ) AS TIPO
+                
         FROM 	job_sucursales,
                 job_empresas,
                 job_terceros
 
-        WHERE 	job_sucursales.codigo_empresa = job_empresas.codigo
-                AND job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
+        WHERE 	job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
+                AND job_sucursales.tipo <= '2'
                 AND job_sucursales.codigo != 0;"
     ),
     array(
@@ -207,26 +211,19 @@ $vistas = array(
         SELECT 	job_sucursales.codigo AS id,
                 job_sucursales.codigo AS codigo, job_sucursales.nombre AS nombre,
                 job_sucursales.nombre_corto AS nombre_corto,
-                job_empresas.razon_social AS empresa,
-                CONCAT(
-                IF(job_terceros.primer_nombre IS NOT NULL,(
-                        CONCAT(
-                            IF(job_terceros.primer_nombre IS NOT NULL,CONCAT(job_terceros.primer_nombre,' '),''),
-                            IF(job_terceros.segundo_nombre IS NOT NULL,CONCAT(job_terceros.segundo_nombre,' '),''),
-                            IF(job_terceros.primer_apellido IS NOT NULL,CONCAT(job_terceros.primer_apellido,' '),''),
-                            IF(job_terceros.segundo_apellido IS NOT NULL,CONCAT(job_terceros.segundo_apellido,' '),'')
-                        )
-                    ),
-                    job_terceros.razon_social
-                )
-                ) AS tercero
+                IF (job_sucursales.tipo ='0',
+                    'Principal',
+                    IF (job_sucursales.tipo ='1',
+                        'Consorcio',
+                        'Unión temporal'
+                    )
+                ) AS tipo
 
         FROM 	job_sucursales,
                 job_terceros,
                 job_empresas
 
-        WHERE 	job_sucursales.codigo_empresa = job_empresas.codigo
-                AND	job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
+        WHERE 	job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
                 AND job_sucursales.codigo != 0;"
     ),
     array(

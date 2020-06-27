@@ -139,11 +139,11 @@ if (!empty($url_generar)) {
     /*** Definición de pestañas para datos del tercero***/
     $formularios["PESTANA_COMPRADOR"] = array(
         array(
-            HTML::campoTextoCorto("*documento_identidad", $textos["DOCUMENTO_COMPRADOR"], 15, 15, "",array("title" => $textos["AYUDA_DOCUMENTO_PROVEEDOR"],"onblur" => "validarItem(this);","onchange" => "cargarDatos()"))
+            HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social","codigo != 0"), "", array("title" => $textos["AYUDA_EMPRESAS"],""))
         ),
-        /*array(
-            HTML::listaSeleccionSimple("*id_tipo_documento", $textos["TIPO_DOCUMENTO_IDENTIDAD"], HTML::generarDatosLista("tipos_documento_identidad", "codigo", "descripcion"),$id_tipo_documento)
-        ),*/
+        array(
+            HTML::campoTextoCorto("*documento_identidad", $textos["DOCUMENTO_COMPRADOR"], 15, 15, "", array("title" => $textos["AYUDA_DOCUMENTO_PROVEEDOR"],""))
+        ),
         array(
             HTML::campoTextoCorto("*primer_nombre", $textos["PRIMER_NOMBRE"], 15, 15, "", array("title" => $textos["AYUDA_PRIMER_NOMBRE"], "onblur" => "validarItem(this)")),
             HTML::campoTextoCorto("segundo_nombre", $textos["SEGUNDO_NOMBRE"], 15, 15, "", array("title" => $textos["AYUDA_SEGUNDO_NOMBRE"], "onblur" => "validarItem(this)"))
@@ -159,28 +159,6 @@ if (!empty($url_generar)) {
              HTML::campoTextoCorto("*celular", $textos["CELULAR"], 20, 20, "", array("title" => $textos["AYUDA_CELULAR"], "onblur" => "validarItem(this)"))
         ),
     );
-
-    /*** Definición de pestañas para la ubicación del tercero***/
-    /*$formularios["PESTANA_UBICACION_COMPRADOR"] = array(
-        array(
-            HTML::campoTextoCorto("*selector2", $textos["LOCALIDAD"], 50, 255, "", array("title" => $textos["AYUDA_DOCUMENTO_MUNICIPIO"], "class" => "autocompletable")).HTML::campoOculto("id_municipio_residencia", "")
-        ),
-        array(
-            HTML::campoTextoCorto("*direccion_principal", $textos["DIRECCION"], 50, 50, "", array("title" => $textos["AYUDA_DIRECCION"]))
-        ),
-        array(
-            HTML::campoTextoCorto("telefono_principal", $textos["TELEFONO_PRINCIPAL"], 15, 15, "", array("title" => $textos["AYUDA_TELEFONO_PRINCIPAL"])),
-            HTML::campoTextoCorto("telefono_secundario", $textos["TELEFONO_SECUNDARIO"], 15, 15, "", array("title" => $textos["AYUDA_TELEFONO_SECUNDARIO"])),
-            HTML::campoTextoCorto("fax", $textos["FAX"], 15, 15, "", array("title" => $textos["AYUDA_FAX"])),
-            HTML::campoTextoCorto("*celular", $textos["CELULAR"], 20, 20, "", array("title" => $textos["AYUDA_CELULAR"]))
-        ),
-        array(
-            HTML::campoTextoCorto("correo", $textos["CORREO"], 50, 255, "", array("title" => $textos["AYUDA_CORREO"]))
-        ),
-        array(
-            HTML::campoTextoCorto("sitio_web", $textos["SITIO_WEB"], 50, 50, "", array("title" => $textos["AYUDA_SITIO_WEB"]))
-        )
-    );*/
 
    /*** Definición de botones ***/
     $botones = array(
@@ -286,7 +264,8 @@ if (!empty($url_generar)) {
             $documento_tercero = $datos->documento_identidad;
 
             $datos_compradores = array(
-                "documento_tercero"   => $documento_tercero,
+                "codigo_empresa"      => $forma_empresa,
+                "documento_identidad" => $forma_documento_identidad,
                 "activo"              => "1",
                 "id_usuario_registra" => $sesion_id_usuario_ingreso,
                 "fecha_registra"      => date("Y-m-d H:i:s"),

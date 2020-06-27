@@ -182,8 +182,9 @@ $vistas = array(
                 job_terceros,
                 job_sucursales
 
-        WHERE   job_proyectos.codigo_empresa_ejecuta = job_empresas.codigo
-                AND job_proyectos.codigo_sucursal_ejecuta = job_sucursales.codigo
+        WHERE   
+                job_proyectos.codigo_sucursal_ejecuta = job_sucursales.codigo
+                AND job_proyectos.codigo_empresa_ejecuta = job_sucursales.codigo_empresa
                 AND job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
                 AND job_proyectos.codigo != 0;"
     ),
@@ -212,9 +213,9 @@ $vistas = array(
                 job_empresas,
                 job_sucursales
 
-        WHERE 	job_proyectos.codigo_empresa_ejecuta = job_empresas.codigo
-                AND job_proyectos.codigo_sucursal_ejecuta = job_sucursales.codigo
-                AND	job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
+        WHERE 	job_proyectos.codigo_sucursal_ejecuta = job_sucursales.codigo
+                AND job_proyectos.codigo_empresa_ejecuta = job_sucursales.codigo_empresa
+                AND job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
                 AND job_proyectos.codigo != 0;"
     ),
     array(

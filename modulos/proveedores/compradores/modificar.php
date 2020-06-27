@@ -60,6 +60,9 @@ if (!empty($url_generar)) {
         $datos         = SQL::filaEnObjeto($consulta);
         $error         = "";
         $titulo        = $componente->nombre;
+
+        $codigo_empresa = SQL::obtenerValor("compradores", "codigo_empresa", "documento_identidad = '$url_id'");
+        $razon_social   = SQL::obtenerValor("empresas", "razon_social", "codigo = '$codigo_empresa'");
         
         if ($datos->tipo_persona  == 1){
             $valor_persona_natural    = true;
@@ -104,7 +107,10 @@ if (!empty($url_generar)) {
         /*** Definición de pestañas para datos del tercero***/
         $formularios["PESTANA_COMPRADOR"] = array(
             array(
-                HTML::campoTextoCorto("*documento_identidad", $textos["DOCUMENTO_PROVEEDOR"], 15, 15, $datos->documento_identidad,array("title" => $textos["AYUDA_DOCUMENTO_PROVEEDOR"],"onblur" => "validarItem(this);"))
+                HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social","codigo != 0 AND razon_social='$razon_social'"), "", array("readonly" => "true"), array("title" => $textos["AYUDA_EMPRESAS"],""))
+            ),
+            array(
+                HTML::campoTextoCorto("*documento_identidad", $textos["DOCUMENTO_COMPRADOR"], 15, 15, $datos->documento_identidad,array("title" => $textos["AYUDA_DOCUMENTO_PROVEEDOR"],"onblur" => "validarItem(this);"))
             ),
             array(
                 HTML::campoTextoCorto("*primer_nombre", $textos["PRIMER_NOMBRE"], 15, 15, $datos->primer_nombre, array("title" => $textos["AYUDA_PRIMER_NOMBRE"], "onblur" => "validarItem(this)", "class" => "$valor_oculto_natural")),
@@ -198,14 +204,14 @@ if (!empty($url_generar)) {
             $id_tercero = $datos->documento_identidad;
 
             $datos_compradores = array(
-                "documento_tercero"   => $documento_tercero,
+                "documento_identidad" => $documento_tercero,
                 "activo"              => "1",
                 "id_usuario_registra" => $sesion_id_usuario_ingreso,
                 "fecha_registra"      => date("Y-m-d H:i:s"),
                 "fecha_modificacion"  => date("Y-m-d H:i:s")
             );
 
-            $consulta_comprador = SQL::modificar("compradores", $datos_compradores, "documento_tercero = '$id_tercero'");
+            $consulta_comprador = SQL::modificar("compradores", $datos_compradores, "documento_identidad = '$id_tercero'");
 
         } else {
             $error   = true;

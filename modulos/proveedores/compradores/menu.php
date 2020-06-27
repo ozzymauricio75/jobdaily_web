@@ -27,7 +27,7 @@
 // Nombre de la vista a partir de la cual se genera la tabla
 $vistaMenu     = "menu_compradores";
 $vistaBuscador = "buscador_compradores";
-$alineacion    = array("I","I","I");
+$alineacion    = array("I","I","I","I");
 
 // Devolver datos para autocompletar la busqueda
 if (isset($url_completar)) {
@@ -54,7 +54,7 @@ $condicion      = SQL::evaluarBusqueda($vistaBuscador, $vistaMenu);
 $agrupamiento   = "";
 $ordenamiento   = SQL::ordenColumnas("NOMBRE_COMPLETO");
 $numeroFilas    = SQL::$filasPorConsulta;
-$columnas       = array("id","id_activo","DOCUMENTO_IDENTIDAD","NOMBRE_COMPLETO","ACTIVO");
+$columnas       = array("id","DOCUMENTO","RAZON_SOCIAL","NOMBRE_COMPLETO","ACTIVO");
 $totalRegistros = SQL::filasDevueltas(SQL::seleccionar(array($vistaMenu), $columnas, $condicion, $agrupamiento, $ordenamiento));
 $paginador      = HTML::insertarPaginador($totalRegistros, $paginaActual, $numeroFilas);
 $registros      = HTML::imprimirRegistros($totalRegistros, $paginaActual, $numeroFilas);

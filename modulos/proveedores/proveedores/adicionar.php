@@ -299,7 +299,7 @@ if (!empty($url_generar)) {
             array(
                 HTML::campoTextoCorto("telefono_principal", $textos["TELEFONO_PRINCIPAL"], 13, 15, "", array("title" => $textos["AYUDA_TELEFONO_PRINCIPAL"])),
                 HTML::campoTextoCorto("fax", $textos["FAX"], 13, 15, "", array("title" => $textos["AYUDA_FAX"])),
-                HTML::campoTextoCorto("celular", $textos["CELULAR"], 14, 20, "", array("title" => $textos["AYUDA_CELULAR"]))
+                HTML::campoTextoCorto("*celular", $textos["CELULAR"], 14, 20, "", array("title" => $textos["AYUDA_CELULAR"]))
             ),
             array(
                 HTML::campoTextoCorto("correo", $textos["CORREO"], 50, 255, "", array("title" => $textos["AYUDA_CORREO"]))
@@ -365,8 +365,7 @@ if (!empty($url_generar)) {
                 HTML::marcaChequeo("servicios_especiales", $textos["SERVICIOS_ESPECIALES"])
             ),
             array(
-                HTML::listaSeleccionSimple("codigo_servicio", $textos["TIPO_SERVICIO"], $servicios,"", array("title" => $textos["AYUDA_TIPO_SERVICIO"])),
-                HTML::listaSeleccionSimple("*fecha_inicio_cobro", $textos["FECHA_INICIO_COBRO"], $inicio_cobro,"", array("title" => $textos["AYUDA_INICIO_COBRO"]))
+                HTML::listaSeleccionSimple("codigo_servicio", $textos["TIPO_SERVICIO"], $servicios,"", array("title" => $textos["AYUDA_TIPO_SERVICIO"]))
             ),
             array(
                 HTML::campoTextoCorto("tiempo_respuesta", $textos["TIEMPO_RESPUESTA"], 3, 3, "", array("title" => $textos["AYUDA_TIEMPO_RESPUESTA"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
@@ -558,7 +557,8 @@ if (!empty($url_generar)) {
             "fax"                                => $forma_fax,
             "celular"                            => $forma_celular,
             "correo"                             => $forma_correo,
-            "sitio_web"                          => $forma_sitio_web
+            "sitio_web"                          => $forma_sitio_web,
+            "fecha_ingreso"                      => date("Y-m-d H:i:s")
         );
 
         if (!$existe_tercero) {
@@ -688,7 +688,7 @@ if (!empty($url_generar)) {
                 "publicidad"                            => $forma_publicidad,
                 "servicios_especiales"                  => $forma_servicios_especiales,
                 "codigo_servicio"                       => $forma_codigo_servicio,
-                "fecha_inicio_cobro"                    => $forma_fecha_inicio_cobro,
+                "fecha_inicio_cobro"                    => '1',
                 "codigo_plazo_pago_contado"             => $forma_codigo_plazo_pago_contado,
                 "codigo_plazo_pago_credito"             => $forma_codigo_plazo_pago_credito,
                 "tasa_pago_credito"                     => $forma_tasa_pago_credito,
@@ -704,10 +704,10 @@ if (!empty($url_generar)) {
                 "valor_flete"                           => $forma_valor_flete,
                 "porcentaje_seguro"                     => $forma_porcentaje_seguro,
                 "valor_seguro"                          => $forma_valor_seguro,
-                "forma_iva"                             => $forma_forma_iva,
-                "forma_liquidacion_descuento_en_linea"  => $forma_liquidacion_descuento_en_linea,
-                "forma_liquidacion_descuento_global"    => $forma_liquidacion_descuento_global,
-                "forma_liquidacion_tasa_credito"        => $forma_liquidacion_tasa_credito
+                "forma_iva"                             => '1',
+                "forma_liquidacion_descuento_en_linea"  => '1',
+                "forma_liquidacion_descuento_global"    => '1',
+                "forma_liquidacion_tasa_credito"        => '1'
             );
 
 
