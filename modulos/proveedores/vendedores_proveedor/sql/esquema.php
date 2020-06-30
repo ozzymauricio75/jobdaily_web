@@ -116,6 +116,23 @@ $registros["componentes"] = array(
     )
 );
 
+$registros["vendedores_proveedor"] = array(
+    array(
+        "codigo"                     => 0,
+        "documento_proveedor"        => 0,
+        "primer_nombre"              => "",
+        "segundo_nombre"             => "",
+        "primer_apellido"            => "",
+        "segundo_apellido"           => "",
+        "celular"                    => "",
+        "correo"                     => "",
+        "activo"                     => 1,
+        "id_usuario_registra"        => 0,
+        "fecha_registra"             => date("Y-m-d H:i:s"),
+        "fecha_modificacion"         => date("Y-m-d H:i:s"),
+    )
+);
+
 $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_vendedores_proveedor AS

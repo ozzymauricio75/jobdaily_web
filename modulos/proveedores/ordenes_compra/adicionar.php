@@ -52,6 +52,33 @@ if (isset($url_completar)) {
     }
     exit;
 
+} elseif (isset($url_cargarDatosVendedor)) {
+    if (!empty($url_codigo_vendedor)) {
+
+        $consulta = SQL::seleccionar(array("vendedores_proveedor"), array("*"), "codigo = '$url_codigo_vendedor'", "", "");
+        $tabla    = array();
+
+        if (SQL::filasDevueltas($consulta)) {
+            $datos = SQL::filaEnObjeto($consulta);
+
+            $tabla = array(
+                $datos->codigo,
+                $datos->documento_proveedor,
+                $datos->primer_nombre,
+                $datos->segundo_nombre,
+                $datos->primer_apellido,
+                $datos->segundo_apellido,
+                $datos->celular,
+                $datos->correo,
+                $datos->activo
+            );
+        } else {
+            $tabla[] = "";
+        }
+        HTTP::enviarJSON($tabla);
+    }
+    exit;
+
 } elseif (isset($url_cargarProveedor)) {
     if (!empty($url_nit_proveedor)) {
 
@@ -159,6 +186,14 @@ if (isset($url_completar)) {
         $codigo_padre            = SQL::obtenerValor("estructura_grupos", "codigo_padre", "codigo = '$codigo_estructura_grupo'");
         $codigo_grupo            = SQL::obtenerValor("estructura_grupos", "codigo_grupo", "codigo = '$codigo_estructura_grupo'");
         $costo                   = SQL::obtenerValor("lista_precio_articulos", "costo", "codigo_articulo = '$codigo_articulo'");
+        $consulta_imagen         = SQL::seleccionar(array("imagenes"), array("id_asociado","categoria","ancho","alto"), "id_asociado = '$codigo_articulo' AND categoria ='2'");
+        $imagen                  = SQL::filaEnObjeto($consulta_imagen);
+        if ($imagen) {
+            $id_asociado = $imagen->id_asociado;
+            $categoria   = $imagen->categoria;
+            $ancho       = $imagen->ancho;
+            $alto        = $imagen->alto;
+        }
 
         $tabla = array();
 
@@ -200,7 +235,11 @@ if (isset($url_completar)) {
                 $codigo_estructura_grupo,
                 $codigo_padre,
                 $codigo_grupo,
-                $costo
+                $costo,
+                $id_asociado,
+                $categoria,
+                $ancho,
+                $alto
             );
         } else {
             $tabla[] = "";
@@ -240,8 +279,8 @@ if (isset($url_completar)) {
 
     if (!empty($url_nit_proveedor)) {
 
-        $proveedor            = $url_nit_proveedor;
-        $consulta             = SQL::seleccionar(array("menu_vendedores_proveedor"), array("*"), "DOCUMENTO = '$proveedor'");
+        $proveedor = $url_nit_proveedor;
+        $consulta  = SQL::seleccionar(array("menu_vendedores_proveedor"), array("*"), "DOCUMENTO = '$proveedor'");
 
         if (SQL::filasDevueltas($consulta)) {
             while($datos = SQL::filaEnObjeto($consulta)){
@@ -326,9 +365,9 @@ if (!empty($url_generar)){
             "mt"    => "menu_terceros"
         );
         $columnas_compradores = array(
-            "documento_identidad"  => "cpr.documento_identidad",
-            "id"                 => "mt.id",
-            "tercero"            => "mt.NOMBRE_COMPLETO"
+            "documento_identidad" => "cpr.documento_identidad",
+            "id"                  => "mt.id",
+            "tercero"             => "mt.NOMBRE_COMPLETO"
         );
 
         $condicion_compradores  = "mt.id = cpr.documento_identidad";
@@ -402,7 +441,7 @@ if (!empty($url_generar)){
                              HTML::listaSeleccionSimple("*id_moneda",$textos["MONEDA"], $monedas, "", array("title",$textos["AYUDA_MONEDA"]))
                         ),
                         array(    
-                            HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social",""), "", array("title" => $textos["AYUDA_EMPRESAS"],"onBlur" => "validarItem(this);","onChange" => "recargarListaEmpresas()", "onClick" => "recargarComprador(),cargaNit()")),
+                            HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social",""), "", array("title" => $textos["AYUDA_EMPRESAS"], "onBlur" => "validarItem(this);","onChange" => "recargarListaEmpresas()", "onClick" => "recargarComprador(),cargaNit()")),
                            
                             HTML::campoTextoCorto("*nit_empresa",$textos["NIT"], 13, 15, "", array("disabled" => "true"), array("title",$textos["AYUDA_NIT"], "", "")) 
                         ),
@@ -432,7 +471,7 @@ if (!empty($url_generar)){
 
                             HTML::campoTextoCorto("*razon_social_proveedor",$textos["RAZON_SOCIAL_PROVEEDOR"], 45, 255, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_RAZON_SOCIAL_PROVEEDOR"], "")),
 
-                            HTML::listaSeleccionSimple("*vendedor_proveedor", $textos["VENDEDOR"], "", "", array("disabled" => "true"), array("title",$textos["AYUDA_VENDEDOR"]))
+                            HTML::listaSeleccionSimple("*vendedor_proveedor", $textos["VENDEDOR"], "", "", array("title",$textos["AYUDA_VENDEDOR"],"onClick" => "cargarDatosVendedor()"))
                         ),
                         array(
                             HTML::campoTextoCorto("*direccion",$textos["DIRECCION"], 40, 255, "", array("readonly" => "true"), array("title",$textos["AYUDA_DIRECCION"])),
@@ -450,6 +489,7 @@ if (!empty($url_generar)){
                 )
             ),
             array(
+                HTML::campoTextoLargo("observaciones",$textos["OBSERVACIONES"], 2, 95, "", array("title"=>$textos["AYUDA_OBSERVACIONES"])),
                 HTML::campoOculto("datos_incompletos_estructura",$textos["SELECCIONAR_ESTRUCTURA_COMPLETA"]),
                 HTML::campoOculto("existe_caracteristica",$textos["EXISTE_CARACTERISTICA"]),
                 HTML::campoOculto("seleccionar_caracteristica",$textos["SELECCIONAR_CARACTERISTICA"]),
@@ -470,7 +510,7 @@ if (!empty($url_generar)){
                 HTML::campoOculto("error_criterio",$textos["ERROR_CRITERIO"]),
                 HTML::campoOculto("error_caracteristica",$textos["ERROR_CARACTERISTICA"]),
                 HTML::campoOculto("error_cantidad_total",$textos["ERROR_CANTIDAD_TOTAL"]),
-                HTML::campoOculto("error_valor_unitario",$textos["ERROR_COSTO_UNITARIO"]),
+                HTML::campoOculto("error_valor_unitario",$textos["ERROR_VALOR_UNITARIO"]),
                 HTML::campoOculto("error_porcentaje_descuento_linea",$textos["ERROR_PORCENTAJE_DESCUENTO_LINEA"]),
                 HTML::campoOculto("error_cantidad_detalle",$textos["ERROR_CANTIDAD_DETALLE"]),
                 HTML::campoOculto("error_concepto",$textos["ERROR_CONCEPTO"]),
@@ -511,8 +551,7 @@ if (!empty($url_generar)){
                 HTML::campoOculto("descuento_global2_actual",0),
                 HTML::campoOculto("descuento_global3_actual",0),
                 HTML::campoOculto("regimen_actual","1"),
-                HTML::campoOculto("id_propuesta_pedido",0),
-                HTML::campoOculto("id_orden_compra",0)
+                HTML::campoOculto("id_propuesta_pedido",0)
             )
         );
         
@@ -530,7 +569,9 @@ if (!empty($url_generar)){
                         array(
                             array(
                                 HTML::campoTextoCorto("+selector7",$textos["REFERENCIA"], 30, 30, "", array("title"=>$textos["AYUDA_REFERENCIA_PROVEEDOR"],"class"=>"autocompletable articulo_existe modificar","onblur" => "validarItem(this)","onblur" => "cargarDatosArticulo()","onKeyPress" => "return campoEntero(event)"))
-                                .HTML::campoOculto("codigo_articulo","")
+                                .HTML::campoOculto("codigo_articulo",""),
+
+                                HTML::imagen(HTTP::generarURL("VISUIMAG")."id=".$id_imagen, array("width" => $imagen->ancho, "height" => $imagen->alto))  
                             ),
                             array(
                                 HTML::campoTextoCorto("+descripcion",$textos["DESCRIPCION"], 50, 255, "", array("title"=>$textos["AYUDA_DETALLE"],"class"=>"articulo_existe modificar_articulo")),
@@ -582,20 +623,14 @@ if (!empty($url_generar)){
 
                                 HTML::boton("botonAgregarArticulo", $textos["AGREGAR_ARTICULO"], "agregarItemArticulo();", "adicionar",array("class"=>"agregar_articulo"),"etiqueta")
                             ),
-                            array(
+                            /*array(
                                 HTML::selectorArchivo("foto_articulo", $textos["FOTO"], array("title" => $textos["AYUDA_FOTO"], "class"=>" articulo_nuevo oculto"))
-                            ),
+                            ),*/
                             array(
                                 HTML::contenedor(
                                     HTML::agrupador(
                                         array(
                                             array(
-                                                HTML::listaSeleccionSimple("+id_sucursal_destino",$textos["SUCURSAL_DESTINO"], $sucursales, "", array("title",$textos["AYUDA_SUCURSAL_DESTINO"])),
-
-                                                HTML::listaSeleccionSimple("+id_concepto_criterio_subnivel_articulo",$textos["CONCEPTO"], "", "", array("title",$textos["AYUDA_CONCEPTO"], "class"=>"oculto concepto")),
-                                                //HTML::listaSeleccionSimple("+id_color",$textos["COLOR"], $colores, "", array("title",$textos["AYUDA_COLOR"], "class"=>"oculto colores")),
-                                                HTML::campoTextoCorto("+id_color",$textos["COLOR"], 15, 50, "", array("title",$textos["AYUDA_COLOR"], "class"=>"oculto colores")),
-
                                                 HTML::campoTextoCorto("+cantidad_detalle",$textos["CANTIDAD_DETALLE"], 5, 15, "", array("title"=>$textos["AYUDA_CANTIDAD_DETALLE"], "onKeyPress"=>"return campoDecimal(event)")),
                                                 HTML::mostrarDato("cantidad_pendiente",$textos["CANTIDAD_PENDIENTE"], ""),
 
@@ -627,12 +662,20 @@ if (!empty($url_generar)){
                 ),
                 HTML::contenedor(
                     HTML::boton("botonActualizar", $textos["ACTUALIZAR_ARTICULO"], "actualizarArticulo();", "restaurar", array("class"=>"actualizarArticulo")),
-                    array("id"=>"boton_actualizar","class"=>"actualizarArticulo oculto")
+                    array("id"=>"boton_actualizar","class"=>"actualizarArticulo oculto"),
+                    HTML::contenedor(
+                            HTML::boton("botonModificarArticulo", "", "modificarArticulo(this);", "modificar", array("class"=>"modificarArticuloTabla")),
+                            array("id" => "modificarArticulo", "style" => "display: none")
+                        ),
+                    HTML::contenedor(
+                        HTML::boton("botonRemoverArticulo", "", "removerArticulo(this);", "eliminar", array("class"=>"removerArticuloTabla")),
+                            array("id" => "removerArticulo", "style" => "display: none")
+                        )
                 ),
                 HTML::generarTabla(
                     array("id","MODIFICAR","ELIMINAR","REFERENCIA","DESCRIPCION","CANTIDAD","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","FOTO","OBSERVACIONES"),
                     "",
-                    array("I","I","I","I","I","I","I","I","I","I"),
+                    array("I","I","I","I","D","I","D","D","I","I"),
                     "listaArticulos",
                     false
                 )
