@@ -27,7 +27,7 @@
 // Nombre de la vista a partir de la cual se genera la tabla
 $vistaMenu     = "menu_ordenes_compra";
 $vistaBuscador = "buscador_ordenes_compra";
-$alineacion    = array("I","I","C","I","D","D","I");
+$alineacion    = array("I","I","I","I","D","D","D","D","I","C");
 
 // Devolver datos para autocompletar la busqueda
 if (isset($url_completar)){
@@ -59,7 +59,8 @@ $registros      = HTML::imprimirRegistros($totalRegistros, $paginaActual, $numer
 $estados["ESTADO_"] = array(
     "0" => "estadoVerde",
     "1" => "estadoNaranja",
-    "2" => "estadoRojo"
+    "2" => "estadoRojo",
+    "3" => "estadoAzul"
 );
 $estados["ESTADO_APROBADA_"] = array(
     "0" => "estadoNaranja",
@@ -78,6 +79,7 @@ $estados["ESTADO_ORDEN_"] = array(
 );
 /*** Ejecutar la consulta y generar tabla a partir de los resultados ***/
 $consulta     = SQL::seleccionar(array($vistaMenu), $columnas, $condicion, $agrupamiento, $ordenamiento, $paginaActual, $numeroFilas);
+//$tabla        = HTML::generarTabla($columnas, $consulta, $alineacion);
 $tabla        = HTML::generarTabla($columnas, SQL::recursoEnArreglo($consulta, $estados), $alineacion);
 
 // Generar y enviar plantilla completa si la peticion no se realiza via AJAX

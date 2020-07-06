@@ -261,7 +261,40 @@ function formatoMiles(input){
             num = num.toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
             num = num.split('').reverse().join('').replace(/^[\.]/,'');
             input.value = num;
-        } else{ alert('Solo se permiten numeros');
-            input.value = input.value.replace(/[^\d\.]*/g,'');
-    }
-}   
+        } //else{ alert('Solo se permiten numeros');
+            //input.value = input.value.replace(/[^\d\.]*/g,'');
+    //}
+}
+
+function ponerMiles(valor) {
+        var valorMiles = '';
+        valor          = valor.toString();
+        cont           = 0;
+        for ( m=valor.length; m>=0; m--) {
+            if (cont != 3) {
+                valorMiles = valor.charAt(m-1)+valorMiles;
+                cont++;
+            } else {
+                cont = 0;
+                if (m != 0) {
+                    valorMiles = ','+valorMiles;
+                    m++;
+                }
+            }
+        }
+        return valorMiles;
+}
+
+function formatear(valor) {
+        num +='';
+        separador: "."; // separador para los miles
+        sepDecimal: ','; // separador para los decimales
+        var splitStr = num.split('.');
+        var splitLeft = splitStr[0];
+        var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+        var regx = /(\d+)(\d{3})/;
+        while (regx.test(splitLeft)) {
+            splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+        }
+        return this.simbol + splitLeft +splitRight;
+}

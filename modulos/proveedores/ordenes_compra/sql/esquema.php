@@ -39,7 +39,7 @@ $tablas["ordenes_compra"] = array(
     "codigo_comprador"                 => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla compradores'",
     "cantidad_registros"               => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Cantidad de Items para la orden de compra'",
     "cantidad_cumplidos"               => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Cantidad de Items cumplidos en la orden de compra'",
-    "estado"                           => "ENUM('0','1','2') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Grabada parcial 2->Anulada'",
+    "estado"                           => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Grabada parcial 2->Anulada' 3->Cumplida",
     "codigo_usuario_orden_compra"      => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genero la orden de compra'",
     "codigo_usuario_anula"             => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que anula el registro'",
     "estado_aprobada"                  => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->No ha sido aprobada 1->Ya fue aprobada'",
@@ -52,11 +52,12 @@ $tablas["ordenes_compra"] = array(
     "descuento_financiero_pronto_pago" => "DECIMAL(7,4) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Descuento financiero por pronto pago'",
     "numero_dias_pronto_pago"          => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Numero de dias para tomar el descuento financiero pronto pago del proveedor'",
     "iva_incluido"                     => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT 'El articulo lleva iva incluido 0->No 1->Si'",
-    "numero_dias_pago"                 => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT ' Numero de dias para pago al proveedor'",
+    "codigo_numero_dias_pago"          => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT ' Numero de dias para pago al proveedor'",
     "observaciones"                    => "VARCHAR(234) COMMENT 'Observacion general para la orden de compra'",
     "imprimio"                         => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT 'La orden de compra ya se impirmio 0->No 1->Si'",
     "fecha_registra"                   => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
-    "fecha_modificacion"               => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificación'"
+    "fecha_modificacion"               => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificación'",
+    "solicitante"                      => "VARCHAR(120) NOT NULL  COMMENT 'Nombre del solicitante de la orden de compra'"
 );
 
 $borrarSiempre["movimiento_ordenes_compra"] = false;
@@ -67,10 +68,8 @@ $tablas["movimiento_ordenes_compra"] = array(
     "codigo_articulo"         => "VARCHAR(20) NOT NULL  COMMENT 'Codigo del articulo asignado por la empresa'",
     "referencia_articulo"     => "VARCHAR(15) NOT NULL COMMENT 'Referencia del producto a realizar orden de compra'",
     "codigo_sucursal_destino" => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código interno de la sucursal'",
-    "estado"                  => "ENUM('0','1','2') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Grabada parcial 2->Anulada'",
-    "unitario_total"          => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->Ingresa unitario del articulo 1->Ingresa valor total'",
+    "estado"                  => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Grabada parcial 2->Anulada' 3->Cumplida",
     "observaciones"           => "VARCHAR(78) COMMENT 'Observacion para el articulo en el pedido'",
-    "cantidad"                => "DECIMAL(15,4) UNSIGNED NOT NULL COMMENT 'Cantidad solicitada del articulo'",
     "codigo_unidad_medida"    => "INT(6) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla unidades'",
     "cantidad_total"          => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Cantidad total solicitada en unidades del articulo'",
     "valor_total"             => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Valor total de la orden de compra del articulo'",
@@ -87,10 +86,10 @@ $tablas["movimiento_ordenes_compra"] = array(
     "porcentaje_impuesto"     => "DECIMAL(7,4) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Porcentaje de la tasa de impuesto del articulo'",
     "iva_incluido"            => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT 'El articulo llave iva incluido 0->No 1->Si'",
     "fecha_entrega"           => "DATE COMMENT 'Fecha de despacho para el articulo'",
-    "observaciones"           => "VARCHAR(78) COMMENT 'Observacion para el articulo en la orden de compra'",
     "fecha_registra"          => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
     "fecha_modificacion"      => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificación'",
-    "codigo_usuario_registra" => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genera el registro'"
+    "codigo_usuario_registra" => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genera el registro'",
+    "codigo_vendedor"         => "INT(6) UNSIGNED NOT NULL COMMENT 'Codigo interno del vendedor tabla vendedores'",
 );
 
 
@@ -177,6 +176,16 @@ $llavesForaneas["ordenes_compra"] = array(
         "usuarios",
         // Nombre del campo clave en la tabla relacionada
         "codigo"
+    ),
+    array(
+        // Nombre de la llave
+        "ordenes_compra_dias_pago",
+        // Nombre del campo clave de la tabla local
+        "codigo_numero_dias_pago",
+        // Nombre de la tabla relacionada
+        "plazos_pago_proveedores",
+        // Nombre del campo clave en la tabla relacionada
+        "codigo"
     )
 );
 $llavesForaneas["movimiento_ordenes_compra"] = array(
@@ -239,6 +248,16 @@ $llavesForaneas["movimiento_ordenes_compra"] = array(
         "usuarios",
         // Nombre del campo clave en la tabla relacionada
         "codigo"
+    ),
+    array(
+        // Nombre de la llave
+        "movimientos_ordenes_compra_vendedor",
+        // Nombre del campo clave de la tabla local
+        "codigo_vendedor",
+        // Nombre de la tabla relacionada
+        "vendedores_proveedor",
+        // Nombre del campo clave en la tabla relacionada
+        "codigo"
     )
 );
 //  Insercion de datos iniciales
@@ -284,17 +303,17 @@ $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_ordenes_compra AS
             SELECT
-                job_ordenes_compra.codigo AS codigo,
-                job_ordenes_compra.codigo_sucursal AS codigo_sucursal,
-                job_ordenes_compra.codigo_comprador AS codigo_comprador,
-                IF (job_ordenes_compra.estado ='0',
-                    'Grabada total',
-                    IF (job_ordenes_compra.estado ='1',
-                        'Grabada parcial',
-                        'Anulada'
-                    )
-                ) AS codigo_estado,
+                job_ordenes_compra.codigo AS id,
+                job_ordenes_compra.fecha_documento AS FECHA_DOCUMENTO,
+                job_ordenes_compra.numero_consecutivo AS DOCUMENTO,
                 job_sucursales.nombre AS SUCURSAL,
+                job_proyectos.nombre AS PROYECTO,
+                FORMAT(SUM(job_movimiento_ordenes_compra.cantidad_total),0) AS TOTAL_UNIDADES,
+                FORMAT(SUM(job_movimiento_ordenes_compra.valor_total),0) AS SUBTOTAL,
+                FORMAT(SUM(job_movimiento_ordenes_compra.valor_iva),0) AS VALOR_IVA,
+                FORMAT(SUM(job_movimiento_ordenes_compra.neto_pagar),0) AS NETO_PAGAR,
+                CONCAT('ESTADO_',job_ordenes_compra.estado) AS ESTADO,
+                
                 CONCAT(
                     job_terceros.documento_identidad,
                     ' ',
@@ -307,37 +326,44 @@ $vistas = array(
                         ),
                         job_terceros.razon_social
                     )
-                ) AS PROVEEDOR,
-                job_ordenes_compra.fecha_documento AS FECHA_DOCUMENTO,
-                job_tipos_documentos.descripcion AS TIPO_DOCUMENTO,
-                job_ordenes_compra.numero_consecutivo AS DOCUMENTO
+                ) AS PROVEEDOR
+                
             FROM
                 job_ordenes_compra,
                 job_sucursales,
                 job_tipos_documentos,
                 job_tipos_documento_identidad,
-                job_terceros
+                job_terceros,
+                job_proyectos,
+                job_compradores,
+                job_movimiento_ordenes_compra
             WHERE
-                job_ordenes_compra.codigo_tipo_documento = job_tipos_documentos.codigo AND
                 job_ordenes_compra.codigo_sucursal = job_sucursales.codigo AND
                 job_ordenes_compra.documento_identidad_proveedor = job_terceros.documento_identidad AND
+                job_ordenes_compra.codigo_tipo_documento = job_tipos_documentos.codigo AND
                 job_tipos_documento_identidad.codigo = job_terceros.codigo_tipo_documento AND
-                job_ordenes_compra.codigo > 0;"
+                job_proyectos.codigo = job_ordenes_compra.prefijo_codigo_proyecto AND
+                job_compradores.codigo = job_ordenes_compra.codigo_comprador AND
+                job_ordenes_compra.codigo = job_movimiento_ordenes_compra.codigo_orden_compra AND
+                job_ordenes_compra.codigo > 0
+            
+            GROUP BY 
+                job_movimiento_ordenes_compra.codigo_orden_compra;"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_ordenes_compra AS
             SELECT
-                job_ordenes_compra.codigo AS codigo,
-                job_ordenes_compra.codigo_sucursal AS codigo_sucursal,
-                job_ordenes_compra.codigo_comprador AS codigo_comprador,
-                IF (job_ordenes_compra.estado ='0',
-                    'Grabada total',
-                    IF (job_ordenes_compra.estado ='1',
-                        'Grabada parcial',
-                        'Anulada'
-                    )
-                ) AS id_estado,
-                job_sucursales.nombre AS sucursal,
+                job_ordenes_compra.codigo AS id,
+                job_ordenes_compra.fecha_documento AS FECHA_DOCUMENTO,
+                job_ordenes_compra.numero_consecutivo AS DOCUMENTO,
+                job_sucursales.nombre AS SUCURSAL,
+                job_proyectos.nombre AS PROYECTO,
+                FORMAT(SUM(job_movimiento_ordenes_compra.cantidad_total),0) AS TOTAL_UNIDADES,
+                FORMAT(SUM(job_movimiento_ordenes_compra.valor_total),0) AS SUBTOTAL,
+                FORMAT(SUM(job_movimiento_ordenes_compra.valor_iva),0) AS VALOR_IVA,
+                FORMAT(SUM(job_movimiento_ordenes_compra.neto_pagar),0) AS NETO_PAGAR,
+                CONCAT('ESTADO_',job_ordenes_compra.estado) AS ESTADO,
+                
                 CONCAT(
                     job_terceros.documento_identidad,
                     ' ',
@@ -350,22 +376,29 @@ $vistas = array(
                         ),
                         job_terceros.razon_social
                     )
-                ) AS proveedor,
-                job_ordenes_compra.fecha_documento AS fecha_documento,
-                job_tipos_documentos.descripcion AS tipo_documento,
-                job_ordenes_compra.numero_consecutivo AS documento
+                ) AS PROVEEDOR
+                
             FROM
                 job_ordenes_compra,
                 job_sucursales,
                 job_tipos_documentos,
                 job_tipos_documento_identidad,
-                job_terceros
+                job_terceros,
+                job_proyectos,
+                job_compradores,
+                job_movimiento_ordenes_compra
             WHERE
-                job_ordenes_compra.codigo_tipo_documento = job_tipos_documentos.codigo AND
                 job_ordenes_compra.codigo_sucursal = job_sucursales.codigo AND
                 job_ordenes_compra.documento_identidad_proveedor = job_terceros.documento_identidad AND
+                job_ordenes_compra.codigo_tipo_documento = job_tipos_documentos.codigo AND
                 job_tipos_documento_identidad.codigo = job_terceros.codigo_tipo_documento AND
-                job_ordenes_compra.codigo > 0;"
+                job_proyectos.codigo = job_ordenes_compra.prefijo_codigo_proyecto AND
+                job_compradores.codigo = job_ordenes_compra.codigo_comprador AND
+                job_ordenes_compra.codigo = job_movimiento_ordenes_compra.codigo_orden_compra AND
+                job_ordenes_compra.codigo > 0
+            
+            GROUP BY 
+                job_movimiento_ordenes_compra.codigo_orden_compra;"
     )
 );
 ?>

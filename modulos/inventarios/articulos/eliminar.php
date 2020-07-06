@@ -67,6 +67,8 @@ if (!empty($url_generar)) {
         $nombre_proveedor       = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
         $nombre_proveedor       = explode("|",$nombre_proveedor);
         $nombre_proveedor       = $nombre_proveedor[0];
+        $costo                  = SQL::obtenerValor("lista_precio_articulos", "costo", "codigo_articulo = '$url_id'");     
+        $costo                  = number_format($costo,2);  
         $referencia             = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal = '1' AND documento_identidad_proveedor = '$documento_identidad_proveedor'");
         $codigo_barras          = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "codigo_articulo = '$url_id' AND principal = '1' AND documento_identidad_proveedor = '$documento_identidad_proveedor'");
 
@@ -124,7 +126,8 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("codigo_barras", $textos["CODIGO_BARRAS"], $codigo_barras)
             ),
             array(
-                HTML::mostrarDato("descripcion", $textos["DESCRIPCION"], $datos->descripcion)
+                HTML::mostrarDato("descripcion", $textos["DESCRIPCION"], $datos->descripcion),
+                HTML::mostrarDato("costo", $textos["COSTO"], $costo)
             ),
             array(
                 HTML::mostrarDato("imprime", $textos["ESTADO_IMPRESION"], $texto_imprime)
@@ -208,12 +211,19 @@ if (!empty($url_generar)) {
 
 /*** Eliminar el elemento seleccionado ***/
 } elseif (!empty($forma_procesar)) {
-    $consulta = SQL::eliminar("referencias_proveedor", "codigo_articulo = '$forma_id'");
-    $consulta = SQL::eliminar("articulos_proveedor", "codigo_articulo = '$forma_id'");
-    $consulta = SQL::eliminar("imagenes", "id_asociado = '$forma_id' AND categoria = '2'");
-    $consulta = SQL::eliminar("articulos", "codigo = '$forma_id'");
+    /*$consulta   = SQL::eliminar("articulos_proveedor", "codigo_articulo = '$forma_id'");
+    $consulta   = SQL::eliminar("referencias_proveedor", "codigo_articulo = '$forma_id'");
+    $consulta   = SQL::eliminar("articulos_proveedor", "codigo_articulo = '$forma_id'");
+    $consulta   = SQL::eliminar("imagenes", "id_asociado = '$forma_id' AND categoria = '2'");
+    $consulta   = SQL::eliminar("articulos", "codigo = '$forma_id'");*/
+    $datos = array(
+                "activo" => 0
+            );
+                        
+    $condicion  = "codigo ='$forma_id'";
+    $modificar  = SQL::modificar("articulos", $datos, $condicion);
 
-    if ($consulta) {
+    if ($modificar) {
         $error   = false;
         $mensaje = $textos["ITEM_ELIMINADO"];
     } else {

@@ -240,14 +240,13 @@ if (!empty($url_generar)) {
                 .HTML::campoOculto("codigo_maximo", $codigo),
             ),
             array(
-                HTML::campoTextoCorto("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"],"onblur" => "validarItem(this)","onchange" => "cargarDatos()","onKeyPress" => "return campoEntero(event)")),
+                HTML::campoTextoCorto("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"],"onblur" => "validarItem(this)","onchange" => "cargarDatos()")),
 
-                HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, "",array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)")),
-
-                HTML::campoTextoCorto("costo", $textos["COSTO"], 15, 15, "",array("title" => $textos["AYUDA_COSTO"],"onKeyPress" => "return campoEntero(event)","onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
+                HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, "",array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)"))
             ),
             array(
-                HTML::campoTextoCorto("*descripcion", $textos["DESCRIPCION"], 51, 255, "", array("title" => $textos["AYUDA_DESCRIPCION"],"onBlur" => "validarItem(this);"))
+                HTML::campoTextoCorto("*descripcion", $textos["DESCRIPCION"], 70, 255, "", array("title" => $textos["AYUDA_DESCRIPCION"],"onBlur" => "validarItem(this);")),
+                HTML::campoTextoCorto("costo", $textos["COSTO"], 15, 15, "",array("title" => $textos["AYUDA_COSTO"],"onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
             ),
             array(
                 HTML::campoTextoCorto("*selector1", $textos["PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_PROVEEDOR"], "class" => "autocompletable"))
@@ -368,7 +367,7 @@ if (!empty($url_generar)) {
 
     /*** Validar referencia ***/
     if ($url_item == "codigo_alfanumerico") {
-        $existe = SQL::existeItem("referencias_proveedor", "referencia", $url_valor,"referencia !=''");
+        $existe = SQL::existeItem("referencias_proveedor", "referencia", $url_valor,"principal != '0'");
         if ($existe) {
             HTTP::enviarJSON($textos["ERROR_EXISTE_CODIGO"]);
         } 
@@ -435,7 +434,7 @@ if (!empty($url_generar)) {
       $error = true;
       $mensaje = $textos["PROVEEDOR_VACIO"];   
            
-    }elseif($existe = SQL::existeItem("referencias_proveedor", "referencia", $forma_codigo_alfanumerico)){
+    }elseif($existe = SQL::existeItem("referencias_proveedor", "referencia", $forma_codigo_alfanumerico, "principal != '0'")){
 	    $error   = true;
         $mensaje = $textos["ERROR_EXISTE_CODIGO"];   
     }else {
@@ -453,6 +452,7 @@ if (!empty($url_generar)) {
         }
 
         $forma_costo = quitarMiles($forma_costo);
+        $forma_costo = str_replace(",", ".", $forma_costo);
 
         $datos = array(
             "codigo"                     => $forma_codigo,

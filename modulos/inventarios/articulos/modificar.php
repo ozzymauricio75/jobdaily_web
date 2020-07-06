@@ -186,7 +186,7 @@ if (!empty($url_generar)) {
 
         // Obtener costo articulo
         $costo = SQL::obtenerValor("lista_precio_articulos", "costo", "codigo = '$url_id'");  
-        $costo = number_format($costo,0);      
+        $costo = number_format($costo,2);      
 
         // Obtener referencias del proveedor y articulo
         $referencia_alterna = SQL::obtenerValor("referencias_proveedor", "referencia", "codigo_articulo = '$url_id' AND principal ='0' AND principal = '1' AND documento_identidad_proveedor = '$documento_identidad_proveedor'");
@@ -238,7 +238,7 @@ if (!empty($url_generar)) {
 
                 HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, $codigo_barras,array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)")),
 
-                HTML::campoTextoCorto("costo", $textos["COSTO"], 15, 15, $costo,array("title" => $textos["AYUDA_COSTO"],"onKeyPress" => "return campoEntero(event)","onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
+                HTML::campoTextoCorto("costo", $textos["COSTO"], 15, 15, $costo,array("title" => $textos["AYUDA_COSTO"],"onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
             ),
             array(
                 HTML::campoTextoCorto("*descripcion", $textos["DESCRIPCION"], 55, 255, htmlentities(stripslashes($datos->descripcion)), array("title" => $textos["AYUDA_DESCRIPCION"]))
@@ -477,6 +477,7 @@ if(empty($forma_codigo)){
         return $valor;
     }
     $forma_costo = quitarMiles($forma_costo);
+    $forma_costo = str_replace(",", ".", $forma_costo);
 
     $datos = array(
         "codigo"                     => $forma_codigo,
@@ -602,9 +603,9 @@ if(empty($forma_codigo)){
                         
                     $condicion  = "documento_identidad_proveedor = '$forma_documento_identidad_proveedor' AND codigo_articulo='$codigo_articulo' AND principal = '0'";
     
-                    $insertar   = SQL::modificar("referencias_proveedor", $datos, $condicion);
+                    $modificar  = SQL::modificar("referencias_proveedor", $datos, $condicion);
                     /*** Error de insercón ***/
-                    if (!$insertar) {
+                    if (!$modificar) {
                         $error     = true;
                         $mensaje   = $textos["ERROR_MODIFICAR_ITEM"];
                     }

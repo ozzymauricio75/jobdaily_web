@@ -59,7 +59,7 @@ if (!empty($url_generar)) {
         $unidad_presentacion    = SQL::obtenerValor("unidades", "nombre", "codigo = '$datos->codigo_unidad_presentacion'");
         $pais                   = SQL::obtenerValor("paises", "nombre", "codigo_iso = '$datos->codigo_iso'");
         $costo                  = SQL::obtenerValor("lista_precio_articulos", "costo", "codigo_articulo = '$url_id'");     
-        $costo                  = number_format($costo,0);  
+        $costo                  = number_format($costo,2);  
         
         $nombre_proveedor       = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
         $nombre_proveedor       = explode("|",$nombre_proveedor);
@@ -123,7 +123,7 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::mostrarDato("descripcion", $textos["DESCRIPCION"], $datos->descripcion),
-                HTML::mostrarDato("costo", $textos["COSTO"], $costo),
+                HTML::mostrarDato("costo", $textos["COSTO"], $costo)
             ),
             array(
                 HTML::mostrarDato("imprime", $textos["ESTADO_IMPRESION"], $texto_imprime)

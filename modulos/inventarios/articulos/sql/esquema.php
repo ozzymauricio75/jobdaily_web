@@ -30,7 +30,7 @@ $borrarSiempre = false;
 // Definición de tablas
 
 $tablas["articulos"] = array(
-    "codigo"                        => "VARCHAR(20) NOT NULL  COMMENT 'Codigo del articulo asignado por la empresa'",
+    "codigo"                        => "VARCHAR(20) NOT NULL COMMENT 'Id de la tabla articulos'",
     "descripcion"                   => "VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Descripcion del arti­culo'",
     "tipo_articulo"                 => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT '1->Materia prima, 2->Producto terminado'",
     "ficha_tecnica"                 => "TEXT NOT NULL DEFAULT '' COMMENT 'Caracteristicas tecnicas de un articulo'",
@@ -147,7 +147,7 @@ $llavesForaneas["articulos"] = array(
 
 // Definición de tablas
 $tablas["referencias_proveedor"] = array(
-    "codigo_articulo"               => "VARCHAR(20) NOT NULL  COMMENT 'Codigo de la tabla de articulos'",
+    "codigo_articulo"               => "VARCHAR(20) NOT NULL COMMENT 'Id de la tabla articulos'",
     "referencia"                    => "VARCHAR(30) NOT NULL COMMENT 'Referencia ó codigo asignada por el proveedor, puede ser el codigo del articulo'",
     "documento_identidad_proveedor" => "VARCHAR(12) NOT NULL COMMENT 'Documento identidad del proveedor'",
     "codigo_barras"                 => "BIGINT(13) NOT NULL COMMENT 'Codigo de barras del articulo(EAN 13)'",
@@ -182,7 +182,7 @@ $llavesForaneas["referencias_proveedor"] = array(
 
 // Definición de tablas
 $tablas["articulos_proveedor"] = array(
-    "codigo_articulo"               => "VARCHAR(20) NOT NULL  COMMENT 'Codigo de la tabla de articulos'",
+    "codigo_articulo"               => "VARCHAR(20) NOT NULL COMMENT 'Id de la tabla articulos'",
     "documento_identidad_proveedor" => "VARCHAR(12) NOT NULL COMMENT 'Documento identidad del proveedor'",
     "fecha_modificacion"            => "DATE NULL COMMENT 'Fecha en la cual se modifica el articulo'"
 );
@@ -361,7 +361,7 @@ $vistas = array(
                 job_referencias_proveedor.referencia AS CODIGO_PROVEEDOR,
                 job_articulos.descripcion AS DESCRIPCION,
                 job_marcas.descripcion AS MARCA,
-                FORMAT(job_lista_precio_articulos.costo,0) AS COSTO,
+                FORMAT(job_lista_precio_articulos.costo,2) AS COSTO,
                 CONCAT(
                     if(job_terceros.primer_nombre is not null, job_terceros.primer_nombre, ''),' ',
                     if(job_terceros.segundo_nombre is not null, job_terceros.segundo_nombre, ''),' ',
@@ -383,7 +383,7 @@ $vistas = array(
                 job_referencias_proveedor.principal = '1' AND
                 job_proveedores.documento_identidad = job_terceros.documento_identidad AND
                 job_articulos.codigo = job_lista_precio_articulos.codigo_articulo AND
-                job_articulos.codigo != '';"
+                job_articulos.codigo != '' AND job_articulos.activo ='1';"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_articulos AS
@@ -438,7 +438,18 @@ $vistas = array(
             job_referencias_proveedor   
         WHERE
             job_referencias_proveedor.codigo_articulo != '';"
-    ) 
+    ),
+    array(
+        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_seleccion_referencias_por_proveedor AS
+        SELECT  job_referencias_proveedor.codigo_articulo AS id,
+                job_referencias_proveedor.documento_identidad_proveedor AS proveedor,
+                job_referencias_proveedor.referencia AS referencia
+        FROM
+            job_referencias_proveedor,
+            job_articulos_proveedor   
+        WHERE
+            job_referencias_proveedor.codigo_articulo = job_articulos_proveedor.codigo_articulo;"
+    )  
 );
 /***
     DROP TABLE IF EXISTS job_menu_articulos;
