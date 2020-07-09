@@ -233,7 +233,7 @@ if (!empty($url_generar)) {
         } else {
             intval($codigo = 1);
         }
-
+        
         $formularios["PESTANA_GENERAL"] = array(
             array(
                 HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 8, 8, $codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"], "onblur" => "validarItem(this);"))
