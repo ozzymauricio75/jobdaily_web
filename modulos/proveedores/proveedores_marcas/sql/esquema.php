@@ -128,7 +128,7 @@ $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_proveedores_marcas AS
         SELECT	
-                CONCAT (job_proveedores_marcas.documento_identidad_proveedor,\"|\",job_proveedores_marcas.codigo_marca) AS id,
+                CONCAT(job_proveedores_marcas.documento_identidad_proveedor,\"|\",job_proveedores_marcas.codigo_marca) AS id,
                 CONCAT(if (job_terceros.primer_nombre is not null, job_terceros.primer_nombre,''),' ',
                        if (job_terceros.segundo_nombre is not null, job_terceros.segundo_nombre, ''), ' ',
                        if (job_terceros.primer_apellido is not null, job_terceros.primer_apellido, ''), ' ',
@@ -148,7 +148,7 @@ $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_proveedores_marcas AS
         SELECT 	
-                CONCAT (job_proveedores_marcas.documento_identidad_proveedor,\"|\",job_proveedores_marcas.codigo_marca) AS id,
+                CONCAT(job_proveedores_marcas.documento_identidad_proveedor,\"|\",job_proveedores_marcas.codigo_marca) AS id,
                 job_proveedores.documento_identidad AS id_proveedor,
                 job_marcas.codigo AS id_marca,
                 CONCAT(if (job_terceros.primer_nombre is not null, job_terceros.primer_nombre,''),' ',
@@ -184,6 +184,48 @@ $vistas = array(
     )
 );
 /***
+    REALES
+    CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_proveedores_marcas AS
+        SELECT  
+                CONCAT(job_proveedores_marcas.documento_identidad_proveedor,"|",job_proveedores_marcas.codigo_marca) AS id,
+                CONCAT(if (job_terceros.primer_nombre is not null, job_terceros.primer_nombre,''),' ',
+                       if (job_terceros.segundo_nombre is not null, job_terceros.segundo_nombre, ''), ' ',
+                       if (job_terceros.primer_apellido is not null, job_terceros.primer_apellido, ''), ' ',
+                       if (job_terceros.segundo_apellido is not null, job_terceros.segundo_apellido, ''), ' ',
+                       if (job_terceros.razon_social is not null, job_terceros.razon_social, '')) AS PROVEEDOR,
+                job_marcas.descripcion AS MARCA
+        
+        FROM    job_proveedores_marcas,
+                job_terceros,
+                job_proveedores,
+                job_marcas
+        
+        WHERE   job_proveedores_marcas.documento_identidad_proveedor = job_proveedores.documento_identidad AND
+                job_proveedores.documento_identidad = job_terceros.documento_identidad AND
+                job_proveedores_marcas.codigo_marca = job_marcas.codigo;
+
+    CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_proveedores_marcas AS
+        SELECT  
+                CONCAT(job_proveedores_marcas.documento_identidad_proveedor,"|",job_proveedores_marcas.codigo_marca) AS id,
+                job_proveedores.documento_identidad AS id_proveedor,
+                job_marcas.codigo AS id_marca,
+                CONCAT(if (job_terceros.primer_nombre is not null, job_terceros.primer_nombre,''),' ',
+                       if (job_terceros.segundo_nombre is not null, job_terceros.segundo_nombre, ''), ' ',
+                       if (job_terceros.primer_apellido is not null, job_terceros.primer_apellido, ''), ' ',
+                       if (job_terceros.segundo_apellido is not null, job_terceros.segundo_apellido, ''), ' ',
+                       if (job_terceros.razon_social is not null, job_terceros.razon_social, '')) AS proveedor,
+                job_marcas.descripcion AS marca
+        
+        FROM    job_proveedores_marcas,
+                job_terceros,
+                job_proveedores,
+                job_marcas
+        
+        WHERE   job_proveedores_marcas.documento_identidad_proveedor = job_proveedores.documento_identidad AND
+                job_proveedores_marcas.codigo_marca = job_marcas.codigo AND
+                job_proveedores.documento_identidad = job_terceros.documento_identidad;            
+
+/////NO FUNCIONANA/////////////////////
     CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_proveedores_marcas AS
     SELECT	
             CONCAT(job_proveedores_marcas.documento_identidad_proveedor,"|",job_proveedores_marcas.codigo_marca) AS id,

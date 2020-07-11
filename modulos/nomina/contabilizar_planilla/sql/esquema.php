@@ -490,7 +490,7 @@ $llavesForaneas["forma_pago_planillas_sucursal"] = array(
 $llavesForaneas["forma_pago_planillas_empleado"] = array(
     array(
         //  Nombre de la llave foranea
-        "forma_pago_planillas_empleado_sucursal",
+        "forma_pago_planilla_empleado_sucursal",
         //  Nombre del campo en la tabla actual
         "codigo_sucursal",
         //  Nombre de la tabla relacionada
@@ -500,7 +500,7 @@ $llavesForaneas["forma_pago_planillas_empleado"] = array(
     ),
     array(
         // Nombre de la llave foranea
-        "forma_pago_planillas_empleado_cuentas_bancarias",
+        "forma_pago_planilla_empleado_cuentas_bancarias",
         // Nombre del campo en la tabla actual
         "codigo_sucursal,codigo_tipo_documento,codigo_sucursal_banco,codigo_iso,codigo_dane_departamento,codigo_dane_municipio,codigo_banco,numero_cuenta",
         // Nombre de la tabla relacionada
@@ -510,7 +510,7 @@ $llavesForaneas["forma_pago_planillas_empleado"] = array(
     ),
     array(
         // Nombre de la llave foranea
-        "forma_pago_planillas_empleado_consecutivo_documento",
+        "forma_pago_planilla_empleado_consecutivo_documento",
         // Nombre del campo en la tabla actual
         "codigo_sucursal,codigo_tipo_documento,documento_identidad_tercero,fecha_consecutivo,consecutivo_documento",
         // Nombre de la tabla relacionada
@@ -520,7 +520,7 @@ $llavesForaneas["forma_pago_planillas_empleado"] = array(
     ),
     array(
         // Nombre de la llave foranea
-        "forma_pago_planillas_empleado_sucursal_contrato_empleado",
+        "forma_pago_planilla_empleado_sucursal_contrato_empleado",
         // Nombre del campo en la tabla actual
         "codigo_empresa,documento_identidad_empleado,fecha_ingreso_empresa,codigo_sucursal,fecha_ingreso_sucursal",
         // Nombre de la tabla relacionada
@@ -530,7 +530,7 @@ $llavesForaneas["forma_pago_planillas_empleado"] = array(
     ),
     array(
         // Nombre de la llave foranea
-        "forma_pago_planillas_empleado_consecutivo_cheque",
+        "forma_pago_planilla_empleado_consecutivo_cheque",
         // Nombre del campo en la tabla actual
         "codigo_sucursal,codigo_tipo_documento,codigo_banco,numero_cuenta,consecutivo_cheque",
         // Nombre de la tabla relacionada
@@ -540,7 +540,7 @@ $llavesForaneas["forma_pago_planillas_empleado"] = array(
     ),
     array(
         // Nombre de la llave foranea
-        "forma_pago_planillas_empleado_auxiliar_contable",
+        "forma_pago_planilla_empleado_auxiliar_contable",
         // Nombre del campo en la tabla actual
         "codigo_empresa_auxiliar,codigo_anexo_contable,codigo_auxiliar_contable",
         // Nombre de la tabla relacionada
@@ -550,7 +550,7 @@ $llavesForaneas["forma_pago_planillas_empleado"] = array(
     ),
     array(
         // Nombre de la llave foranea
-        "forma_pago_planillas_empleado_usuario",
+        "forma_pago_planilla_empleado_usuario",
         // Nombre del campo en la tabla actual
         "codigo_usuario_registra",
         // Nombre de la tabla relacionada

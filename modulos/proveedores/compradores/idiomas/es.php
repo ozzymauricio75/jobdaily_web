@@ -38,6 +38,7 @@ $textos = array(
     "NOMBRE_COMPLETO"                       => "Nombre completo",
     //Campos
     "TIPO_DOCUMENTO_IDENTIDAD"              => "Tipo de documento de identidad",
+    "EMPRESA"                               => "Empresa",
     "TIPO_PERSONA"                          => "Tipo de persona",
     "FECHA_INGRESO"                         => "Fecha ingreso",
     "PERSONA_NATURAL"                       => "Persona Natural",

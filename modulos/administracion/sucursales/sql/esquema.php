@@ -203,6 +203,7 @@ $vistas = array(
                 job_terceros
 
         WHERE 	job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
+                AND job_sucursales.codigo_empresa = job_empresas.codigo
                 AND job_sucursales.tipo <= '2'
                 AND job_sucursales.codigo != 0;"
     ),
@@ -223,7 +224,9 @@ $vistas = array(
                 job_terceros,
                 job_empresas
 
-        WHERE 	job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
+       WHERE    job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
+                AND job_sucursales.codigo_empresa = job_empresas.codigo
+                AND job_sucursales.tipo <= '2'
                 AND job_sucursales.codigo != 0;"
     ),
     array(

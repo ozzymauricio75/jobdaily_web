@@ -127,15 +127,14 @@ if (isset($url_completar)) {
         }
 
         $codigo_vendedor       = SQL::obtenerValor("vendedores_proveedor", "codigo", "documento_proveedor ='$url_nit_proveedor' AND activo='1'");
-
         $nombre_vendedor       = SQL::obtenerValor("menu_vendedores_proveedor", "NOMBRE_COMPLETO", "DOCUMENTO ='$url_nit_proveedor'");
-
         $direccion             = SQL::obtenerValor("terceros", "direccion_principal", "documento_identidad ='$url_nit_proveedor' AND activo='1'");
-
         $correo_electronico    = SQL::obtenerValor("vendedores_proveedor", "correo", "documento_proveedor ='$url_nit_proveedor' AND activo='1'");
         $celular               = SQL::obtenerValor("vendedores_proveedor", "celular", "documento_proveedor ='$url_nit_proveedor' AND activo='1'");
-        $codigo_dane_municipio = SQL::obtenerValor("terceros", "codigo_dane_municipio_localidad", "documento_identidad ='$url_nit_proveedor' AND activo='1'");
-        $municipios            = SQL::obtenerValor("municipios","nombre","codigo_dane_municipio = '$codigo_dane_municipio' LIMIT 0,1");
+
+        $codigo_dane_departamento = SQL::obtenerValor("terceros", "codigo_dane_departamento_localidad", "documento_identidad ='$url_nit_proveedor' AND activo='1'");
+        $codigo_dane_municipio    = SQL::obtenerValor("terceros", "codigo_dane_municipio_localidad", "documento_identidad ='$url_nit_proveedor' AND activo='1'");
+        $municipios               = SQL::obtenerValor("municipios","nombre","codigo_dane_municipio = '$codigo_dane_municipio' AND codigo_dane_departamento = '$codigo_dane_departamento' LIMIT 0,1");
 
         //Asignar codigo siguiente de la tabla 
         $prefijo_orden_compra  = SQL::obtenerValor("proyectos","codigo","codigo = '$codigo_proyecto'");
@@ -184,7 +183,7 @@ if (isset($url_completar)) {
         $nit_proveedor   = $url_nit_proveedor;   
         $respuesta       = array();
         
-        $codigo_articulo = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$url_referencia_carga' AND principal = '1' AND documento_identidad_proveedor = '$nit_proveedor'");
+        $codigo_articulo = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$url_referencia_carga' AND principal = '1'");
         $activo                        = SQL::obtenerValor("articulos", "activo", "codigo = '$codigo_articulo'");
         $estructura_grupos             = SQL::obtenerValor("articulos", "codigo_estructura_grupo", "codigo = '$codigo_articulo'");
         $nodo_estructura_grupos        = SQL::obtenerValor("estructura_grupos", "codigo_padre", "codigo = '$estructura_grupos'");
@@ -430,6 +429,7 @@ if (isset($url_completar)) {
     $fecha_entrega_orden     = $forma_fecha_entrega_orden;
     $indice                  = $forma_indice;
     $vendedor_proveedor      = $forma_vendedor_proveedor;
+    $descuento               = $forma_descuento;
 
     /*** Quitar separador de miles a un numero ***/
     function quitarMiles($cadena){
@@ -447,7 +447,7 @@ if (isset($url_completar)) {
     $costo_unitario          = quitarMiles($costo_unitario);
     $subtotal                = quitarMiles($subtotal);
     $codigo_orden_compra     = SQL::obtenerValor("ordenes_compra", "codigo", "numero_consecutivo = '$numero_orden'");
-    $codigo_articulo         = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$referencia' AND documento_identidad_proveedor='$nit_proveedor'");
+    $codigo_articulo         = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$referencia'");
     $tasa_iva                = SQL::obtenerValor("articulos", "codigo_impuesto_compra", "codigo = '$codigo_articulo'");
     $porcentaje_impuesto     = SQL::obtenerValor("vigencia_tasas", "porcentaje", "codigo_tasa = '$tasa_iva'");
     $valor_iva               = ($subtotal * $porcentaje_impuesto) /100;
@@ -488,10 +488,16 @@ if (isset($url_completar)) {
         "fecha_registra"           => date("Y-m-d H:i:s"),
         "fecha_modificacion"       => 0,
         "codigo_usuario_registra"  => $sesion_id_usuario_ingreso,
-        "codigo_vendedor"          => $vendedor_proveedor,   
+        "codigo_vendedor"          => $vendedor_proveedor   
     );
+    
+    $id_movimiento_orden = SQL::insertar("movimiento_ordenes_compra", $datos_movimiento,true);  
+    
+    $datos_encabezado = array(  
+        "descuento_global1" => $descuento
+    );  
 
-    $id_movimiento_orden = SQL::insertar("movimiento_ordenes_compra", $datos_movimiento,true);    
+    $descuento_global1   = SQL::insertar("ordenes_compra", $datos_encabezado,true);  
 
     $tabla = array();
     if ($id_movimiento_orden){
@@ -502,8 +508,8 @@ if (isset($url_completar)) {
         $respuesta[4]  = $descripcion;
         $respuesta[5]  = number_format($cantidad_total_articulo,0);
         $respuesta[6]  = $nombre_unidad_compra;
-        $respuesta[7]  = number_format($costo_unitario,0);
-        $respuesta[8]  = number_format($subtotal,0);
+        $respuesta[7]  = number_format($costo_unitario,2);
+        $respuesta[8]  = number_format($subtotal,2);
         $respuesta[9]  = $observaciones_articulo;
         $respuesta[10] = $consecutivo;
 
@@ -776,7 +782,7 @@ if (!empty($url_generar)){
                         array(    
                             HTML::listaSeleccionSimple("*dias_pago", $textos["NUMERO_DIAS_PAGO"], HTML::generarDatosLista("plazos_pago_proveedores", "codigo", "descripcion", "codigo!='0'"), "", array("title",$textos["AYUDA_NUMERO_DIAS_PAGO"])),
                             
-                            HTML::listaSeleccionSimple("*id_moneda",$textos["MONEDA"], $monedas, "", array("title",$textos["AYUDA_MONEDA"])),
+                            HTML::listaSeleccionSimple("*id_moneda",$textos["MONEDA"], $monedas, 1, array("title",$textos["AYUDA_MONEDA"])),
 
                             HTML::listaSeleccionSimple("*tipos_documento",$textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","descripcion='ORDEN DE COMPRA' OR descripcion='orden de compra'"), "", array("disabled" => "true"), array("title",$textos["AYUDA_MONEDA"]))
                         ),
@@ -790,6 +796,10 @@ if (!empty($url_generar)){
                             HTML::campoOculto("id_sucursal", ""),
 
                             HTML::listaSeleccionSimple("*codigo_comprador",$textos["COMPRADOR"], "", "", array("disabled" => "true"), array("title",$textos["AYUDA_COMPRADOR"])),
+
+                            HTML::marcaChequeo("aplica_descuento",$textos["DESCUENTO"], 1, false, array("title"=>$textos["AYUDA_APLICA_DESCUENTO"], "class"=>"descuento_linea modificar","onClick"=>"activaCampos(4,0)")),
+
+                            HTML::campoTextoCorto("descuento",$textos["PORCENTAJE"], 2, 8, "", array("title"=>$textos["AYUDA_APLICA_DESCUENTO"],"onKeyPress" => "return campoNumero(event)", "class"=>"linea oculto modificar"))
                         ),
                         array(
                            HTML::listaSeleccionSimple("*proyecto", $textos["PROYECTO"], HTML::generarDatosLista("proyectos", "codigo", "nombre","codigo != 0"), "", array("disabled" => "true"), array("title" => $textos["AYUDA_EMPRESAS"], "")),
@@ -956,17 +966,12 @@ if (!empty($url_generar)){
                             array(
                                 HTML::listaSeleccionSimple("+id_unidad_compra",$textos["UNIDAD_MEDIDA"], "", "",array("title"=>$textos["AYUDA_UNIDAD"],"class"=>"oculto")),
 
-                                HTML::campoTextoCorto("+costo_unitario",$textos["COSTO_UNITARIO"], 10, 15, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_COSTO_UNITARIO"], "onKeyPress"=>"return campoEntero(event)","onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)")),
+                                HTML::campoTextoCorto("+costo_unitario",$textos["COSTO_UNITARIO"], 10, 15, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_COSTO_UNITARIO"], "onKeyPress"=>"return numero(event)","onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)")),
                                 HTML::campoOculto("cantidad_total_control",0),
 
                                 HTML::campoTextoCorto("+cantidad_total_articulo",$textos["CANTIDAD_TOTAL"], 5, 15, "", array("title"=>$textos["AYUDA_CANTIDAD_TOTAL"], "onKeyPress"=>"return campoEntero(event)", "onKeyUp"=>"activaDetalle()", "onKeyUp"=>"calcularSubtotal()", "class"=>"movimiento")),
 
                                 HTML::campoTextoCorto("+subtotal",$textos["SUBTOTAL"], 10, 15, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_SUBTOTAL"], "onKeyPress"=>"return campoDecimal(event)"))
-                            ),
-                            array(
-                                HTML::marcaChequeo("aplica_descuento",$textos["DESCUENTO"], 1, false, array("title"=>$textos["AYUDA_APLICA_DESCUENTO"], "class"=>"descuento_linea modificar","onClick"=>"activaCampos(4,0)")),
-
-                                HTML::campoTextoCorto("descuento",$textos["PORCENTAJE"], 2, 8, "", array("title"=>$textos["AYUDA_APLICA_DESCUENTO"],"onKeyPress"=>"return campoDecimal(event)", "class"=>"linea oculto modificar")),
                             ),
                             array(    
                                 HTML::campoTextoCorto("observaciones_articulo",$textos["OBSERVACIONES_ARTICULO"], 50, 78, "",array("title"=>$textos["AYUDA_OBSERVACIONES"], "class"=>"movimiento oculto")),
@@ -1091,7 +1096,9 @@ if (!empty($url_generar)){
             array(
                 HTML::campoOculto("campo_prefijo_orden",""),
                 HTML::campoOculto("campo_numero_orden_total",""), 
-                HTML::campoOculto("campo_nit_proveedor",""), 
+                HTML::campoOculto("campo_nit_proveedor",""),
+                HTML::campoOculto("campo_sucursal",""), 
+                HTML::campoOculto("campo_fecha_documento","") 
             ),
             array(
                 HTML::contenedor(
@@ -1192,11 +1199,17 @@ if (!empty($url_generar)){
             "estado"             => '0', 
             "fecha_registra"     => date("Y-m-d H:i:s")
         );
+        
         $condicion_encabezado = "codigo='$codigo_orden_compra' AND numero_consecutivo='$forma_campo_numero_orden_total'";
         $modificar_encabezado = SQL::modificar("ordenes_compra", $datos_encabezado, $condicion_encabezado);
-       
-        if (!$modificar_encabezado) {
+        
+        if($modificar_encabezado){
+            $forma_id = $forma_campo_sucursal."|".$forma_campo_fecha_documento."|".$forma_campo_numero_orden_total;
+            include("clases/imprimir.php");
+            $ruta_archivo = HTTP::generarURL("DESCARCH")."&id=".$id_archivo."&temporal=0";
+        }
 
+        if (!$modificar_encabezado) {
             $error     = true;
             $mensaje   = $textos["ERROR_GRABAR_MOVIMIENTO_ORDEN"];
         }
@@ -1204,10 +1217,19 @@ if (!empty($url_generar)){
         $error   = false;
         $mensaje = $textos["ORDEN_GRABADA"];
     }
+    
     // Enviar datos con la respuesta del proceso al script que origino la peticion
-    $respuesta    = array();
-    $respuesta[0] = $error;
-    $respuesta[1] = $mensaje;
-    HTTP::enviarJSON($respuesta);
+    if(isset($ruta_archivo) || !empty($ruta_archivo)){
+        $respuesta    = array();
+        $respuesta[0] = $error;
+        $respuesta[1] = $mensaje;
+        $respuesta[2] = $ruta_archivo;
+        HTTP::enviarJSON($respuesta);
+    }else{
+        $respuesta    = array();
+        $respuesta[0] = $error;
+        $respuesta[1] = $mensaje;
+        HTTP::enviarJSON($respuesta);
+    }
 }
 ?>

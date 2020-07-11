@@ -291,14 +291,14 @@
                     $('#costo_unitario').val(costo);
                     $('#id_unidad_compra').append('<option value="'+codigo_unidad_compra+'">' +nombre_unidad_compra+ '</option>').attr("disabled","disabled");
                 
-                } else {   
+                } /*else {   
                     alert(datos[1]);
                     $('#selector7').val('');
                     $('#descripcion').val('');
                     $('#costo_unitario').val('');
                     $('#id_unidad_compra').val('');  
                     $('#selector7').focus(''); 
-                }
+                }*/
             } 
         });
     }
@@ -403,12 +403,12 @@
             crear_articulo = true;
         }
         // datos articulo existe //
-        var articulo    = $("#selector7").val();
+        /*var articulo    = $("#selector7").val();
         if (!crear_articulo && (articulo == undefined || isNaN(articulo) || articulo == 0)){
             continuar   = false;
             mensajes[contador_mensajes] = $("#error_articulo").val();
             contador_mensajes++;
-        }
+        }*/
             
         // datos pedido //
         var cantidad_total_articulo     = parseFloat($("#cantidad_total_articulo").val());
@@ -429,7 +429,7 @@
         var aplica_descuento            = false;
         var porcentaje_aplica_descuento = 0;
 
-        if ($(".descuento_linea").is(':checked')){
+        /*if ($(".descuento_linea").is(':checked')){
             aplica_descuento                = true;
             porcentaje_aplica_descuento     = parseFloat($("#descuento").val());
             if (porcentaje_aplica_descuento == undefined || isNaN(porcentaje_aplica_descuento) || porcentaje_aplica_descuento == 0){
@@ -437,7 +437,7 @@
                 mensajes[contador_mensajes] = $("#error_porcentaje_descuento_linea").val();
                 contador_mensajes++;
             }
-        }
+        }*/
         var observaciones_articulo = $("#observaciones_articulo").val();
 
         if (continuar){
@@ -456,12 +456,12 @@
                 referencia: referencia, descripcion: descripcion, cantidad_total_articulo, codigo_unidad_compra: codigo_unidad_compra, 
                 costo_unitario: costo_unitario, subtotal: subtotal, observaciones_articulo: observaciones_articulo,
                 id_sucursal_orden: id_sucursal_orden, nit_proveedor: nit_proveedor, fecha_entrega_orden: fecha_entrega_orden,
-                vendedor_proveedor: vendedor_proveedor
+                vendedor_proveedor: vendedor_proveedor, descuento: descuento
             }, success: function(datos) {
                 if (datos[0]){
                     var numero_orden = $("#numero_orden").val();
                     var indice       = datos[10];
-                    
+                
                     $(".terminar_orden").parent().show();
                     $(".terminar_orden").removeAttr("disabled");
 
@@ -621,11 +621,12 @@
     }
 
     function totalPedido(){
-        var destino       = $('#URLFormulario').val();
-        var numero_orden  = $("#numero_orden").val();
-        var nit_proveedor = $("#selector4").val();
-        var iva_incluido  = "0";
-
+        var destino         = $('#URLFormulario').val();
+        var numero_orden    = $("#numero_orden").val();
+        var nit_proveedor   = $("#selector4").val();
+        var iva_incluido    = "0";
+        var sucursal        = $("#sucursal").val();
+        var fecha_documento = $("#fecha_documento").val();
 
         if ($(".iva_incluido").is(':checked')){
             iva_incluido = "1";
@@ -660,6 +661,8 @@
                 $("#campo_prefijo_orden").val(prefijo_codigo_proyecto);
                 $("#campo_numero_orden_total").val(numero_orden);
                 $("#campo_nit_proveedor").val(nit_proveedor);
+                $("#campo_sucursal").val(sucursal);
+                $("#campo_fecha_documento").val(fecha_documento);
                 //campos de totales
                 $("#total_unidades").val(total_unidades);
                 $("#subtotal_pedido").val(subtotal_pedido);

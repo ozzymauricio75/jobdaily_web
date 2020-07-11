@@ -145,7 +145,7 @@ if (!empty($url_generar)) {
             HTML::campoTextoCorto("segundo_apellido", $textos["SEGUNDO_APELLIDO"], 15, 15, "", array("title" => $textos["AYUDA_SEGUNDO_APELLIDO"], "onblur" => "validarItem(this)"))
         ),
         array(
-            HTML::campoTextoCorto("correo", $textos["CORREO"], 50, 255, "", array("title" => $textos["AYUDA_CORREO"], "onblur" => "validarItem(this)"))
+            HTML::campoTextoCorto("*correo", $textos["CORREO"], 50, 255, "", array("title" => $textos["AYUDA_CORREO"], "onblur" => "validarItem(this)"))
         ),
         array(
              HTML::campoTextoCorto("*celular", $textos["CELULAR"], 20, 20, "", array("title" => $textos["AYUDA_CELULAR"], "onblur" => "validarItem(this)"))
@@ -191,8 +191,8 @@ if (!empty($url_generar)) {
 
     
     /*** Validar el ingreso de campos requeridos ***/
-    if (empty($forma_celular) || (empty($forma_primer_nombre) && 
-        empty($forma_primer_apellido) || (!empty($forma_primer_nombre) && empty($forma_primer_apellido)))) {
+    if (empty($forma_celular) || (empty($forma_correo) || (empty($forma_primer_nombre) && 
+        empty($forma_primer_apellido) || (!empty($forma_primer_nombre) && empty($forma_primer_apellido))))) {
 
         $error   = true;
         $mensaje = $textos["ERROR_DATOS_INCOMPLETOS"];

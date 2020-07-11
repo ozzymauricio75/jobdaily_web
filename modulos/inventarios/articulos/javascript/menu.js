@@ -4,7 +4,7 @@
 
     /*** Adicionar combinaciones de teclas para el manejo de botones***/
     $(document).bind('keydown', 'Ctrl+a', function(evt) {$('#ADICARTI').click(); return false;});
-    $(document).bind('keydown', 'Ctrl+c', function(evt) {$('#CONSARTI').click(); return false;});
+    $(document).bind('keydown', 'Ctrl+b', function(evt) {$('#CONSARTI').click(); return false;});
     $(document).bind('keydown', 'Ctrl+m', function(evt) {$('#MODIARTI').click(); return false;});
     $(document).bind('keydown', 'Ctrl+e', function(evt) {$('#ELIMARTI').click(); return false;});
     $(document).bind('keydown', 'Ctrl+x', function(evt) {$('#EXISARTI').click(); return false;});
@@ -20,6 +20,7 @@
         var destino           = $('#URLFormulario').val();
         var referencia        = $('#codigo_alfanumerico').val();
         var codigo            = $('#codigo_maximo').val();
+        var codigo_marca      = $('#codigo_marca').val();
 
         /*** Descargar contenido  ***/
         $.getJSON(destino, {recargar: true, referencia_carga: referencia}, function(datos){
@@ -37,7 +38,7 @@
                     var nombre_unidad_compra   = datos[27];
                     var padre                  = datos[29];
                     var grupo                  = datos[30];
-               
+
                     $('#codigo').val(datos[0]);
                     $('#tipo_articulo').val(datos[2]);
                     $('#codigo_barras').val(datos[21]);
@@ -62,7 +63,7 @@
 
                 }/*else{
                     $('#codigo').val('');
-                    $('#codigo').val(codigo);
+                    //$('#codigo').val(codigo);
                     $('#codigo_alfanumerico').val('');
                     $('#descripcion').val('');
                     $('#codigo_barras').val('');
@@ -73,9 +74,9 @@
                     $('#profundidad').val('');
                     $('#peso').val('');
                     $('#ficha_tecnica').val('');
-                    $('#codigo_impuesto_compra').val('');
-                    $('#codigo_marca').val('');
-                    $('#codigo_unidad_compra').val('');
+                    //$('#codigo_impuesto_compra').val('');
+                    $('#codigo_marca').val(codigo_marca);
+                    //$('#codigo_unidad_compra').val('');
                     $('#codigo_iso').val('');
                     $('#referencia').val('');
                     $('#codigo_barras_alterna').val('');
@@ -262,8 +263,8 @@ function formatoMiles(input){
             num = num.split('').reverse().join('').replace(/^[\.]/,'');
             input.value = num;
         } //else{ alert('Solo se permiten numeros');
-            //input.value = input.value.replace(/[^\d\.]*/g,'');
-    //}
+          //  input.value = input.value.replace(/[^\d\.]*/g,'');
+   // }
 }
 
 function ponerMiles(valor) {

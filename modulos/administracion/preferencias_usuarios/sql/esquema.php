@@ -74,15 +74,15 @@ $llavesForaneas["sucursales"] = array(
 
 $registros["componentes"] = array(
     array(
-        "id"           => "GESTPREF",
-        "padre"        => "SUBMACCE",
-        "id_modulo"    => "ADMINISTRACION",
-        "visible"      => "1",
-        "orden"        => "200",
-        "carpeta"      => "principal",
-        "global"       => "0",
+        "id"            => "GESTPREF",
+        "padre"         => "SUBMACCE",
+        "id_modulo"     => "ADMINISTRACION",
+        "visible"       => "1",
+        "orden"         => "200",
+        "carpeta"       => "principal",
+        "global"        => "0",
         "requiere_item" => "0",
-        "tipo_enlace"  => "1"
+        "tipo_enlace"   => "1"
     ),
     array(
         "id"           => "PREFUSUA",

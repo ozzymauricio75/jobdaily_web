@@ -30,7 +30,7 @@ $borrarSiempre = false;
 // Definición de tablas
 
 $tablas["articulos"] = array(
-    "codigo"                        => "VARCHAR(20) NOT NULL COMMENT 'Id de la tabla articulos'",
+    "codigo"                        => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno'",
     "descripcion"                   => "VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Descripcion del arti­culo'",
     "tipo_articulo"                 => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT '1->Materia prima, 2->Producto terminado'",
     "ficha_tecnica"                 => "TEXT NOT NULL DEFAULT '' COMMENT 'Caracteristicas tecnicas de un articulo'",
@@ -147,7 +147,7 @@ $llavesForaneas["articulos"] = array(
 
 // Definición de tablas
 $tablas["referencias_proveedor"] = array(
-    "codigo_articulo"               => "VARCHAR(20) NOT NULL COMMENT 'Id de la tabla articulos'",
+    "codigo_articulo"               => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno'",
     "referencia"                    => "VARCHAR(30) NOT NULL COMMENT 'Referencia ó codigo asignada por el proveedor, puede ser el codigo del articulo'",
     "documento_identidad_proveedor" => "VARCHAR(12) NOT NULL COMMENT 'Documento identidad del proveedor'",
     "codigo_barras"                 => "BIGINT(13) NOT NULL COMMENT 'Codigo de barras del articulo(EAN 13)'",
@@ -182,7 +182,7 @@ $llavesForaneas["referencias_proveedor"] = array(
 
 // Definición de tablas
 $tablas["articulos_proveedor"] = array(
-    "codigo_articulo"               => "VARCHAR(20) NOT NULL COMMENT 'Id de la tabla articulos'",
+    "codigo_articulo"               => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno'",
     "documento_identidad_proveedor" => "VARCHAR(12) NOT NULL COMMENT 'Documento identidad del proveedor'",
     "fecha_modificacion"            => "DATE NULL COMMENT 'Fecha en la cual se modifica el articulo'"
 );
@@ -216,9 +216,9 @@ $llavesForaneas["articulos_proveedor"] = array(
 // Definición de tablas
 $tablas["lista_precio_articulos"] = array(
     "codigo"                  => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Llave primaria'",
-    "codigo_articulo"         => "VARCHAR(20) NOT NULL COMMENT 'Id de la tabla articulos'",
+    "codigo_articulo"         => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno'",
     "fecha"                   => "DATE NOT NULL COMMENT 'Fecha en que inicia la lista de precio'",
-    "costo"                   => "DECIMAL(11,0) NOT NULL COMMENT 'Precio'",
+    "costo"                   => "DECIMAL(11,2) NOT NULL COMMENT 'Precio'",
     "codigo_usuario_registra" => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Id del usuario que genera el registro'",
     "fecha_registra"          => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
     "fecha_modificacion"      => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificación'"
@@ -387,19 +387,22 @@ $vistas = array(
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_articulos AS
-        SELECT 	job_articulos.codigo AS id,
-                job_articulos.codigo AS codigo,
-                job_articulos.descripcion AS descripcion,
-                job_marcas.descripcion AS marca,
-                job_referencias_proveedor.referencia AS referencia,
-                FORMAT(job_lista_precio_articulos.costo,0) AS costo,
+        SELECT 	CONCAT(
+                    job_referencias_proveedor.codigo_articulo,
+                    '|',job_referencias_proveedor.documento_identidad_proveedor
+                ) AS id,
+                job_articulos.codigo AS CODIGO,
+                job_articulos.descripcion AS DESCRIPCION,
+                job_marcas.descripcion AS MARCA,
+                job_referencias_proveedor.referencia AS REFERENCIA,
+                FORMAT(job_lista_precio_articulos.costo,2) AS COSTO,
                 CONCAT(
                     if(job_terceros.primer_nombre is not null, job_terceros.primer_nombre, ''),' ',
                     if(job_terceros.segundo_nombre is not null, job_terceros.segundo_nombre, ''),' ',
                     if(job_terceros.primer_apellido is not null, job_terceros.primer_apellido, ''),' ',
                     if(job_terceros.segundo_apellido is not null, job_terceros.segundo_apellido, ''),' ',
                     if(job_terceros.razon_social is not null, job_terceros.razon_social, '')
-                ) AS proveedor
+                ) AS PROVEEDOR
         FROM 	job_articulos,
                 job_marcas,
                 job_referencias_proveedor,

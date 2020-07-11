@@ -31,15 +31,15 @@ $tablas ["proyectos"] = array(
     "codigo"                   => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno del proyecto'",
     /*tabla empresas*/
     "codigo_empresa_ejecuta"   => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno de la empresa que ejecuta el proyecto'",
-    "codigo_sucursal_ejecuta"  => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno consorcio o uniopn temporal que ejecuta proyecto'",
+    "codigo_sucursal_ejecuta"  => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno consorcio o union temporal que ejecuta proyecto'",
     /***************/
     "nombre"                   => "VARCHAR(60) NOT NULL COMMENT 'Nombre que identifica el proyecto'",
     "fecha_cierre"             => "DATE DEFAULT NULL COMMENT 'Fecha que estuvo activo el proyecto'",
     "activo"                   => "ENUM('0','1') NOT NULL DEFAULT '1' COMMENT 'Indicador de estado del proyecto: 0=Cerrado, 1=Abierto'",
     /*tabla municipios*/
     "codigo_iso"               => "VARCHAR(2) NOT NULL COMMENT 'Llave principal de la tabla paises'",
-    "codigo_dane_departamento" => "VARCHAR(2) NOT NULL COMMENT 'Codigo DANE'",
-    "codigo_dane_municipio"    => "VARCHAR(3) NOT NULL COMMENT 'Codigo DANE'",
+    "codigo_dane_departamento" => "VARCHAR(2) NOT NULL COMMENT 'Codigo DANE departamentoa'",
+    "codigo_dane_municipio"    => "VARCHAR(3) NOT NULL COMMENT 'Codigo DANE municipios'",
     /******************/
     "direccion_proyecto"       => "VARCHAR(60) NULL COMMENT 'Direccion donde se encuentra ubicado el proyecto'",
     "valor_proyecto"           => "DECIMAL(15,2) NULL COMMENT 'Valor del proyecto'"
@@ -51,7 +51,7 @@ $llavesPrimarias["proyectos"] = "codigo";
 // Definición de campos únicos
 
 $llavesUnicas["proyectos"] = array(
-    "codigo_empresa_ejecuta,codigo_sucursal_ejecuta,nombre",
+    "codigo_empresa_ejecuta,codigo_sucursal_ejecuta,nombre"
 );
 
 // Definición de llaves foráneas
@@ -78,7 +78,7 @@ $llavesForaneas["proyectos"] = array(
     ),
     array(
         // Nombre de la llave
-        "sucursal_id_municipio",
+        "proyecto_sucursal_id_municipio",
         // Nombre del campo clave de la tabla local
         "codigo_iso,codigo_dane_departamento,codigo_dane_municipio",
         // Nombre de la tabla relacionada
@@ -102,7 +102,7 @@ $registros["proyectos"] = array(
         "codigo_dane_departamento"      => "",
         "codigo_dane_municipio"         => "",
 		"direccion_proyecto"         	=> "",
-        "valor_proyecto"                => 0,
+        "valor_proyecto"                => '0'
 	)
 );
 
@@ -181,10 +181,10 @@ $vistas = array(
                 job_empresas,
                 job_terceros,
                 job_sucursales
-
         WHERE   
                 job_proyectos.codigo_sucursal_ejecuta = job_sucursales.codigo
                 AND job_proyectos.codigo_empresa_ejecuta = job_sucursales.codigo_empresa
+                AND job_sucursales.codigo_empresa = job_empresas.codigo 
                 AND job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
                 AND job_proyectos.codigo != 0;"
     ),

@@ -24,47 +24,6 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
-
-/*if (!empty($url_recargarPais) && !empty($url_documento_identidad_proveedor)){
-
-    $codigo_iso   = SQL::obtenerValor("terceros","codigo_iso_localidad","documento_identidad = '$url_documento_identidad_proveedor'");
-
-    $elementos[0] = $codigo_iso;
-    /*******************************************************/
-    /*$id_texto = "0-";
-    $descripcion_texto = " -";
-
-    $consulta = SQL::seleccionar(array("buscador_proveedores_marcas"),array("id_marca","marca"),"id_proveedor = '$url_documento_identidad_proveedor'");
-
-    if (SQL::filasDevueltas($consulta)) {
-        while($datos = SQL::filaEnObjeto($consulta)){
-            $id_texto.= $datos->id_marca."-";
-            $descripcion_texto.= $datos->marca."-";
-        }
-    }
-
-    $codigo_marcas_proveedor      = trim($id_texto, "-");
-    $descripcion_marcas_proveedor = trim($descripcion_texto, "-");
-    /*******************************************************/
-
-    /*$elementos[1] = $codigo_marcas_proveedor;
-    $elementos[2] = $descripcion_marcas_proveedor;
-    
-    HTTP::enviarJSON($elementos);
-    exit;
-}
-
-if (!empty($url_verificarReferencia) && !empty($url_documento_identidad) && !empty($url_codigo) && !empty($url_referencia)){
-
-    $consulta = SQL::obtenerValor("referencias_proveedor","referencia","documento_identidad_proveedor='$url_documento_identidad' AND url_referencia='$url_referencia'");
-    if ($consulta){
-        $continuar = 0;
-    } else {
-        $continuar = 1;
-    }
-    HTTP::enviarJson($continuar);
-    exit();
-}*/
 $indicador = 0;
 $tabla                      = "usuarios";
 $columnas                   = SQL::obtenerColumnas($tabla);
@@ -185,7 +144,7 @@ if (!empty($url_generar)) {
         $codigo_marca = SQL::obtenerValor("articulos", "codigo_marca", "codigo = '$url_id'");
 
         // Obtener costo articulo
-        $costo = SQL::obtenerValor("lista_precio_articulos", "costo", "codigo = '$url_id'");  
+        $costo = SQL::obtenerValor("lista_precio_articulos", "costo", "codigo_articulo = '$url_id'");  
         $costo = number_format($costo,2);      
 
         // Obtener referencias del proveedor y articulo
@@ -238,7 +197,7 @@ if (!empty($url_generar)) {
 
                 HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, $codigo_barras,array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)")),
 
-                HTML::campoTextoCorto("costo", $textos["COSTO"], 15, 15, $costo,array("title" => $textos["AYUDA_COSTO"],"onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
+                HTML::campoTextoCorto("costo", $textos["COSTO"], 15, 15, $costo, array("title" => $textos["AYUDA_COSTO"],"onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
             ),
             array(
                 HTML::campoTextoCorto("*descripcion", $textos["DESCRIPCION"], 55, 255, htmlentities(stripslashes($datos->descripcion)), array("title" => $textos["AYUDA_DESCRIPCION"]))

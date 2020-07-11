@@ -54,7 +54,7 @@ if (empty($url_pagina)) {
 /*** Datos por defecto para realizar la consulta ***/
 $condicion      = SQL::evaluarBusqueda($vistaBuscador, $vistaMenu);
 $agrupamiento   = "";
-$ordenamiento   = SQL::ordenColumnas("DESCRIPCION ASC");
+$ordenamiento   = SQL::ordenColumnas("CODIGO_INTERNO DESC");
 $numeroFilas    = SQL::$filasPorConsulta;
 $columnas       = SQL::obtenerColumnas($vistaMenu);
 $totalRegistros = SQL::filasDevueltas(SQL::seleccionar(array($vistaMenu), $columnas, $condicion, $agrupamiento, $ordenamiento));

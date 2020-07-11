@@ -112,14 +112,14 @@ if (isset($url_recargar)) {
         $codigo_estructura_grupo = SQL::obtenerValor("articulos", "codigo_estructura_grupo", "codigo = '$codigo_articulo'");
         $codigo_padre            = SQL::obtenerValor("estructura_grupos", "codigo_padre", "codigo = '$codigo_estructura_grupo'");
         $codigo_grupo            = SQL::obtenerValor("estructura_grupos", "codigo_grupo", "codigo = '$codigo_estructura_grupo'");
+        $codigo_marca            = SQL::obtenerValor("marcas", "codigo", "");
+        $nombre_marca            = SQL::obtenerValor("marcas", "descripcion", "codigo !='0'");
 
         $tabla = array();
 
         if (SQL::filasDevueltas($consulta)) {
 
             $datos = SQL::filaEnObjeto($consulta);
-            $codigo_marca = SQL::obtenerValor("marcas", "codigo", "codigo = '$datos->codigo'");
-            $nombre_marca = SQL::obtenerValor("marcas", "descripcion", "codigo = '$datos->codigo'");
 
             $tabla = array(
                 $datos->codigo,
@@ -225,7 +225,7 @@ if (!empty($url_generar)) {
         $preferencias_globales["impuesto_compra"] = 0;    
         $preferencias_globales["impuesto_venta"]  = 0;
         
-        //Asignar codigo del articulo siguiente de la tabla 
+        //Asignar codigo siguiente de la tabla 
         $codigo = SQL::obtenerValor("articulos","MAX(codigo)","codigo>0");
 
         if ($codigo){
