@@ -225,7 +225,7 @@ if (!empty($url_generar)) {
         $preferencias_globales["impuesto_compra"] = 0;    
         $preferencias_globales["impuesto_venta"]  = 0;
         
-        //Asignar codigo siguiente de la tabla 
+        //Asignar codigo del articulo siguiente de la tabla 
         $codigo = SQL::obtenerValor("articulos","MAX(codigo)","codigo>0");
 
         if ($codigo){
