@@ -185,15 +185,14 @@
                 $("#digito_verificacion").parent().show().attr("disabled","disabled");
                 $("#digito_verificacion").val(datos[1]).attr("disabled","disabled");
                 $("#direccion").val(datos[4]).attr("disabled","disabled");
-                $("#correo_electronico").val(datos[5]).attr("disabled","disabled");
-                $("#celular").val(datos[6]).attr("disabled","disabled");
+                //$("#correo_electronico").val(datos[5]).attr("disabled","disabled");
+                //$("#celular").val(datos[6]).attr("disabled","disabled");
                 $("#selector1").val(datos[7]).attr("disabled","disabled");
                 $("#prefijo_orden").text(datos[8]);
                 $("#numero_orden").val(datos[9]).attr("disabled","disabled");
                 //Habilita campos pestaña pedidos
                 $("#selector7").parent().show();
-                
-                recargarVendedores();
+                //recargarVendedores();
             } else {
                 $("#razon_social_proveedor").val('');
                 $("#digito_verificacion").val('');
@@ -640,13 +639,14 @@
     }
 
     function totalPedido(){
-        var destino         = $('#URLFormulario').val();
-        var numero_orden    = $("#numero_orden").val();
-        var nit_proveedor   = $("#selector4").val();
-        var iva_incluido    = "0";
-        var sucursal        = $("#sucursal").val();
-        var fecha_documento = $("#fecha_documento").val();
-        var descuento       = $("#descuento").val();
+        var destino             = $('#URLFormulario').val();
+        var numero_orden        = $("#numero_orden").val();
+        var nit_proveedor       = $("#selector4").val();
+        var iva_incluido        = "0";
+        var sucursal            = $("#sucursal").val();
+        var fecha_documento     = $("#fecha_documento").val();
+        var descuento           = $("#descuento").val();
+        var observaciones_orden = $("#observaciones_orden").val();
 
         if ($(".iva_incluido").is(':checked')){
             iva_incluido = "1";
@@ -657,7 +657,7 @@
         }
         
         $.getJSON(destino, {total_pedido: true, numero_orden: numero_orden, iva_incluido: iva_incluido, descuento: descuento, 
-            nit_proveedor: nit_proveedor},
+            nit_proveedor: nit_proveedor, observaciones_orden: observaciones_orden},
             function (datos){
             if(datos[1]){
                 var total_unidades          = (datos[1]);

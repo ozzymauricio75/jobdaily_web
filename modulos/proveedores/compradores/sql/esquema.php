@@ -133,7 +133,7 @@ $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_compradores AS
         SELECT
-            job_compradores.documento_identidad AS id,
+            job_compradores.codigo AS id,
             job_terceros.documento_identidad AS DOCUMENTO,
             job_empresas.razon_social AS RAZON_SOCIAL,
             CONCAT(IF(job_terceros.primer_nombre IS NOT NULL,job_terceros.primer_nombre,''),' ',

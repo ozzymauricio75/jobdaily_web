@@ -639,6 +639,7 @@ if (isset($url_completar)) {
 
 }elseif (isset($url_total_pedido)){
 
+    $observaciones_orden  = $url_observaciones_orden;
     $codigo_orden_compra  = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$url_numero_orden'");
     $unidades             = SQL::obtenerValor("movimiento_ordenes_compra","SUM(cantidad_total)","codigo_orden_compra='$codigo_orden_compra'");
     $subtotal             = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_total)","codigo_orden_compra='$codigo_orden_compra'");
@@ -661,11 +662,6 @@ if (isset($url_completar)) {
 
     $respuesta = array();
     if ($unidades){
-        $datos_encabezado = array(                         
-            "valor_descuento_global1" => $valor_descuento
-        );
-        $insertar_valor_descuento = SQL::insertar("ordenes_compra", $datos_encabezado,true);
-
         $respuesta[0]  = true;     
         $respuesta[1]  = number_format($unidades,0);
         $respuesta[2]  = number_format($subtotal,0);
@@ -830,14 +826,14 @@ if (!empty($url_generar)){
                 HTML::agrupador(
                     array(
                         array(
-                            HTML::campoTextoCorto("*selector4",$textos["NIT_PROVEEDOR"], 15, 15, "", array("title"=>$textos["AYUDA_NIT_PROVEEDOR"],"class" => "autocompletable", "onKeyPress"=>"return campoEntero(event)", "onBlur"=>"cargarProveedor(),recargarVendedores()")),
+                            HTML::campoTextoCorto("*selector4",$textos["NIT_PROVEEDOR"], 15, 15, "", array("title"=>$textos["AYUDA_NIT_PROVEEDOR"],"class" => "autocompletable", "onKeyPress"=>"return campoEntero(event)", "onBlur"=>"cargarProveedor()")),
 
                             HTML::campoTextoCorto("digito_verificacion", $textos["DIGITO_VERIFICACION"], 1, 1, "", array("readonly" => "true","Class" => "oculto"))
                             .HTML::campoOculto("documento_identidad_proveedor", ""),
 
                             HTML::campoTextoCorto("*razon_social_proveedor",$textos["RAZON_SOCIAL_PROVEEDOR"], 45, 255, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_RAZON_SOCIAL_PROVEEDOR"], "")),
 
-                            HTML::listaSeleccionSimple("*vendedor_proveedor", $textos["VENDEDOR"], "", "", array("title",$textos["AYUDA_VENDEDOR"],"onClick" => "cargarDatosVendedor()"))
+                            HTML::listaSeleccionSimple("*vendedor_proveedor", $textos["VENDEDOR"], "", "", array("title",$textos["AYUDA_VENDEDOR"],"onClick" => "recargarVendedores(), cargarDatosVendedor()"))
                         ),
                         array(
                             HTML::campoTextoCorto("*direccion",$textos["DIRECCION"], 40, 255, "", array("readonly" => "true"), array("title",$textos["AYUDA_DIRECCION"])),
@@ -1195,7 +1191,7 @@ if (!empty($url_generar)){
     $mensaje = $textos["ORDEN_GRABADA"];
 
     $codigo_orden_compra  = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$forma_campo_numero_orden_total' AND documento_identidad_proveedor='$forma_campo_nit_proveedor'");
-    $condicion_movimiento = "codigo_orden_compra='$codigo_orden_compra'";
+    $condicion_encabezado = "numero_consecutivo='$forma_campo_numero_orden_total'";
 
     $observaciones_orden  = $forma_observaciones_orden;
     
@@ -1205,7 +1201,7 @@ if (!empty($url_generar)){
         "fecha_registra" => date("Y-m-d H:i:s"),
     );
 
-    $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, $condicion_movimiento);
+    $modificar_movimiento = SQL::modificar("ordenes_compra", $datos, $condicion_encabezado);
 
     /*** Error de insercón ***/
     if (!$modificar_movimiento) {
