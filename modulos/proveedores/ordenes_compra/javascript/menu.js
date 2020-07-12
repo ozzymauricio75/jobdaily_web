@@ -192,12 +192,7 @@
                 $("#numero_orden").val(datos[9]).attr("disabled","disabled");
                 //Habilita campos pestaña pedidos
                 $("#selector7").parent().show();
-                $("#descripcion").parent().show();
-                $("#id_unidad_compra").parent().show();
-                $("#costo_unitario").parent().show();
-                $("#cantidad_total_articulo").parent().show();
-                $("#subtotal").parent().show();
-                $("#observaciones_articulo").parent().show();
+                
                 recargarVendedores();
             } else {
                 $("#razon_social_proveedor").val('');
@@ -222,13 +217,16 @@
         var dias_pago        = $('#dias_pago').val();
         var tipos_documento  = $('#tipos_documento').val();
         var solicitante      = $('#solicitante').val();
+        var descuento        = $('#descuento').val();
 
         $.getJSON(destino, {grabarEncabezado: true, nit_proveedor: nit_proveedor, codigo_proyecto: codigo_proyecto,
             sucursal: sucursal, fecha_documento: fecha_documento, numero_orden: numero_orden, codigo_comprador: codigo_comprador,
-            codigo_moneda: codigo_moneda, dias_pago: dias_pago, tipos_documento: tipos_documento, solicitante: solicitante}, function(datos) {
+            codigo_moneda: codigo_moneda, dias_pago: dias_pago, tipos_documento: tipos_documento, solicitante: solicitante,
+            descuento: descuento
+        }, function(datos) {
             
             //********************************Esto lo debo revisar**************************************
-            var codigo_vendedor = datos[2];
+            /*var codigo_vendedor = datos[2];
             var nombre_vendedor = datos[3];
             
             if(datos[0] != ""){ 
@@ -248,7 +246,7 @@
                 $("#correo_electronico").val('');
                 $("#celular").val('');
                 $("#selector1").val('');
-            }
+            }*/
         });
     }
 
@@ -272,6 +270,7 @@
         var nit_proveedor     = parseInt($('#selector4').val());
         var mensajes          = new Array();
         var contador_mensajes = 1;
+        var mensaje_error     = "No existe el codigo del articulo, por favor verifique";
 
         /*** Descargar contenido  ***/
         $.getJSON(destino, {cargarDatosArticuloCreado: true, referencia_carga: referencia, nit_proveedor: nit_proveedor}, function(datos){
@@ -286,20 +285,38 @@
                     var ancho                  = datos[34];
                     var alto                   = datos[35];
                     costo                      = ponerMiles(costo);
-     
+                    
+                    $("#descripcion").parent().show();
+                    $("#id_unidad_compra").parent().show();
+                    $("#costo_unitario").parent().show();
+                    $("#cantidad_total_articulo").parent().show();
+                    $("#subtotal").parent().show();
+                    $("#observaciones_articulo").parent().show();
+
                     $('#descripcion').val(datos[1]).attr("disabled","disabled");
                     $('#costo_unitario').val(costo);
                     $('#id_unidad_compra').append('<option value="'+codigo_unidad_compra+'">' +nombre_unidad_compra+ '</option>').attr("disabled","disabled");
                 
-                } /*else {   
-                    alert(datos[1]);
+                } else {   
+                    alert(mensaje_error);
+                    $('#descripcion').val(''); 
+                    $('#id_unidad_compra').val(''); 
+                    $('#selector7').val('').focus();
+                    $('#costo').val('');          
+                    /*alert(datos[1]);
                     $('#selector7').val('');
                     $('#descripcion').val('');
                     $('#costo_unitario').val('');
                     $('#id_unidad_compra').val('');  
-                    $('#selector7').focus(''); 
-                }*/
-            } 
+                    $('#selector7').focus(''); */
+                }
+            } /*else {   
+                alert(mensaje_error);
+                $('#descripcion').val(''); 
+                $('#id_unidad_compra').val(''); 
+                $('#selector7').val('').focus(); 
+                $('#costo').val('');         
+            } */
         });
     }
 
@@ -486,6 +503,8 @@
                                 '<td align="left">'+datos[6]+'</td>'+
                                 '<td align="right">'+datos[7]+'</td>'+
                                 '<td align="right">'+datos[8]+'</td>'+
+                                '<td align="right">'+datos[11]+'</td>'+
+                                '<td align="right">'+datos[12]+'</td>'+
                                 '<td align="left">'+datos[9]+'</td>'+
                             '</tr>';
 
@@ -519,8 +538,8 @@
         $("#subtotal").val('');
         $("#foto_articulo").val('');
         $("#observaciones_articulo").val('');
-        $("#aplica_descuento").val('');
-        $("#descuento").val('');
+        //$("#aplica_descuento").val('');
+        //$("#descuento").val('');
         return true;
     }
 
@@ -627,6 +646,7 @@
         var iva_incluido    = "0";
         var sucursal        = $("#sucursal").val();
         var fecha_documento = $("#fecha_documento").val();
+        var descuento       = $("#descuento").val();
 
         if ($(".iva_incluido").is(':checked')){
             iva_incluido = "1";
@@ -650,13 +670,15 @@
                 var prefijo_codigo_proyecto = (datos[8]);
                 var numero_orden            = (datos[9]);
                 var total_items             = (datos[10]);
+                var valor_descuento         = (datos[11]);
 
+                //campos del resumen
                 $("#prefijo_orden_total").text(prefijo_codigo_proyecto);
                 $("#numero_orden_total").text(numero_orden);
                 $("#nit_proveedor_total").text(nit_proveedor);
                 $("#proveedor_total").text(nombre_proveedor);
                 $("#proyecto_total").text(proyecto);
-                $("#cantidad_items_total").val(total_items);
+                $("#cantidad_items_total").val(total_items);  
                 //campos ocultos de la pestaña totales
                 $("#campo_prefijo_orden").val(prefijo_codigo_proyecto);
                 $("#campo_numero_orden_total").val(numero_orden);
@@ -667,7 +689,8 @@
                 $("#total_unidades").val(total_unidades);
                 $("#subtotal_pedido").val(subtotal_pedido);
                 $("#total_iva_pedido").val(total_iva_pedido);
-                $("#total_pedido").val(total_pedido);        
+                $("#total_pedido").val(total_pedido); 
+                $("#descuento_pedido").val(valor_descuento);       
             }
         });
     }

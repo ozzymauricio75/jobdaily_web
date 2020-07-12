@@ -240,7 +240,7 @@ if (!empty($url_generar)) {
                 .HTML::campoOculto("codigo_maximo", $codigo),
             ),
             array(
-                HTML::campoTextoCorto("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"],"onblur" => "validarItem(this)","onchange" => "cargarDatos()")),
+                HTML::campoTextoCorto("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"], "class" => "autocompletable", "onblur" => "validarItem(this)","onchange" => "cargarDatos()")),
 
                 HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, "",array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)"))
             ),

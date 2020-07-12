@@ -182,8 +182,8 @@ if (isset($url_completar)) {
     if (!empty($url_referencia_carga)) {
         $nit_proveedor   = $url_nit_proveedor;   
         $respuesta       = array();
-        
-        $codigo_articulo = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$url_referencia_carga' AND principal = '1'");
+ 
+        $codigo_articulo = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$url_referencia_carga' AND principal = '1' AND documento_identidad_proveedor = '$nit_proveedor'");
         $activo                        = SQL::obtenerValor("articulos", "activo", "codigo = '$codigo_articulo'");
         $estructura_grupos             = SQL::obtenerValor("articulos", "codigo_estructura_grupo", "codigo = '$codigo_articulo'");
         $nodo_estructura_grupos        = SQL::obtenerValor("estructura_grupos", "codigo_padre", "codigo = '$estructura_grupos'");
@@ -259,8 +259,7 @@ if (isset($url_completar)) {
                 $respuesta[34] = $ancho;
                 $respuesta[35] = $alto;
             } else{
-                $respuesta[0]  = false;
-                $respuesta[1]  = $textos["ERROR_CODIGO"];
+                $respuesta[0]  = "";
                 HTTP::enviarJSON($respuesta);
                 exit();
             }
@@ -365,8 +364,10 @@ if (isset($url_completar)) {
         $documento_proveedor = $url_nit_proveedor;
         $tipo_documento      = $url_tipos_documento;
         $solicitante         = $url_solicitante;
+        $descuento           = $url_descuento;
         $respuesta           = array();
 
+        $descuento        = str_replace(",", ".", $descuento);
         $estado_orden     = SQL::obtenerValor("ordenes_compra", "estado", "numero_consecutivo = '$numero_orden' AND prefijo_codigo_proyecto = '$codigo_proyecto'");
         $codigo_comprador = SQL::obtenerValor("compradores", "codigo", "documento_identidad = '$codigo_comprador'");
 
@@ -388,7 +389,7 @@ if (isset($url_completar)) {
                 "estado_aprobada"                   => 0,
                 "codigo_usuario_aprueba"            => "",
                 "codigo_moneda"                     => $codigo_moneda,
-                "descuento_global1"                 => 0,
+                "descuento_global1"                 => $descuento,
                 "descuento_global2"                 => 0,
                 "descuento_global3"                 => 0,
                 "descuento_financiero_fijo"         => 0,
@@ -444,14 +445,17 @@ if (isset($url_completar)) {
     }
 
     $codigo_orden_compra     = SQL::obtenerValor("ordenes_compra", "codigo", "numero_consecutivo = '$numero_orden'");
+    $descuento               = SQL::obtenerValor("ordenes_compra", "descuento_global1", "numero_consecutivo = '$numero_orden'");
     $costo_unitario          = quitarMiles($costo_unitario);
     $subtotal                = quitarMiles($subtotal);
-    $codigo_orden_compra     = SQL::obtenerValor("ordenes_compra", "codigo", "numero_consecutivo = '$numero_orden'");
+    $valor_descuento_global1 = ($subtotal * $descuento)/100;
+    
     $codigo_articulo         = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$referencia'");
     $tasa_iva                = SQL::obtenerValor("articulos", "codigo_impuesto_compra", "codigo = '$codigo_articulo'");
     $porcentaje_impuesto     = SQL::obtenerValor("vigencia_tasas", "porcentaje", "codigo_tasa = '$tasa_iva'");
-    $valor_iva               = ($subtotal * $porcentaje_impuesto) /100;
-    $neto_pagar              = $subtotal + $valor_iva;
+    
+    $valor_iva               = (($subtotal - $valor_descuento_global1) * $porcentaje_impuesto) /100;
+    $neto_pagar              = ($subtotal - $valor_descuento_global1) + $valor_iva;
     $consecutivo             = SQL::obtenerValor("movimiento_ordenes_compra", "MAX(consecutivo)", "codigo_orden_compra = '$codigo_orden_compra'");
     $nombre_unidad_compra    = SQL::obtenerValor("tipos_unidades", "nombre", "codigo = '$unidad_compra'");
 
@@ -471,8 +475,8 @@ if (isset($url_completar)) {
         "codigo_unidad_medida"     => $unidad_compra,
         "cantidad_total"           => $cantidad_total_articulo,
         "valor_total"              => $subtotal,
-        "descuento_global1"        => 0,
-        "valor_descuento_global1"  => 0, 
+        "descuento_global1"        => $descuento,
+        "valor_descuento_global1"  => $valor_descuento_global1, 
         "descuento_global2"        => 0, 
         "valor_descuento_global2"  => 0,
         "descuento_global3"        => 0,
@@ -512,6 +516,8 @@ if (isset($url_completar)) {
         $respuesta[8]  = number_format($subtotal,2);
         $respuesta[9]  = $observaciones_articulo;
         $respuesta[10] = $consecutivo;
+        $respuesta[11] = number_format($valor_descuento_global1,2);
+        $respuesta[12] = number_format($valor_iva,2);
 
     } else {
         $eliminar_encabezado = SQL::eliminar("ordenes_compra", "numero_consecutivo = '$numero_orden'");
@@ -633,12 +639,14 @@ if (isset($url_completar)) {
 
 }elseif (isset($url_total_pedido)){
 
-    $codigo_orden_compra = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$url_numero_orden'");
-    $unidades            = SQL::obtenerValor("movimiento_ordenes_compra","SUM(cantidad_total)","codigo_orden_compra='$codigo_orden_compra'");
-    $subtotal            = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_total)","codigo_orden_compra='$codigo_orden_compra'");
-    $total_iva           = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_iva)","codigo_orden_compra='$codigo_orden_compra'");
-    $total_orden         = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden_compra'");
-    $total_items         = SQL::obtenerValor("movimiento_ordenes_compra","COUNT(codigo_articulo)","codigo_orden_compra='$codigo_orden_compra'");
+    $codigo_orden_compra  = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$url_numero_orden'");
+    $unidades             = SQL::obtenerValor("movimiento_ordenes_compra","SUM(cantidad_total)","codigo_orden_compra='$codigo_orden_compra'");
+    $subtotal             = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_total)","codigo_orden_compra='$codigo_orden_compra'");
+    $porcentaje_descuento = SQL::obtenerValor("movimiento_ordenes_compra","descuento_global1","codigo_orden_compra='$codigo_orden_compra'");
+    $valor_descuento      = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_descuento_global1)","codigo_orden_compra='$codigo_orden_compra'");
+    $total_iva            = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_iva)","codigo_orden_compra='$codigo_orden_compra'");
+    $total_orden          = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden_compra'");
+    $total_items          = SQL::obtenerValor("movimiento_ordenes_compra","COUNT(codigo_articulo)","codigo_orden_compra='$codigo_orden_compra'");
 
     $consulta_encabezado = SQL::seleccionar(array("ordenes_compra"), array("*"), "numero_consecutivo = '$url_numero_orden' AND documento_identidad_proveedor = '$url_nit_proveedor'");
     
@@ -653,6 +661,11 @@ if (isset($url_completar)) {
 
     $respuesta = array();
     if ($unidades){
+        $datos_encabezado = array(                         
+            "valor_descuento_global1" => $valor_descuento
+        );
+        $insertar_valor_descuento = SQL::insertar("ordenes_compra", $datos_encabezado,true);
+
         $respuesta[0]  = true;     
         $respuesta[1]  = number_format($unidades,0);
         $respuesta[2]  = number_format($subtotal,0);
@@ -664,12 +677,14 @@ if (isset($url_completar)) {
         $respuesta[8]  = $prefijo_codigo_proyecto;        
         $respuesta[9]  = $url_numero_orden;
         $respuesta[10] = $total_items;
+        $respuesta[11] = number_format($valor_descuento);
     } else {
         $respuesta[0]  = false;
         $respuesta[1]  = number_format(0,0);
         $respuesta[2]  = number_format(0,0);
         $respuesta[3]  = number_format(0,0);
         $respuesta[4]  = number_format(0,0);
+        $respuesta[11] = number_format(0,0);
     }  
     HTTP::enviarJSON($respuesta);
     exit();  
@@ -730,8 +745,9 @@ if (!empty($url_generar)){
     $estructuras          = SQL::obtenerValor("estructura_grupos", "codigo","codigo > '0' LIMIT 0,1");
     $tasas                = SQL::obtenerValor("tasas", "codigo", "codigo > '0' LIMIT 0,1");
     $monedas              = SQL::obtenerValor("tipos_moneda", "codigo", "codigo > '0' LIMIT 0,1");
+    $proyectos            = SQL::obtenerValor("proyectos", "codigo", "codigo > '0' LIMIT 0,1");
     
-    if ($sucursales && $compradores && $tipos_documentos && $municipios && $unidades && $estructuras && $tasas && $monedas){
+    if ($sucursales && $compradores && $tipos_documentos && $municipios && $unidades && $estructuras && $tasas && $monedas && $proyectos){
 
         if ($sesion_usuario_maestro_ingreso){
             $sucursales  = HTML::generarDatosLista("sucursales","codigo","nombre_corto","codigo > '0' AND activo = '0'");
@@ -930,7 +946,7 @@ if (!empty($url_generar)){
                     HTML::agrupador(
                         array(
                             array(
-                                HTML::campoTextoCorto("+selector7",$textos["REFERENCIA"], 30, 30, "", array("title"=>$textos["AYUDA_REFERENCIA_PROVEEDOR"],"class"=>" articulo_existe modificar","onblur" => "validarItem(this)","onblur" => "cargarDatosArticulo()"))
+                                HTML::campoTextoCorto("+selector7",$textos["REFERENCIA"], 30, 30, "", array("title"=>$textos["AYUDA_REFERENCIA_PROVEEDOR"],"class"=>"autocompletable articulo_existe modificar","onblur" => "cargarDatosArticulo()"))
                                 .HTML::campoOculto("codigo_articulo","")  
                             ),
                             array(
@@ -1032,9 +1048,9 @@ if (!empty($url_generar)){
                         )
                 ),*/
                 HTML::generarTabla(
-                    array("id","ELIMINAR","REFERENCIA","DESCRIPCION","CANTIDAD","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","OBSERVACIONES"),
+                    array("id","ELIMINAR","REFERENCIA","DESCRIPCION","CANTIDAD","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","DESCUENTO","IVA","OBSERVACIONES"),
                     "",
-                    array("I","I","I","D","I","D","D","I"),
+                    array("I","I","I","D","C","D","D","D","D","I"),
                     "listaArticulos",
                     false
                 )
@@ -1106,11 +1122,10 @@ if (!empty($url_generar)){
                         array(
                             array(
                                 HTML::campoTextoCorto("total_unidades",$textos["TOTAL_UNIDADES"], 10, 10, "", array("readOnly"=>"true")),
-                                HTML::campoTextoCorto("subtotal_pedido",$textos["SUBTOTAL"], 10, 10, "", array("readOnly"=>"true"))
-                            ),
-                            array(
-                                HTML::campoTextoCorto("total_iva_pedido",$textos["TOTAL_IVA"], 10, 10, "", array("readOnly"=>"true")),
-                                HTML::campoTextoCorto("total_pedido",$textos["TOTAL_PEDIDO"], 10, 10, "", array("readOnly"=>"true"))
+                                HTML::campoTextoCorto("subtotal_pedido",$textos["SUBTOTAL"], 15, 15, "", array("readOnly"=>"true")),
+                                HTML::campoTextoCorto("descuento_pedido",$textos["DESCUENTO"], 15, 15, "", array("readOnly"=>"true")),
+                                HTML::campoTextoCorto("total_iva_pedido",$textos["TOTAL_IVA"], 15, 15, "", array("readOnly"=>"true")),
+                                HTML::campoTextoCorto("total_pedido",$textos["TOTAL_PEDIDO"], 15, 15, "", array("readOnly"=>"true"))
                             ),
                             array(
                                 HTML::campoTextoLargo("observaciones_orden",$textos["OBSERVACIONES"], 2, 95, "", array("title"=>$textos["AYUDA_OBSERVACIONES"]))
@@ -1162,6 +1177,9 @@ if (!empty($url_generar)){
         if (!$monedas){
             $error .= $textos["CREAR_MONEDAS"];
         }
+        if (!$proyectos){
+            $error .= $textos["CREAR_PROYECTOS"];
+        }
     }
 
     // Enviar datos para la generacion del formulario al script que origino la peticion
@@ -1174,7 +1192,7 @@ if (!empty($url_generar)){
 } elseif (!empty($forma_procesar)) {
     // Asumir por defecto que no hubo error
     $error   = false;
-    $mensaje = $textos["ITEM_ADICIONADO"];
+    $mensaje = $textos["ORDEN_GRABADA"];
 
     $codigo_orden_compra  = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$forma_campo_numero_orden_total' AND documento_identidad_proveedor='$forma_campo_nit_proveedor'");
     $condicion_movimiento = "codigo_orden_compra='$codigo_orden_compra'";
@@ -1207,29 +1225,23 @@ if (!empty($url_generar)){
             $forma_id = $forma_campo_sucursal."|".$forma_campo_fecha_documento."|".$forma_campo_numero_orden_total;
             include("clases/imprimir.php");
             $ruta_archivo = HTTP::generarURL("DESCARCH")."&id=".$id_archivo."&temporal=0";
-        }
-
-        if (!$modificar_encabezado) {
+        } else {
             $error     = true;
             $mensaje   = $textos["ERROR_GRABAR_MOVIMIENTO_ORDEN"];
         }
-
-        $error   = false;
-        $mensaje = $textos["ORDEN_GRABADA"];
-    }
-    
-    // Enviar datos con la respuesta del proceso al script que origino la peticion
-    if(isset($ruta_archivo) || !empty($ruta_archivo)){
-        $respuesta    = array();
-        $respuesta[0] = $error;
-        $respuesta[1] = $mensaje;
-        $respuesta[2] = $ruta_archivo;
-        HTTP::enviarJSON($respuesta);
-    }else{
-        $respuesta    = array();
-        $respuesta[0] = $error;
-        $respuesta[1] = $mensaje;
-        HTTP::enviarJSON($respuesta);
+        // Enviar datos con la respuesta del proceso al script que origino la peticion
+        if(isset($ruta_archivo) || !empty($ruta_archivo)){
+            $respuesta    = array();
+            $respuesta[0] = $error;
+            $respuesta[1] = $mensaje;
+            $respuesta[2] = $ruta_archivo;
+            HTTP::enviarJSON($respuesta);
+        }else{
+            $respuesta    = array();
+            $respuesta[0] = $error;
+            $respuesta[1] = $mensaje;
+            HTTP::enviarJSON($respuesta);    
+        }   
     }
 }
 ?>

@@ -89,9 +89,11 @@
     function cargarDatosArticulo() {
         var destino           = $('#URLFormulario').val();
         var referencia        = $('#selector2').val();
+        var mensaje_error     = "No existe el codigo del articulo, por favor verifique";
 
         /*** Descargar contenido  ***/
         $.getJSON(destino, {recargar: true, referencia_carga: referencia}, function(datos){
+            
             if (datos != ""){
                 if(datos[0] != ""){    
                     var codigo_marca           = datos[22];
@@ -130,6 +132,9 @@
                     $('#codigo_unidad_compra').append('<option value="'+codigo_unidad_compra+'">' +nombre_unidad_compra+ '</option>').attr("disabled","disabled");
                     $('#codigo_iso').val(datos[16]).attr("disabled","disabled");
                 }
+            }else{
+                alert(mensaje_error);
+                $('#selector2').val('').focus();
             }
         });
     }

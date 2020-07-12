@@ -83,7 +83,7 @@ if (!empty($url_verificarReferencia) && !empty($url_documento_identidad) && !emp
 if (isset($url_recargar)) {
 
     if (!empty($url_referencia_carga)) {
-        
+    //var_dump("eliana orines",$url_referencia_carga);    
         $referencia = $url_referencia_carga;
 
         $codigo_articulo               = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$referencia' AND principal = '1' LIMIT 1");
@@ -125,8 +125,8 @@ if (isset($url_recargar)) {
         if (SQL::filasDevueltas($consulta)) {
 
             $datos = SQL::filaEnObjeto($consulta);
-            $codigo_marca = SQL::obtenerValor("marcas", "codigo", "codigo = '$datos->codigo'");
-            $nombre_marca = SQL::obtenerValor("marcas", "descripcion", "codigo = '$datos->codigo'");
+            $codigo_marca = SQL::obtenerValor("marcas", "codigo", "codigo = '$datos->codigo_marca'");
+            $nombre_marca = SQL::obtenerValor("marcas", "descripcion", "codigo = '$datos->codigo_marca'");
 
             $tabla = array(
                 $datos->codigo,
@@ -162,10 +162,13 @@ if (isset($url_recargar)) {
                 $codigo_grupo
             );
         } else {
-            $tabla[] = "";
+            $tabla[0] = "";
+            HTTP::enviarJSON($tabla);
+            exit();
         }
-        HTTP::enviarJSON($tabla);
+        
     }
+    HTTP::enviarJSON($tabla);
     exit;
 }
 
@@ -246,7 +249,7 @@ if (!empty($url_generar)) {
                 HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 8, 8, $codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"], "onblur" => "validarItem(this);"))
             ),
             array(
-                HTML::campoTextoCorto("selector2", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"],"class" => "autocompletable", "onblur" => "validarItem(this)", "onchange" => "cargarDatosArticulo()"))
+                HTML::campoTextoCorto("selector2", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"], "onBlur" => "validarItem(this)", "onChange" => "cargarDatosArticulo()"))
                 .HTML::campoOculto("codigo_alfanumerico", ""),
 
                 HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, "",array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)"))
@@ -275,6 +278,9 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::campoTextoLargo("ficha_tecnica", $textos["FICHA_TECNICA"],5, 70, "", array("title" => $textos["AYUDA_FICHA_TECNICA"]))
+            ),
+            array(
+                HTML::campoOculto("error_no_articulo",$textos["ERROR_NO_EXISTE_ARTICULO"]),
             )
         );
  
@@ -396,7 +402,21 @@ if (!empty($url_generar)) {
       $mensaje = $textos["PROVEEDOR_VACIO"];    
            
     }else {
-        
+        /*** Quitar separador de miles a un numero ***/
+        function quitarMiles($cadena){
+            $valor = array();
+            for ($i = 0; $i < strlen($cadena); $i++) {
+                if (substr($cadena, $i, 1) != ".") {
+                    $valor[$i] = substr($cadena, $i, 1);
+                }
+            }
+            $valor = implode($valor);
+            return $valor;
+        }
+
+        $forma_costo = quitarMiles($forma_costo);
+        $forma_costo = str_replace(",", ".", $forma_costo);
+
         $datos_articulo = array(
             "codigo_articulo"               => $codigo_articulo,
             "documento_identidad_proveedor" => $forma_documento_identidad_proveedor,
@@ -404,6 +424,14 @@ if (!empty($url_generar)) {
         );
 
         $insertar_articulo = SQL::insertar("articulos_proveedor", $datos_articulo);
+
+        $datos_lista_precio_articulos   = array(
+            "codigo_articulo"           => $codigo_articulo,
+            "costo"                     => $costo,
+            "fecha_modificacion"        => date("Y-m-d H:i:s")
+        );
+
+        $insertar_lista_precio_articulos = SQL::insertar("lista_precio_articulos", $datos_lista_precio_articulos);
 
         /*** Error de inserción ***/
         if (!$insertar_articulo) {

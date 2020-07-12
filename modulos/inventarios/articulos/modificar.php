@@ -286,7 +286,7 @@ if (!empty($url_generar)) {
             }
         }
 
-        if ($imagen) {
+        if (($imagen) || (!$imagen)) {
             $id_imagen = $imagen->id_asociado."|".$imagen->categoria;
 
             $formularios["PESTANA_IMAGEN"] = array(

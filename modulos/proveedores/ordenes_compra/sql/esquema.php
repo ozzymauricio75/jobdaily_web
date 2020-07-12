@@ -348,7 +348,9 @@ $vistas = array(
                 job_ordenes_compra.codigo > 0
             
             GROUP BY 
-                job_movimiento_ordenes_compra.codigo_orden_compra;"
+                job_movimiento_ordenes_compra.codigo_orden_compra
+            ORDER BY
+                job_ordenes_compra.numero_consecutivo DESC;"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_ordenes_compra AS

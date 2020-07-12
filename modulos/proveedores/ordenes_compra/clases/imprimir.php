@@ -120,20 +120,20 @@
     $archivo->Cell(130,4,$textos["ORDEN_COMPRA_PDF"].$consecutivo,0,1,'R');
 
     $archivo->Ln(1);
-    $archivo->Cell(30,4,$textos["PROVEEDOR"]." :",0,0,'L');
+    $archivo->Cell(44,4,$textos["PROVEEDOR"]." :",0,0,'L');
     $archivo->SetFont('Arial','',8);
     $archivo->Cell(130,4,"".$nombre_proveedor,0,0,'L');
     $archivo->Cell(40,4,"",0,1,'R');
 
     $archivo->Ln(1);
-    $archivo->Cell(30,4,$textos["NIT"]." :",0,0,'L');
+    $archivo->Cell(44,4,$textos["NIT"]." :",0,0,'L');
     $archivo->SetFont('Arial','',8);
     $archivo->Cell(130,4,"".$nit."-".$digitoV,0,0,'L');
     $archivo->Cell(40,4,"",0,1,'R');
 
     $archivo->SetFont('Arial','B',8);
     $archivo->Ln(0);
-    $archivo->Cell(30,4,$textos["COMPRADOR"]." :",0,0,'L');
+    $archivo->Cell(44,4,$textos["COMPRADOR"]." :",0,0,'L');
     $archivo->SetFont('Arial','',8);
     $archivo->Cell(90,4,"".$usuario."",0);
     $archivo->Cell(40,4,"",0);
@@ -141,7 +141,7 @@
 
     $archivo->SetFont('Arial','B',8);
     $archivo->Ln(0);
-    $archivo->Cell(30,4,$textos["SUCURSAL"]." :",0,0,'L');
+    $archivo->Cell(44,4,$textos["SUCURSAL"]." :",0,0,'L');
     $archivo->SetFont('Arial','',8);
     $archivo->Cell(90,4,"".$almacen."",0);
     $archivo->Cell(40,4,"",0);
@@ -168,7 +168,7 @@
     $diasemana = date("w",$fecha);
 
     $archivo->Ln(0);
-    $archivo->Cell(30,4,$textos["FECHA"].":",0,0,'L');
+    $archivo->Cell(44,4,$textos["FECHA"].":",0,0,'L');
     $archivo->SetFont('Arial','',8);
     $archivo->Cell(90,4,$textos["DIA_".$diasemana.""]." ".$dia." de ".$textos["MES_".$mes.""]." de ".$anno,0);
     $archivo->Cell(40,4,"",0,0,'R');
