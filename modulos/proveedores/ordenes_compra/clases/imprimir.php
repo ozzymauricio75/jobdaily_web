@@ -23,7 +23,7 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
-    // Datos del encabezado de la orden
+    //Datos del encabezado de la orden
     $vistaConsulta = "ordenes_compra";
     $columnas      = SQL::obtenerColumnas($vistaConsulta);
     $llaveOrden    = explode("|",$forma_id);
@@ -48,6 +48,7 @@
     $descuento_global_2         = $datos_ordenes->descuento_global2;
     $descuento_financiero       = $datos_ordenes->descuento_financiero;
     $solicitante                = $datos_ordenes->solicitante;
+    $prefijo_codigo_proyecto    = $datos_ordenes->prefijo_codigo_proyecto;
 
     $documento_comprador        = SQL::obtenerValor("compradores", "documento_identidad", "codigo = '".$datos_ordenes->codigo_comprador."'");
     $comprador                  = SQL::obtenerValor("menu_compradores", "NOMBRE_COMPLETO", "DOCUMENTO = '".$documento_comprador."'");
@@ -56,9 +57,9 @@
     $consorcio                  = SQL::obtenerValor("sucursales","nombre","codigo = '".$datos_ordenes->codigo_sucursal."'");
     $forma_pago                 = SQL::obtenerValor("plazos_pago_proveedores","nombre","codigo = '".$datos_ordenes->codigo_numero_dias_pago."'"); 
     $nit_empresa                = SQL::obtenerValor("empresas","documento_identidad_tercero","codigo = '".$codigo_empresa."'");
+    $nombre_proyecto            = SQL::obtenerValor("proyectos","nombre","codigo = '".$prefijo_codigo_proyecto."'");
    
     //Genera digito de verificacion en nit empresa
-
     $array = array(1 => 3, 4 => 17, 7 => 29, 10 => 43, 13 => 59, 2 => 7, 5 => 19, 8 => 37, 11 => 47, 14 => 67, 3 => 13,
                6 => 23, 9 => 41, 12 => 53, 15 => 71);
     $x       = 0;
@@ -136,7 +137,7 @@
 
     $fecha        = mktime(0,0,0, $mes, $dia, $anno);
     $diasemana    = date("w", $fecha);
-
+    //////////////////////////////ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
     $anchoColumnas      = array(20,50);
     $alineacionColumnas = array("I","I");
 
@@ -221,30 +222,26 @@
 
     if ($descuento_global_1 != 0) {
         $descuento_global_1 = number_format($descuento_global_1,2);
-        $archivo->SetFont('Arial','B',8);
-        $archivo->Cell(35,4,$textos["DESCUENTO_GLOBAL1_PDF"]." :",0,0,'L');
-        $archivo->SetFont('Arial','',8);
-        $archivo->Cell(70,4,$descuento_global_1." %",0);
-        $archivo->Cell(40,4,"",0,1,'R');
-    } else {
-        $archivo->Cell(40,4,"",0,1,'R');
-    }
+        
+    } 
 
-    if ($descuento_global_2 != 0) {
-        $archivo->SetFont('Arial','B',8);
-        $archivo->Cell(35,4,$textos["DESCUENTO_GLOBAL2_PDF"]." :",0,0,'L');
-        $archivo->SetFont('Arial','',8);
-        $archivo->Cell(70,4,"".$descuento_global_2." %",0);
-        $archivo->Cell(40,4,"",0,1,'R');
-    } else {
-        $archivo->Cell(40,4,"",0,1,'R');
-    }
+    $archivo->SetFont('Arial','B',8);
+    $archivo->Ln(0);
+    $archivo->Cell(35,4,$textos["PROYECTO"]." :",0,0,'L');
+    $archivo->SetFont('Arial','',8);
+    $archivo->Cell(70,4,"".$prefijo_codigo_proyecto." - ".$nombre_proyecto."",0);
+    $archivo->SetFont('Arial','B',8);
+    $archivo->Cell(35,4,$textos["DESCUENTO_GLOBAL1_PDF"]." :",0,0,'L');
+    $archivo->SetFont('Arial','',8);
+    $archivo->Cell(70,4,"".$descuento_global_1."%",0,0,'L');
+    $archivo->Cell(40,4,"",0,1,'R');
 
     $archivo->SetFont('Arial','B',8);
     $archivo->Ln(0);
     $archivo->Cell(35,4,$textos["OBSERVACIONES"]." :",0,0,'L');
     $archivo->SetFont('Arial','',8);
-    $archivo->Cell(70,4,"".$observaciones."",0);
+    $archivo->Cell(150,4,"".$observaciones."",0);
+    $archivo->SetFont('Arial','B',8);
 
     if ($descuento_financiero != 0) {
         $archivo->SetFont('Arial','B',8);
@@ -255,28 +252,24 @@
     } else {
         $archivo->Cell(40,4,"",0,1,'R');
     }
-
+    //////////////////////////////FIN ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
     $archivo->SetFont('Arial','B',6);
     $archivo->SetFillColor(225,225,225);
 
     $archivo->Ln(6);
-    $archivo->Cell(15,4,$textos["REFERENCIA"],1,0,'C',true);
-    $archivo->Cell(25,4,$textos["ARTICULO"],1,0,'C',true);
-    $archivo->Cell(20,4,$textos["SUCURSAL_RECIBE"],1,0,'C',true);
-    $archivo->Cell(18,4,$textos["CANTIDAD"],1,0,'C',true);
-    $archivo->Cell(17,4,$textos["REQUERIDO"],1,0,'C',true);
-    $archivo->Cell(25,4,$textos["VALOR_UNITARIO"],1,0,'C',true);
-    $archivo->Cell(15,4,$textos["DESCUENTO_1_PDF"],1,0,'C',true);
-    $archivo->Cell(15,4,$textos["DESCUENTO_2_PDF"],1,0,'C',true);
-    $archivo->Cell(25,4,$textos["CON_DESCUENTO"],1,0,'C',true);
-    $archivo->Cell(20,4,$textos["IVA_ARTICULO"],1,0,'C',true);
-    $archivo->Cell(25,4,$textos["FORMA_PAGO_PDF"],1,0,'C',true);
-    $archivo->Cell(15,4,$textos["FINANCIACION_PDF"],1,0,'C',true);
-    $archivo->Cell(25,4,$textos["TOTAL_ITEM"],1,0,'C',true);
-
+    $archivo->Cell(8,4,$textos["ITEMS"],1,0,'C',true);
+    $archivo->Cell(20,4,$textos["REFERENCIA"],1,0,'C',true);
+    $archivo->Cell(89,4,$textos["DESCRIPCION"],1,0,'C',true);
+    $archivo->Cell(20,4,$textos["UNIDAD_MEDIDA"],1,0,'C',true);
+    $archivo->Cell(12,4,$textos["CANTIDAD_PDF"],1,0,'C',true);
+    $archivo->Cell(20,4,$textos["VALOR_UNITARIO"],1,0,'C',true);
+    $archivo->Cell(20,4,$textos["VALOR_TOTAL"],1,0,'C',true);
+    $archivo->Cell(71,4,$textos["OBSERVACIONES_ARTICULO"],1,0,'C',true);
+    
+    //Se lee el movimiento de la tabla movimientos
     $vistaConsulta          = "movimiento_ordenes_compra";
     $columnas               = SQL::obtenerColumnas($vistaConsulta);
-    $consulta               = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo_sucursal_destino = '".$llaveOrden[0]."' AND fecha_registra = '".$llaveOrden[1]."' AND codigo_orden_compra = '".$datos->codigo."'");
+    $consulta_movimiento    = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo_sucursal_destino = '".$datos_ordenes->codigo_sucursal."' AND fecha_registra = '".$llaveOrden[1]."' AND codigo_orden_compra = '".$datos_ordenes->codigo."'");
     $total                  = 0;
     $total_iva              = 0;
     $sucursales             = array();
@@ -290,7 +283,7 @@
     $subtotal_factura       = 0;
     $valor_con_iva          = 0;
 
-    while ($datos_articulo = SQL::filaEnObjeto($consulta)) {
+    while ($datos_movimiento = SQL::filaEnObjeto($consulta_movimiento)) {
 
         if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
             $archivo->SetFillColor(255,255,255);
@@ -299,19 +292,16 @@
         }
 
         $financiacion       = "-";
-        $plazo              = SQL::obtenerValor("plazos_pago_proveedores","nombre","codigo ='".$datos->codigo_numero_dias_pago."'");
-        $mostrar_descuento1 = number_format($datos->descuento_global1, 2,'.' ,',');
+        $plazo              = SQL::obtenerValor("plazos_pago_proveedores","nombre","codigo ='".$datos_ordenes->codigo_numero_dias_pago."'");
+        $mostrar_descuento1 = number_format($datos_ordenes->descuento_global1, 2,'.' ,',');
         $mostrar_descuento1 = $mostrar_descuento1." %";
-        //$mostrar_descuento2 = number_format($datos_articulo->descuento_global2, 2,'.' ,',');
-        //$mostrar_descuento2 = $mostrar_descuento2." %";
-        $descuento_global1  = $datos->descuento_global1;
-        //$descuento2         = $datos_articulo->descuento_global2;
+        $descuento_global1  = $datos_ordenes->descuento_global1;
 
         $pago           = $textos["FORMA_PAGO_PDF"]." : ".$plazo;
         $financiacion   = "-";    
 
         // Obtener porcentaje vigente de la tasa de compra del articulo
-        $consulta_impuesto  = SQL::seleccionar(array("vigencia_tasas"), array("porcentaje"), "codigo_tasa='".$datos_articulo->codigo_tasa_impuesto."'", "", "fecha DESC", 1);
+        $consulta_impuesto  = SQL::seleccionar(array("vigencia_tasas"), array("porcentaje"), "codigo_tasa='".$datos_movimiento->codigo_tasa_impuesto."'", "", "fecha DESC", 1);
         if (SQL::filasDevueltas($consulta_impuesto)) {
             $datos_impuesto = SQL::filaEnObjeto($consulta_impuesto);
             $valor_impuesto = $datos_impuesto->porcentaje;
@@ -319,187 +309,42 @@
             $valor_impuesto = 0;
         }
 
-        $valor_compra = $datos_articulo->valor_total;
-        $cantidad     = $datos_articulo->cantidad_total;
-
-        //$tasa_pago_credito      = $datos_articulo->tasa_credito;
-        // Valores descuento en linea
-        /*if($forma_liquida_linea == 1){
-            // se calcula sobre el valor unitario
-            $valor_descuento_1        = (($valor_compra * $descuento1)/100);
-            $valor_porcentaje_d1      = $valor_descuento_1;
-            $valor_descuento_1        = $valor_compra - $valor_descuento_1;
-            $subtotal2                = $valor_descuento_1 * $cantidad;
-
-            $valor_descuento_2        = (($valor_descuento_1 * $descuento2)/100);
-            $valor_descuento          = $valor_descuento_1 - $valor_descuento_2;
-            $subtotal                 = $valor_descuento * $cantidad;
-            $subtotal2                = $valor_descuento * $cantidad;
-
-            if ($forma_liquida_tasa_credito == '1' && $tasa_pago_credito>0){
-                $descuento_financiacion += (($subtotal * $tasa_pago_credito) / 100);
-            }
-
-            // Valores descuento en linea
-            if($forma_liquida_global == 1){
-                // se calcula sobre el valor unitario
-                $valor_descuento_global1 = (($valor_descuento) * $descuento_global_1)/100;
-                $valor_porcentaje_dg1    = $valor_descuento_global1;
-                $valor_descuento_global1 = $valor_descuento - $valor_descuento_global1;
-
-                $valor_descuento_global2 = (($valor_descuento_global1) * $descuento_global_2)/100;
-                $valor_descuento         = $valor_descuento_global1 - $valor_descuento_global2;
-                $costo                   = (int)$valor_descuento;
-                $subtotal                = $valor_descuento * $cantidad;
-                $subtotal2               = $valor_descuento * $cantidad;
-                if ($forma_liquida_tasa_credito == '2' && $tasa_pago_credito>0){
-                    $descuento_financiacion += (($subtotal * $tasa_pago_credito) / 100);
-                }
-
-                $total_todos_descuentos  += ($valor_porcentaje_dg1+$valor_descuento_global2)*$cantidad;
-            } else if ($forma_liquida_global == 2){
-                // se calcula sobre el valor total
-                $valor_descuento_global1 = (($subtotal) * $descuento_global_1)/100;
-                $valor_porcentaje_dg1    = $valor_descuento_global1;
-                $valor_descuento_global1 = $subtotal - $valor_descuento_global1;
-
-                $valor_descuento_global2 = (($valor_descuento_global1) * $descuento_global_2)/100;
-                $valor_descuento         = $valor_descuento_global1 - $valor_descuento_global2;
-                $subtotal2               = $valor_descuento * $cantidad;
-                $costo                   = (int)($valor_descuento/$cantidad);
-                if ($forma_liquida_tasa_credito == '2' && $tasa_pago_credito>0){
-                    $descuento_financiacion += (($subtotal2 * $tasa_pago_credito) / 100);
-                }
-
-                $total_todos_descuentos += ($valor_porcentaje_dg1+$valor_descuento_global2)*$cantidad;
-            } else {
-                // se calcula sobre el total de la factura
-                $costo                   = (int)($subtotal/$cantidad);
-                $total_entradas          += $subtotal;
-                $valor_descuento_global1 = (($total_entradas) * $descuento_global_1)/100;
-                $valor_porcentaje_dg1    = $valor_descuento_global1;
-                $valor_descuento_global1 = $total_entradas - $valor_descuento_global1;
-                $valor_descuento_global2 = (($valor_descuento_global1) * $descuento_global_2)/100;
-                $valor_total             = $valor_descuento_global1 -$valor_descuento_global2;
-
-                $subtotal = (int)($subtotal - (($subtotal * $descuento_global_1)/100));
-                $subtotal = (int)($subtotal - (($subtotal * $descuento_global_2)/100));
-                if ($forma_liquida_tasa_credito == '2' && $tasa_pago_credito>0){
-                    $descuento_financiacion += (($subtotal * $tasa_pago_credito) / 100);
-                }
-
-                $total_descuentos_linea  +=($valor_porcentaje_d1+$valor_descuento_2)*$cantidad;
-                $total_todos_descuentos += $valor_porcentaje_dg1+$valor_descuento_global2;
-            }
-        } else {
-            // Valores descuento en linea
-            if($forma_liquida_global == 2){
-                // se calcula sobre el valor total
-                $subtotal              = $valor_compra * $cantidad;
-
-                $valor_descuento_1     = (($subtotal * $descuento1)/100);
-                $valor_porcentaje_d1   = $valor_descuento_1;
-                $valor_descuento_1     = $subtotal - $valor_descuento_1;
-
-                $valor_descuento_2     = (($valor_descuento_1 * $descuento2)/100);
-                $valor_descuento       = $valor_descuento_1 - $valor_descuento_2;
-                if ($forma_liquida_tasa_credito == '1' && $tasa_pago_credito>0){
-                    $descuento_financiacion += (($valor_descuento * $tasa_pago_credito) / 100);
-                }
-
-                // se calcula sobre el valor total
-                $valor_descuento_global1 = (($valor_descuento) * $descuento_global_1)/100;
-                $valor_porcentaje_dg1    = $valor_descuento_global1;
-                $valor_descuento_global1 = $valor_descuento - $valor_descuento_global1;
-
-                $valor_descuento_global2 = (($valor_descuento_global1) * $descuento_global_2)/100;
-                $valor_descuento         = $valor_descuento_global1 - $valor_descuento_global2;
-                $subtotal2               = $valor_descuento;
-                $costo                   = (int)($valor_descuento/$cantidad);
-
-                $total_todos_descuentos += ($valor_porcentaje_dg1+$valor_descuento_global2)*$cantidad;
-            } else {
-                // se calcula sobre el valor total
-                $subtotal              = $valor_compra * $cantidad;
-
-                $valor_descuento_1     = (($subtotal * $descuento1)/100);
-                $valor_porcentaje_d1   = $valor_descuento_1;
-                $valor_descuento_1     = $subtotal - $valor_descuento_1;
-
-                $valor_descuento_2     = (($valor_descuento_1 * $descuento2)/100);
-                $valor_descuento       = $valor_descuento_1 - $valor_descuento_2;
-                $costo                 = (int)($valor_descuento/$cantidad);
-                $subtotal2             = $valor_descuento;
-
-                // se calcula sobre el total de la factura
-                $total_entradas          += $subtotal;
-                $valor_descuento_global1 = (($total_entradas) * $descuento_global_1)/100;
-                $valor_porcentaje_dg1    = $valor_descuento_global1;
-                $valor_descuento_global1 = $total_entradas - $valor_descuento_global1;
-
-                $valor_descuento_global2 = (($valor_descuento_global1) * $descuento_global_2)/100;
-                $valor_total             = $valor_descuento_global1 -$valor_descuento_global2;
-
-                $total_descuentos_linea  +=($valor_porcentaje_d1+$valor_descuento_2)*$cantidad;
-                $total_todos_descuentos  = $valor_porcentaje_dg1+$valor_descuento_global2;
-            }
-            if ($forma_liquida_tasa_credito == '2' && $tasa_pago_credito>0){
-                $descuento_financiacion += (($total_todos_descuentos * $tasa_pago_credito) / 100);
-            }
-        }*/
-
+        $valor_unitario = $datos_movimiento->valor_unitario;
+        $valor_total    = $datos_movimiento->valor_total;
+        $cantidad       = $datos_movimiento->cantidad_total;
+        $observaciones  = $datos_movimiento->observaciones;
+ 
         $fecha_hoy          = date("Y-m-d");
-        $id_tasa_articulo   = SQL::obtenerValor("articulos","codigo_impuesto_compra","codigo = '".$datos_articulo->codigo_articulo."'");
+        $id_tasa_articulo   = SQL::obtenerValor("articulos","codigo_impuesto_compra","codigo = '".$datos_movimiento->codigo_articulo."'");
         $fecha_tasa         = SQL::obtenerValor("vigencia_tasas","MAX(fecha)","codigo_tasa='".$id_tasa_articulo."' AND fecha<='".$fecha_hoy."'");
         $valorbase_articulo = SQL::obtenerValor("vigencia_tasas","valor_base","codigo_tasa='".$id_tasa_articulo."'AND fecha LIKE '".$fecha_tasa."'");
-
-        //$valor_articulo = ($datos_articulo->valor_compra - (($datos_articulo->valor_compra * $descuento1) /100));
-        //$valor_articulo = ($valor_articulo - (($valor_articulo * $descuento2) /100));
-
-        /*if ($forma_liquida_tasa_credito == '1'){
-            $valor_articulo = ($valor_articulo + (($valor_articulo * $tasa_pago_credito) /100));
-        }
-        $valor_articulo = ($valor_articulo - (($valor_articulo * $descuento_global_1) /100));
-        $valor_articulo = ($valor_articulo - (($valor_articulo * $descuento_global_2) /100));
-        if ($forma_liquida_tasa_credito == '2'){
-            $valor_articulo = ($valor_articulo + (($valor_articulo * $tasa_pago_credito) /100));
-        }
-        if($valor_articulo >= $valorbase_articulo){
-            $valor_articulo = ($valor_articulo * $cantidad);
-            $valor_con_iva += ($valor_articulo + (($valor_articulo*$valor_impuesto)/100));
-            $total_iva     += (($valor_articulo*$valor_impuesto)/100);
-        }*/
 
         if($valor_total > 0){
             $total = $valor_total;
         }
 
-        $subtotal_factura   = $subtotal_factura + $total;
-        $sucursales[]       = $datos_articulo->codigo_sucursal;
+        $subtotal_factura = $subtotal_factura + $total;
+        $sucursales[]     = $datos_movimiento->codigo_sucursal;
 
-        $sucursal_entrega   = SQL::obtenerValor("sucursales","nombre","codigo = '".$datos_articulo->codigo_sucursal."'");
-        $articulo           = SQL::obtenerValor("articulos","codigo","codigo = '".$datos_articulo->codigo_articulo."'");
+        $sucursal_entrega = SQL::obtenerValor("sucursales","nombre","codigo = '".$datos_movimiento->codigo_sucursal."'");
+        $referencia       = SQL::obtenerValor("referencias_proveedor","referencia","codigo_articulo = '".$datos_movimiento->codigo_articulo."'");
+        $descripcion      = SQL::obtenerValor("articulos","descripcion","codigo = '".$datos_movimiento->codigo_articulo."'");
 
         $archivo->SetFont('Arial','',6);
 
-        $id_unidad     = $datos_articulo->codigo_unidad_medida;
+        $id_unidad     = $datos_movimiento->codigo_unidad_medida;
         $nombre_unidad = SQL::obtenerValor("unidades","nombre","codigo='".$id_unidad."'");
-        $cantidad      = number_format($datos_articulo->cantidad_total)." ".$nombre_unidad;
+        $cantidad      = number_format($datos_movimiento->cantidad_total)." ".$nombre_unidad;
 /////////////////////////////////////////////////////////////////////////////////////////////////
         $archivo->Ln(4);
-        $archivo->Cell(15,4,$articulo,1,0,'C',true);
-        $archivo->Cell(25,4,$datos_articulo->referencia_articulo,1,0,'L',true);
-        $archivo->Cell(20,4,$sucursal_entrega,1,0,'L',true);
-        $archivo->Cell(18,4,$cantidad,1,0,'C',true);
-        $archivo->Cell(17,4,$datos_articulo->fecha_entrega,1,0,'C',true);
-        $archivo->Cell(25,4,"$ ".number_format($valor_compra),1,0,'R',true);
-        $archivo->Cell(15,4,$mostrar_descuento1,1,0,'C',true);
-        $archivo->Cell(15,4,$mostrar_descuento2,1,0,'C',true);
-        $archivo->Cell(25,4,"$ ".number_format($costo),1,0,'R',true);
-        $archivo->Cell(20,4,$valor_impuesto."%",1,0,'R',true);
-        $archivo->Cell(25,4,$pago,1,0,'L',true,"",true);
-        $archivo->Cell(15,4,$financiacion,1,0,'C',true);
-        $archivo->Cell(25,4,"$ ".number_format($subtotal2),1,0,'R',true);
+        $archivo->Cell(8,4,$i,1,0,'C',true);
+        $archivo->Cell(20,4,$referencia,1,0,'C',true);
+        $archivo->Cell(97,4,$descripcion,1,0,'L',true);
+        $archivo->Cell(20,4,$nombre_unidad,1,0,'L',true);
+        $archivo->Cell(6,4,$cantidad,1,0,'C',true);
+        $archivo->Cell(18,4,"$ ".number_format($valor_unitario),1,0,'C',true);
+        $archivo->Cell(18,4,"$ ".number_format($valor_total),1,0,'C',true);
+        $archivo->Cell(83,4,$observaciones,1,0,'C',true);
 /////////////////////////////////////////////////////////////////////////////////////////////////
         $imprime_cabecera = $archivo->breakCell(8);
 
