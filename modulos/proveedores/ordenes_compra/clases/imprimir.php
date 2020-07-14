@@ -43,12 +43,12 @@
     $consecutivo                = $datos_ordenes->numero_consecutivo;
     $fechaRegistra              = $datos_ordenes->fecha_registra;
     $estado                     = $datos_ordenes->estado;
-    $observaciones              = $datos_ordenes->observaciones;
     $descuento_global_1         = $datos_ordenes->descuento_global1;
     $descuento_global_2         = $datos_ordenes->descuento_global2;
     $descuento_financiero       = $datos_ordenes->descuento_financiero;
     $solicitante                = $datos_ordenes->solicitante;
     $prefijo_codigo_proyecto    = $datos_ordenes->prefijo_codigo_proyecto;
+    $observaciones_orden        = $datos_ordenes->observaciones;
 
     $documento_comprador        = SQL::obtenerValor("compradores", "documento_identidad", "codigo = '".$datos_ordenes->codigo_comprador."'");
     $comprador                  = SQL::obtenerValor("menu_compradores", "NOMBRE_COMPLETO", "DOCUMENTO = '".$documento_comprador."'");
@@ -57,6 +57,8 @@
     $consorcio                  = SQL::obtenerValor("sucursales","nombre","codigo = '".$datos_ordenes->codigo_sucursal."'");
     $forma_pago                 = SQL::obtenerValor("plazos_pago_proveedores","nombre","codigo = '".$datos_ordenes->codigo_numero_dias_pago."'"); 
     $nit_empresa                = SQL::obtenerValor("empresas","documento_identidad_tercero","codigo = '".$codigo_empresa."'");
+    $direccion_empresa          = SQL::obtenerValor("terceros","direccion_principal","documento_identidad = '".$nit_empresa."'");
+    $celular_empresa            = SQL::obtenerValor("terceros","celular","documento_identidad = '".$nit_empresa."'");
     $nombre_proyecto            = SQL::obtenerValor("proyectos","nombre","codigo = '".$prefijo_codigo_proyecto."'");
    
     //Genera digito de verificacion en nit empresa
@@ -240,7 +242,7 @@
     $archivo->Ln(0);
     $archivo->Cell(35,4,$textos["OBSERVACIONES"]." :",0,0,'L');
     $archivo->SetFont('Arial','',8);
-    $archivo->Cell(150,4,"".$observaciones."",0);
+    $archivo->Cell(150,4,"".$observaciones_orden."",0);
     $archivo->SetFont('Arial','B',8);
 
     if ($descuento_financiero != 0) {
@@ -258,238 +260,201 @@
 
     $archivo->Ln(6);
     $archivo->Cell(8,4,$textos["ITEMS"],1,0,'C',true);
-    $archivo->Cell(20,4,$textos["REFERENCIA"],1,0,'C',true);
+    $archivo->Cell(24,4,$textos["REFERENCIA"],1,0,'C',true);
     $archivo->Cell(89,4,$textos["DESCRIPCION"],1,0,'C',true);
+    $archivo->Cell(61,4,$textos["OBSERVACIONES_ARTICULO"],1,0,'C',true);
     $archivo->Cell(20,4,$textos["UNIDAD_MEDIDA"],1,0,'C',true);
     $archivo->Cell(12,4,$textos["CANTIDAD_PDF"],1,0,'C',true);
-    $archivo->Cell(20,4,$textos["VALOR_UNITARIO"],1,0,'C',true);
-    $archivo->Cell(20,4,$textos["VALOR_TOTAL"],1,0,'C',true);
-    $archivo->Cell(71,4,$textos["OBSERVACIONES_ARTICULO"],1,0,'C',true);
+    $archivo->Cell(23,4,$textos["VALOR_UNITARIO"],1,0,'C',true);
+    $archivo->Cell(23,4,$textos["VALOR_TOTAL"],1,0,'C',true);
     
     //Se lee el movimiento de la tabla movimientos
     $vistaConsulta          = "movimiento_ordenes_compra";
     $columnas               = SQL::obtenerColumnas($vistaConsulta);
-    $consulta_movimiento    = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo_sucursal_destino = '".$datos_ordenes->codigo_sucursal."' AND fecha_registra = '".$llaveOrden[1]."' AND codigo_orden_compra = '".$datos_ordenes->codigo."'");
+    $consulta_movimiento    = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo_sucursal_destino = '".$datos_ordenes->codigo_sucursal."' AND codigo_orden_compra = '".$datos_ordenes->codigo."'");
+    //Inicia valores en cero de totales
     $total                  = 0;
+    $subtotal_orden         = 0;
+    $total_descuento        = 0;
     $total_iva              = 0;
-    $sucursales             = array();
     $i                      = 0;
+    $item                   = 1;
     $valor_descuento        = 0;
     $valor_total            = 0;
     $total_todos_descuentos = 0;
-    $total_entradas         = 0;
-    $total_descuentos_linea = 0;
-    $descuento_financiacion = 0;
-    $subtotal_factura       = 0;
     $valor_con_iva          = 0;
 
-    while ($datos_movimiento = SQL::filaEnObjeto($consulta_movimiento)) {
+    //Inicio la lectura del movimiento
+    if (SQL::filasDevueltas($consulta_movimiento)) {
 
-        if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
-            $archivo->SetFillColor(255,255,255);
-        }else{
-            $archivo->SetFillColor(240,240,240);
-        }
+        while ($datos_movimiento = SQL::filaEnObjeto($consulta_movimiento)) {
 
-        $financiacion       = "-";
-        $plazo              = SQL::obtenerValor("plazos_pago_proveedores","nombre","codigo ='".$datos_ordenes->codigo_numero_dias_pago."'");
-        $mostrar_descuento1 = number_format($datos_ordenes->descuento_global1, 2,'.' ,',');
-        $mostrar_descuento1 = $mostrar_descuento1." %";
-        $descuento_global1  = $datos_ordenes->descuento_global1;
-
-        $pago           = $textos["FORMA_PAGO_PDF"]." : ".$plazo;
-        $financiacion   = "-";    
-
-        // Obtener porcentaje vigente de la tasa de compra del articulo
-        $consulta_impuesto  = SQL::seleccionar(array("vigencia_tasas"), array("porcentaje"), "codigo_tasa='".$datos_movimiento->codigo_tasa_impuesto."'", "", "fecha DESC", 1);
-        if (SQL::filasDevueltas($consulta_impuesto)) {
-            $datos_impuesto = SQL::filaEnObjeto($consulta_impuesto);
-            $valor_impuesto = $datos_impuesto->porcentaje;
-        } else {
-            $valor_impuesto = 0;
-        }
-
-        $valor_unitario = $datos_movimiento->valor_unitario;
-        $valor_total    = $datos_movimiento->valor_total;
-        $cantidad       = $datos_movimiento->cantidad_total;
-        $observaciones  = $datos_movimiento->observaciones;
- 
-        $fecha_hoy          = date("Y-m-d");
-        $id_tasa_articulo   = SQL::obtenerValor("articulos","codigo_impuesto_compra","codigo = '".$datos_movimiento->codigo_articulo."'");
-        $fecha_tasa         = SQL::obtenerValor("vigencia_tasas","MAX(fecha)","codigo_tasa='".$id_tasa_articulo."' AND fecha<='".$fecha_hoy."'");
-        $valorbase_articulo = SQL::obtenerValor("vigencia_tasas","valor_base","codigo_tasa='".$id_tasa_articulo."'AND fecha LIKE '".$fecha_tasa."'");
-
-        if($valor_total > 0){
-            $total = $valor_total;
-        }
-
-        $subtotal_factura = $subtotal_factura + $total;
-        $sucursales[]     = $datos_movimiento->codigo_sucursal;
-
-        $sucursal_entrega = SQL::obtenerValor("sucursales","nombre","codigo = '".$datos_movimiento->codigo_sucursal."'");
-        $referencia       = SQL::obtenerValor("referencias_proveedor","referencia","codigo_articulo = '".$datos_movimiento->codigo_articulo."'");
-        $descripcion      = SQL::obtenerValor("articulos","descripcion","codigo = '".$datos_movimiento->codigo_articulo."'");
-
-        $archivo->SetFont('Arial','',6);
-
-        $id_unidad     = $datos_movimiento->codigo_unidad_medida;
-        $nombre_unidad = SQL::obtenerValor("unidades","nombre","codigo='".$id_unidad."'");
-        $cantidad      = number_format($datos_movimiento->cantidad_total)." ".$nombre_unidad;
-/////////////////////////////////////////////////////////////////////////////////////////////////
-        $archivo->Ln(4);
-        $archivo->Cell(8,4,$i,1,0,'C',true);
-        $archivo->Cell(20,4,$referencia,1,0,'C',true);
-        $archivo->Cell(97,4,$descripcion,1,0,'L',true);
-        $archivo->Cell(20,4,$nombre_unidad,1,0,'L',true);
-        $archivo->Cell(6,4,$cantidad,1,0,'C',true);
-        $archivo->Cell(18,4,"$ ".number_format($valor_unitario),1,0,'C',true);
-        $archivo->Cell(18,4,"$ ".number_format($valor_total),1,0,'C',true);
-        $archivo->Cell(83,4,$observaciones,1,0,'C',true);
-/////////////////////////////////////////////////////////////////////////////////////////////////
-        $imprime_cabecera = $archivo->breakCell(8);
-
-        if($imprime_cabecera){
-            $archivo->Ln(4);
-            $archivo->SetFont('Arial','B',8);
-            $archivo->Cell(60,4,"",0);
-            $archivo->Cell(60,4,"",0);
-            $archivo->Cell(130,4,$textos["ORDEN_COMPRA"].$consecutivo,0,1,'R');
-
-            $archivo->SetFont('Arial','B',8);
-            $archivo->Ln(4);
-            $archivo->Cell(30,4,$textos["SUCURSAL"]." :",0,0,'L');
-            $archivo->SetFont('Arial','',8);
-            $archivo->Cell(90,4,"".$almacen."",0);
-            $archivo->Cell(40,4,"",0);
-
-            $archivo->SetFont('Arial','B',6);
-            $archivo->SetFillColor(225,225,225);
-
-            $archivo->Ln(6);
-            $archivo->Cell(15,4,$textos["ARTICULO"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["REFERENCIA"],1,0,'C',true);
-            $archivo->Cell(20,4,$textos["SUCURSAL_RECIBE"],1,0,'C',true);
-            $archivo->Cell(18,4,$textos["CANTIDAD"],1,0,'C',true);
-            $archivo->Cell(17,4,$textos["REQUERIDO"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["VALOR_BASE"],1,0,'C',true);
-            $archivo->Cell(15,4,$textos["DESCUENTO_1_PDF"],1,0,'C',true);
-            $archivo->Cell(15,4,$textos["DESCUENTO_2_PDF"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["CON_DESCUENTO"],1,0,'C',true);
-            $archivo->Cell(20,4,$textos["PORCENTAJE_IVA"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["FORMA_PAGO_PDF"],1,0,'C',true);
-            $archivo->Cell(15,4,$textos["FINANCIACION_PDF"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["TOTAL_ITEM"],1,0,'C',true);
-        }
-
-        $i++;
-    }
-
-    if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
-        $archivo->SetFillColor(255,255,255);
-    }else{
-        $archivo->SetFillColor(240,240,240);
-    }
-    $archivo->Ln(4);
-    $archivo->SetFont('Arial','B',6);
-    $archivo->Cell(235,4,$textos["SUBTOTAL"].": ",0,0,'R');
-    $archivo->SetFont('Arial','',6);
-    $archivo->Cell(25,4,"$ ".number_format($subtotal_factura),1,0,'R',true);
-
-    /*if ($forma_liquida_tasa_credito=='1' && $descuento_financiacion>0){
-        if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
-            $archivo->SetFillColor(255,255,255);
-        }else{
-            $archivo->SetFillColor(240,240,240);
-        }
-        $archivo->Ln(4);
-        $archivo->SetFont('Arial','B',6);
-        $archivo->Cell(235,4,$textos["FINANCIACION"].": ",0,0,'R');
-        $archivo->SetFont('Arial','',6);
-        $archivo->Cell(25,4,"$ ".number_format($descuento_financiacion),1,0,'R',true);
-    }*/
-
-    $total_todos_descuentos = 0;
-    /*if ($forma_liquida_global=='3'){
-
-        $total_todos_descuentos = (($subtotal_factura + $descuento_financiacion) * $descuento_global_1) / 100;
-        $total_todos_descuentos = ($total_todos_descuentos + (($subtotal_factura - $total_todos_descuentos) * $descuento_global_2) / 100);
-        if ($total_todos_descuentos > 0){
             if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
                 $archivo->SetFillColor(255,255,255);
             }else{
                 $archivo->SetFillColor(240,240,240);
             }
-            $archivo->Ln(4);
-            $archivo->SetFont('Arial','B',6);
-            $archivo->Cell(235,4,$textos["TOTAL_DESCUENTOS"].": ",0,0,'R');
-            $archivo->SetFont('Arial','',6);
-            $archivo->Cell(25,4,"$ ".number_format($total_todos_descuentos),1,0,'R',true);
-        }
 
-        $subtotal_pdf = $subtotal_factura + $descuento_financiacion - $total_todos_descuentos;
+            // Obtener porcentaje vigente de la tasa de compra del articulo
+            $consulta_impuesto  = SQL::seleccionar(array("vigencia_tasas"), array("porcentaje"), "codigo_tasa='".$datos_movimiento->codigo_tasa_impuesto."'", "", "fecha DESC", 1);
 
-        if ($subtotal_pdf > 0){
-            if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
-                $archivo->SetFillColor(255,255,255);
-            }else{
-                $archivo->SetFillColor(240,240,240);
+            if (SQL::filasDevueltas($consulta_impuesto)) {
+                $datos_impuesto = SQL::filaEnObjeto($consulta_impuesto);
+                $valor_impuesto = $datos_impuesto->porcentaje;
+            } else {
+                $valor_impuesto = 0;
             }
-            $archivo->Ln(4);
-            $archivo->SetFont('Arial','B',6);
-            $archivo->Cell(235,4,$textos["SUBTOTAL"].": ",0,0,'R');
+
+            // Valores de cada articulo
+            $cantidad_total          = $datos_movimiento->cantidad_total;
+            $valor_unitario          = $datos_movimiento->valor_unitario;
+            $valor_total             = $datos_movimiento->valor_total;
+            $descuento_global1       = $datos_movimiento->descuento_global1;
+            $valor_descuento_global1 = $datos_movimiento->valor_descuento_global1;
+            $observaciones_articulo  = $datos_movimiento_orden->observaciones;
+
+            //Hago la sumatoria
+            $subtotal             = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_total)","codigo_orden_compra='$codigo_orden_compra'");
+            $porcentaje_descuento = SQL::obtenerValor("movimiento_ordenes_compra","descuento_global1","codigo_orden_compra='$codigo_orden_compra'");
+            $valor_descuento      = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_descuento_global1)","codigo_orden_compra='$codigo_orden_compra'");
+            $total_iva            = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_iva)","codigo_orden_compra='$codigo_orden_compra'");
+            $total_orden          = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden_compra'");
+            $total_items          = SQL::obtenerValor("movimiento_ordenes_compra","COUNT(codigo_articulo)","codigo_orden_compra='$codigo_orden_compra'");
+
+            //Doy formato valores
+        
+            /*$neto_pagar              = $datos_movimiento->neto_pagar;
+            $valor_iva               = $datos_movimiento->valor_iva;
+            $observaciones           = $datos_movimiento->observaciones;
+*/
+            $fecha_hoy          = date("Y-m-d");
+            $id_tasa_articulo   = SQL::obtenerValor("articulos","codigo_impuesto_compra","codigo = '".$datos_movimiento->codigo_articulo."'");
+            $fecha_tasa         = SQL::obtenerValor("vigencia_tasas","MAX(fecha)","codigo_tasa='".$id_tasa_articulo."' AND fecha<='".$fecha_hoy."'");
+            $valorbase_articulo = SQL::obtenerValor("vigencia_tasas","valor_base","codigo_tasa='".$id_tasa_articulo."'AND fecha LIKE '".$fecha_tasa."'");
+
+            $descripcion            = SQL::obtenerValor("articulos","descripcion","codigo = '".$datos_movimiento->codigo_articulo."'");
+            $observaciones_articulo = SQL::obtenerValor("movimiento_ordenes_compra","observaciones","codigo_articulo = '$datos_movimiento->codigo_articulo' AND codigo_orden_compra = '$codigo_orden_compra'");
             $archivo->SetFont('Arial','',6);
-            $archivo->Cell(25,4,"$ ".number_format($subtotal_pdf),1,0,'R',true);
+
+            $id_unidad     = $datos_movimiento->codigo_unidad_medida;
+            $nombre_unidad = SQL::obtenerValor("unidades","nombre","codigo='".$id_unidad."'");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+            $archivo->Ln(4);
+            $archivo->Cell(8,4,$item,1,0,'C',true);
+            $archivo->Cell(24,4,$datos_movimiento->referencia_articulo,1,0,'C',true);
+            $archivo->Cell(89,4,$descripcion,1,0,'L',true);
+            $archivo->Cell(61,4,$observaciones_articulo,1,0,'L',true);
+            $archivo->Cell(20,4,$nombre_unidad,1,0,'C',true);
+            $archivo->Cell(12,4,number_format($cantidad_total),1,0,'R',true);
+            $archivo->Cell(23,4,"$ ".number_format($valor_unitario,2),1,0,'R',true);
+            $archivo->Cell(23,4,"$ ".number_format($valor_total,2),1,0,'R',true);
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+            $imprime_cabecera = $archivo->breakCell(8);
+
+            if($imprime_cabecera){
+                $archivo->Ln(4);
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Cell(60,4,"",0);
+                $archivo->Cell(60,4,"",0);
+                $archivo->Cell(130,4,$textos["ORDEN_COMPRA"].$consecutivo,0,1,'R');
+
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Ln(4);
+                $archivo->Cell(30,4,$textos["SUCURSAL"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(90,4,"".$empresa." - ".$consorcio,"",0);
+                $archivo->Cell(40,4,"",0);
+
+                $archivo->SetFont('Arial','B',6);
+                $archivo->SetFillColor(225,225,225);
+
+                $archivo->Ln(6);
+                $archivo->Cell(8,4,$textos["ITEMS"],1,0,'C',true);
+                $archivo->Cell(20,4,$textos["REFERENCIA"],1,0,'C',true);
+                $archivo->Cell(89,4,$textos["DESCRIPCION"],1,0,'C',true);
+                $archivo->Cell(71,4,$textos["OBSERVACIONES_ARTICULO"],1,0,'C',true);
+                $archivo->Cell(20,4,$textos["UNIDAD_MEDIDA"],1,0,'C',true);
+                $archivo->Cell(12,4,$textos["CANTIDAD_PDF"],1,0,'C',true);
+                $archivo->Cell(20,4,$textos["VALOR_UNITARIO"],1,0,'D',true);
+                $archivo->Cell(20,4,$textos["VALOR_TOTAL"],1,0,'D',true);
+            }
+
+            $i++;
+            $item++;
         }
-    } else {
-        $subtotal_pdf = $subtotal_factura + $descuento_financiacion;
-    }*/
+    }
+    if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
+        $archivo->SetFillColor(255,255,255);
+    } else{
+        $archivo->SetFillColor(240,240,240);
+    }
+
+    $archivo->Ln(4);
+    $archivo->SetFont('Arial','B',6);
+    $archivo->Cell(237,4,$textos["SUBTOTAL"].": ",0,0,'R');
+    $archivo->SetFont('Arial','',6);
+    $archivo->Cell(23,4,"$ ".number_format($subtotal,2),1,0,'R',true);
+
+    if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
+        $archivo->SetFillColor(255,255,255);
+    } else{
+        $archivo->SetFillColor(240,240,240);
+    }
+
+    $archivo->Ln(4);
+    $archivo->SetFont('Arial','B',6);
+    $archivo->Cell(237,4,$textos["DESCUENTO_GLOBAL1_PDF"].": ",0,0,'R');
+    $archivo->SetFont('Arial','',6);
+    $archivo->Cell(23,4,"$ ".number_format($valor_descuento,2),1,0,'R',true);
+
+    if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
+        $archivo->SetFillColor(255,255,255);
+    } else{
+        $archivo->SetFillColor(240,240,240);
+    }
+
+    $archivo->Ln(4);
+    $archivo->SetFont('Arial','B',6);
+    $archivo->Cell(237,4,$textos["IVA"],0,0,'R');
+    $archivo->SetFont('Arial','',6);
+    $archivo->Cell(23,4,"$ ".number_format($total_iva,2),1,0,'R',true);
 
     if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
         $archivo->SetFillColor(255,255,255);
     }else{
         $archivo->SetFillColor(240,240,240);
     }
-    $archivo->Ln(4);
-    $archivo->SetFont('Arial','B',6);
-    $archivo->Cell(235,4,$textos["IVA"],0,0,'R');
-    $archivo->SetFont('Arial','',6);
-    $archivo->Cell(25,4,"$ ".number_format($total_iva),1,0,'R',true);
 
-    if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
-        $archivo->SetFillColor(255,255,255);
-    }else{
-        $archivo->SetFillColor(240,240,240);
-    }
     $archivo->Ln(4);
     $archivo->SetFont('Arial','B',6);
-    $archivo->Cell(235,4,$textos["TOTAL_ORDEN"],0,0,'R');
+    $archivo->Cell(237,4,$textos["TOTAL_ORDEN"],0,0,'R');
     $archivo->SetFont('Arial','',6);
-    $total  = round($subtotal_pdf)+round($total_iva);
-    $archivo->Cell(25,4,"$ ".number_format($total),1,0,'R',true);
+    $archivo->Cell(23,4,"$ ".number_format($total_orden,2),1,0,'R',true);
 
     $archivo->Ln(10);
     $archivo->Ln(4);
+    
     if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
         $archivo->SetFillColor(255,255,255);
     }else{
         $archivo->SetFillColor(240,240,240);
     }
+    
     $archivo->SetFont('Arial','B',8);
-    $archivo->Cell(260,4,$textos["NOTAS"],0,0,'L');
+    $archivo->Cell(260,4,$textos["OBSERVACIONES"],0,0,'L');
 
-    $sucursales = array_unique($sucursales);
-    foreach ($sucursales as $sucursal) {
-        $consulta      = SQL::seleccionar(array("sucursales"), array("*"), "codigo = '".$sucursal."'");
-        $datosSucursal = SQL::filaEnObjeto($consulta);
-        $municipio     = SQL::obtenerValor("municipios","nombre","codigo_iso = '".$datosSucursal->codigo_iso."' AND codigo_dane_departamento = '".$datosSucursal->codigo_dane_departamento."' AND codigo_dane_municipio = '".$datosSucursal->codigo_dane_municipio."'");
+    $codigo_iso               = SQL::obtenerValor("sucursales","codigo_iso","codigo = '".$datos_ordenes->codigo_sucursal."'");
+    $codigo_dane_departamento = SQL::obtenerValor("sucursales","codigo_dane_departamento","codigo = '".$datos_ordenes->codigo_sucursal."'");
+    $codigo_dane_municipio    = SQL::obtenerValor("sucursales","codigo_dane_municipio","codigo = '".$datos_ordenes->codigo_sucursal."'");
+    $municipio                = SQL::obtenerValor("municipios","nombre","codigo_iso = '".$codigo_iso."' AND codigo_dane_departamento = '".$codigo_dane_departamento."' AND codigo_dane_municipio = '".$codigo_dane_municipio."'");
 
-        $archivo->Ln(4);
-        $archivo->SetFont('Arial','',8);
-        $archivo->Cell(260,4,$datosSucursal->nombre.": ".$municipio.", ".$datosSucursal->direccion_residencia.", Tel. ".$datosSucursal->telefono_1.".",0,0,'L');
-    }
+    $archivo->Ln(4);
+    $archivo->SetFont('Arial','',8);
+    $archivo->Cell(260,4,"".$observaciones_orden."",0);
     $archivo->Output($nombreArchivo, "F");
 
-    $consecutivo = SQL::obtenerValor("archivos","MAX(consecutivo)","codigo_sucursal='".$datos->codigo_sucursal."'");
+    $consecutivo = SQL::obtenerValor("archivos","MAX(consecutivo)","codigo_sucursal='".$datos_ordenes->codigo_sucursal."'");
     if ($consecutivo){
         $consecutivo++;
     } else {
@@ -497,10 +462,11 @@
     }
 
     $datos_archivo = array(
-        "codigo_sucursal" => $datos->codigo_sucursal,
+        "codigo_sucursal" => $datos_ordenes->codigo_sucursal,
         "consecutivo"     => $consecutivo,
         "nombre"          => $nombre
     );
     SQL::insertar("archivos", $datos_archivo);
-    $id_archivo = $datos->codigo_sucursal."|".$consecutivo;
+    $id_archivo = $datos_ordenes->codigo_sucursal."|".$consecutivo;
+
 ?>

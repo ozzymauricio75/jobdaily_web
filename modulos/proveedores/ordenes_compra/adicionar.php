@@ -469,7 +469,7 @@ if (isset($url_completar)) {
         "codigo_orden_compra"      => $codigo_orden_compra,   
         "consecutivo"              => $consecutivo,
         "codigo_articulo"          => $codigo_articulo,
-        "referencia_articulo"      => 1,
+        "referencia_articulo"      => $referencia,
         "codigo_sucursal_destino"  => $id_sucursal_orden, 
         "estado"                   => 1,
         "codigo_unidad_medida"     => $unidad_compra,
