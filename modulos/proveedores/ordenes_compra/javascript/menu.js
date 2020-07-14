@@ -5,6 +5,7 @@
     /*** Adicionar combinaciones de teclas para el manejo de botones***/
     $(document).bind('keydown', 'Ctrl+a', function(evt) {$('#ADICOCPR').click(); return false;});
     $(document).bind('keydown', 'Ctrl+c', function(evt) {$('#CONSOCPR').click(); return false;});
+    $(document).bind('keydown', 'Ctrl+g', function(evt) {$('#botonAgregarArticulo').click(); return false;});
     //$(document).bind('keydown', 'Ctrl+m', function(evt) {$('#MODICARA').click(); return false;});
     //$(document).bind('keydown', 'Ctrl+e', function(evt) {$('#ELIMCARA').click(); return false;});
 
@@ -254,13 +255,12 @@
         var cantidad_total_articulo = $('#cantidad_total_articulo').val();
         var costo_unitario          = $('#costo_unitario').val();
         var subtotal                = 0;
-        costo_unitario              = costo_unitario;
-        costo_unitario              = parseFloat(costo_unitario.replace(',', ""));
-        
-        subtotal = costo_unitario * cantidad_total_articulo;
-        subtotal = ponerMiles(subtotal);
-        $('#subtotal').val(subtotal);
+        costo_unitario              = costo_unitario.replace(/,/g, "");
 
+        subtotal = costo_unitario * cantidad_total_articulo;
+        subtotal = subtotal.toFixed(2);
+        //subtotal = ponerMiles(subtotal);
+        $('#subtotal').val(subtotal);
     }
 
     function cargarDatosArticulo(){
@@ -528,7 +528,7 @@
             }
             alert(mensaje_pantalla);
         } 
-        $("#selector7").val('');
+        $('#selector7').val('').focus();
         $("#descripcion").val('');
         $("#id_unidad_compra").text('');
         $("#id_unidad_compra").val('');

@@ -297,6 +297,18 @@ $registros["componentes"] = array(
         "requiere_item"   => "1",
         "tabla_principal" => "ordenes_compra",
         "tipo_enlace"     => "1"
+    ),
+    array(
+        "id"              => "ANULORCO",
+        "padre"           => "GESTOCPR",
+        "id_modulo"       => "PROVEEDORES",
+        "visible"         => "0",
+        "orden"           => "0011",
+        "carpeta"         => "ordenes_compra",
+        "archivo"         => "anular",
+        "requiere_item"   => "1",
+        "tabla_principal" => "ordenes_compra",
+        "tipo_enlace"     => "1"
     )
 );
 $vistas = array(

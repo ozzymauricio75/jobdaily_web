@@ -146,7 +146,7 @@
     $archivo = new PDF("L","mm","Letter");
     $archivo->textoCabecera  = $textos["FECHA"].": ".date("Y-m-d");
     $archivo->textoTitulo    = $textos["DOCUOCPR"];
-    $archivo->textoPiePagina = "";
+    $archivo->textoPiePagina = $textos["PIE_PAGINA_EMPRESA"];
 
     $archivo->AddPage();
     $archivo->SetFont('Arial','B',8);
@@ -321,12 +321,6 @@
             $total_orden          = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden_compra'");
             $total_items          = SQL::obtenerValor("movimiento_ordenes_compra","COUNT(codigo_articulo)","codigo_orden_compra='$codigo_orden_compra'");
 
-            //Doy formato valores
-        
-            /*$neto_pagar              = $datos_movimiento->neto_pagar;
-            $valor_iva               = $datos_movimiento->valor_iva;
-            $observaciones           = $datos_movimiento->observaciones;
-*/
             $fecha_hoy          = date("Y-m-d");
             $id_tasa_articulo   = SQL::obtenerValor("articulos","codigo_impuesto_compra","codigo = '".$datos_movimiento->codigo_articulo."'");
             $fecha_tasa         = SQL::obtenerValor("vigencia_tasas","MAX(fecha)","codigo_tasa='".$id_tasa_articulo."' AND fecha<='".$fecha_hoy."'");
@@ -357,29 +351,120 @@
                 $archivo->SetFont('Arial','B',8);
                 $archivo->Cell(60,4,"",0);
                 $archivo->Cell(60,4,"",0);
-                $archivo->Cell(130,4,$textos["ORDEN_COMPRA"].$consecutivo,0,1,'R');
+                $archivo->Cell(130,4,$textos["ORDEN_COMPRA_PDF"].$consecutivo,0,1,'R');
 
                 $archivo->SetFont('Arial','B',8);
-                $archivo->Ln(4);
-                $archivo->Cell(30,4,$textos["SUCURSAL"]." :",0,0,'L');
+                $archivo->Ln(0);
+                $archivo->Cell(35,4,$textos["PROVEEDOR"]." :",0,0,'L');
                 $archivo->SetFont('Arial','',8);
-                $archivo->Cell(90,4,"".$empresa." - ".$consorcio,"",0);
-                $archivo->Cell(40,4,"",0);
+                $archivo->Cell(70,4,"".$nombre_proveedor,0,0,'L');
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Cell(35,4,$textos["FECHA_ENTREGA"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$fechaEntrega,0,0,'L');
+                $archivo->Cell(40,4,"",0,1,'R');
 
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Ln(0);
+                $archivo->Cell(35,4,$textos["NIT"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$nit."-".$digitoV,0,0,'L');
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Cell(35,4,$textos["FACTURAR_A"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$empresa." - ".$consorcio,0,0,'L');
+                $archivo->Cell(40,4,"",0,1,'R');
+
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Ln(0);
+                $archivo->Cell(35,4,$textos["DIRECCION"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$direccion_proveedor,0,0,'L');
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Cell(35,4,$textos["NIT"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$nit_empresa."-".$digitoV_Empresa,0,0,'L');
+                $archivo->Cell(40,4,"",0,1,'R');
+
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Ln(0);
+                $archivo->Cell(35,4,$textos["CIUDAD"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$ciudad_proveedor,0,0,'L');
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Cell(35,4,$textos["FORMA_PAGO_PDF"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$forma_pago,0,0,'L');
+                $archivo->Cell(40,4,"",0,1,'R');
+
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Ln(0);
+                $archivo->Cell(35,4,$textos["VENDEDOR"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$nombre_vendedor."",0);
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Cell(35,4,$textos["COMPRADOR"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$comprador,0,0,'L');
+                $archivo->Cell(40,4,"",0,1,'R');
+
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Ln(0);
+                $archivo->Cell(35,4,$textos["TELEFONO"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$telefono_vendedor,0,0,'L');
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Cell(35,4,$textos["SOLICITANTE"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$solicitante,0,0,'L');
+                $archivo->Cell(40,4,"",0,1,'R');
+
+                if ($descuento_global_1 != 0) {
+                    $descuento_global_1 = number_format($descuento_global_1,2);
+                    
+                } 
+
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Ln(0);
+                $archivo->Cell(35,4,$textos["PROYECTO"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$prefijo_codigo_proyecto." - ".$nombre_proyecto."",0);
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Cell(35,4,$textos["DESCUENTO_GLOBAL1_PDF"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(70,4,"".$descuento_global_1."%",0,0,'L');
+                $archivo->Cell(40,4,"",0,1,'R');
+
+                $archivo->SetFont('Arial','B',8);
+                $archivo->Ln(0);
+                $archivo->Cell(35,4,$textos["OBSERVACIONES"]." :",0,0,'L');
+                $archivo->SetFont('Arial','',8);
+                $archivo->Cell(150,4,"".$observaciones_orden."",0);
+                $archivo->SetFont('Arial','B',8);
+
+                if ($descuento_financiero != 0) {
+                    $archivo->SetFont('Arial','B',8);
+                    $archivo->Cell(35,4,$textos["FINANCIERO"]." :",0,0,'L');
+                    $archivo->SetFont('Arial','',8);
+                    $archivo->Cell(70,4,"".$descuento_financiero." %",0);
+                    $archivo->Cell(40,4,"",0,1,'R');
+                } else {
+                    $archivo->Cell(40,4,"",0,1,'R');
+                }
+                //////////////////////////////FIN ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
                 $archivo->SetFont('Arial','B',6);
                 $archivo->SetFillColor(225,225,225);
 
                 $archivo->Ln(6);
                 $archivo->Cell(8,4,$textos["ITEMS"],1,0,'C',true);
-                $archivo->Cell(20,4,$textos["REFERENCIA"],1,0,'C',true);
+                $archivo->Cell(24,4,$textos["REFERENCIA"],1,0,'C',true);
                 $archivo->Cell(89,4,$textos["DESCRIPCION"],1,0,'C',true);
-                $archivo->Cell(71,4,$textos["OBSERVACIONES_ARTICULO"],1,0,'C',true);
+                $archivo->Cell(61,4,$textos["OBSERVACIONES_ARTICULO"],1,0,'C',true);
                 $archivo->Cell(20,4,$textos["UNIDAD_MEDIDA"],1,0,'C',true);
                 $archivo->Cell(12,4,$textos["CANTIDAD_PDF"],1,0,'C',true);
-                $archivo->Cell(20,4,$textos["VALOR_UNITARIO"],1,0,'D',true);
-                $archivo->Cell(20,4,$textos["VALOR_TOTAL"],1,0,'D',true);
+                $archivo->Cell(23,4,$textos["VALOR_UNITARIO"],1,0,'C',true);
+                $archivo->Cell(23,4,$textos["VALOR_TOTAL"],1,0,'C',true);
             }
-
             $i++;
             $item++;
         }
@@ -432,8 +517,8 @@
     $archivo->SetFont('Arial','',6);
     $archivo->Cell(23,4,"$ ".number_format($total_orden,2),1,0,'R',true);
 
-    $archivo->Ln(10);
-    $archivo->Ln(4);
+    $archivo->Ln(8);
+    $archivo->Ln(2);
     
     if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
         $archivo->SetFillColor(255,255,255);
@@ -449,9 +534,27 @@
     $codigo_dane_municipio    = SQL::obtenerValor("sucursales","codigo_dane_municipio","codigo = '".$datos_ordenes->codigo_sucursal."'");
     $municipio                = SQL::obtenerValor("municipios","nombre","codigo_iso = '".$codigo_iso."' AND codigo_dane_departamento = '".$codigo_dane_departamento."' AND codigo_dane_municipio = '".$codigo_dane_municipio."'");
 
-    $archivo->Ln(4);
+    $archivo->Ln(6);
     $archivo->SetFont('Arial','',8);
     $archivo->Cell(260,4,"".$observaciones_orden."",0);
+
+    //Texto de pie de pagina
+    $archivo->SetFont('Arial','B',8);
+    $archivo->Ln(8);
+    $archivo->SetFont('Arial','',8);
+    $archivo->Cell(260,4,$textos["PIE_PAGINA"],0,0,'L');
+    $archivo->Ln(4);
+    $archivo->Cell(260,4,$textos["PIE_PAGINA2"],0,0,'L');
+    $archivo->Ln(4);
+    $archivo->Cell(260,4,$textos["PIE_PAGINA3"],0,0,'L');
+
+    $archivo->Ln(8);
+    $archivo->SetFont('Arial','B',8);
+    $archivo->Cell(260,4,$textos["IMPORTANTE"],0,0,'L');
+    $archivo->Ln(6);
+    $archivo->SetFont('Arial','',8);
+    $archivo->Cell(260,4,$textos["IMPORTANTE2"],0,0,'L');
+
     $archivo->Output($nombreArchivo, "F");
 
     $consecutivo = SQL::obtenerValor("archivos","MAX(consecutivo)","codigo_sucursal='".$datos_ordenes->codigo_sucursal."'");

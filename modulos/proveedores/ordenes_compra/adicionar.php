@@ -182,18 +182,18 @@ if (isset($url_completar)) {
     if (!empty($url_referencia_carga)) {
         $nit_proveedor   = $url_nit_proveedor;   
         $respuesta       = array();
- 
-        $codigo_articulo = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$url_referencia_carga' AND principal = '1' AND documento_identidad_proveedor = '$nit_proveedor'");
+
+        $codigo_articulo = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$url_referencia_carga' AND principal = '1' LIMIT 1");
         $activo                        = SQL::obtenerValor("articulos", "activo", "codigo = '$codigo_articulo'");
         $estructura_grupos             = SQL::obtenerValor("articulos", "codigo_estructura_grupo", "codigo = '$codigo_articulo'");
         $nodo_estructura_grupos        = SQL::obtenerValor("estructura_grupos", "codigo_padre", "codigo = '$estructura_grupos'");
         $grupo_estructura_grupos       = SQL::obtenerValor("estructura_grupos", "codigo_grupo", "codigo = '$estructura_grupos'");
 
-        $codigo_barras                 = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "referencia = '$url_referencia_carga' AND principal = '1' AND documento_identidad_proveedor = '$nit_proveedor'");
-        $documento_identidad_proveedor = SQL::obtenerValor("referencias_proveedor", "documento_identidad_proveedor", "referencia = '$url_referencia_carga' AND principal = '1'");     
+        $codigo_barras                 = SQL::obtenerValor("referencias_proveedor", "codigo_barras", "referencia = '$url_referencia_carga' AND principal = '1'");
+        //$documento_identidad_proveedor = SQL::obtenerValor("referencias_proveedor", "documento_identidad_proveedor", "referencia = '$url_referencia_carga' AND principal = '1'");     
 
-        $documento_identidad_proveedor = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
-        
+        //$documento_identidad_proveedor = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
+ 
         // Realiza consulta para mandar datos a java script y cargar si codigo existe - faltan algunos no esenciales
         $consulta                = SQL::seleccionar(array("articulos"), array("*"), "codigo = '$codigo_articulo' AND activo = '1'", "", "codigo", 1);
         $codigo_impuesto_compra  = SQL::obtenerValor("articulos", "codigo_impuesto_compra", "codigo = '$codigo_articulo'");
@@ -450,7 +450,7 @@ if (isset($url_completar)) {
     $subtotal                = quitarMiles($subtotal);
     $valor_descuento_global1 = ($subtotal * $descuento)/100;
     
-    $codigo_articulo         = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$referencia'");
+    $codigo_articulo         = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$referencia' LIMIT 0,1");
     $tasa_iva                = SQL::obtenerValor("articulos", "codigo_impuesto_compra", "codigo = '$codigo_articulo'");
     $porcentaje_impuesto     = SQL::obtenerValor("vigencia_tasas", "porcentaje", "codigo_tasa = '$tasa_iva'");
     
@@ -978,16 +978,17 @@ if (!empty($url_generar)){
                             array(
                                 HTML::listaSeleccionSimple("+id_unidad_compra",$textos["UNIDAD_MEDIDA"], "", "",array("title"=>$textos["AYUDA_UNIDAD"],"class"=>"oculto")),
 
-                                HTML::campoTextoCorto("+costo_unitario",$textos["COSTO_UNITARIO"], 10, 15, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_COSTO_UNITARIO"], "onKeyPress"=>"return numero(event)","onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)")),
+                                HTML::campoTextoCorto("+costo_unitario",$textos["COSTO_UNITARIO"], 15, 15, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_COSTO_UNITARIO"], "onKeyPress"=>"return numero(event)","onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)")),
                                 HTML::campoOculto("cantidad_total_control",0),
 
                                 HTML::campoTextoCorto("+cantidad_total_articulo",$textos["CANTIDAD_TOTAL"], 5, 15, "", array("title"=>$textos["AYUDA_CANTIDAD_TOTAL"], "onKeyPress"=>"return campoEntero(event)", "onKeyUp"=>"activaDetalle()", "onKeyUp"=>"calcularSubtotal()", "class"=>"movimiento")),
 
-                                HTML::campoTextoCorto("+subtotal",$textos["SUBTOTAL"], 10, 15, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_SUBTOTAL"], "onKeyPress"=>"return campoDecimal(event)"))
+                                HTML::campoTextoCorto("+subtotal",$textos["SUBTOTAL"], 15, 15, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_SUBTOTAL"]))
                             ),
                             array(    
                                 HTML::campoTextoCorto("observaciones_articulo",$textos["OBSERVACIONES_ARTICULO"], 50, 78, "",array("title"=>$textos["AYUDA_OBSERVACIONES"], "class"=>"movimiento oculto")),
-
+                            ),
+                            array(    
                                 HTML::boton("botonAgregarArticulo", $textos["AGREGAR_ARTICULO"], "agregarItemArticulo(), mostrarTotales(), totalPedido()", "adicionar",array("class"=>"agregar_articulo"),"etiqueta"),
 
                                 HTML::boton("botonModificarArticuloTabla", $textos["MODIFICAR_ARTICULO"], "modificarArticuloTabla()", "modificar",array("class"=>" modificar_articulo_tabla oculto"),"etiqueta")
@@ -1044,11 +1045,7 @@ if (!empty($url_generar)){
                         )
                 ),*/
                 HTML::generarTabla(
-                    array("id","ELIMINAR","REFERENCIA","DESCRIPCION","CANTIDAD","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","DESCUENTO","IVA","OBSERVACIONES"),
-                    "",
-                    array("I","I","I","D","C","D","D","D","D","I"),
-                    "listaArticulos",
-                    false
+                    array("id","ELIMINAR","REFERENCIA","DESCRIPCION","CANTIDAD","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","DESCUENTO","IVA","OBSERVACIONES"),"",array("I","I","I","D","C","D","D","D","D","I"),"listaArticulos",false
                 )
             ),
             array(
