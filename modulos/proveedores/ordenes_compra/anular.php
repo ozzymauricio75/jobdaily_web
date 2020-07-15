@@ -40,7 +40,7 @@ if (!empty($url_generar)) {
 
         $vistaConsulta  = "ordenes_compra";
         $columnas       = SQL::obtenerColumnas($vistaConsulta);
-        $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, "id = '$url_id'");
+        $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
         $datos          = SQL::filaEnObjeto($consulta);
 
         /*** Verificar si la orden de compra puede ser anulada ***/
@@ -51,7 +51,7 @@ if (!empty($url_generar)) {
         $consulta_entradas  = SQL::seleccionar($tablas, $columnas, $condicion);
         $entradas           = SQL::filasDevueltas($consulta_entradas);
 
-        if (($estado==0) && ($estado==1)) {
+        if (($estado==0) || ($estado==1)) {
 
             $codigo_orden_compra           = $url_id;
             $numero_consecutivo            = $datos->numero_consecutivo;
@@ -64,135 +64,146 @@ if (!empty($url_generar)) {
             $observaciones                 = $datos->observaciones;
             $descuento_global1             = $datos->descuento_global1;
 
-            $documento_comprador   = SQL::obtenerValor("compradores", "documento_identidad", "codigo = '".$codigo_comprador."'");
-            $primer_nombre         = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$documento_comprador."'");
-           //aca voy
-            $almacen            = SQL::obtenerValor("sucursales","nombre","id = '$idSucursal'");
-            $tercero            = SQL::obtenerValor("proveedores","id_tercero","id = '$idProveedor'");
-            $proveedor          = SQL::obtenerValor("seleccion_proveedores","nombre","id = '$idProveedor'");
+            $documento_comprador     = SQL::obtenerValor("compradores", "documento_identidad", "codigo = '".$codigo_comprador."'");
+            $primer_nombre           = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$documento_comprador."'");
+            $segundo_nombre          = SQL::obtenerValor("terceros", "segundo_nombre", "documento_identidad = '".$documento_comprador."'");
+            $primer_apellido         = SQL::obtenerValor("terceros", "primer_apellido", "documento_identidad = '".$documento_comprador."'");
+            $segundo_apellido        = SQL::obtenerValor("terceros", "segundo_apellido", "documento_identidad = '".$documento_comprador."'");
+            $nombre_comprador        = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
+            $nombre_numero_dias_pago = SQL::obtenerValor("plazos_pago_proveedores", "nombre", "codigo = '".$datos->codigo_numero_dias_pago."'");
 
-            $vector_proveedor   = explode("|", $proveedor);
-            $nombre_proveedor   = $vector_proveedor[0];
-            $tipo_compra        = SQL::obtenerValor("tipos_compra","nombre","id = '$tipoCompra'");
+            $nombre_moneda           = SQL::obtenerValor("tipos_moneda", "nombre", "codigo = '".$datos->codigo_moneda."'");
+            $tipo_documento          = SQL::obtenerValor("tipos_documentos", "descripcion", "codigo = '".$datos->codigo_tipo_documento."'");
+            $codigo_empresa          = SQL::obtenerValor("sucursales", "codigo_empresa", "codigo = '".$codigo_sucursal."'");
+            $empresa                 = SQL::obtenerValor("empresas", "razon_social", "codigo = '".$codigo_empresa."'");
+            $nit_empresa             = SQL::obtenerValor("empresas", "documento_identidad_tercero", "codigo = '".$codigo_empresa."'");   
+            $nombre_proyecto         = SQL::obtenerValor("proyectos", "nombre", "codigo = '".$datos->prefijo_codigo_proyecto."'");
+            $razon_social_proveedor  = SQL::obtenerValor("terceros", "razon_social", "documento_identidad = '".$documento_identidad_proveedor."'");
+            $direccion_proveedor     = SQL::obtenerValor("terceros", "direccion_principal", "documento_identidad = '".$documento_identidad_proveedor."'");
+          
+            $nombre_sucursal         = SQL::obtenerValor("sucursales","nombre","codigo = '$codigo_sucursal'");
+            $proveedor               = SQL::obtenerValor("seleccion_proveedores","nombre","id = '$documento_identidad_proveedor'");
 
-            $consulta1          = SQL::seleccionar(array("articulos_ordenes_compra"), array("*"), "id_orden = '$url_id'");
-            $total_credito      = 0;
-            $total_contado      = 0;
-            $items              = array();
-            if (SQL::filasDevueltas($consulta1)) {
-                while ($datos_item = SQL::filaEnObjeto($consulta1)) {
-                    $id             = $datos_item->id;
-                    $sucursal       = SQL::obtenerValor("sucursales","nombre","id = '$datos_item->id_sucursal'");
-                    $articulo       = SQL::obtenerValor("articulos","codigo_interno","id='".$datos_item->id_articulo."'");
-                    $plazo          = SQL::obtenerValor("plazos_pago_proveedores","nombre","id ='".$datos_item->id_plazo_pago."'");
-                    $forma_pago     = $datos_item->forma_pago;
-                    $valor_compra   = $datos_item->valor_compra;
-                    $precio_publico = $datos_item->precio_publico;
-                    $unidades       = $datos_item->unidades;
-                    $descuento1     = $datos_item->descuento1;
-                    $descuento2     = $datos_item->descuento2;
+            $vector_proveedor        = explode("|", $proveedor);
+            $nombre_proveedor        = $vector_proveedor[0];
 
-                    $valor_compra   = $valor_compra-(($valor_compra*$descuento1)/100);
-                    $valor_compra   = $valor_compra-(($valor_compra*$descuento2)/100);
+            //Inicia lectura del movimiento
+            $consulta_movimiento   = SQL::seleccionar(array("movimiento_ordenes_compra"), array("*"), "codigo_orden_compra = '$url_id' AND codigo_sucursal_destino='$codigo_sucursal' ORDER BY consecutivo ASC");
+            $total_credito         = 0;
+            $total_contado         = 0;
+            $items                 = array();
 
-                    /*** Obtener porcentaje vigente de la tasa de compra del articulo ***/
-                    $consulta2  = SQL::seleccionar(array("vigencia_tasas"), array("porcentaje"), "id_tasa='".$datos_item->id_tasa."'", "", "fecha DESC", 1);
-                    if (SQL::filasDevueltas($consulta2)) {
-                        $datos      = SQL::filaEnObjeto($consulta2);
-                        $porcentaje = $datos->porcentaje;
-                    } else {
-                        $porcentaje = 0;
-                    }
-                    $valor_mas_iva = $valor_compra+(($valor_compra*$porcentaje)/100);
+            if (SQL::filasDevueltas($consulta_movimiento)) {
+                while ($datos_item           = SQL::filaEnObjeto($consulta_movimiento)) {
+                    $id                      = $datos_item->codigo;
+                    $codigo_articulo         = $datos_item->codigo_articulo;
+                    $nombre_sucursal_destino = SQL::obtenerValor("sucursales","nombre","codigo = '$datos_item->codigo_sucursal'");
+                    $descripcion             = SQL::obtenerValor("articulos","descripcion","codigo='".$datos_item->codigo_articulo."'");
+                    $referencia_articulo     = $datos_item->referencia_articulo;
+                    $nombre_unidad_medida    = SQL::obtenerValor("unidades","nombre","codigo='".$datos_item->codigo_unidad_medida."'");
+                    $fecha_entrega           = $datos_item->fecha_entrega;
+                    $primer_nombre           = SQL::obtenerValor("vendedores_proveedor", "primer_nombre", "codigo = '".$datos_item->codigo_vendedor."'");
+                    $segundo_nombre          = SQL::obtenerValor("vendedores_proveedor", "segundo_nombre", "codigo = '".$datos_item->codigo_vendedor."'");
+                    $primer_apellido         = SQL::obtenerValor("vendedores_proveedor", "primer_apellido", "codigo = '".$datos_item->codigo_vendedor."'");
+                    $segundo_apellido        = SQL::obtenerValor("vendedores_proveedor", "segundo_apellido", "codigo = '".$datos_item->codigo_vendedor."'");
+                    $nombre_vendedor         = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
+                    $correo_vendedor         = SQL::obtenerValor("vendedores_proveedor", "correo", "codigo = '".$datos_item->codigo_vendedor."'");
+                    $celular_vendedor        = SQL::obtenerValor("vendedores_proveedor", "celular", "codigo = '".$datos_item->codigo_vendedor."'");
 
-                    if ($forma_pago == 1) {
-                        $pago   = $textos["CONTADO"];
-                        $total_contado = $total_contado+($valor_compra*$unidades);
-                    }
-                    if ($forma_pago == 2) {
-                        $pago   = $textos["CREDITO"];
-                        $total_credito = $total_credito+($valor_compra*$unidades);
-                    }
+                    $observaciones           = $datos_item->observaciones;
+                    $valor_unitario          = $datos_item->valor_unitario;
+                    $cantidad_total          = $datos_item->cantidad_total;
+                    $valor_total             = $datos_item->valor_total;
+                    $descuento_global1       = $datos_item->descuento_global1;
+                    $valor_descuento_global1 = $datos_item->valor_descuento_global1;
+                    $neto_pagar              = $datos_item->neto_pagar;
+                    $valor_iva               = $datos_item->valor_iva;
 
-                    if ($datos_item->obsequio) {
-                        $pago   = $textos["OBSEQUIO"];
-                        $plazo  = "-";
-                    }
-
-                    $margen = (($precio_publico-$valor_mas_iva)*100)/$precio_publico;
-                    $margen = number_format($margen,2);
-
-                    $items[] = array(   $id,
-                                        $articulo,
-                                        $pago,
-                                        $plazo,
-                                        number_format($valor_compra),
-                                        number_format($valor_mas_iva),
-                                        number_format($precio_publico),
-                                        $margen,
-                                        $unidades,
-                                        number_format($valor_mas_iva*$unidades),
-                                        $sucursal
-                                    );
+                    $items[] = array(   
+                                    $id,
+                                    $referencia_articulo,
+                                    $descripcion,
+                                    number_format($cantidad_total,0),
+                                    $nombre_unidad_medida,
+                                    number_format($valor_unitario,2),
+                                    number_format($valor_total,2),
+                                    number_format($valor_descuento_global1,2),
+                                    number_format($valor_iva,2),
+                                    $observaciones,
+                                );
                 }
             }
-
-            /*** Calcular total con descuentos globales aplicados ***/
-            $total = $total_contado+$total_credito;
-            $total_descuento = $total-(($total*$global1)/100);
-            $total_descuento = $total_descuento-(($total_descuento*$global2)/100);
-
-            $tipo_iva = array(
-                "1" => $textos["DISTRIBUIDO"],
-                "2" => $textos["PRIMERA_CUOTA"],
-                "3" => $textos["SEPARADO"]
-            );
+            $total_orden = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden_compra'");
+            $total_orden = $total_orden;
+            $total_items = SQL::obtenerValor("movimiento_ordenes_compra","COUNT(codigo_articulo)","codigo_orden_compra='$codigo_orden_compra'");
 
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
                 array(
-                    HTML::mostrarDato("idorden", $textos["IDORDEN"], $consecutivo)
+                    HTML::agrupador(
+                        array(
+                            array(
+                                HTML::mostrarDato("prefijo_orden", $textos["PREFIJO_ORDEN_COMPRA"], $datos->prefijo_codigo_proyecto),
+                                HTML::mostrarDato("numero_orden", $textos["DOCUMENTO"], $numero_consecutivo),
+                                HTML::mostrarDato("fecha_documento", $textos["FECHA_DOCUMENTO"], $datos->fecha_documento),
+                                HTML::mostrarDato("fecha_entrega", $textos["FECHA_ENTREGA"], $fecha_entrega)
+                            ),
+                            array(
+                                HTML::mostrarDato("numero_dias_pago", $textos["NUMERO_DIAS_PAGO"], $nombre_numero_dias_pago),
+                                HTML::mostrarDato("moneda", $textos["MONEDA"], $nombre_moneda),
+                                HTML::mostrarDato("tipo_documento", $textos["TIPO_DOCUMENTO"], $tipo_documento),
+                                HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
+                            ),
+                            array(
+                                HTML::mostrarDato("empresa", $textos["EMPRESA"], $empresa),
+                                HTML::mostrarDato("nit", $textos["NIT"], $nit_empresa)
+                            ),
+                            array(
+                                HTML::mostrarDato("consorcio", $textos["CONSORCIO"], $nombre_sucursal),
+                                HTML::mostrarDato("comprador", $textos["COMPRADOR"], $nombre_comprador)
+                            ),
+                            array(
+                                HTML::mostrarDato("proyecto", $textos["PROYECTO"], $nombre_proyecto),
+                                HTML::mostrarDato("solicitante", $textos["SOLICITANTE"], $datos->solicitante)
+                            ),
+                            array(
+                                HTML::mostrarDato("descuento_global1", $textos["DESCUENTO_GLOBAL1"], $descuento_global1)
+                            ),
+                        ),
+                        $textos["DATOS_FACTURACION"]
+                    )
                 ),
                 array(
-                    HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
-                ),
-                array(
-                    HTML::mostrarDato("usuario", $textos["USUARIO"], $usuario),
-                    HTML::mostrarDato("sucursal", $textos["SUCURSAL"], $almacen)
-                    .HTML::campoOculto("id_sucursal", $idSucursal)
-                ),
-                array(
-                    HTML::mostrarDato("proveedor", $textos["PROVEEDOR"], $proveedor)
-                ),
-                array(
-                    HTML::mostrarDato("tipo_compra", $textos["TIPO_COMPRA"], $tipo_compra),
-                    HTML::mostrarDato("forma_iva", $textos["TIPO_IVA"], $tipo_iva[$forma_iva])
-                ),
-                array(
-                    HTML::mostrarDato("descuento_global1", $textos["DESCUENTO_GLOBAL1"], $global1),
-                    HTML::mostrarDato("descuento_global2", $textos["DESCUENTO_GLOBAL2"], $global2)
-                ),
-                array(
-                    HTML::mostrarDato("descuento_financiero", $textos["DESCUENTO_FINANCIERO"], $financiero)
-                ),
-                array(
-                    HTML::mostrarDato("observaciones", $textos["OBSERVACIONES"], $observaciones)
-                )
+                    HTML::agrupador(
+                        array(
+                            array(
+                                HTML::mostrarDato("nit_proveedor", $textos["NIT_PROVEEDOR"], $documento_identidad_proveedor),
+                                HTML::mostrarDato("razon_social_proveedor", $textos["RAZON_SOCIAL_PROVEEDOR"], $razon_social_proveedor),
+                                HTML::mostrarDato("nombre_vendedor", $textos["VENDEDOR"], $nombre_vendedor) 
+                            ),
+                            array(
+                                HTML::mostrarDato("direccion", $textos["DIRECCION"], $documento_identidad_proveedor),
+                                HTML::mostrarDato("email", $textos["CORREO_ELECTRONICO"], $correo_vendedor),
+                                HTML::mostrarDato("celular", $textos["CELULAR"], $celular_vendedor),
+                            )
+                        ),
+                        $textos["DATOS_PROVEEDOR"]
+                    )
+                ),    
             );
 
             $formularios["PESTANA_ARTICULOS"] = array(
                 array(
-                    HTML::mostrarDato("total_contado", $textos["TOTAL_CONTADO"], number_format($total_contado)),
-                    HTML::mostrarDato("total_credito", $textos["TOTAL_CREDITO"], number_format($total_credito)),
-                    HTML::mostrarDato("total", $textos["TOTAL"], number_format($total)),
-                    HTML::mostrarDato("total_descuento", $textos["TOTAL_DESCUENTO"], number_format($total_descuento))
+                    HTML::mostrarDato("total_unidades", $textos["TOTAL_UNIDADES"], number_format($total_items)),
+                    HTML::mostrarDato("subtotal", $textos["SUBTOTAL"], number_format($valor_total)),
+                    HTML::mostrarDato("descuento_global1", $textos["DESCUENTO_GLOBAL1"], number_format($valor_descuento_global1)),
+                    HTML::mostrarDato("total_iva", $textos["VALOR_IVA"], number_format($valor_iva)),
+                    HTML::mostrarDato("total_pedido", $textos["TOTAL_PEDIDO"], number_format($total_orden))
                 ),
                 array(
-                    HTML::generarTabla( array("id","ARTICULO","FORMA_PAGO","PLAZO","PRECIO_COMPRA","PRECIO_MAS_IVA","PRECIO_PUBLICO","MARGEN","CANTIDAD","TOTAL","SUCURSAL"),
-                                        $items,
-                                        array("I","C","C","D","D","D","D","C","D","C"),
-                                        "listaItems",
-                                        false)
+                    HTML::generarTabla(
+                        array("id","REFERENCIA","DESCRIPCION","CANTIDAD","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","DESCUENTO","IVA","OBSERVACIONES"), $items, array("I","I","D","D","C","D","D","D","I"), "listaItems", false
+                        )
                 )
             );
 
@@ -204,12 +215,9 @@ if (!empty($url_generar)) {
             $contenido = HTML::generarPestanas($formularios, $botones);
 
         } else {
-            if ($entradas) {
-                $error = $textos["ERROR_ORDEN_ENTRADAS"];
-            } else {
+            if ($estado) {
                 $error = $textos["ERROR_ORDEN_ESTADO"];
-            }
-
+            } 
             $titulo    = "";
             $contenido = "";
         }
@@ -226,9 +234,9 @@ if (!empty($url_generar)) {
 } elseif (!empty($forma_procesar)) {
     /*** Asumir por defecto que no hubo error ***/
     $datos = array(
-        "estado" => "4"
+        "estado" => "3"
     );
-    $consulta = SQL::modificar("ordenes_compras", $datos, "id = '$forma_id'");
+    $consulta = SQL::modificar("ordenes_compras", $datos, "codigo = '$forma_id'");
 
     if ($consulta) {
         $error   = false;
@@ -237,8 +245,6 @@ if (!empty($url_generar)) {
         Sesion::registrar("indice_imprimir", $forma_id);
         include("clases/imprimir.php");
         $dato_respuesta = HTML::enlazarPagina($textos["IMPRIMIR_PDF"], $pance["url"]."/".$nombreArchivo, array("class" => "pdf", "onClick" => "$('a.pdf').media({width:500, height:400});"));
-
-
     } else {
         $error   = true;
         $mensaje = $textos["ERROR_ANULAR_ITEM"];
