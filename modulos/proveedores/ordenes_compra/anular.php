@@ -114,7 +114,7 @@ if (!empty($url_generar)) {
                     $valor_unitario          = $datos_item->valor_unitario;
                     $cantidad_total          = $datos_item->cantidad_total;
                     $valor_total             = $datos_item->valor_total;
-                    $descuento_global1       = $datos_item->descuento_global1;
+                    $descuento_global1       = number_format($datos_item->descuento_global1,2)."%";
                     $valor_descuento_global1 = $datos_item->valor_descuento_global1;
                     $neto_pagar              = $datos_item->neto_pagar;
                     $valor_iva               = $datos_item->valor_iva;
@@ -132,9 +132,27 @@ if (!empty($url_generar)) {
                                     $observaciones,
                                 );
                 }
-            }
+            }  
+            
+            $subtotal    = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_total)","codigo_orden_compra='$codigo_orden_compra'");
+            $subtotal    = number_format($subtotal, 0);
+            $subtotal    = str_replace(',', '.', $subtotal);
+
+            $unidades    = SQL::obtenerValor("movimiento_ordenes_compra","SUM(cantidad_total)","codigo_orden_compra='$codigo_orden_compra'");
+            $unidades    = number_format($unidades, 0);
+            
+            $descuento   = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_descuento_global1)","codigo_orden_compra='$codigo_orden_compra'");
+            $descuento   = number_format($descuento, 0);
+            $descuento   = str_replace(',', '.', $descuento);
+
+            $total_iva   = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_iva)","codigo_orden_compra='$codigo_orden_compra'");
+            $total_iva   = number_format($total_iva, 0);
+            $total_iva   = str_replace(',', '.', $total_iva);
+
             $total_orden = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden_compra'");
-            $total_orden = $total_orden;
+            $total_orden = number_format($total_orden, 0);
+            $total_orden = str_replace(',', '.', $total_orden);
+
             $total_items = SQL::obtenerValor("movimiento_ordenes_compra","COUNT(codigo_articulo)","codigo_orden_compra='$codigo_orden_compra'");
 
             /*** Definición de pestañas general ***/
@@ -169,6 +187,9 @@ if (!empty($url_generar)) {
                             array(
                                 HTML::mostrarDato("descuento_global1", $textos["DESCUENTO_GLOBAL1"], $descuento_global1)
                             ),
+                            array(
+                                HTML::campoOculto("numero_orden",$numero_consecutivo)
+                            ),
                         ),
                         $textos["DATOS_FACTURACION"]
                     )
@@ -194,15 +215,19 @@ if (!empty($url_generar)) {
 
             $formularios["PESTANA_ARTICULOS"] = array(
                 array(
-                    HTML::mostrarDato("total_unidades", $textos["TOTAL_UNIDADES"], number_format($total_items)),
-                    HTML::mostrarDato("subtotal", $textos["SUBTOTAL"], number_format($valor_total)),
-                    HTML::mostrarDato("descuento_global1", $textos["DESCUENTO_GLOBAL1"], number_format($valor_descuento_global1)),
-                    HTML::mostrarDato("total_iva", $textos["VALOR_IVA"], number_format($valor_iva)),
-                    HTML::mostrarDato("total_pedido", $textos["TOTAL_PEDIDO"], number_format($total_orden))
+                    HTML::mostrarDato("total_unidades", $textos["TOTAL_UNIDADES"], $unidades),
+                    HTML::mostrarDato("subtotal", $textos["SUBTOTAL"], "$".($subtotal)),
+                    HTML::mostrarDato("descuento_global1", $textos["DESCUENTO"], "$".($descuento)),
+                    HTML::mostrarDato("total_iva", $textos["VALOR_IVA"], "$".($total_iva)),
+                    HTML::mostrarDato("total_pedido", $textos["TOTAL_PEDIDO"], "$".($total_orden))
                 ),
                 array(
                     HTML::generarTabla(
-                        array("id","REFERENCIA","DESCRIPCION","CANTIDAD","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","DESCUENTO","IVA","OBSERVACIONES"), $items, array("I","I","D","D","C","D","D","D","I"), "listaItems", false
+                        array("id","REFERENCIA","DESCRIPCION","CANTIDAD","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","DESCUENTO","IVA","OBSERVACIONES"), 
+                            $items, 
+                            array("I","I","D","D","C","D","D","D","I"), 
+                            "listaItems", 
+                            false
                         )
                 )
             );
@@ -234,17 +259,15 @@ if (!empty($url_generar)) {
 } elseif (!empty($forma_procesar)) {
     /*** Asumir por defecto que no hubo error ***/
     $datos = array(
-        "estado" => "3"
+        "estado" => "2"
     );
-    $consulta = SQL::modificar("ordenes_compras", $datos, "codigo = '$forma_id'");
+    
+    $consulta_encabezado = SQL::modificar("ordenes_compra", $datos, "codigo = '$forma_id'");
+    $consulta_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, "codigo_orden_compra = '$forma_id'");
 
-    if ($consulta) {
-        $error   = false;
-        $mensaje = $textos["ITEM_ANULADO"];
-
-        Sesion::registrar("indice_imprimir", $forma_id);
-        include("clases/imprimir.php");
-        $dato_respuesta = HTML::enlazarPagina($textos["IMPRIMIR_PDF"], $pance["url"]."/".$nombreArchivo, array("class" => "pdf", "onClick" => "$('a.pdf').media({width:500, height:400});"));
+    if (($consulta_encabezado) && ($consulta_movimiento)) {
+        $error    = false;
+        $mensaje  = $textos["ITEM_ANULADO"];
     } else {
         $error   = true;
         $mensaje = $textos["ERROR_ANULAR_ITEM"];

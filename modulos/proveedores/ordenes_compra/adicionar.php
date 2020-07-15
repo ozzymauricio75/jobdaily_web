@@ -1189,6 +1189,7 @@ if (!empty($url_generar)){
 
     $codigo_orden_compra  = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$forma_campo_numero_orden_total' AND documento_identidad_proveedor='$forma_campo_nit_proveedor'");
     $condicion_encabezado = "numero_consecutivo='$forma_campo_numero_orden_total'";
+    $condicion_movimiento = "codigo_orden_compra='$codigo_orden_compra'";
 
     $observaciones_orden  = $forma_observaciones_orden;
     
@@ -1198,10 +1199,11 @@ if (!empty($url_generar)){
         "fecha_registra" => date("Y-m-d H:i:s"),
     );
 
-    $modificar_movimiento = SQL::modificar("ordenes_compra", $datos, $condicion_encabezado);
+    $modificar_encabezado = SQL::modificar("ordenes_compra", $datos, $condicion_encabezado);
+    $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, $condicion_movimiento);
 
     /*** Error de insercón ***/
-    if (!$modificar_movimiento) {
+    if ((!$modificar_movimiento)||(!$modificar_encabezado)) {
         $error     = true;
         $mensaje   = $textos["ERROR_GRABAR_MOVIMIENTO_ORDEN"];
     }else{
