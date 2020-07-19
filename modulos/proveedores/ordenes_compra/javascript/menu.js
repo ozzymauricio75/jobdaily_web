@@ -264,6 +264,22 @@
         $('#subtotal').val(subtotal);
     }
 
+    function calcularSubtotalCruce() {
+        var destino                 = $('#URLformulario').val();
+        var cantidad_total_articulo = $('#cantidad_total_articulo').val();
+        var valor_unitario          = $('#valor_unitario').val();
+        var porcentaje_iva          = $('#porcentaje_iva').val();
+        var subtotal                = 0;
+        costo_unitario              = costo_unitario.replace(/,/g, "");
+
+        subtotal   = valor_unitario * cantidad_total_articulo;
+        valor_iva  = (subtotal * porcentaje_iva)/100;
+        subtotal   = subtotal.toFixed(2);
+
+        $('#subtotal').val(subtotal);
+        $('#total_iva_pedido').val(valor_iva);
+    }
+
     function cargarDatosArticulo(){
         var destino           = $('#URLFormulario').val();
         var referencia        = $('#selector7').val();
@@ -723,6 +739,36 @@
                 $("#total_pedido").val(total_pedido);        
             }
         });
+    }
+
+    function activaCamposTotales(){
+        $("#listaItems").parent().hide();
+        $("#total_unidades").parent().show(); 
+        $("#subtotal_pedido").parent().show();
+        $("#descuento_pedido").parent().show(); 
+        $("#total_iva_pedido").parent().show();
+        $("#total_pedido").parent().show();   
+    }
+
+    function activaCamposArticulos(){
+        $("#listaItems").parent().show();
+        $("#total_unidades").parent().hide(); 
+        $("#subtotal_pedido").parent().hide();
+        $("#descuento_pedido").parent().hide(); 
+        $("#total_iva_pedido").parent().hide();
+        $("#total_pedido").parent().hide(); 
+    }
+
+    function insertaCantidades(){
+        var destino             = $('#URLFormulario').val();
+        var unidades_cruce      = $('#unidades_cruce').val();
+        var unidades_orden      = $('#unidades_orden').val();
+        var unidades_digitadas  = $('#unidades_pendientes').val();
+        $unidades_pendientes    = $unidades_orden - $unidades_cruce
+document.write("mierdsa");
+        if(unidades_digitadas>$unidades_pendientes){
+            alert('El valor ingresado es mayor que la cantidad pendiente');
+        }
     }
 
     function activaCampos(tipo,descuento){

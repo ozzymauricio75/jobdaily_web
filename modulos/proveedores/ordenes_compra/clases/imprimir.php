@@ -534,13 +534,13 @@
     $codigo_dane_municipio    = SQL::obtenerValor("sucursales","codigo_dane_municipio","codigo = '".$datos_ordenes->codigo_sucursal."'");
     $municipio                = SQL::obtenerValor("municipios","nombre","codigo_iso = '".$codigo_iso."' AND codigo_dane_departamento = '".$codigo_dane_departamento."' AND codigo_dane_municipio = '".$codigo_dane_municipio."'");
 
-    $archivo->Ln(6);
+    $archivo->Ln(4);
     $archivo->SetFont('Arial','',8);
     $archivo->Cell(260,4,"".$observaciones_orden."",0);
 
     //Texto de pie de pagina
     $archivo->SetFont('Arial','B',8);
-    $archivo->Ln(8);
+    $archivo->Ln(6);
     $archivo->SetFont('Arial','',8);
     $archivo->Cell(260,4,$textos["PIE_PAGINA"],0,0,'L');
     $archivo->Ln(4);
@@ -548,10 +548,10 @@
     $archivo->Ln(4);
     $archivo->Cell(260,4,$textos["PIE_PAGINA3"],0,0,'L');
 
-    $archivo->Ln(8);
+    $archivo->Ln(6);
     $archivo->SetFont('Arial','B',8);
     $archivo->Cell(260,4,$textos["IMPORTANTE"],0,0,'L');
-    $archivo->Ln(6);
+    $archivo->Ln(4);
     $archivo->SetFont('Arial','',8);
     $archivo->Cell(260,4,$textos["IMPORTANTE2"],0,0,'L');
 

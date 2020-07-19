@@ -170,7 +170,8 @@ if (!empty($url_generar)) {
                         array(
                             HTML::mostrarDato("numero_dias_pago", $textos["NUMERO_DIAS_PAGO"], $nombre_numero_dias_pago),
                             HTML::mostrarDato("moneda", $textos["MONEDA"], $nombre_moneda),
-                            HTML::mostrarDato("tipo_documento", $textos["TIPO_DOCUMENTO"], $tipo_documento)
+                            HTML::mostrarDato("tipo_documento", $textos["TIPO_DOCUMENTO"], $tipo_documento),
+                            HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
                         ),
                         array(
                             HTML::mostrarDato("empresa", $textos["EMPRESA"], $empresa),

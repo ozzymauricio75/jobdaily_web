@@ -39,6 +39,7 @@ if (isset($url_completar)){
 $botones  = HTML::boton("ADICOCPR",$textos["ADICIONAR"],"ejecutarComando(this,910,660);","adicionar");
 $botones .= HTML::boton("CONSOCPR",$textos["CONSULTAR"],"ejecutarComando(this,900,660);","consultar");
 $botones .= HTML::boton("ANULORCO",$textos["ANULAR"],"ejecutarComando(this,900,660);","anular");
+$botones .= HTML::boton("CRUCORCO",$textos["CRUZAR"],"ejecutarComando(this,960,660);","cruzar");
 
 // Obtener el numero de la pagina actual
 if (empty($url_pagina)) {

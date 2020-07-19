@@ -23,11 +23,9 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
-
-$borrarSiempre = array();
+$borrarSiempre["ordenes_compra"] = false;
 
 //  Definicion de tablas
-$borrarSiempre["ordenes_compra"] = false;
 $tablas["ordenes_compra"] = array(
     "codigo"                           => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Llave primaria'",
     "codigo_sucursal"                  => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla de sucursales'",
@@ -39,7 +37,7 @@ $tablas["ordenes_compra"] = array(
     "codigo_comprador"                 => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla compradores'",
     "cantidad_registros"               => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Cantidad de Items para la orden de compra'",
     "cantidad_cumplidos"               => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Cantidad de Items cumplidos en la orden de compra'",
-    "estado"                           => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Grabada parcial 2->Anulada 3->Cumplida'",
+    "estado"                           => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Entrega parcial 2->Anulada 3->Cumplida'",
     "codigo_usuario_orden_compra"      => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genero la orden de compra'",
     "codigo_usuario_anula"             => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que anula el registro'",
     "estado_aprobada"                  => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->No ha sido aprobada 1->Ya fue aprobada'",
@@ -64,11 +62,11 @@ $borrarSiempre["movimiento_ordenes_compra"] = false;
 $tablas["movimiento_ordenes_compra"] = array(
     "codigo"                  => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Llave primaria'",
     "codigo_orden_compra"     => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla ordenes_compra'",
-    "consecutivo"             => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Numero consecutivo del movimiento'",
+    "consecutivo"             => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Numero consecutivo del movimiento'",
     "codigo_articulo"         => "INT(9) UNSIGNED ZEROFILL COMMENT 'Codigo del articulo asignado por la empresa'",
-    "referencia_articulo"     => "VARCHAR(15) NOT NULL COMMENT 'Referencia del producto a realizar orden de compra'",
+    "referencia_articulo"     => "VARCHAR(30) NOT NULL COMMENT 'Referencia del producto a realizar orden de compra'",
     "codigo_sucursal_destino" => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código interno de la sucursal'",
-    "estado"                  => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Grabada parcial 2->Anulada 3->Cumplida'",
+    "estado"                  => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Entrega parcial 2->Anulada 3->Cumplida'",
     "observaciones"           => "VARCHAR(78) COMMENT 'Observacion para el articulo en el pedido'",
     "codigo_unidad_medida"    => "INT(6) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla unidades'",
     "cantidad_total"          => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Cantidad total solicitada en unidades del articulo'",
@@ -89,13 +87,47 @@ $tablas["movimiento_ordenes_compra"] = array(
     "fecha_registra"          => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
     "fecha_modificacion"      => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificación'",
     "codigo_usuario_registra" => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genera el registro'",
-    "codigo_vendedor"         => "INT(6) UNSIGNED NOT NULL COMMENT 'Codigo interno del vendedor tabla vendedores'",
+    "codigo_vendedor"         => "INT(6) UNSIGNED NOT NULL COMMENT 'Codigo interno del vendedor tabla vendedores'"
 );
 
+$borrarSiempre["cruce_orden_compra"] = false;
+//Definicion de tablas
+$tablas["cruce_orden_compra"] = array(
+    //////// LLAVE CONSECUTIVO ////////
+    "codigo"                         => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Numero consecutivo del registro'",
+    "codigo_prefijo_proyecto"        => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Numero prefijo de la orden, que es el codigo del proyecto'",
+    "codigo_orden_compra"            => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla ordenes_compra'",
+    "codigo_sucursal"                => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código de la sucursal a la cual pertenece'",
+    "fecha_registro"                 => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
+    "codigo_usuario_registra"        => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del Usuario que ingresa la mercancia'",
+    "documento_identidad_proveedor"  => "VARCHAR(12) NOT NULL COMMENT 'Llave principal de la tabla de proveedores'"
+); 
+
+$borrarSiempre["movimiento_cruce_orden_compra"] = false;
+//Definicion de tablas
+$tablas["movimiento_cruce_orden_compra"] = array(
+    ///////////////////////////////////
+    "codigo"                         => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Numero consecutivo del registro'",
+    "codigo_cruce_orden_compra"      => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla cruce ordenes_compra'",
+    "codigo_articulo"                => "INT(9) UNSIGNED ZEROFILL COMMENT 'Codigo del articulo asignado por la empresa'",
+    "cantidad_total"                 => "DECIMAL(15,4) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Cantidad total solicitada en unidades del articulo'",
+    "valor_total"                    => "DECIMAL(15,4) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Valor total de la orden de compra del articulo'",
+    "valor_descuento_global1"        => "DECIMAL(15,4) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Valor descuento global1 del articulo'",
+    "neto_pagar"                     => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Neto a pagar del pedido del articulo'",
+    "valor_iva"                      => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Valor del iva del pedido del articulo'",
+    "codigo_tipo_documento"          => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo del tipo de documento'",
+    "numero_factura_proveedor"       => "VARCHAR(15) NOT NULL COMMENT 'Número de la factura enviada por el proveedor'",
+    "numero_remision_proveedor"      => "VARCHAR(15) NOT NULL COMMENT 'Número de la remisión con la cual el proveedor envió la mercancía '",
+    "observaciones"                  => "VARCHAR(255) NULL COMMENT 'Información suministrada por el usuario sobre el documento a cruzar'",
+    "fecha_registro"                 => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
+    "codigo_usuario_registra"        => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del Usuario que ingresa la mercancia'"
+);
 
 // Definicion de llaves primarias
-$llavesPrimarias["ordenes_compra"]            = "codigo";
-$llavesPrimarias["movimiento_ordenes_compra"] = "codigo";
+$llavesPrimarias["ordenes_compra"]                = "codigo";
+$llavesPrimarias["movimiento_ordenes_compra"]     = "codigo";
+$llavesPrimarias["cruce_orden_compra"]            = "codigo";
+$llavesPrimarias["movimiento_cruce_orden_compra"] = "codigo";
 
 //Definición llaves unicas
 $llavesUnicas["ordenes_compra"] = array(
@@ -103,6 +135,10 @@ $llavesUnicas["ordenes_compra"] = array(
 );
 $llavesUnicas["movimiento_ordenes_compra"] = array(
     "codigo_orden_compra,consecutivo"
+);
+$llavesUnicas["cruce_orden_compra"] = array(
+    "codigo_prefijo_proyecto,codigo_orden_compra,codigo_sucursal,
+                fecha_registro,documento_identidad_proveedor"
 );
 
 //  Definicion de llaves Foraneas
@@ -260,6 +296,92 @@ $llavesForaneas["movimiento_ordenes_compra"] = array(
         "codigo"
     )
 );
+//Definicion de llaves foraneas
+$llavesForaneas["cruce_orden_compra"] = array(
+    array(
+        // Nombre de la llave
+        "cruce_orden_compra_prefijo_codigo_proyecto",
+        // Nombre del campo clave de la tabla local
+        "codigo_prefijo_proyecto",
+        // Nombre de la tabla relacionada
+        "proyectos",
+        // Nombre del campo clave en la tabla relacionada
+        "codigo"
+    ),
+   array(
+        // Nombre de la llave
+        "cruce_orden_compra_codigo_sucursal",
+        // Nombre del campo clave de la tabla local
+        "codigo_sucursal",
+        // Nombre de la tabla relacionada
+        "sucursales",
+        // Nombre del campo clave en la tabla relacionada
+        "codigo"
+    ),
+    array(
+        // Nombre de la llave
+        "cruce_orden_compra_proveedor",
+        // Nombre del campo clave de la tabla local
+        "documento_identidad_proveedor",
+        // Nombre de la tabla relacionada
+        "proveedores",
+        // Nombre del campo clave en la tabla relacionada
+        "documento_identidad"
+    ),
+    array(
+        // Nombre de la llave
+        "cruce_orden_compra_usuario_registra",
+        // Nombre del campo clave de la tabla local
+        "codigo_usuario_registra",
+        // Nombre de la tabla relacionada
+        "usuarios",
+        // Nombre del campo clave en la tabla relacionada
+        "codigo"
+    )
+); 
+//Definicion de llaves foraneas
+$llavesForaneas["movimiento_cruce_orden_compra"] = array(   
+    array(
+        // Nombre de la llave
+        "movimiento_cruce_orden_compra_codigo_orden_compra",
+        // Nombre del campo clave de la tabla local
+        "codigo_cruce_orden_compra",
+        // Nombre de la tabla relacionada
+        "cruce_orden_compra",
+        // Nombre del campo clave en la tabla relacionada
+        "codigo"
+    ),
+    array(
+        // Nombre de la llave
+        "movimiento_cruce_orden_compra_codigo_tipo_documento",
+        // Nombre del campo clave de la tabla local
+        "codigo_tipo_documento",
+        // Nombre de la tabla relacionada
+        "tipos_documentos",
+        // Nombre del campo clave en la tabla relacionada
+        "codigo"
+    ),
+    array(
+        // Nombre de la llave
+        "movimiento_cruce_orden_compra_codigo_articulo",
+        // Nombre del campo clave de la tabla local
+        "codigo_articulo",
+        // Nombre de la tabla relacionada
+        "articulos",
+        // Nombre del campo clave en la tabla relacionada
+        "codigo"
+    ),
+    array(
+        // Nombre de la llave
+        "movimiento_cruce_orden_compra_usuario_registra",
+        // Nombre del campo clave de la tabla local
+        "codigo_usuario_registra",
+        // Nombre de la tabla relacionada
+        "usuarios",
+        // Nombre del campo clave en la tabla relacionada
+        "codigo"
+    )
+);
 //  Insercion de datos iniciales
 $registros["componentes"] = array(
     array(
@@ -306,6 +428,18 @@ $registros["componentes"] = array(
         "orden"           => "0011",
         "carpeta"         => "ordenes_compra",
         "archivo"         => "anular",
+        "requiere_item"   => "1",
+        "tabla_principal" => "ordenes_compra",
+        "tipo_enlace"     => "1"
+    ),
+    array(
+        "id"              => "CRUCORCO",
+        "padre"           => "GESTOCPR",
+        "id_modulo"       => "PROVEEDORES",
+        "visible"         => "0",
+        "orden"           => "0012",
+        "carpeta"         => "ordenes_compra",
+        "archivo"         => "cruzar",
         "requiere_item"   => "1",
         "tabla_principal" => "ordenes_compra",
         "tipo_enlace"     => "1"

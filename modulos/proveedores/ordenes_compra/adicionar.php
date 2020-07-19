@@ -383,7 +383,7 @@ if (isset($url_completar)) {
                 "codigo_comprador"                  => $codigo_comprador,
                 "cantidad_registros"                => 0,
                 "cantidad_cumplidos"                => 0,
-                "estado"                            => 1,
+                "estado"                            => 0,
                 "codigo_usuario_orden_compra"       => $sesion_id_usuario_ingreso,
                 "codigo_usuario_anula"              => "",
                 "estado_aprobada"                   => 0,
@@ -796,7 +796,7 @@ if (!empty($url_generar)){
                             
                             HTML::listaSeleccionSimple("*id_moneda",$textos["MONEDA"], $monedas, 1, array("title",$textos["AYUDA_MONEDA"])),
 
-                            HTML::listaSeleccionSimple("*tipos_documento",$textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","descripcion='ORDEN DE COMPRA' OR descripcion='orden de compra'"), "", array("disabled" => "true"), array("title",$textos["AYUDA_MONEDA"]))
+                            HTML::listaSeleccionSimple("*tipos_documento",$textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","descripcion='ORDEN DE COMPRA' OR descripcion='orden de compra'"), "", array("disabled" => "true"), array("title",$textos["AYUDA_TIPO_DOCUMENTO"]))
                         ),
                         array(    
                             HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social",""), "", array("title" => $textos["AYUDA_EMPRESAS"], "class"=>"empresa", "onBlur" => "validarItem(this);","onChange" => "recargarListaEmpresas()", "onClick" => "recargarComprador(),cargaNit()")),
@@ -1193,14 +1193,19 @@ if (!empty($url_generar)){
 
     $observaciones_orden  = $forma_observaciones_orden;
     
-    $datos = array(
+    $datos_encabezado  = array(
         "observaciones"  => $observaciones_orden,
         "estado"         => '0', 
         "fecha_registra" => date("Y-m-d H:i:s"),
     );
 
-    $modificar_encabezado = SQL::modificar("ordenes_compra", $datos, $condicion_encabezado);
-    $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, $condicion_movimiento);
+    $datos_movimiento = array(
+        "estado"         => '0', 
+        "fecha_registra" => date("Y-m-d H:i:s"),
+    );
+
+    $modificar_encabezado = SQL::modificar("ordenes_compra", $datos_encabezado, $condicion_encabezado);
+    $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos_movimiento, $condicion_movimiento);
 
     /*** Error de insercón ***/
     if ((!$modificar_movimiento)||(!$modificar_encabezado)) {
