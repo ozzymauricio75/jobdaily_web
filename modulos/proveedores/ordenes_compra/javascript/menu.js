@@ -166,7 +166,7 @@
                 for(var i=0; i<vector_id.length; i++){ 
                     $('#vendedor_proveedor').append('<option value="'+vector_id[i]+'">' +vector_nombre[i]+ '</option>');
                 }
-                //grabarEncabezado();
+                grabarEncabezado();
             }
             $('#vendedor_proveedor').removeAttr('disabled');
         });

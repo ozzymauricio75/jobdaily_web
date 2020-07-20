@@ -188,7 +188,6 @@ if (!empty($url_generar)) {
 
     $llave                         = explode("-", $forma_selector3);
     $documento_identidad_proveedor = $llave[0];
-
     
     /*** Validar el ingreso de campos requeridos ***/
     if (empty($forma_celular) || (empty($forma_correo) || (empty($forma_primer_nombre) && 

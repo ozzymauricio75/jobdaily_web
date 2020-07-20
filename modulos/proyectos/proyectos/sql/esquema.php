@@ -221,7 +221,7 @@ $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_seleccion_proyectos AS
         SELECT 	job_proyectos.codigo AS id,
-                CONCAT(job_proyectos.nombre,'|', job_proyectos.codigo) AS nombre
+                CONCAT(job_proyectos.codigo,'-', job_proyectos.nombre) AS nombre
         FROM 	job_proyectos
         WHERE 	job_proyectos.codigo != 0 ORDER BY job_proyectos.nombre ASC;"
     )

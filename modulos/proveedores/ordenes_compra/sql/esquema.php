@@ -23,8 +23,8 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
-$borrarSiempre["ordenes_compra"] = false;
-
+//$borrarSiempre["ordenes_compra"] = false;
+$borrarSiempre = false;
 //  Definicion de tablas
 $tablas["ordenes_compra"] = array(
     "codigo"                           => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Llave primaria'",

@@ -24,9 +24,9 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
-$borrarSiempre = array();
-
-$borrarSiempre["vendedores_proveedor"] = false;
+//$borrarSiempre = array();
+$borrarSiempre = false;
+//$borrarSiempre["vendedores_proveedor"] = false;
 $tablas["vendedores_proveedor"] = array(
     "codigo"                     => "INT(6) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno'",
     "documento_proveedor"        => "VARCHAR(12) NOT NULL COMMENT 'Id de la tabla terceros, Llave principal'",

@@ -24,9 +24,9 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
-$borrarSiempre = array();
-
-$borrarSiempre["compradores"] = false;
+//$borrarSiempre = array();
+$borrarSiempre = false;
+//$borrarSiempre["compradores"] = false;
 $tablas["compradores"] = array(
     "codigo"               => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno'",
     "codigo_empresa"       => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla empresas, Llave principal'",
