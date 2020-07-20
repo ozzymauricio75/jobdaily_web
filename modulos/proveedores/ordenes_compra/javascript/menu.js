@@ -1,4 +1,4 @@
-    $(document).ready(function() {
+     $(document).ready(function() {
         ejecutarFuncionesGlobales();
     });
 
@@ -166,7 +166,7 @@
                 for(var i=0; i<vector_id.length; i++){ 
                     $('#vendedor_proveedor').append('<option value="'+vector_id[i]+'">' +vector_nombre[i]+ '</option>');
                 }
-                grabarEncabezado();
+                //grabarEncabezado();
             }
             $('#vendedor_proveedor').removeAttr('disabled');
         });
@@ -759,16 +759,77 @@
         $("#total_pedido").parent().hide(); 
     }
 
-    function insertaCantidades(){
+    function insertaCantidades(nombre_campo,codigo_articulo,numero_consecutivo){
+
         var destino             = $('#URLFormulario').val();
+        var codigo_orden_compra = $('#codigo_orden_compra').val();
         var unidades_cruce      = $('#unidades_cruce').val();
         var unidades_orden      = $('#unidades_orden').val();
-        var unidades_digitadas  = $('#unidades_pendientes').val();
-        $unidades_pendientes    = $unidades_orden - $unidades_cruce
-document.write("mierdsa");
-        if(unidades_digitadas>$unidades_pendientes){
-            alert('El valor ingresado es mayor que la cantidad pendiente');
-        }
+        var numero_filas        = $('#numero_filas').val();
+        var unidades_pendientes = $('#unidades_pendientes').val();
+        var cantidad_registros  = $('#cantidad_registros').val();
+        var numero_consecutivo  = numero_consecutivo;
+        var codigo_articulo     = codigo_articulo; 
+        var referencia_articulo = referencia_articulo; 
+        var indice              = numero_filas - (numero_filas - nombre_campo);
+        var unidades_digitadas  = $("input[name='cantidades["+indice+"]']").val();
+        unidades_digitadas      = unidades_digitadas.replace(".",""); 
+
+
+        $.getJSON(destino, {insertaCantidades: true, codigo_articulo: codigo_articulo, numero_consecutivo: numero_consecutivo,
+             codigo_orden_compra: codigo_orden_compra, unidades_digitadas: unidades_digitadas, indice: indice},
+            function (datos){
+            if(datos[0] == ""){
+                //unidades_digitadas = unidades_digitadas.replace(".","");
+                alert("Error, verifique las unidades digitadas son mayores a las pendientes.");
+                //nombre_campo       ="";
+                //codigo_articulo    ="";
+                //numero_consecutivo =""; 
+                //referencia_articulo =""; 
+
+                $("input[name='cantidades["+indice+"]']").focus();
+                $("input[name='cantidades["+indice+"]']").val('');
+
+                /*for (i=indice;i<=numero_filas;i++){
+                    $("input[name='cantidades["+indice+"]']").focus();
+                }*/
+            }else{
+                //alert('Valor aceptado.');
+                indice = datos[1];
+                //indice = numero_filas - (numero_filas+nombre_campo);
+                $("input[name='cantidades["+indice+"]']").focus();
+                //nombre_campo       ="";
+                //codigo_articulo    ="";
+                //numero_consecutivo =""; 
+                //referencia_articulo =""; 
+            }
+        });
+        //var unidades_pendientes = unidades_orden - unidades_cruce;
+
+        /*if(unidades_pendientes>0){
+            var unidades_digitadas  = $("input[name='cantidades["+indice+"]']").val(); 
+            unidades_digitadas      = unidades_digitadas.replace(".","");
+
+            if(unidades_digitadas>unidades_pendientes){
+                unidades_digitadas = unidades_digitadas.replace(".","");
+                alert('La cantidad digitada es mayor que las unidades pendientes.');
+                
+                $("input[name='cantidades["+indice+"]']").val('');
+
+                for (i=indice;i<=numero_filas;i++){
+                    $("input[name='cantidades["+indice+"]']").focus();
+                }
+            }/*else if(unidades_digitadas<=unidades_pendientes){                                              
+                indice++;
+                //$("input[name='cantidades["+indice+"]']").removeAttr('disabled').focus();
+            }
+        }*/
+    }
+
+    function enterToTab(myEvent) {
+       if (myEvent.keyCode == 13) {
+           myEvent.keyCode = 9;
+       }
     }
 
     function activaCampos(tipo,descuento){

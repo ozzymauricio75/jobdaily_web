@@ -54,7 +54,7 @@ $tablas["ordenes_compra"] = array(
     "observaciones"                    => "VARCHAR(234) COMMENT 'Observacion general para la orden de compra'",
     "imprimio"                         => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT 'La orden de compra ya se impirmio 0->No 1->Si'",
     "fecha_registra"                   => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
-    "fecha_modificacion"               => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificación'",
+    "fecha_modificacion"               => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificaciÃ³n'",
     "solicitante"                      => "VARCHAR(120) NOT NULL  COMMENT 'Nombre del solicitante de la orden de compra'"
 );
 
@@ -65,7 +65,7 @@ $tablas["movimiento_ordenes_compra"] = array(
     "consecutivo"             => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Numero consecutivo del movimiento'",
     "codigo_articulo"         => "INT(9) UNSIGNED ZEROFILL COMMENT 'Codigo del articulo asignado por la empresa'",
     "referencia_articulo"     => "VARCHAR(30) NOT NULL COMMENT 'Referencia del producto a realizar orden de compra'",
-    "codigo_sucursal_destino" => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código interno de la sucursal'",
+    "codigo_sucursal_destino" => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'CÃ³digo interno de la sucursal'",
     "estado"                  => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Entrega parcial 2->Anulada 3->Cumplida'",
     "observaciones"           => "VARCHAR(78) COMMENT 'Observacion para el articulo en el pedido'",
     "codigo_unidad_medida"    => "INT(6) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla unidades'",
@@ -85,7 +85,7 @@ $tablas["movimiento_ordenes_compra"] = array(
     "iva_incluido"            => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT 'El articulo llave iva incluido 0->No 1->Si'",
     "fecha_entrega"           => "DATE COMMENT 'Fecha de despacho para el articulo'",
     "fecha_registra"          => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
-    "fecha_modificacion"      => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificación'",
+    "fecha_modificacion"      => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificaciÃ³n'",
     "codigo_usuario_registra" => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genera el registro'",
     "codigo_vendedor"         => "INT(6) UNSIGNED NOT NULL COMMENT 'Codigo interno del vendedor tabla vendedores'"
 );
@@ -97,7 +97,7 @@ $tablas["cruce_orden_compra"] = array(
     "codigo"                         => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Numero consecutivo del registro'",
     "codigo_prefijo_proyecto"        => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Numero prefijo de la orden, que es el codigo del proyecto'",
     "codigo_orden_compra"            => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla ordenes_compra'",
-    "codigo_sucursal"                => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código de la sucursal a la cual pertenece'",
+    "codigo_sucursal"                => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'CÃ³digo de la sucursal a la cual pertenece'",
     "fecha_registro"                 => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
     "codigo_usuario_registra"        => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del Usuario que ingresa la mercancia'",
     "documento_identidad_proveedor"  => "VARCHAR(12) NOT NULL COMMENT 'Llave principal de la tabla de proveedores'"
@@ -116,9 +116,9 @@ $tablas["movimiento_cruce_orden_compra"] = array(
     "neto_pagar"                     => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Neto a pagar del pedido del articulo'",
     "valor_iva"                      => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Valor del iva del pedido del articulo'",
     "codigo_tipo_documento"          => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo del tipo de documento'",
-    "numero_factura_proveedor"       => "VARCHAR(15) NOT NULL COMMENT 'Número de la factura enviada por el proveedor'",
-    "numero_remision_proveedor"      => "VARCHAR(15) NOT NULL COMMENT 'Número de la remisión con la cual el proveedor envió la mercancía '",
-    "observaciones"                  => "VARCHAR(255) NULL COMMENT 'Información suministrada por el usuario sobre el documento a cruzar'",
+    "numero_factura_proveedor"       => "VARCHAR(15) NOT NULL COMMENT 'NÃºmero de la factura enviada por el proveedor'",
+    "numero_remision_proveedor"      => "VARCHAR(15) NOT NULL COMMENT 'NÃºmero de la remisiÃ³n con la cual el proveedor enviÃ³ la mercancÃ­a '",
+    "observaciones"                  => "VARCHAR(255) NULL COMMENT 'InformaciÃ³n suministrada por el usuario sobre el documento a cruzar'",
     "fecha_registro"                 => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
     "codigo_usuario_registra"        => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del Usuario que ingresa la mercancia'"
 );
@@ -129,7 +129,7 @@ $llavesPrimarias["movimiento_ordenes_compra"]     = "codigo";
 $llavesPrimarias["cruce_orden_compra"]            = "codigo";
 $llavesPrimarias["movimiento_cruce_orden_compra"] = "codigo";
 
-//Definición llaves unicas
+//DefiniciÃ³n llaves unicas
 $llavesUnicas["ordenes_compra"] = array(
     "codigo_sucursal,codigo_tipo_documento,fecha_documento,numero_consecutivo",
 );
@@ -496,7 +496,7 @@ $vistas = array(
             GROUP BY 
                 job_movimiento_ordenes_compra.codigo_orden_compra
             ORDER BY
-                job_ordenes_compra.numero_consecutivo DESC;"
+                job_ordenes_compra.numero_consecutivo, job_ordenes_compra.estado DESC;"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_ordenes_compra AS

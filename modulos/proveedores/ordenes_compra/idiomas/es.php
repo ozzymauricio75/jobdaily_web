@@ -268,6 +268,7 @@ $textos = array(
     "ACEPTAR_PEDIDO"                           => "Terminar orden",
     "ITEM_ANULADO"                             => "La orden de compra ha sido anulada",
     "ERROR_CRUZAR"                             => "Error, Verifique el documento de proveedor y la seleccion por totales.",
+    "ERROR_UNIDADES_MAYORES"                   => "Error, las unidades digitadas son mayores a las unidades pendientes.",
     "ERROR_POR_TOTALES"                        => "No se puede cruzar la orden de compra, esta tomando la opción por articulos sin datos.",
     "ERROR_ANULAR_ITEM"                        => "No se pudo anular la orden",
     "ERROR_NIT_PROVEEDOR"                      => "-Debe digitar el nit del proveedor",

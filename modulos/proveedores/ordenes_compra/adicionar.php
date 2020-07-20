@@ -989,7 +989,7 @@ if (!empty($url_generar)){
                                 HTML::campoTextoCorto("observaciones_articulo",$textos["OBSERVACIONES_ARTICULO"], 50, 78, "",array("title"=>$textos["AYUDA_OBSERVACIONES"], "class"=>"movimiento oculto")),
                             ),
                             array(    
-                                HTML::boton("botonAgregarArticulo", $textos["AGREGAR_ARTICULO"], "agregarItemArticulo(), mostrarTotales(), totalPedido()", "adicionar",array("class"=>"agregar_articulo"),"etiqueta"),
+                                HTML::boton("botonAgregarArticulo", $textos["AGREGAR_ARTICULO"], "grabarEncabezado(),agregarItemArticulo(), mostrarTotales(), totalPedido()", "adicionar",array("class"=>"agregar_articulo"),"etiqueta"),
 
                                 HTML::boton("botonModificarArticuloTabla", $textos["MODIFICAR_ARTICULO"], "modificarArticuloTabla()", "modificar",array("class"=>" modificar_articulo_tabla oculto"),"etiqueta")
                                 .HTML::campoOculto("indice_tabla",0)
