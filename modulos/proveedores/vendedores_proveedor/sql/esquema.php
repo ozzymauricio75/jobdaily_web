@@ -116,7 +116,7 @@ $registros["componentes"] = array(
     )
 );
 
-$registros["vendedores_proveedor"] = array(
+/*$registros["vendedores_proveedor"] = array(
     array(
         "codigo"                     => 0,
         "documento_proveedor"        => 0,
@@ -131,7 +131,7 @@ $registros["vendedores_proveedor"] = array(
         "fecha_registra"             => date("Y-m-d H:i:s"),
         "fecha_modificacion"         => date("Y-m-d H:i:s"),
     )
-);
+);*/
 
 $vistas = array(
     array(

@@ -50,10 +50,21 @@ if (!empty($url_generar)) {
         $fecha_envio                   = $datos->fecha_envio; 
         $observaciones                 = $datos->observaciones;
         $estado                        = $datos->estado;
+        $numero_orden_compra           = $datos->numero_orden_compra;
 
-        $razon_social          = SQL::obtenerValor("terceros","razon_social", "documento_identidad = '$documento_identidad_proveedor'");
         $nombre_tipo_documento = SQL::obtenerValor("tipos_documentos","descripcion", "codigo = '$codigo_tipo_documento'");
         $nombre_proyecto       = SQL::obtenerValor("proyectos","nombre", "codigo = '$codigo_proyecto'");
+        
+        $tipo_persona          = SQL::obtenerValor("terceros", "tipo_persona", "documento_identidad = '".$documento_identidad_proveedor."'");
+            if(($tipo_persona==1)||($tipo_persona==3)){
+                $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$documento_identidad_proveedor."'");
+                $segundo_nombre   = SQL::obtenerValor("terceros", "segundo_nombre", "documento_identidad = '".$documento_identidad_proveedor."'");
+                $primer_apellido  = SQL::obtenerValor("terceros", "primer_apellido", "documento_identidad = '".$documento_identidad_proveedor."'");
+                $segundo_apellido = SQL::obtenerValor("terceros", "segundo_apellido", "documento_identidad = '".$documento_identidad_proveedor."'");
+                $razon_social     = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
+            }else{
+                $razon_social     = SQL::obtenerValor("terceros","razon_social", "documento_identidad = '$documento_identidad_proveedor'");
+            }
 
         $error         = "";
         $titulo        = $componente->nombre;
@@ -63,7 +74,8 @@ if (!empty($url_generar)) {
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
                 array(
-                    HTML::mostrarDato("proyecto", $textos["PROYECTO"], $nombre_proyecto)
+                    HTML::mostrarDato("proyecto", $textos["PROYECTO"], $nombre_proyecto),
+                    HTML::mostrarDato("orden_compra", $textos["ORDEN_COMPRA"], $numero_orden_compra),
                 ),
                 array(
                     HTML::mostrarDato("nit_proveedor", $textos["NIT_PROVEEDOR"], $documento_identidad_proveedor),

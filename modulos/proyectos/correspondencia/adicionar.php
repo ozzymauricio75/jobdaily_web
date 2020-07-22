@@ -44,6 +44,36 @@ if (isset($url_completar)) {
     }
     exit;
 
+}elseif (!empty($url_cargarOrdenes)) {
+    $codigo_proyecto               = $url_codigo_proyecto;
+    $documento_identidad_proveedor = $url_documento_identidad_proveedor;
+
+    $llave                         = explode("-", $url_documento_identidad_proveedor);
+    $documento_identidad_proveedor = $llave[0];
+
+    $llave_proyecto                = explode("-", $codigo_proyecto);
+    $codigo_proyecto               = $llave_proyecto[0];
+
+    $consulta_orden  = SQL::seleccionar(array("ordenes_compra"), array("*"), "prefijo_codigo_proyecto = '$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor'");
+
+    if (SQL::filasDevueltas($consulta_orden)) {
+        while($datos = SQL::filaEnObjeto($consulta_orden)){
+            $codigo.= $datos->codigo."-";
+            $numero_consecutivo.= $datos->numero_consecutivo."-";
+        }   
+    }else {
+        $error   = true;
+        $mensaje = $textos["ERROR_EXISTE_ORDEN"];
+    }
+    $codigo             = trim($codigo,"-");
+    $numero_consecutivo = trim($numero_consecutivo,"-");
+    /*******************************************************/
+    $elementos[0] = $codigo;
+    $elementos[1] = $numero_consecutivo;
+    $elementos[2] = $mensaje;
+    HTTP::enviarJSON($elementos);
+    exit;    
+
 }elseif (!empty($url_recargar)) {
 
     if ($url_elemento == "empresa") {
@@ -73,21 +103,21 @@ elseif (!empty($url_generar)) {
         } else {
             $codigo = 1;
         }
+
          /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                //HTML::listaSeleccionSimple("*selector5", $textos["PROYECTO"], HTML::generarDatosLista("proyectos", "codigo", "nombre","codigo != 0"), "", array("title" => $textos["AYUDA_PROYECTO"])),
                 HTML::campoTextoCorto("*selector5", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable"))
-                .HTML::campoOculto("codigo_proyecto", ""),
-
-                //HTML::campoTextoCorto("nombre", $textos["NOMBRE"], 40, 60, "", array("readonly" => "true"), array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);"))
+                .HTML::campoOculto("codigo_proyecto", "")
             ),
             array(  
-                HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable"))
-                .HTML::campoOculto("documento_identidad_proveedor", "")
+                HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable","onBlur"=>"cargarOrdenes()","onKeyPress"=>"return campoEntero(event)"))
+                .HTML::campoOculto("documento_identidad_proveedor", ""),
+
+                HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo != 0"), "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"]))
             ),
             array(
-                HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo != 0"), "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"])),
+                HTML::listaSeleccionSimple("*orden_compra", $textos["ORDEN_COMPRA"], "", "", array("title",$textos["AYUDA_ORDEN"], "onBlur" => "validarItem(this)")),
 
                 HTML::campoTextoCorto("*documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"], "onBlur" => "validarItem(this)")),
 
@@ -160,6 +190,10 @@ elseif (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["FECHA_RECEPCION_VACIO"];
 
+    }elseif(empty($forma_orden_compra)){
+        $error   = true;
+        $mensaje = $textos["ORDEN_VACIO"];
+
     }elseif(empty($forma_fecha_vencimiento)){
         $error   = true;
         $mensaje = $textos["FECHA_VENCIMIENTO_VACIO"];
@@ -190,6 +224,7 @@ elseif (!empty($url_generar)) {
             "documento_identidad_proveedor" => $documento_identidad_proveedor,
             "codigo_tipo_documento"         => $forma_tipo_documento,
             "numero_documento_proveedor"    => $forma_documento_soporte,
+            "numero_orden_compra"           => $forma_orden_compra,
             "valor_documento"               => $forma_valor_documento,
             "estado"                        => '0',
             "fecha_recepcion"               => $forma_fecha_recepcion,

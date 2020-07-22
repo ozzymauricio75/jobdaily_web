@@ -34,14 +34,15 @@ $tablas ["correspondencia"] = array(
     "codigo_proyecto"               => "INT(9) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Codigo interno del proyecto'",
     "documento_identidad_proveedor" => "VARCHAR(12) NOT NULL COMMENT 'Llave principal de la tabla de terceros'",
     /***************/
+    "numero_orden_compra"           => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Numero consecutivo de la orden de compra'",
     "codigo_tipo_documento"         => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código asignado por el usuario'",
     "numero_documento_proveedor"    => "VARCHAR(15) NOT NULL COMMENT 'Número del documento enviado por el proveedor'",
     "valor_documento"               => "DECIMAL(15,2) NULL COMMENT 'Valor del documento del proveedor'",
     "estado"                        => "ENUM('0','1','2','3') NOT NULL DEFAULT '0' COMMENT '0->Recepcionado 1->Entregado 2->Anulado'",
     /******************/
-    "fecha_recepcion"               => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
-    "fecha_vencimiento"             => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
-    "fecha_envio"                   => "TIMESTAMP NOT NULL COMMENT 'Fecha ultima modificación'",
+    "fecha_recepcion"               => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema'",
+    "fecha_vencimiento"             => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema'",
+    "fecha_envio"                   => "DATE NOT NULL COMMENT 'Fecha ultima modificación'",
     "observaciones"                 => "VARCHAR(234) COMMENT 'Observacion general para la orden de compra'"
 );
 
@@ -173,6 +174,17 @@ $registros["componentes"] = array(
         "archivo"      => "eliminar",
         "global"       => "0",
         "tipo_enlace"  => "1"
+    ),
+    array(
+        "id"           => "RECICORR",
+        "padre"        => "GESTCORR",
+        "id_modulo"    => "PROYECTOS",
+        "visible"      => "0",
+        "orden"        => "70",
+        "carpeta"      => "correspondencia",
+        "archivo"      => "recibir",
+        "global"       => "0",
+        "tipo_enlace"  => "1"
     )
 );
 
@@ -182,10 +194,22 @@ $vistas = array(
         SELECT  job_correspondencia.codigo AS id,
                 job_correspondencia.codigo AS CODIGO,
                 job_proyectos.nombre AS PROYECTO,
-                job_terceros.documento_identidad AS NIT_PROVEEDOR,
-                job_terceros.razon_social AS RAZON_SOCIAL,
+
+                CONCAT(
+                    IF(job_terceros.primer_nombre IS NOT NULL,
+                        CONCAT(
+                            CONCAT(job_terceros.primer_nombre,' '),
+                            IF(job_terceros.segundo_nombre IS NOT NULL,CONCAT(job_terceros.segundo_nombre,' '),''),
+                            IF(job_terceros.primer_apellido IS NOT NULL,CONCAT(job_terceros.primer_apellido,' '),''),
+                            IF(job_terceros.segundo_apellido IS NOT NULL,CONCAT(job_terceros.segundo_apellido,''),'')
+                        ),
+                        job_terceros.razon_social
+                    )
+                ) AS RAZON_SOCIAL,
+                job_correspondencia.numero_orden_compra AS ORDEN_COMPRA,
                 FORMAT(job_correspondencia.valor_documento,0) AS VALOR,
                 job_tipos_documentos.descripcion AS TIPO_DOCUMENTO,
+                job_correspondencia.numero_documento_proveedor AS FACTURA,
                 CONCAT('ESTADO_',job_correspondencia.estado) AS ESTADO,
                 job_correspondencia.fecha_recepcion AS FECHA_RECEPCION,
                 job_correspondencia.fecha_vencimiento AS FECHA_VENCIMIENTO,
@@ -194,11 +218,13 @@ $vistas = array(
         FROM    job_proyectos,
                 job_correspondencia,
                 job_terceros,
-                job_tipos_documentos
+                job_tipos_documentos,
+                job_tipos_documento_identidad
         WHERE   
                 job_correspondencia.codigo_proyecto = job_proyectos.codigo
                 AND job_correspondencia.documento_identidad_proveedor = job_terceros.documento_identidad
-                AND job_correspondencia.codigo_tipo_documento = job_tipos_documentos.codigo 
+                AND job_correspondencia.codigo_tipo_documento = job_tipos_documentos.codigo
+                AND job_tipos_documento_identidad.codigo = job_terceros.codigo_tipo_documento 
                 AND job_correspondencia.codigo != 0;"
     ),
     array(
@@ -206,10 +232,22 @@ $vistas = array(
         SELECT  job_correspondencia.codigo AS id,
                 job_correspondencia.codigo AS codigo,
                 job_proyectos.nombre AS proyecto,
-                job_terceros.documento_identidad AS nit_proveedor,
-                job_terceros.razon_social AS razon_social,
+
+                CONCAT(
+                    IF(job_terceros.primer_nombre IS NOT NULL,
+                        CONCAT(
+                            CONCAT(job_terceros.primer_nombre,' '),
+                            IF(job_terceros.segundo_nombre IS NOT NULL,CONCAT(job_terceros.segundo_nombre,' '),''),
+                            IF(job_terceros.primer_apellido IS NOT NULL,CONCAT(job_terceros.primer_apellido,' '),''),
+                            IF(job_terceros.segundo_apellido IS NOT NULL,CONCAT(job_terceros.segundo_apellido,''),'')
+                        ),
+                        job_terceros.razon_social
+                    )
+                ) AS RAZON_SOCIAL,
+                job_correspondencia.numero_orden_compra AS orden_compra,
                 FORMAT(job_correspondencia.valor_documento,0) AS valor,
-                job_tipos_documentos.codigo AS tipo_documento,
+                job_tipos_documentos.descripcion AS tipo_documento,
+                job_correspondencia.numero_documento_proveedor AS factura,
                 CONCAT('ESTADO_',job_correspondencia.estado) AS estado,
                 job_correspondencia.fecha_recepcion AS fecha_recepcion,
                 job_correspondencia.fecha_vencimiento AS fecha_vencimiento,
@@ -218,11 +256,13 @@ $vistas = array(
         FROM    job_proyectos,
                 job_correspondencia,
                 job_terceros,
-                job_tipos_documentos
+                job_tipos_documentos,
+                job_tipos_documento_identidad
         WHERE   
                 job_correspondencia.codigo_proyecto = job_proyectos.codigo
                 AND job_correspondencia.documento_identidad_proveedor = job_terceros.documento_identidad
-                AND job_correspondencia.codigo_tipo_documento = job_tipos_documentos.codigo 
+                AND job_correspondencia.codigo_tipo_documento = job_tipos_documentos.codigo
+                AND job_tipos_documento_identidad.codigo = job_terceros.codigo_tipo_documento 
                 AND job_correspondencia.codigo != 0;"
     )
 )

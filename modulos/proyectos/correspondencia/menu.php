@@ -28,7 +28,7 @@
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
 $vistaMenu     = "menu_correspondencia";
 $vistaBuscador = "buscador_correspondencia";
-$alineacion    = array("D","C","D","I","D","C","I","C","C","C","I");
+$alineacion    = array("D","C","D","D","D","D","C","I","C","C","C","C");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {
@@ -42,6 +42,7 @@ $botones .= HTML::boton("CONSCORR",$textos["CONSULTAR"],"ejecutarComando(this, 6
 $botones .= HTML::boton("MODICORR",$textos["MODIFICAR"],"ejecutarComando(this, 600, 450);","modificar");
 $botones .= HTML::boton("ANULCORR",$textos["ANULAR"],"ejecutarComando(this, 600, 450);","anular");
 $botones .= HTML::boton("ELIMCORR",$textos["ELIMINAR"],"ejecutarComando(this, 600, 450);","eliminar");
+$botones .= HTML::boton("RECICORR",$textos["RECIBIR"],"ejecutarComando(this, 800, 550);","recibir");
 
 /*** Obtener el número de la página actual ***/
 if (empty($url_pagina)) {

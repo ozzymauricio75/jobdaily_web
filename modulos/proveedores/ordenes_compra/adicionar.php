@@ -322,23 +322,18 @@ if (isset($url_completar)) {
     if (!empty($url_empresa)) {
 
         $empresa_ejecuta      = $url_empresa;
-        $consulta             = SQL::seleccionar(array("proyectos"), array("*"), "codigo_empresa_ejecuta = '$empresa_ejecuta'");
-        $tabla                = array();
-
+        $sucursal_ejecuta     = $url_sucursal;
+        $consulta             = SQL::seleccionar(array("proyectos"), array("*"), "codigo_empresa_ejecuta = '$empresa_ejecuta' AND codigo_sucursal_ejecuta='$sucursal_ejecuta'");
         if (SQL::filasDevueltas($consulta)) {
             while($datos = SQL::filaEnObjeto($consulta)){
-                $codigo.= $datos->codigo."-";
-                $nombre.= $datos->nombre."-";
-            }   
+                $tabla = array(
+                    $codigo = $datos->codigo,
+                    $nombre = $datos->nombre
+                );
+            } 
         }
-        $documento = trim($codigo,"-");
-        $nombre    = trim($nombre,"-");
-    /*******************************************************/
-        $elementos[0] = $codigo;
-        $elementos[1] = $nombre;
-    
-        HTTP::enviarJSON($elementos);
     }
+    HTTP::enviarJSON($tabla);
     exit;
 
 }  elseif (isset($url_cargarNit)) {

@@ -130,9 +130,17 @@
 
     function recargarProyectos(){
         var destino         = $('#URLFormulario').val();
-        var codigo_empresa = $('#empresa').val();  
+        var codigo_empresa  = $('#empresa').val(); 
+        var sucursal        = $('#sucursal').val();  
 
-        $.getJSON(destino, {recargarProyecto: true, empresa: codigo_empresa}, function(elementos) {
+        $.getJSON(destino, {recargarProyecto: true, empresa: codigo_empresa, sucursal: sucursal}, function(datos) {
+            jQuery.each(datos, function(valor, texto) {
+                lista = lista+'<option value="'+datos[0]+'">'+datos[1]+'</option>';
+            });
+            $('#proyecto').html(lista);
+        });
+        $('#proyecto').removeAttr('disabled');
+        /*$.getJSON(destino, {recargarProyecto: true, empresa: codigo_empresa, sucursal: sucursal}, function(elementos) {
           
             if (elementos) {
                 var codigo       = elementos[0];
@@ -141,13 +149,13 @@
                 vector_nombre    = nombre.split('-');
                 $('#proyecto').html('');
 
-                for(var i=0; i<vector_documento.length; i++){
+                for(var i=0; i<elementos.length; i++){
                     
                     $('#proyecto').append('<option value="'+vector_codigo[i]+'">' +vector_nombre[i]+ '</option>');
                 }
             }
             $('#proyecto').removeAttr('disabled');
-        });
+        });*/
     }
 
     function recargarVendedores(){

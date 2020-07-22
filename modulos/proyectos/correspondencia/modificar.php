@@ -71,6 +71,7 @@ if (!empty($url_generar)) {
         $fecha_envio                   = $datos->fecha_envio; 
         $observaciones                 = $datos->observaciones;
         $estado                        = $datos->estado;
+        $numero_orden_compra           = $datos->numero_orden_compra;
 
         $razon_social          = SQL::obtenerValor("terceros","razon_social", "documento_identidad = '$documento_identidad_proveedor'");
         $nombre_tipo_documento = SQL::obtenerValor("tipos_documentos","descripcion", "codigo = '$codigo_tipo_documento'");
@@ -89,6 +90,16 @@ if (!empty($url_generar)) {
             }
         }
 
+        /*** Consulta ordenes de compra ***/
+        $consulta_orden = SQL::seleccionar(array("ordenes_compra"),array("numero_consecutivo"),"prefijo_codigo_proyecto='$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor'");
+
+        if (SQL::filasDevueltas($consulta_orden)) {
+
+            while ($datos_orden = SQL::filaEnObjeto($consulta_orden)) {
+                $ordenes[$datos_orden->numero_consecutivo] = $datos_orden->numero_consecutivo;
+            }
+        }
+
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
@@ -98,9 +109,11 @@ if (!empty($url_generar)) {
             array(
                 HTML::mostrarDato("nit_proveedor", $textos["NIT_PROVEEDOR"], $documento_identidad_proveedor),
                 HTML::mostrarDato("razon_social", $textos["RAZON_SOCIAL"], $razon_social),
+
+                 HTML::listaSeleccionSimple("*orden_compra", $textos["ORDEN_COMPRA"], HTML::generarDatosLista("ordenes_compra", "numero_consecutivo","codigo", "prefijo_codigo_proyecto='$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor'"), $numero_orden_compra, array("title" => $textos["AYUDA_ORDEN_COMPRA"])),
             ),
             array(
-                HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], $tipos_documentos, $datos_tipos_documentos->codigo,array("title" => $textos["AYUDA_TIPO_DOCUMENTO"])),
+                HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion", "codigo != 0"), $datos_tipos_documentos->codigo, array("title" => $textos["AYUDA_TIPO_DOCUMENTO"])),
 
                 HTML::campoTextoCorto("*documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, $numero_documento_proveedor, array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"], "onBlur" => "validarItem(this)")),
 
@@ -161,6 +174,10 @@ if (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["FECHA_RECEPCION_VACIO"];
 
+    }elseif(empty($forma_orden_compra)){
+        $error   = true;
+        $mensaje = $textos["ORDEN_VACIO"];
+
     }elseif(empty($forma_fecha_vencimiento)){
         $error   = true;
         $mensaje = $textos["FECHA_VENCIMIENTO_VACIO"];
@@ -189,6 +206,7 @@ if (!empty($url_generar)) {
         $datos = array(
             "codigo_tipo_documento"         => $forma_tipo_documento,
             "numero_documento_proveedor"    => $forma_documento_soporte,
+            "numero_orden_compra"           => $forma_orden_compra,  
             "valor_documento"               => $forma_valor_documento,
             "estado"                        => '0',
             "fecha_recepcion"               => $forma_fecha_recepcion,
