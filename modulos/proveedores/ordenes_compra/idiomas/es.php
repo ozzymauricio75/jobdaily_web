@@ -62,6 +62,7 @@ $textos = array(
     "TOTALES_ORDEN"                            => "Totales de la orden compra",
     "RESUMEN_ORDEN"                            => "Resumen orden compra",
     "CONSORCIO"                                => "Consorcio o Unión temporal",
+    "CONSORCIO_PDF"                            => "Consor/Unión",
     "ESTADO_PDF"                               => "Estado",
     "EMPRESA"                                  => "Empresa",
     "PESTANA_NEGOCIACION"                      => "Datos negociación",

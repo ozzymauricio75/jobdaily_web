@@ -167,7 +167,7 @@ if (!empty($url_generar)) {
             $archivo->AddPage();
             $archivo->SetFont('Arial','B',8);
 
-            $datos_encabezado = SQL::filaEnObjeto($ordenes_compra);
+            //$datos_encabezado = SQL::filaEnObjeto($ordenes_compra);
 
             $nombre_proyecto  = SQL::obtenerValor("proyectos","nombre","codigo='$datos_encabezado->prefijo_codigo_proyecto'");
             $codigo_empresa   = SQL::obtenerValor("sucursales","codigo_empresa","codigo='$datos_encabezado->codigo_sucursal'");
@@ -200,15 +200,17 @@ if (!empty($url_generar)) {
             $archivo->SetFillColor(225,225,225);
 
             $archivo->Ln(6);
-            $archivo->Cell(55,4,$textos["EMPRESA"],1,0,'C',true);
-            $archivo->Cell(35,4,$textos["CONSORCIO"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["FECHA_DOCUMENTO"],1,0,'C',true);
-            $archivo->Cell(24,4,$textos["ORDEN_COMPRA"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["SUBTOTAL"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["DESCUENTO"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["IVA"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["VALOR_TOTAL"],1,0,'C',true);
-            $archivo->Cell(20,4,$textos["ESTADO_PDF"],1,0,'C',true);
+            $archivo->Cell(50,4,$textos["EMPRESA"],1,0,'C',true);
+            $archivo->Cell(20,4,$textos["CONSORCIO_PDF"],1,0,'C',true);
+            $archivo->Cell(20,4,$textos["FECHA_DOCUMENTO"],1,0,'C',true);
+            $archivo->Cell(20,4,$textos["ORDEN_COMPRA"],1,0,'C',true);
+            $archivo->Cell(19,4,$textos["SUBTOTAL"],1,0,'C',true);
+            $archivo->Cell(19,4,$textos["DESCUENTO"],1,0,'C',true);
+            $archivo->Cell(19,4,$textos["IVA"],1,0,'C',true);
+            $archivo->Cell(19,4,$textos["VALOR_TOTAL"],1,0,'C',true);
+            $archivo->Cell(18,4,$textos["ESTADO_PDF"],1,0,'C',true);
+            $archivo->Cell(15,4,$textos["NIT"],1,0,'C',true);
+            $archivo->Cell(40,4,$textos["PROVEEDOR"],1,0,'C',true);
             //////////////////////////////FIN ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
             /*** Obtener los datos de la tabla ***/
             $ordenes_compra = SQL::seleccionar(array("ordenes_compra"),array("*"),"$condicion_estado prefijo_codigo_proyecto='$codigo_proyecto'");
@@ -223,11 +225,13 @@ if (!empty($url_generar)) {
                     
                     $movimiento_ordenes  = SQL::seleccionar(array("movimiento_ordenes_compra"),array("*"),"codigo_orden_compra='$datos_encabezado->codigo'");    
                     
-                    $id_sucursal      = SQL::obtenerValor("ordenes_compra","codigo_sucursal","prefijo_codigo_proyecto='$codigo_proyecto' LIMIT 0,1");
-                    $codigo_empresa   = SQL::obtenerValor("sucursales","codigo_empresa","codigo='$id_sucursal'");
-                    $nombre_empresa   = SQL::obtenerValor("empresas","razon_social","codigo='$codigo_empresa'");
-                    $numero_orden     = $datos_encabezado->numero_consecutivo;
-                    $grabar_registro  = 1;
+                    $id_sucursal     = SQL::obtenerValor("ordenes_compra","codigo_sucursal","prefijo_codigo_proyecto='$codigo_proyecto' LIMIT 0,1");
+                    $codigo_empresa  = SQL::obtenerValor("sucursales","codigo_empresa","codigo='$id_sucursal'");
+                    $nombre_empresa  = SQL::obtenerValor("empresas","razon_social","codigo='$codigo_empresa'");
+                    $numero_orden    = $datos_encabezado->numero_consecutivo;
+                    $nit             = SQL::obtenerValor("ordenes_compra","documento_identidad_proveedor","numero_consecutivo='$numero_orden'");
+                    $proveedor       = SQL::obtenerValor("menu_proveedores","PROVEEDOR","DOCUMENTO_PROVEEDOR ='$nit'");
+                    $grabar_registro = 1;
                     
                     if ($grabar_registro==1){
 
@@ -276,15 +280,18 @@ if (!empty($url_generar)) {
                         
                         /////////////////////////////////////////////////////////////////////////////////////////////////
                         $archivo->Ln(4);
-                        $archivo->Cell(55,4,$nombre_empresa,1,0,'L',true);
-                        $archivo->Cell(35,4,$consorciado,1,0,'L',true);
-                        $archivo->Cell(25,4,$fecha_orden,1,0,'C',true);
-                        $archivo->Cell(24,4,$numero_orden,1,0,'R',true);
-                        $archivo->Cell(25,4,"$ ".$subtotal,1,0,'R',true);
-                        $archivo->Cell(25,4,"$ ".$descuento,1,0,'R',true);
-                        $archivo->Cell(25,4,"$ ".$total_iva,1,0,'R',true);
-                        $archivo->Cell(25,4,"$ ".$total_orden,1,0,'R',true);
-                        $archivo->Cell(20,4,$estado_orden,1,0,'L',true);
+                        $archivo->Cell(50,4,$nombre_empresa,1,0,'L',true);
+                        $archivo->Cell(20,4,$consorciado,1,0,'L',true);
+                        $archivo->Cell(20,4,$fecha_orden,1,0,'C',true);
+                        $archivo->Cell(20,4,$numero_orden,1,0,'R',true);
+                        $archivo->Cell(19,4,"$ ".$subtotal,1,0,'R',true);
+                        $archivo->Cell(19,4,"$ ".$descuento,1,0,'R',true);
+                        $archivo->Cell(19,4,"$ ".$total_iva,1,0,'R',true);
+                        $archivo->Cell(19,4,"$ ".$total_orden,1,0,'R',true);
+                        $archivo->Cell(18,4,$estado_orden,1,0,'L',true);
+                        $archivo->Cell(15,4,$nit,1,0,'R',true);
+                        $archivo->Cell(40,4,$proveedor,1,0,'C',true);
+
                         /////////////////////////////////////////////////////////////////////////////////////////////////
                         $imprime_cabecera = $archivo->breakCell(8);
 
@@ -314,15 +321,17 @@ if (!empty($url_generar)) {
                             $archivo->SetFillColor(225,225,225);
 
                             $archivo->Ln(6);
-                            $archivo->Cell(55,4,$textos["EMPRESA"],1,0,'C',true);
-                            $archivo->Cell(35,4,$textos["CONSORCIO"],1,0,'C',true);
-                            $archivo->Cell(25,4,$textos["FECHA_DOCUMENTO"],1,0,'C',true);
-                            $archivo->Cell(24,4,$textos["ORDEN_COMPRA"],1,0,'C',true);
-                            $archivo->Cell(25,4,$textos["SUBTOTAL"],1,0,'C',true);
-                            $archivo->Cell(25,4,$textos["DESCUENTO"],1,0,'C',true);
-                            $archivo->Cell(25,4,$textos["IVA"],1,0,'C',true);
-                            $archivo->Cell(25,4,$textos["VALOR_TOTAL"],1,0,'C',true);
-                            $archivo->Cell(20,4,$textos["ESTADO_PDF"],1,0,'C',true);
+                            $archivo->Cell(50,4,$textos["EMPRESA"],1,0,'C',true);
+                            $archivo->Cell(20,4,$textos["CONSORCIO_PDF"],1,0,'C',true);
+                            $archivo->Cell(20,4,$textos["FECHA_DOCUMENTO"],1,0,'C',true);
+                            $archivo->Cell(20,4,$textos["ORDEN_COMPRA"],1,0,'C',true);
+                            $archivo->Cell(19,4,$textos["SUBTOTAL"],1,0,'C',true);
+                            $archivo->Cell(19,4,$textos["DESCUENTO"],1,0,'C',true);
+                            $archivo->Cell(19,4,$textos["IVA"],1,0,'C',true);
+                            $archivo->Cell(19,4,$textos["VALOR_TOTAL"],1,0,'C',true);
+                            $archivo->Cell(18,4,$textos["ESTADO_PDF"],1,0,'C',true);
+                            $archivo->Cell(15,4,$textos["NIT"],1,0,'C',true);
+                            $archivo->Cell(40,4,$textos["PROVEEDOR"],1,0,'C',true);
                         }
                         $i++;
                         $item++;
@@ -346,15 +355,14 @@ if (!empty($url_generar)) {
 
             $archivo->Ln(4);
             $archivo->SetFont('Arial','B',6);
-            $archivo->Cell(55,4,"",1,0,'R',true);
-            $archivo->Cell(35,4,"",1,0,'R',true);
-            $archivo->Cell(25,4,"",1,0,'R',true);
-            $archivo->Cell(24,4,"",1,0,'R',true);
-            $archivo->Cell(25,4,"$ ".$acumulado_subtotal,1,0,'R',true);
-            $archivo->Cell(25,4,"$ ".$acumulado_descuento,1,0,'R',true);
-            $archivo->Cell(25,4,"$ ".$acumulado_iva,1,0,'R',true);
-            $archivo->Cell(25,4,"$ ".$acumulado_total,1,0,'R',true);
+            $archivo->Cell(50,4,"",1,0,'R',true);
             $archivo->Cell(20,4,"",1,0,'R',true);
+            $archivo->Cell(20,4,"",1,0,'R',true);
+            $archivo->Cell(20,4,"",1,0,'R',true);
+            $archivo->Cell(19,4,"$ ".$acumulado_subtotal,1,0,'R',true);
+            $archivo->Cell(19,4,"$ ".$acumulado_descuento,1,0,'R',true);
+            $archivo->Cell(19,4,"$ ".$acumulado_iva,1,0,'R',true);
+            $archivo->Cell(19,4,"$ ".$acumulado_total,1,0,'R',true);
 
             if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
                 $archivo->SetFillColor(255,255,255);
@@ -381,7 +389,7 @@ if (!empty($url_generar)) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
         } else{
             //Se crean los titulos del archivo excel
-            $titulos_plano = "EMPRESA;CONSORCIO;FECHA ORDEN;ORDEN COMPRA;SUBTOTAL;DESCUENTO;IVA;VALOR TOTAL;ESTADO\n";
+            $titulos_plano = "EMPRESA;CONSORCIO;FECHA ORDEN;ORDEN COMPRA;SUBTOTAL;DESCUENTO;IVA;VALOR TOTAL;ESTADO;NIT;PROVEEDOR\n";
             fwrite($archivo, $titulos_plano);
             
             /*** Obtener los datos de la tabla ***/
@@ -394,6 +402,8 @@ if (!empty($url_generar)) {
                     $codigo_empresa   = SQL::obtenerValor("sucursales","codigo_empresa","codigo='$id_sucursal'");
                     $nombre_empresa   = SQL::obtenerValor("empresas","razon_social","codigo='$codigo_empresa'");
                     $numero_orden     = $datos_encabezado->numero_consecutivo;
+                    $nit              = SQL::obtenerValor("ordenes_compra","documento_identidad_proveedor","numero_consecutivo='$numero_orden'");
+                    $proveedor        = SQL::obtenerValor("menu_proveedores","PROVEEDOR","DOCUMENTO_PROVEEDOR ='$nit'");
                     $grabar_registro  = 1;
 
                     if ($grabar_registro==1){
@@ -437,7 +447,7 @@ if (!empty($url_generar)) {
                         $estado       = $datos_encabezado->estado;
                                                                                                
                         //Contenido del archivo
-                        $contenido = "$nombre_empresa;$consorciado;$fecha_orden;$numero_orden;$subtotal;$descuento;$total_iva;$total_orden;$estado_orden\n";
+                        $contenido = "$nombre_empresa;$consorciado;$fecha_orden;$numero_orden;$subtotal;$descuento;$total_iva;$total_orden;$estado_orden;$nit;$proveedor\n";
                         $guardarArchivo = fwrite($archivo,$contenido);
                     }
                 }

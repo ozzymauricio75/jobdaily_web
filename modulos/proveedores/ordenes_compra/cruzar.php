@@ -477,6 +477,7 @@ if(isset($url_insertaCantidades)){
                 }    
             } 
         }
+    //Si se cruza por unidades x codigo    
     }elseif(($forma_tipo==1) && ($forma_documento_soporte_orden)){
         if(isset($consulta_cruce_orden)){
             $insertar_cruce_orden = SQL::insertar("cruce_orden_compra", $datos_cruce_orden);
@@ -518,30 +519,31 @@ if(isset($url_insertaCantidades)){
             );
             $insertar_movimiento_cruce_orden = SQL::insertar("movimiento_cruce_orden_compra", $datos_movimiento_cruce_orden_compra);
             //Obtengo cantidades por codigo en el movimiento y en el cruce
-            $unidades_orden           = SQL::obtenerValor("movimiento_ordenes_compra","SUM(cantidad_total)","codigo_orden_compra='$forma_codigo_orden_compra'");
-            $unidades_cruce           = SQL::obtenerValor("movimiento_cruce_orden_compra","SUM(cantidad_total)","codigo_cruce_orden_compra='$codigo_cruce_orden_compra'");
+            $unidades_orden = SQL::obtenerValor("movimiento_ordenes_compra","SUM(cantidad_total)","codigo_orden_compra='$forma_codigo_orden_compra'");
+            $unidades_cruce = SQL::obtenerValor("movimiento_cruce_orden_compra","SUM(cantidad_total)","codigo_cruce_orden_compra='$codigo_cruce_orden_compra'");
             $unidades_cruce = intval($unidades_cruce);
             $unidades_orden = intval($unidades_orden);
-            
+
             if($unidades_cruce<$unidades_orden){
-                $datos = array(
+                $datos_parcial = array(
                     "estado" => "1"
                 ); 
-                $modificar_encabezado = SQL::modificar("ordenes_compra", $datos, "codigo = '$forma_codigo_orden_compra'");
-                $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, "codigo_orden_compra = '$forma_codigo_orden_compra'");
-            
+                $modificar_encabezado = SQL::modificar("ordenes_compra", $datos_parcial, "codigo = '$forma_codigo_orden_compra'");
+                $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos_parcial, "codigo_orden_compra = '$forma_codigo_orden_compra'");
+
                 if (($modificar_encabezado) && ($modificar_movimiento)) {
                     $error    = false;
                     $mensaje  = $textos["ORDEN_CUMPLIDA_PARCIALMENTE"]; 
+                }else{
+                    $error    = false;
+                    $mensaje  = $textos["ORDEN_CUMPLIDA_PARCIALMENTE"]; 
                 }
-                $error    = false;
-                $mensaje  = $textos["ORDEN_CUMPLIDA_PARCIALMENTE"]; 
             }elseif($unidades_cruce==$unidades_orden){
-                $datos = array(
+                $datos_cumplida = array(
                     "estado" => "3"
                 );
-                $modificar_encabezado = SQL::modificar("ordenes_compra", $datos, "codigo = '$forma_codigo_orden_compra'");
-                $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, "codigo_orden_compra = '$forma_codigo_orden_compra'");
+                $modificar_encabezado = SQL::modificar("ordenes_compra", $datos_cumplida, "codigo = '$forma_codigo_orden_compra'");
+                $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos_cumplida, "codigo_orden_compra = '$forma_codigo_orden_compra'");
             
                 if (($modificar_encabezado) && ($modificar_movimiento)) {
                     $error    = false;
