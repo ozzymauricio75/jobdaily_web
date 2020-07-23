@@ -10,6 +10,24 @@
     //$(document).bind('keydown', 'Ctrl+m', function(evt) {$('#MODICARA').click(); return false;});
     //$(document).bind('keydown', 'Ctrl+e', function(evt) {$('#ELIMCARA').click(); return false;});
 
+    function seleccionar_todas_sucursales(){
+      var seleccionar_todos = true;
+      var contador_casillas_seleccionadas = 0;
+      var contador_total_casillas = 0;
+      $('#PESTANA_REPORTE').find('.sucursales:checkbox').each(function (consorciados) {
+
+        var id = $(this).val();
+        if($('#sucursales_'+id).attr('checked')){
+            contador_casillas_seleccionadas++;
+        }
+        contador_total_casillas++;
+      });
+      
+      if(contador_total_casillas == contador_casillas_seleccionadas)
+        seleccionar_todos=false;
+        $(".sucursales:checkbox").attr('checked', seleccionar_todos);
+    }
+
     function quitarMiles($cadena){
         $valor = array();
         for ($i = 0; $i < strlen($cadena); $i++) {
@@ -131,11 +149,11 @@
     function recargarProyectos(){
         var destino         = $('#URLFormulario').val();
         var codigo_empresa  = $('#empresa').val(); 
-        var sucursal        = $('#sucursal').val();  
+        var sucursal        = $('#sucursal').val();
 
         $.getJSON(destino, {recargarProyecto: true, empresa: codigo_empresa, sucursal: sucursal}, function(datos) {
             jQuery.each(datos, function(valor, texto) {
-                lista = lista+'<option value="'+datos[0]+'">'+datos[1]+'</option>';
+            var lista = lista+'<option value="'+datos[0]+'">'+datos[1]+'</option>';
             });
             $('#proyecto').html(lista);
         });

@@ -614,6 +614,26 @@ function imprimirItem(cerrar, id) {
 }
 
 /*** Procesar formulario para la exportación de datos ***/
+function exportarDatos() {
+    $('#formularioPrincipal').ajaxForm();
+    $('#formularioPrincipal').ajaxSubmit({
+        beforeSubmit: function(formData, jqForm, options) {
+            formData.push({name: 'procesar', value: true});
+        },
+        dataType: 'json',
+        success: function(datos) {
+            if (datos[0]) {
+                $('#errorDialogo').html(datos[1]).fadeOut(8000).addClass('mensajeError');
+            } else {
+                $('#errorDialogo').html(datos[1]);
+            }
+            pagina = $('#pagina').val();
+            cambiarPaginaDesdeLista(pagina);
+        }
+    });
+}
+
+/*** Procesar formulario para la exportación de datos ***/
 function exportarDatos(seleccion) {
     $('#formularioPrincipal').ajaxForm();
     $('#formularioPrincipal').ajaxSubmit({
@@ -681,441 +701,440 @@ function formatoNumero(numero) {
             }
         }
         return numeroComas;
-    }
+}
 
-    /*** funciones usadas en los balances de contabilidad ***/
-    function seleccionar_todas_sucursales(){
+/*** funciones usadas en los balances de contabilidad ***/
+function seleccionar_todas_sucursales(){
 
-        var contador_casillas_seleccionadas = 0;
-        var contador_total_casillas = 0;
+    var contador_casillas_seleccionadas = 0;
+    var contador_total_casillas = 0;
 
-        $('.sucursales_electrodomesticos:checkbox').each(function () {
-            var id = $(this).val();
-            if ($(this).is(':checked')) {
-                contador_casillas_seleccionadas++;
-            }
-            contador_total_casillas++;
-        });
-
-        if(contador_total_casillas == contador_casillas_seleccionadas){
-            $(".sucursales_electrodomesticos:checkbox").removeAttr('checked');
-            $(".empresas_consolidados:checkbox").removeAttr('checked');
-        } else {
-            $(".sucursales_electrodomesticos:checkbox").attr('checked','checked');
-            $(".empresas_consolidados:checkbox").attr('checked','checked');
+    $('.sucursales_electrodomesticos:checkbox').each(function () {
+        var id = $(this).val();
+        if ($(this).is(':checked')) {
+            contador_casillas_seleccionadas++;
         }
+        contador_total_casillas++;
+    });
+
+    if(contador_total_casillas == contador_casillas_seleccionadas){
+        $(".sucursales_electrodomesticos:checkbox").removeAttr('checked');
+        $(".empresas_consolidados:checkbox").removeAttr('checked');
+    } else {
+        $(".sucursales_electrodomesticos:checkbox").attr('checked','checked');
+        $(".empresas_consolidados:checkbox").attr('checked','checked');
     }
+}
 
-    function todosTercero(){
-        if($('#todos_terceros').attr('checked')){
-            $('#selector1').parent().hide();
-            $('#id_tercero').val('')
-        }else{
-            $('#selector1').parent().show();
-        }
+function todosTercero(){
+    if($('#todos_terceros').attr('checked')){
+        $('#selector1').parent().hide();
+        $('#id_tercero').val('')
+    }else{
+        $('#selector1').parent().show();
     }
-    function todosClientes(){
-        if($('#todos_clientes').attr('checked')){
-            $('#selector1').parent().hide();
-            $('#id_cliente_mayorista').val('')
-        }else{
-            $('#selector1').parent().show();
-        }
+}
+function todosClientes(){
+    if($('#todos_clientes').attr('checked')){
+        $('#selector1').parent().hide();
+        $('#id_cliente_mayorista').val('')
+    }else{
+        $('#selector1').parent().show();
     }
+}
 
-    function todosDocumentos(){
-        if($('#todos_documentos').attr('checked')){
-            $('#numero_desde').parent().parent().hide();
-            $('#tipo_documento').parent().parent().hide();
-        }else{
-            $('#tipo_documento').parent().parent().show();
-            todosConsecutivos();
-        }
+function todosDocumentos(){
+    if($('#todos_documentos').attr('checked')){
+        $('#numero_desde').parent().parent().hide();
+        $('#tipo_documento').parent().parent().hide();
+    }else{
+        $('#tipo_documento').parent().parent().show();
+        todosConsecutivos();
     }
+}
 
-    function todosConsecutivos(){
-        if($('#todos_consecutivos').attr('checked')){
-            $('#numero_desde').parent().parent().hide();
-        }else{
-            $('#numero_desde').parent().parent().show();
-        }
+function todosConsecutivos(){
+    if($('#todos_consecutivos').attr('checked')){
+        $('#numero_desde').parent().parent().hide();
+    }else{
+        $('#numero_desde').parent().parent().show();
     }
+}
 
-    function validarFecha() {
-        var inicio  = $('#fecha_desde').val();
-        var fin     = $('#fecha_hasta').val();
+function validarFecha() {
+    var inicio  = $('#fecha_desde').val();
+    var fin     = $('#fecha_hasta').val();
 
-        if (inicio >= fin) {
-            $('#fecha_hasta').val('');
-            var mensaje = $('#error_fechas').val();
-            alert(mensaje);
-        }
+    if (inicio >= fin) {
+        $('#fecha_hasta').val('');
+        var mensaje = $('#error_fechas').val();
+        alert(mensaje);
     }
+}
 
-    function validarCuenta() {
-        var cuenta_desde  = $('#cuenta_desde').val();
-        var cuenta_hasta  = $('#cuenta_hasta').val();
+function validarCuenta() {
+    var cuenta_desde  = $('#cuenta_desde').val();
+    var cuenta_hasta  = $('#cuenta_hasta').val();
 
-        if (cuenta_desde > cuenta_hasta) {
-            $('#cuenta_desde').val('');
-            $('#cuenta_hasta').val('');
-            var MensajeError = $('#error_cuentas').val();
-            $('#cuenta_hasta').parent().children('#errorDialogo').remove();
-            $('#cuenta_hasta').parent().append('<span id="errorDialogo" class="mensajeErrorLinea">'+MensajeError+'</span>');
-            $('#cuenta_hasta').parent().children('.mensajeErrorLinea').fadeOut(5000).addClass('mensajeError').css('display','block');
-            $('#cuenta_hasta').focus();
-        }
+    if (cuenta_desde > cuenta_hasta) {
+        $('#cuenta_desde').val('');
+        $('#cuenta_hasta').val('');
+        var MensajeError = $('#error_cuentas').val();
+        $('#cuenta_hasta').parent().children('#errorDialogo').remove();
+        $('#cuenta_hasta').parent().append('<span id="errorDialogo" class="mensajeErrorLinea">'+MensajeError+'</span>');
+        $('#cuenta_hasta').parent().children('.mensajeErrorLinea').fadeOut(5000).addClass('mensajeError').css('display','block');
+        $('#cuenta_hasta').focus();
     }
+}
 
-    function validarNumeros() {
-        var inicio  = parseInt($('#numero_desde').val());
-        var fin     = parseInt($('#numero_hasta').val());
+function validarNumeros() {
+    var inicio  = parseInt($('#numero_desde').val());
+    var fin     = parseInt($('#numero_hasta').val());
 
-        if (inicio > fin) {
-            $('#numero_desde').val('');
-            $('#numero_hasta').val('');
-            var MensajeError = $('#error_numeros').val();
-            $('#numero_hasta').parent().children('#errorDialogo').remove();
-            $('#numero_hasta').parent().append('<span id="errorDialogo" class="mensajeErrorLinea">'+MensajeError+'</span>');
-            $('#numero_hasta').parent().children('.mensajeErrorLinea').fadeOut(7000).addClass('mensajeError').css('display','block');
-            $('#numero_hasta').focus();
-        }
+    if (inicio > fin) {
+        $('#numero_desde').val('');
+        $('#numero_hasta').val('');
+        var MensajeError = $('#error_numeros').val();
+        $('#numero_hasta').parent().children('#errorDialogo').remove();
+        $('#numero_hasta').parent().append('<span id="errorDialogo" class="mensajeErrorLinea">'+MensajeError+'</span>');
+        $('#numero_hasta').parent().children('.mensajeErrorLinea').fadeOut(7000).addClass('mensajeError').css('display','block');
+        $('#numero_hasta').focus();
     }
+}
 
-    function activarManejoDetalles(campo){
-        var nivel = parseInt($(campo).val());
-        if (nivel<5){
-            $('#detalles_balance').parent().hide();
-            $('#detalles_balance').addClass("campoInactivo").attr("disabled");
-        } else {
-            $('#detalles_balance').parent().show();
-            $('#detalles_balance').removeClass("campoInactivo").removeAttr("disabled");
-        }
+function activarManejoDetalles(campo){
+    var nivel = parseInt($(campo).val());
+    if (nivel<5){
+        $('#detalles_balance').parent().hide();
+        $('#detalles_balance').addClass("campoInactivo").attr("disabled");
+    } else {
+        $('#detalles_balance').parent().show();
+        $('#detalles_balance').removeClass("campoInactivo").removeAttr("disabled");
     }
+}
 
-    /*** Procesar formulario para generar un documento ***/
-    function imprimirItemCondicion(cerrar, id) {
+/*** Procesar formulario para generar un documento ***/
+function imprimirItemCondicion(cerrar, id) {
 
-        cerrar = typeof(cerrar) != 'undefined' ? cerrar : false;
-        id     = typeof(id) != 'undefined' ? id : '';
+    cerrar = typeof(cerrar) != 'undefined' ? cerrar : false;
+    id     = typeof(id) != 'undefined' ? id : '';
 
-        $('#indicadorEsperaComando').css("display","block");
-        $('#formularioPrincipal').ajaxForm();
-        $('#formularioPrincipal').ajaxSubmit({
-            beforeSubmit: function(formData, jqForm, options) {
-                formData.push({name: 'id', value: id});
-                formData.push({name: 'procesar', value: true});
-            },
-            dataType: 'json',
-            success: function(datos) {
-                if (datos[0]) {
+    $('#indicadorEsperaComando').css("display","block");
+    $('#formularioPrincipal').ajaxForm();
+    $('#formularioPrincipal').ajaxSubmit({
+        beforeSubmit: function(formData, jqForm, options) {
+            formData.push({name: 'id', value: id});
+            formData.push({name: 'procesar', value: true});
+        },
+        dataType: 'json',
+        success: function(datos) {
+            if (datos[0]) {
+                alert(datos[1]);
+            } else {
+                if(cerrar == true){
+                    pagina = $('#pagina').val();
+                    cambiarPaginaDesdeLista(pagina);
+                    $('#cuadroDialogo').dialog("close");
+                    $('#cuadroDialogo').dialog("destroy");
+                    $('#cuadroDialogo').empty();
                     alert(datos[1]);
-                } else {
-                    if(cerrar == true){
-                        pagina = $('#pagina').val();
-                        cambiarPaginaDesdeLista(pagina);
-                        $('#cuadroDialogo').dialog("close");
-                        $('#cuadroDialogo').dialog("destroy");
-                        $('#cuadroDialogo').empty();
-                        alert(datos[1]);
-                        if(datos[3] == true){
-                            window.open(datos[2], '_blank');
-                        }
-                    }else{
-                        if(datos[3] == true){
-                            window.open(datos[2], '_blank');
-                        }
+                    if(datos[3] == true){
+                        window.open(datos[2], '_blank');
+                    }
+                }else{
+                    if(datos[3] == true){
+                        window.open(datos[2], '_blank');
                     }
                 }
-                $('#indicadorEsperaComando').css("display","none");
             }
-        });
-
-        return true;
-    }
-
-    /*** Validar un elemento de acuerdo a su llave primaria (LSM) ***/
-    function validarItemsllaves(item,llave_valor,llave_post){
-        var destino  = $('#URLFormulario').val();
-
-        var valor_campo = "";
-        var id_item     = $(item).attr('id');
-        var llave_v     = llave_valor.split("|");
-        var valor_item  = $(item).val();
-
-        for(var i=0; i<llave_v.length;i++){
-
-            valor = llave_v[i];
-            valor = $("#"+valor).val();
-
-            if((i+1)== llave_v.length){
-                valor_campo += valor;
-            }
-            else{
-                valor_campo += valor+"|";
-            }
-
+            $('#indicadorEsperaComando').css("display","none");
         }
+    });
 
-        $.getJSON(destino, {
-                validarItemsllaves:true,
-                id:llave_post,
-                item:id_item,
-                valor:valor_campo,
-                valor_item:valor_item
-            },
-            function(mensaje){
-                if(mensaje != ""){
-                    $(item).parent().children('#errorDialogo').remove();
-                    $(item).parent().append('<span id="errorDialogo" class="mensajeErrorLinea">'+mensaje+'</span>');
-                    $(item).parent().children('.mensajeErrorLinea').fadeOut(5000).addClass('mensajeError').css('display','block');
-                    $(item).focus();
-                }
-            }
-        );
-    }
+    return true;
+}
 
-    function cargarFechaPago(){
+/*** Validar un elemento de acuerdo a su llave primaria (LSM) ***/
+function validarItemsllaves(item,llave_valor,llave_post){
+    var destino  = $('#URLFormulario').val();
 
-        var destino          = $('#URLFormulario').val();
-        var codigo_planilla  = $('#codigo_planilla').val();
-        var fecha_inicio     = $('#fecha_inicio').val();
-        var fecha_fin        = $('#fecha_fin').val();
-        var lista            = '';
-        $('#fecha_pago').empty();
-        $('#periodo').empty();
+    var valor_campo = "";
+    var id_item     = $(item).attr('id');
+    var llave_v     = llave_valor.split("|");
+    var valor_item  = $(item).val();
 
-        /*** Enviar datos para la recarga ***/
-        $.getJSON(destino, {recargar: true, codigo_planilla: codigo_planilla, fecha_inicio: fecha_inicio, fecha_fin: fecha_fin}, function(datos) {
-            jQuery.each(datos, function(valor, texto) {
-                lista = lista+'<option value="'+valor+'">'+texto+'</option>';
-            });
-            $('#fecha_pago').html(lista);
-        });
+    for(var i=0; i<llave_v.length;i++){
 
-        setTimeout("cargarPeriodoPlanilla()",200);
-    }
+        valor = llave_v[i];
+        valor = $("#"+valor).val();
 
-
-
-    function cargarPeriodoPlanilla1(){
-
-        var destino         = $('#URLFormulario').val();
-        var codigo_planilla = $('#codigo_planilla').val();
-        var ano_generacion  = $('#ano_generacion').val();
-        var mes_generacion  = $('#mes_generacion').val();
-        var lista           = '';
-        var periodo         = "periodo";
-        /*** Enviar datos para la recarga ***/
-        $.getJSON(destino, {recargar: true, codigo_planilla: codigo_planilla, ano_generacion: ano_generacion, mes_generacion: mes_generacion, periodo: periodo}, function(datos) {
-            jQuery.each(datos, function(valor, texto) {
-                lista = lista+'<option value="'+valor+'">'+texto+'</option>';
-
-            });
-
-            $('#periodo').html(lista);
-
-        });
-    }
-
-      function cargarFechaPago2(){
-
-        var destino          = $('#URLFormulario').val();
-        var codigo_planilla  = $('#codigo_planilla').val();
-        var ano_generacion   = $('#ano_generacion').val();
-        var mes_generacion   = $('#mes_generacion').val();
-        var lista            = '';
-
-        $('#fecha_pago').empty();
-        $('#periodo').empty();
-
-        /*** Enviar datos para la recarga ***/
-        $.getJSON(destino, {recargar: true, codigo_planilla: codigo_planilla, ano_generacion: ano_generacion, mes_generacion: mes_generacion}, function(datos) {
-            jQuery.each(datos, function(valor, texto) {
-                lista = lista+'<option value="'+valor+'">'+texto+'</option>';
-            });
-            $('#fecha_pago').html(lista);
-            determinarPeriodo();
-        });
-
-       // setTimeout("determinarPeriodo()",200);
-    }
-
-    function determinarPeriodo()
-    {
-        var destino         = $('#URLFormulario').val();
-        var codigo_planilla = $('#codigo_planilla').val();
-        var fechaPago       = $("#fecha_pago").val();
-
-        if(fechaPago!=null){
-            datosFecha          = fechaPago.split("-");
-            dia                 = parseInt(datosFecha[2]);
-
-            $.getJSON(destino, {recargarTipoPlanilla: true, codigo_planilla: codigo_planilla}, function(tipo) {
-
-                var planillas_fecha_unica = $("#planillas_fecha_unica").val();
-                if(tipo=='2'){
-
-                    if (typeof(planillas_fecha_unica)!="undefined"){
-
-                        $('.todas_planillas:checkbox').each(function () {
-                            var id = $(this).val();
-                            if ($(this).is(':checked')) {
-                                $(".todas_planillas:checkbox").removeAttr('checked');
-                            }
-                        });
-                        $('#planillas_fecha_unica').parent().hide();
-                        $('#planillas_fecha_unica').addClass("campoInactivo").attr("disabled");
-                    }
-                    if(dia<=15){
-                        $("#nombre_periodo").text($("#primera_quincena").val());
-                        $("#periodo").val("2");
-                    }else{
-                        $("#nombre_periodo").text($("#segunda_quincena").val());
-                        $("#periodo").val("3");
-                    }
-                }else if (tipo=='1'){
-
-                    if (typeof(planillas_fecha_unica)!="undefined"){
-                        $('#planillas_fecha_unica').parent().hide();
-                        $('#planillas_fecha_unica').addClass("campoInactivo").attr("disabled");
-                        $('.todas_planillas:checkbox').each(function () {
-                            var id = $(this).val();
-                            if ($(this).is(':checked')) {
-                                $(".todas_planillas:checkbox").removeAttr('checked');
-                            }
-                        });
-                    }
-
-                    $("#nombre_periodo").text($("#mensual").val());
-                    $("#periodo").val("1");
-                }else if (tipo=='4'){
-                    $("#nombre_periodo").text($("#fecha_unica").val());
-                    $("#periodo").val("9");
-
-                    if (typeof(planillas_fecha_unica)!="undefined"){
-                        $('#planillas_fecha_unica').parent().show();
-                        $('#planillas_fecha_unica').removeClass("campoInactivo").removeAttr("disabled");
-                    }
-                }
-
-            });
+        if((i+1)== llave_v.length){
+            valor_campo += valor;
+        }
+        else{
+            valor_campo += valor+"|";
         }
 
     }
 
-    function borrarEspacios(cadena){
-        var campo = cadena.replace(/^\s+/g,'').replace(/\s+$/g,'');
-        return campo;
+    $.getJSON(destino, {
+            validarItemsllaves:true,
+            id:llave_post,
+            item:id_item,
+            valor:valor_campo,
+            valor_item:valor_item
+        },
+        function(mensaje){
+            if(mensaje != ""){
+                $(item).parent().children('#errorDialogo').remove();
+                $(item).parent().append('<span id="errorDialogo" class="mensajeErrorLinea">'+mensaje+'</span>');
+                $(item).parent().children('.mensajeErrorLinea').fadeOut(5000).addClass('mensajeError').css('display','block');
+                $(item).focus();
+            }
+        }
+    );
+}
+
+function cargarFechaPago(){
+
+    var destino          = $('#URLFormulario').val();
+    var codigo_planilla  = $('#codigo_planilla').val();
+    var fecha_inicio     = $('#fecha_inicio').val();
+    var fecha_fin        = $('#fecha_fin').val();
+    var lista            = '';
+    $('#fecha_pago').empty();
+    $('#periodo').empty();
+
+    /*** Enviar datos para la recarga ***/
+    $.getJSON(destino, {recargar: true, codigo_planilla: codigo_planilla, fecha_inicio: fecha_inicio, fecha_fin: fecha_fin}, function(datos) {
+        jQuery.each(datos, function(valor, texto) {
+            lista = lista+'<option value="'+valor+'">'+texto+'</option>';
+        });
+        $('#fecha_pago').html(lista);
+    });
+
+    setTimeout("cargarPeriodoPlanilla()",200);
+}
+
+
+
+function cargarPeriodoPlanilla1(){
+
+    var destino         = $('#URLFormulario').val();
+    var codigo_planilla = $('#codigo_planilla').val();
+    var ano_generacion  = $('#ano_generacion').val();
+    var mes_generacion  = $('#mes_generacion').val();
+    var lista           = '';
+    var periodo         = "periodo";
+    /*** Enviar datos para la recarga ***/
+    $.getJSON(destino, {recargar: true, codigo_planilla: codigo_planilla, ano_generacion: ano_generacion, mes_generacion: mes_generacion, periodo: periodo}, function(datos) {
+        jQuery.each(datos, function(valor, texto) {
+            lista = lista+'<option value="'+valor+'">'+texto+'</option>';
+
+        });
+
+        $('#periodo').html(lista);
+
+    });
+}
+
+  function cargarFechaPago2(){
+
+    var destino          = $('#URLFormulario').val();
+    var codigo_planilla  = $('#codigo_planilla').val();
+    var ano_generacion   = $('#ano_generacion').val();
+    var mes_generacion   = $('#mes_generacion').val();
+    var lista            = '';
+
+    $('#fecha_pago').empty();
+    $('#periodo').empty();
+
+    /*** Enviar datos para la recarga ***/
+    $.getJSON(destino, {recargar: true, codigo_planilla: codigo_planilla, ano_generacion: ano_generacion, mes_generacion: mes_generacion}, function(datos) {
+        jQuery.each(datos, function(valor, texto) {
+            lista = lista+'<option value="'+valor+'">'+texto+'</option>';
+        });
+        $('#fecha_pago').html(lista);
+        determinarPeriodo();
+    });
+
+   // setTimeout("determinarPeriodo()",200);
+}
+
+function determinarPeriodo()
+{
+    var destino         = $('#URLFormulario').val();
+    var codigo_planilla = $('#codigo_planilla').val();
+    var fechaPago       = $("#fecha_pago").val();
+
+    if(fechaPago!=null){
+        datosFecha          = fechaPago.split("-");
+        dia                 = parseInt(datosFecha[2]);
+
+        $.getJSON(destino, {recargarTipoPlanilla: true, codigo_planilla: codigo_planilla}, function(tipo) {
+
+            var planillas_fecha_unica = $("#planillas_fecha_unica").val();
+            if(tipo=='2'){
+
+                if (typeof(planillas_fecha_unica)!="undefined"){
+
+                    $('.todas_planillas:checkbox').each(function () {
+                        var id = $(this).val();
+                        if ($(this).is(':checked')) {
+                            $(".todas_planillas:checkbox").removeAttr('checked');
+                        }
+                    });
+                    $('#planillas_fecha_unica').parent().hide();
+                    $('#planillas_fecha_unica').addClass("campoInactivo").attr("disabled");
+                }
+                if(dia<=15){
+                    $("#nombre_periodo").text($("#primera_quincena").val());
+                    $("#periodo").val("2");
+                }else{
+                    $("#nombre_periodo").text($("#segunda_quincena").val());
+                    $("#periodo").val("3");
+                }
+            }else if (tipo=='1'){
+
+                if (typeof(planillas_fecha_unica)!="undefined"){
+                    $('#planillas_fecha_unica').parent().hide();
+                    $('#planillas_fecha_unica').addClass("campoInactivo").attr("disabled");
+                    $('.todas_planillas:checkbox').each(function () {
+                        var id = $(this).val();
+                        if ($(this).is(':checked')) {
+                            $(".todas_planillas:checkbox").removeAttr('checked');
+                        }
+                    });
+                }
+
+                $("#nombre_periodo").text($("#mensual").val());
+                $("#periodo").val("1");
+            }else if (tipo=='4'){
+                $("#nombre_periodo").text($("#fecha_unica").val());
+                $("#periodo").val("9");
+
+                if (typeof(planillas_fecha_unica)!="undefined"){
+                    $('#planillas_fecha_unica').parent().show();
+                    $('#planillas_fecha_unica').removeClass("campoInactivo").removeAttr("disabled");
+                }
+            }
+
+        });
     }
 
-    function seleccionHijos(campo) {
-        var id    = $(campo).attr('id');
-        var clase = $(campo).attr('class');
+}
 
-        if ($(campo).is(':checked')) {
-            var marcar = 1;
+function borrarEspacios(cadena){
+    var campo = cadena.replace(/^\s+/g,'').replace(/\s+$/g,'');
+    return campo;
+}
+
+function seleccionHijos(campo) {
+    var id    = $(campo).attr('id');
+    var clase = $(campo).attr('class');
+
+    if ($(campo).is(':checked')) {
+        var marcar = 1;
+    } else {
+        var marcar = 0;
+    }
+
+    $('li.'+clase).find(':checkbox').each(function(){
+
+        if ($(this).attr('id') != id){
+            if (marcar==0) {
+                $(this).removeAttr("checked");
+            } else {
+                $(this).attr("checked", "checked");
+            }
+        }
+    });
+}
+
+function referenciaHijo(campo){
+
+    var referencia = $(campo).children("a").attr("href");
+    if (referencia){
+        if (referencia !="#"){
+            document.location.href = referencia;
         } else {
-            var marcar = 0;
-        }
-
-        $('li.'+clase).find(':checkbox').each(function(){
-
-            if ($(this).attr('id') != id){
-                if (marcar==0) {
-                    $(this).removeAttr("checked");
-                } else {
-                    $(this).attr("checked", "checked");
-                }
-            }
-        });
-    }
-
-    function referenciaHijo(campo){
-
-        var referencia = $(campo).children("a").attr("href");
-        if (referencia){
-            if (referencia !="#"){
-                document.location.href = referencia;
-            } else {
-                var hijo = $(campo).children("a");
-                ejecutarComando(hijo,600,500);
-            }
+            var hijo = $(campo).children("a");
+            ejecutarComando(hijo,600,500);
         }
     }
+}
 
-    function in_array(elemento, arreglo){/*** Para determinar si un elemento esta dentro de un array ***/
-        var a=false;
-        for(var i=0;i<arreglo.length;i++){
-            if(elemento == arreglo[i]){
-                a=true;
-                break;
-            }
-        }
-        return a;
-    }
-
-    function campoVacio(valor){
-        if((/^\s+jq/.test(valor)) || valor==''){
-                return true;
-        }
-        return false;
-    }
-
-    function limpiar_oculto_Autocompletable(selector, oculto){/*** Aplicar con el metodo onKeyUp ***/
-        if($(selector).val()==""){
-            $(oculto).val('');
+function in_array(elemento, arreglo){/*** Para determinar si un elemento esta dentro de un array ***/
+    var a=false;
+    for(var i=0;i<arreglo.length;i++){
+        if(elemento == arreglo[i]){
+            a=true;
+            break;
         }
     }
+    return a;
+}
 
-    function autocompletableListaPlanilla(item){
-        var destino         = $('#URLFormulario').val();
-        var listaSucursales = listadoSucursales();
-        if(campoVacio(listaSucursales)){
-            listaSucursales = $('#listaSucursales').val();
+function campoVacio(valor){
+    if((/^\s+jq/.test(valor)) || valor==''){
+            return true;
+    }
+    return false;
+}
+
+function limpiar_oculto_Autocompletable(selector, oculto){/*** Aplicar con el metodo onKeyUp ***/
+    if($(selector).val()==""){
+        $(oculto).val('');
+    }
+}
+
+function autocompletableListaPlanilla(item){
+    var destino         = $('#URLFormulario').val();
+    var listaSucursales = listadoSucursales();
+    if(campoVacio(listaSucursales)){
+        listaSucursales = $('#listaSucursales').val();
+    }
+    $(item).autocomplete(destino, {
+        minChars: 3,
+        width: 250,
+        max: 100,
+        delay: 100,
+        matchContains: true,
+        cacheLength: 100,
+        extraParams: {
+            verificar: true,
+            sucursales: listaSucursales
+        },
+        formatResult: function(datos, valor) {return valor.split("|")[0];console.log(valor);}
+    }).blur(function() {
+        ///Aqui poner evento cuando pierda el foco
+    });
+
+    $(item).result(function(evento, datos, formateado) {
+        if (datos) {
+            $('#documento_identidad').val(datos[1]);
+
+            ///Aqui llamar el metodo de calculo
+
+        } else {
+            $('#documento_identidad').val('');
         }
-        $(item).autocomplete(destino, {
-            minChars: 3,
-            width: 250,
-            max: 100,
-            delay: 100,
-            matchContains: true,
-            cacheLength: 100,
-            extraParams: {
-                verificar: true,
-                sucursales: listaSucursales
-            },
-            formatResult: function(datos, valor) {return valor.split("|")[0];console.log(valor);}
-        }).blur(function() {
-            ///Aqui poner evento cuando pierda el foco
-        });
 
-        $(item).result(function(evento, datos, formateado) {
-            if (datos) {
-                $('#documento_identidad').val(datos[1]);
+    });
+}
 
-                ///Aqui llamar el metodo de calculo
+function listadoSucursales(){
 
-            } else {
-                $('#documento_identidad').val('');
-            }
+    var contador = 0;
+    var listado  = new Array();
 
-        });
-    }
+    $('.sucursales_electrodomesticos:checkbox').each(function () {
+        var valor = $(this).val();
+        if ($(this).is(':checked')) {
+            listado[contador] = valor;
+            contador++;
+        }
+    });
 
-    function listadoSucursales(){
-
-        var contador = 0;
-        var listado  = new Array();
-
-        $('.sucursales_electrodomesticos:checkbox').each(function () {
-            var valor = $(this).val();
-            if ($(this).is(':checked')) {
-                listado[contador] = valor;
-                contador++;
-            }
-        });
-
-        return listado.join(",");
-    }
-
+    return listado.join(",");
+}

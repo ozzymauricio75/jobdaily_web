@@ -52,8 +52,8 @@
 
     $documento_comprador        = SQL::obtenerValor("compradores", "documento_identidad", "codigo = '".$datos_ordenes->codigo_comprador."'");
     $comprador                  = SQL::obtenerValor("menu_compradores", "NOMBRE_COMPLETO", "DOCUMENTO = '".$documento_comprador."'");
-    $empresa                    = SQL::obtenerValor("empresas","razon_social","codigo = '".$datos_ordenes->codigo_sucursal."'");
     $codigo_empresa             = SQL::obtenerValor("sucursales","codigo_empresa","codigo = '".$datos_ordenes->codigo_sucursal."'");
+    $empresa                    = SQL::obtenerValor("empresas","razon_social","codigo = '".$codigo_empresa."'");
     $consorcio                  = SQL::obtenerValor("sucursales","nombre","codigo = '".$datos_ordenes->codigo_sucursal."'");
     $forma_pago                 = SQL::obtenerValor("plazos_pago_proveedores","nombre","codigo = '".$datos_ordenes->codigo_numero_dias_pago."'"); 
     $nit_empresa                = SQL::obtenerValor("empresas","documento_identidad_tercero","codigo = '".$codigo_empresa."'");
@@ -570,6 +570,5 @@
         "nombre"          => $nombre
     );
     SQL::insertar("archivos", $datos_archivo);
-    $id_archivo = $datos_ordenes->codigo_sucursal."|".$consecutivo;
-
+    $id_archivo   = $datos_ordenes->codigo_sucursal."|".$consecutivo;
 ?>

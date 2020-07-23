@@ -753,6 +753,26 @@ class HTML {
     /*** Generar vínculo de página web ***/
     public static function enlazarPagina($texto, $url, $opciones = "") {
 
+        $enlace = "<a href=\"$url\"";
+
+        if (!empty($opciones)) {
+            $listaOpciones = array();
+
+            foreach ($opciones as $atributo => $valor) {
+                $listaOpciones[] = "$atributo=\"$valor\"";
+            }
+
+            $opciones = implode(" ", $listaOpciones);
+            $enlace .= " $opciones";
+        }
+
+        $enlace .= ">$texto</a>";
+        return $enlace;
+    }
+    ///Anterior
+    /*** Generar vínculo de página web ***/
+    /*public static function enlazarPagina($texto, $url, $opciones = "") {
+
         $enlace = "<a target='_blank' href=\"$url\"";
 
         if (!empty($opciones)) {

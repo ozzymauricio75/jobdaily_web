@@ -64,7 +64,7 @@ $registros      = HTML::imprimirRegistros($totalRegistros, $paginaActual, $numer
 // Definir colores para los estados //
 $estados["ESTADO_"] = array(
     "0" => "estadoVerde",
-    "1" => "estadoNaranja",
+    "1" => "estadoAzul",
     "2" => "estadoRojo"
 );
 

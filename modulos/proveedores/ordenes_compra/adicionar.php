@@ -806,7 +806,7 @@ if (!empty($url_generar)){
 
                             HTML::marcaChequeo("aplica_descuento",$textos["DESCUENTO"], 1, false, array("title"=>$textos["AYUDA_APLICA_DESCUENTO"], "class"=>"descuento_linea modificar","onClick"=>"activaCampos(4,0)")),
 
-                            HTML::campoTextoCorto("descuento",$textos["PORCENTAJE"], 2, 8, "", array("title"=>$textos["AYUDA_APLICA_DESCUENTO"],"onKeyPress" => "return campoNumero(event)", "class"=>"linea oculto modificar"))
+                            HTML::campoTextoCorto("descuento",$textos["PORCENTAJE"], 2, 8, "", array("title"=>$textos["AYUDA_APLICA_DESCUENTO"], "class"=>"linea oculto modificar"))
                         ),
                         array(
                            HTML::listaSeleccionSimple("*proyecto", $textos["PROYECTO"], HTML::generarDatosLista("proyectos", "codigo", "nombre","codigo != 0"), "", array("disabled" => "true"), array("title" => $textos["AYUDA_EMPRESAS"], "")),
@@ -1202,7 +1202,7 @@ if (!empty($url_generar)){
     $modificar_encabezado = SQL::modificar("ordenes_compra", $datos_encabezado, $condicion_encabezado);
     $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos_movimiento, $condicion_movimiento);
 
-    /*** Error de insercón ***/
+    /*** Error de inserción ***/
     if ((!$modificar_movimiento)||(!$modificar_encabezado)) {
         $error     = true;
         $mensaje   = $textos["ERROR_GRABAR_MOVIMIENTO_ORDEN"];
@@ -1223,9 +1223,10 @@ if (!empty($url_generar)){
         } else {
             $error     = true;
             $mensaje   = $textos["ERROR_GRABAR_MOVIMIENTO_ORDEN"];
-        }
-        // Enviar datos con la respuesta del proceso al script que origino la peticion
-        if(isset($ruta_archivo) || !empty($ruta_archivo)){
+        }   
+    }
+    // Enviar datos con la respuesta del proceso al script que origino la peticion
+    /*    if(isset($ruta_archivo) || !empty($ruta_archivo)){
             $respuesta    = array();
             $respuesta[0] = $error;
             $respuesta[1] = $mensaje;
@@ -1236,7 +1237,14 @@ if (!empty($url_generar)){
             $respuesta[0] = $error;
             $respuesta[1] = $mensaje;
             HTTP::enviarJSON($respuesta);    
-        }   
+        }*/
+            // Enviar datos con la respuesta del proceso al script que origino la peticion
+    $respuesta    = array();
+    $respuesta[0] = $error;
+    $respuesta[1] = $mensaje;
+    if (isset($ruta_archivo)){
+        $respuesta[2] = $ruta_archivo;
     }
+    HTTP::enviarJSON($respuesta);
 }
 ?>

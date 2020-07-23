@@ -225,7 +225,9 @@ $vistas = array(
                 AND job_correspondencia.documento_identidad_proveedor = job_terceros.documento_identidad
                 AND job_correspondencia.codigo_tipo_documento = job_tipos_documentos.codigo
                 AND job_tipos_documento_identidad.codigo = job_terceros.codigo_tipo_documento 
-                AND job_correspondencia.codigo != 0;"
+                AND job_correspondencia.codigo != 0 
+        ORDER BY
+                job_correspondencia.estado,job_correspondencia.codigo ASC;"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_correspondencia AS
