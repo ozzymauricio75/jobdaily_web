@@ -36,6 +36,7 @@ $textos = array(
     "REPOORCO"                                 => "Reportes de ordenes de compra",
     "CRUZAR"                                   => "Cruzar",
     "REPORTE"                                  => "Reporte",
+    "FACTURA_PROVEEDOR"                        => "Factura Proveedor",
     "GENERAR_PLANO"                            => "Descargar archivo",
     "APROOCPR"                                 => "Aprobar orden de compra",
     "REIMORCO"                                 => "Re-imprimir",

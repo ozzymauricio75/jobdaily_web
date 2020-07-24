@@ -43,6 +43,7 @@ $botones .= HTML::boton("MODICORR",$textos["MODIFICAR"],"ejecutarComando(this, 6
 $botones .= HTML::boton("ANULCORR",$textos["ANULAR"],"ejecutarComando(this, 600, 450);","anular");
 $botones .= HTML::boton("ELIMCORR",$textos["ELIMINAR"],"ejecutarComando(this, 600, 450);","eliminar");
 $botones .= HTML::boton("RECICORR",$textos["RECIBIR"],"ejecutarComando(this, 800, 550);","recibir");
+$botones .= HTML::boton("REPOCORR",$textos["REPORTE"],"ejecutarComando(this, 650,420);","reporte");
 
 /*** Obtener el número de la página actual ***/
 if (empty($url_pagina)) {

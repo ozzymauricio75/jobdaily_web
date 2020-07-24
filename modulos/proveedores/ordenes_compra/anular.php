@@ -203,7 +203,7 @@ if (!empty($url_generar)) {
                                 HTML::mostrarDato("nombre_vendedor", $textos["VENDEDOR"], $nombre_vendedor) 
                             ),
                             array(
-                                HTML::mostrarDato("direccion", $textos["DIRECCION"], $documento_identidad_proveedor),
+                                HTML::mostrarDato("direccion", $textos["DIRECCION"], $direccion_proveedor),
                                 HTML::mostrarDato("email", $textos["CORREO_ELECTRONICO"], $correo_vendedor),
                                 HTML::mostrarDato("celular", $textos["CELULAR"], $celular_vendedor),
                             )

@@ -185,6 +185,17 @@ $registros["componentes"] = array(
         "archivo"      => "recibir",
         "global"       => "0",
         "tipo_enlace"  => "1"
+    ),
+    array(
+        "id"           => "REPOCORR",
+        "padre"        => "GESTCORR",
+        "id_modulo"    => "PROYECTOS",
+        "visible"      => "0",
+        "orden"        => "72",
+        "carpeta"      => "correspondencia",
+        "archivo"      => "reporte",
+        "global"       => "0",
+        "tipo_enlace"  => "1"
     )
 );
 

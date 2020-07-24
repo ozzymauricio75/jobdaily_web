@@ -108,14 +108,17 @@ if (!empty($url_generar)) {
                 $correo_vendedor         = SQL::obtenerValor("vendedores_proveedor", "correo", "codigo = '".$datos_item->codigo_vendedor."'");
                 $celular_vendedor        = SQL::obtenerValor("vendedores_proveedor", "celular", "codigo = '".$datos_item->codigo_vendedor."'");
 
-                $observaciones           = $datos_item->observaciones;
-                $valor_unitario          = $datos_item->valor_unitario;
-                $cantidad_total          = $datos_item->cantidad_total;
-                $valor_total             = $datos_item->valor_total;
-                $descuento_global1       = number_format($datos_item->descuento_global1,2)."%";
-                $valor_descuento_global1 = $datos_item->valor_descuento_global1;
-                $neto_pagar              = $datos_item->neto_pagar;
-                $valor_iva               = $datos_item->valor_iva;
+                $codigo_cruce             = SQL::obtenerValor("cruce_orden_compra","codigo","codigo_orden_compra='$codigo_orden_compra'");
+                $numero_factura_proveedor = SQL::obtenerValor("movimiento_cruce_orden_compra","numero_factura_proveedor","codigo_cruce_orden_compra='$codigo_cruce' LIMIT 0,1");
+
+                $observaciones            = $datos_item->observaciones;
+                $valor_unitario           = $datos_item->valor_unitario;
+                $cantidad_total           = $datos_item->cantidad_total;
+                $valor_total              = $datos_item->valor_total;
+                $descuento_global1        = number_format($datos_item->descuento_global1,2)."%";
+                $valor_descuento_global1  = $datos_item->valor_descuento_global1;
+                $neto_pagar               = $datos_item->neto_pagar;
+                $valor_iva                = $datos_item->valor_iva;
 
                 $items[] = array(   
                                 $id,
@@ -156,9 +159,6 @@ if (!empty($url_generar)) {
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
-            ),
-            array(
                 HTML::agrupador(
                     array(
                         array(
@@ -175,7 +175,8 @@ if (!empty($url_generar)) {
                         ),
                         array(
                             HTML::mostrarDato("empresa", $textos["EMPRESA"], $empresa),
-                            HTML::mostrarDato("nit", $textos["NIT"], $nit_empresa)
+                            HTML::mostrarDato("nit", $textos["NIT"], $nit_empresa),
+                            HTML::mostrarDato("factura_proveedor", $textos["FACTURA_PROVEEDOR"], $numero_factura_proveedor)
                         ),
                         array(
                             HTML::mostrarDato("consorcio", $textos["CONSORCIO"], $nombre_sucursal),
@@ -204,7 +205,7 @@ if (!empty($url_generar)) {
                             HTML::mostrarDato("nombre_vendedor", $textos["VENDEDOR"], $nombre_vendedor) 
                         ),
                         array(
-                            HTML::mostrarDato("direccion", $textos["DIRECCION"], $documento_identidad_proveedor),
+                            HTML::mostrarDato("direccion", $textos["DIRECCION"], $direccion_proveedor),
                             HTML::mostrarDato("email", $textos["CORREO_ELECTRONICO"], $correo_vendedor),
                             HTML::mostrarDato("celular", $textos["CELULAR"], $celular_vendedor),
                         )
