@@ -55,8 +55,8 @@ if (isset($url_completar)) {
 
     if (!$recibir_documento){
         $respuesta[0] = false;
-        $respuesta[1] = $textos["ERROR_RECIBIR_ITEM"];
-    }else {
+        $respuesta[1] = $textos["ITEM_RECIBIDO"];
+    }else if($recibir_documento) {
         $error   = true;
         $mensaje = $textos["ERROR_RECIBIR_ITEM"];
     }
@@ -254,7 +254,7 @@ if (!empty($url_generar)) {
 
 /*** Adicionar los datos provenientes del formulario ***/
 } elseif (!empty($forma_procesar)) {
-
+    
     if ($forma_indicador==1) {
         $error    = false;
         $mensaje  = $textos["ITEM_RECIBIDO"];

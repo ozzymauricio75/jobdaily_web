@@ -85,6 +85,7 @@ if (isset($url_completar)) {
     }
 
     HTTP::enviarJSON($respuesta);
+    exit; 
 }
 
 /*** Generar el formulario para la captura de datos ***/
@@ -197,11 +198,6 @@ elseif (!empty($url_generar)) {
     }elseif(empty($forma_fecha_vencimiento)){
         $error   = true;
         $mensaje = $textos["FECHA_VENCIMIENTO_VACIO"];
-    /*}
-
-    elseif(empty($forma_fecha_envio)){
-        $error   = true;
-        $mensaje = $textos["FECHA_ENVIO_VACIO"];*/
     } else {
 
         /*** Quitar separador de miles a un numero ***/
@@ -229,7 +225,7 @@ elseif (!empty($url_generar)) {
             "estado"                        => '0',
             "fecha_recepcion"               => $forma_fecha_recepcion,
             "fecha_vencimiento"             => $forma_fecha_vencimiento,
-            "fecha_envio"                   => " ",
+            "fecha_envio"                   => "",
             "observaciones"                 => $forma_observaciones
         );
         $insertar = SQL::insertar("correspondencia", $datos);

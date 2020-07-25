@@ -110,7 +110,6 @@
                 for(var i=0; i<vector_id.length; i++){ 
                     $('#orden_compra').append('<option value="'+vector_id[i]+'">' +vector_nombre[i]+ '</option>');
                 }
-                grabarEncabezado();
                 $('#orden_compra').removeAttr('disabled');
             }else if(elementos[0]==""){
                 $('#orden_compra').attr('disabled');
