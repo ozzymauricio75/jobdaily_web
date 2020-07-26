@@ -51,7 +51,7 @@ if (!empty($url_generar)) {
         $consulta_entradas  = SQL::seleccionar($tablas, $columnas, $condicion);
         $entradas           = SQL::filasDevueltas($consulta_entradas);
 
-        if (($estado==0) || ($estado==1) || ($estado==4)) {
+        if (($estado==4)) {
 
             $codigo_orden_compra           = $url_id;
             $numero_consecutivo            = $datos->numero_consecutivo;
@@ -258,19 +258,19 @@ if (!empty($url_generar)) {
 /*** Adicionar los datos provenientes del formulario ***/
 } elseif (!empty($forma_procesar)) {
     /*** Asumir por defecto que no hubo error ***/
-    $datos = array(
-        "estado" => "2"
-    );
     
-    $consulta_encabezado = SQL::modificar("ordenes_compra", $datos, "codigo = '$forma_id'");
-    $consulta_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, "codigo_orden_compra = '$forma_id'");
+    $existe_movimiento  = SQL::obtenerValor("movimiento_ordenes_compra", "codigo", "codigo_orden_compra = '$forma_id'");
 
-    if (($consulta_encabezado) && ($consulta_movimiento)) {
+    if($existe_movimiento){ 
+        $elimina_movimiento = SQL::eliminar("movimiento_ordenes_compra", "codigo_orden_compra = '$forma_id'");    
+        $elimina_encabezado = SQL::eliminar("ordenes_compra", "codigo = '$forma_id'");
+    }
+    if (($elimina_encabezado) || ($elimina_movimiento)) {
         $error    = false;
-        $mensaje  = $textos["ITEM_ANULADO"];
+        $mensaje  = $textos["ITEM_ELIMINADO"];
     } else {
         $error   = true;
-        $mensaje = $textos["ERROR_ANULAR_ITEM"];
+        $mensaje = $textos["ERROR_ELIMINAR_ITEM"];
     }
 
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/

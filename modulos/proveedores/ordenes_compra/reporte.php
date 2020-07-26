@@ -114,7 +114,7 @@ if (!empty($url_generar)) {
     } else {
         /*** Generar archivo plano ***/
         if ($forma_estado == 4){
-            $condicion_estado = "";
+            $condicion_estado = "estado !='4' AND";
         } elseif ($forma_estado == 0) {
             $condicion_estado = "estado = '$forma_estado' AND ";    
         } elseif ($forma_estado == 1) {
@@ -248,6 +248,9 @@ if (!empty($url_generar)) {
                         }
                         if ($datos_encabezado->estado == '3'){
                            $estado_orden = $textos["ESTADO_3"];
+                        }
+                        if ($datos_encabezado->estado == '4'){
+                           $estado_orden = $textos["ESTADO_4"];
                         }
                         
                         $subtotal = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_total)","codigo_orden_compra='$datos_encabezado->codigo'");
@@ -421,6 +424,9 @@ if (!empty($url_generar)) {
                         }
                         if ($datos_encabezado->estado == '3'){
                            $estado_orden = $textos["ESTADO_3"];
+                        }
+                        if ($datos_encabezado->estado == '4'){
+                           $estado_orden = $textos["ESTADO_4"];
                         }
                         
                         $subtotal = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_total)","codigo_orden_compra='$datos_encabezado->codigo'");

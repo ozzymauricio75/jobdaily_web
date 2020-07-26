@@ -118,7 +118,7 @@
             $('#sucursal').html(lista);
             $("#proyecto").removeAttr("disabled");
             $("#solicitante").removeAttr("disabled");
-            recargarProyectos();
+            //recargarProyectos();
             //$('#sucursal').val('');
         });
     }
@@ -147,6 +147,20 @@
     }
 
     function recargarProyectos(){
+        var destino                 = $('#URLFormulario').val();
+        var codigo_empresa_proyecto = $('#empresa').val();
+        var sucursal                = $('#sucursal').val();   
+        var lista                   = '';
+
+        $.getJSON(destino, {recargarProyecto: true, codigo: codigo_empresa_proyecto, elemento: sucursal}, function(datos) {
+            jQuery.each(datos, function(valor, texto) {
+                lista = lista+'<option value="'+valor+'">'+texto+'</option>';
+            });
+            $('#proyecto').html(lista);
+        });
+    }
+
+    /*function recargarProyectos(){
         var destino         = $('#URLFormulario').val();
         var codigo_empresa  = $('#empresa').val(); 
         var sucursal        = $('#sucursal').val();
@@ -173,8 +187,8 @@
                 }
             }
             $('#proyecto').removeAttr('disabled');
-        });*/
-    }
+        });
+    }*/
 
     function recargarVendedores(){
         var destino  = $('#URLFormulario').val();

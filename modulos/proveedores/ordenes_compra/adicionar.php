@@ -317,7 +317,13 @@ if (isset($url_completar)) {
     }
     exit;    
 
-} elseif (isset($url_recargarProyecto)) {
+} elseif (!empty($url_recargarProyecto)) {
+
+    $respuesta = HTML::generarDatosLista("proyectos", "codigo", "nombre", "codigo_empresa_ejecuta = '".$url_codigo."'");
+    HTTP::enviarJSON($respuesta);
+    exit();
+
+/*} elseif (isset($url_recargarProyecto)) {
 
     if (!empty($url_empresa)) {
 
@@ -335,7 +341,7 @@ if (isset($url_completar)) {
     }
     HTTP::enviarJSON($tabla);
     exit;
-
+*/
 }  elseif (isset($url_cargarNit)) {
     if (!empty($url_codigo_empresa)) {
 
@@ -378,7 +384,7 @@ if (isset($url_completar)) {
                 "codigo_comprador"                  => $codigo_comprador,
                 "cantidad_registros"                => 0,
                 "cantidad_cumplidos"                => 0,
-                "estado"                            => 0,
+                "estado"                            => 4,
                 "codigo_usuario_orden_compra"       => $sesion_id_usuario_ingreso,
                 "codigo_usuario_anula"              => "",
                 "estado_aprobada"                   => 0,
@@ -466,7 +472,7 @@ if (isset($url_completar)) {
         "codigo_articulo"          => $codigo_articulo,
         "referencia_articulo"      => $referencia,
         "codigo_sucursal_destino"  => $id_sucursal_orden, 
-        "estado"                   => 1,
+        "estado"                   => 4,
         "codigo_unidad_medida"     => $unidad_compra,
         "cantidad_total"           => $cantidad_total_articulo,
         "valor_total"              => $subtotal,
@@ -493,7 +499,8 @@ if (isset($url_completar)) {
     $id_movimiento_orden = SQL::insertar("movimiento_ordenes_compra", $datos_movimiento,true);  
     
     $datos_encabezado = array(  
-        "descuento_global1" => $descuento
+        "descuento_global1" => $descuento,
+        "estado" => '0'
     );  
 
     $descuento_global1   = SQL::insertar("ordenes_compra", $datos_encabezado,true);  
@@ -794,12 +801,12 @@ if (!empty($url_generar)){
                             HTML::listaSeleccionSimple("*tipos_documento",$textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","descripcion='ORDEN DE COMPRA' OR descripcion='orden de compra'"), "", array("disabled" => "true"), array("title",$textos["AYUDA_TIPO_DOCUMENTO"]))
                         ),
                         array(    
-                            HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social",""), "", array("title" => $textos["AYUDA_EMPRESAS"], "class"=>"empresa", "onBlur" => "validarItem(this);","onChange" => "recargarListaEmpresas()", "onClick" => "recargarComprador(),cargaNit()")),
+                            HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social",""), "", array("title" => $textos["AYUDA_EMPRESAS"], "class"=>"empresa", "onBlur" => "validarItem(this);","onChange" => "recargarListaEmpresas(),recargarProyectos()", "onClick" => "recargarComprador(),cargaNit()")),
                            
                             HTML::campoTextoCorto("*nit_empresa",$textos["NIT"], 13, 15, "", array("disabled" => "true"), array("title",$textos["AYUDA_NIT"], "", "")) 
                         ),
                         array(
-                            HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre",""), "", array("disabled" => "true"), array("title" => $textos["AYUDA_CONSORCIO"], "onBlur" => "validarItem(this)")),
+                            HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre",""), "", "", array("title" => $textos["AYUDA_CONSORCIO"], "onBlur" => "validarItem(this)")),
                             HTML::campoOculto("id_sucursal", ""),
 
                             HTML::listaSeleccionSimple("*codigo_comprador",$textos["COMPRADOR"], "", "", array("disabled" => "true"), array("title",$textos["AYUDA_COMPRADOR"])),
@@ -809,7 +816,7 @@ if (!empty($url_generar)){
                             HTML::campoTextoCorto("descuento",$textos["PORCENTAJE"], 2, 8, "", array("title"=>$textos["AYUDA_APLICA_DESCUENTO"], "class"=>"linea oculto modificar"))
                         ),
                         array(
-                           HTML::listaSeleccionSimple("*proyecto", $textos["PROYECTO"], HTML::generarDatosLista("proyectos", "codigo", "nombre","codigo != 0"), "", array("disabled" => "true"), array("title" => $textos["AYUDA_EMPRESAS"], "")),
+                           HTML::listaSeleccionSimple("*proyecto", $textos["PROYECTO"], "", "", array("disabled" => "true"), array("title" => $textos["AYUDA_PROYECTOS"], "")),
 
                            HTML::campoTextoCorto("*solicitante",$textos["SOLICITANTE"], 40, 255, "", array("disabled" => "true"), array("title",$textos["AYUDA_SOLICITANTE"]))                       
                         ),
@@ -1218,27 +1225,19 @@ if (!empty($url_generar)){
         
         if($modificar_encabezado){
             $forma_id = $forma_campo_sucursal."|".$forma_campo_fecha_documento."|".$forma_campo_numero_orden_total;
+            Sesion::registrar("indice_imprimir", $idAsignado);
+
             include("clases/imprimir.php");
+            //$ruta_archivo = HTTP::generarURL("IMPRIMIR_PDF")."&id=".$forma_id."&temporal=0";
             $ruta_archivo = HTTP::generarURL("DESCARCH")."&id=".$id_archivo."&temporal=0";
+
         } else {
             $error     = true;
             $mensaje   = $textos["ERROR_GRABAR_MOVIMIENTO_ORDEN"];
         }   
     }
+    
     // Enviar datos con la respuesta del proceso al script que origino la peticion
-    /*    if(isset($ruta_archivo) || !empty($ruta_archivo)){
-            $respuesta    = array();
-            $respuesta[0] = $error;
-            $respuesta[1] = $mensaje;
-            $respuesta[2] = $ruta_archivo;
-            HTTP::enviarJSON($respuesta);
-        }else{
-            $respuesta    = array();
-            $respuesta[0] = $error;
-            $respuesta[1] = $mensaje;
-            HTTP::enviarJSON($respuesta);    
-        }*/
-            // Enviar datos con la respuesta del proceso al script que origino la peticion
     $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $mensaje;

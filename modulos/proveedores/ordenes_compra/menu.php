@@ -41,6 +41,7 @@ $botones .= HTML::boton("CONSOCPR",$textos["CONSULTAR"],"ejecutarComando(this,90
 $botones .= HTML::boton("ANULORCO",$textos["ANULAR"],"ejecutarComando(this,900,660);","anular");
 $botones .= HTML::boton("CRUCORCO",$textos["CRUZAR"],"ejecutarComando(this,960,660);","cruzar");
 $botones .= HTML::boton("REPOORCO",$textos["REPORTE"],"ejecutarComando(this, 650,420);","reporte");
+$botones .= HTML::boton("ELIMOCPR",$textos["ELIMINAR"],"ejecutarComando(this, 900,660);","eliminar");
 
 // Obtener el numero de la pagina actual
 if (empty($url_pagina)) {
@@ -63,7 +64,8 @@ $estados["ESTADO_"] = array(
     "0" => "estadoVerde",
     "1" => "estadoNaranja",
     "2" => "estadoRojo",
-    "3" => "estadoAzul"
+    "3" => "estadoAzul",
+    "4" => "estadoGris",
 );
 $estados["ESTADO_APROBADA_"] = array(
     "0" => "estadoNaranja",

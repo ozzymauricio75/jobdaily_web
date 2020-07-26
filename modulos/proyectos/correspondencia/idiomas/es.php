@@ -36,6 +36,7 @@ $textos = array(
     "REPOCORR"                          => "Reportes Correspondencia",
     "RECIBIR"                           => "Recibir",
     "REPORTE"                           => "Reportes",
+    "IMPRIMIR_PDF"                      => "[Imprimir]",
     "CODIGO"                            => "Código",
     "TODOS"                             => "Todos",
     "FECHA_DOCUMENTO"                   => "Fecha documento",

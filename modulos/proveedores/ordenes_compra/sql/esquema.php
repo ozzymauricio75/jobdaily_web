@@ -37,7 +37,7 @@ $tablas["ordenes_compra"] = array(
     "codigo_comprador"                 => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla compradores'",
     "cantidad_registros"               => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Cantidad de Items para la orden de compra'",
     "cantidad_cumplidos"               => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Cantidad de Items cumplidos en la orden de compra'",
-    "estado"                           => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Entrega parcial 2->Anulada 3->Cumplida'",
+    "estado"                           => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Entrega parcial 2->Anulada 3->Cumplida 4->Temporal'",
     "codigo_usuario_orden_compra"      => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genero la orden de compra'",
     "codigo_usuario_anula"             => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que anula el registro'",
     "estado_aprobada"                  => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->No ha sido aprobada 1->Ya fue aprobada'",
@@ -66,7 +66,7 @@ $tablas["movimiento_ordenes_compra"] = array(
     "codigo_articulo"         => "INT(9) UNSIGNED ZEROFILL COMMENT 'Codigo del articulo asignado por la empresa'",
     "referencia_articulo"     => "VARCHAR(30) NOT NULL COMMENT 'Referencia del producto a realizar orden de compra'",
     "codigo_sucursal_destino" => "MEDIUMINT(5) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código interno de la sucursal'",
-    "estado"                  => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Entrega parcial 2->Anulada 3->Cumplida'",
+    "estado"                  => "ENUM('0','1','2','3') NOT NULL DEFAULT '1' COMMENT '0->Grabada total 1->Entrega parcial 2->Anulada 3->Cumplida 4->Sin Grabar Total'",
     "observaciones"           => "VARCHAR(78) COMMENT 'Observacion para el articulo en el pedido'",
     "codigo_unidad_medida"    => "INT(6) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id de la tabla unidades'",
     "cantidad_total"          => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Cantidad total solicitada en unidades del articulo'",
@@ -452,6 +452,15 @@ $registros["componentes"] = array(
         "orden"           => "0014",
         "carpeta"         => "ordenes_compra",
         "archivo"         => "reporte"
+    ),
+    array(
+        "id"              => "ELIMOCPR",
+        "padre"           => "GESTOCPR",
+        "id_modulo"       => "PROVEEDORES",
+        "visible"         => "0",
+        "orden"           => "0015",
+        "carpeta"         => "ordenes_compra",
+        "archivo"         => "eliminar"
     )
 );
 $vistas = array(
