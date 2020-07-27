@@ -278,6 +278,44 @@ class HTML {
         return $elemento;
     }
 
+    /*** Crear código para insertar un (div) ***/
+    public static function div($nombre, $opciones = "") {
+        $elemento = "<div id=\"$nombre\"";
+
+        if (!empty($opciones)) {
+            $listaOpciones = array();
+
+            foreach ($opciones as $atributo => $valor) {
+                $listaOpciones[] = "$atributo=\"$valor\"";
+            }
+
+            $opciones = implode(" ", $listaOpciones);
+            $elemento .= " $opciones";
+        }
+
+        $elemento .= "></div>\n";
+        return $elemento;
+    }
+
+    /*** Crear código para insertar una figura ***/
+    public static function figura($clase, $contenido, $opciones = "") {
+        $elemento = "<figure class=\"$clase\"";
+
+        if (!empty($opciones)) {
+            $listaOpciones = array();
+
+            foreach ($opciones as $atributo => $valor) {
+                $listaOpciones[] = "$atributo=\"$valor\"";
+            }
+
+            $opciones = implode(" ", $listaOpciones);
+            $elemento .= " $opciones";
+        }
+
+        $elemento .= ">$contenido</figure>\n";
+        return $elemento;
+    }
+
     /*** Crear código para insertar un rectángulo (div) ***/
     public static function contenedor($contenido, $opciones = "") {
         $elemento = "<div";

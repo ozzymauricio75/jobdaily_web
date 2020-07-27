@@ -64,6 +64,7 @@ $rutasGlobales["javascript"]  = "javascript";
 $rutasGlobales["imagenes"]    = "imagenes";
 $rutasGlobales["estilos"]     = "css";
 $rutasGlobales["archivos"]    = "../archivos";
+$rutasGlobales["graficosPhp"] = "../Highcharts-8.1.2/code";
 
 // Definicion de directorios por modulo o componente
 $rutasComponente["idiomas"]    = "idiomas";
@@ -122,6 +123,7 @@ $imagenesGlobales["regresar"]            = $rutasGlobales["imagenes"]."/regresar
 $imagenesGlobales["exportar"]            = $rutasGlobales["imagenes"]."/exportar.png";
 $imagenesGlobales["cruzar"]              = $rutasGlobales["imagenes"]."/modificar.png";
 $imagenesGlobales["reporte"]             = $rutasGlobales["imagenes"]."/exportar.png";
+$imagenesGlobales["graficar"]            = $rutasGlobales["imagenes"]."/graficar.png";
 $imagenesGlobales["anterior"]            = $rutasGlobales["imagenes"]."/anterior.png";
 $imagenesGlobales["ultima"]              = $rutasGlobales["imagenes"]."/ultima.png";
 $imagenesGlobales["siguiente"]           = $rutasGlobales["imagenes"]."/siguiente.png";

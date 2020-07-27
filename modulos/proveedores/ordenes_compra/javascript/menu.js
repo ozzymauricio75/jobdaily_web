@@ -7,8 +7,66 @@
     $(document).bind('keydown', 'Ctrl+c', function(evt) {$('#CONSOCPR').click(); return false;});
     $(document).bind('keydown', 'Ctrl+n', function(evt) {$('#ANULORCO').click(); return false;});
     $(document).bind('keydown', 'Ctrl+g', function(evt) {$('#botonAgregarArticulo').click(); return false;});
+
     //$(document).bind('keydown', 'Ctrl+m', function(evt) {$('#MODICARA').click(); return false;});
     //$(document).bind('keydown', 'Ctrl+e', function(evt) {$('#ELIMCARA').click(); return false;});
+    function grafica(){
+        var destino   = $('#URLFormulario').val();
+        var proyecto  = $('#selector5').val();
+
+        $.getJSON(destino, {cargaGrafica: true, proyecto: proyecto}, function(datos) {
+
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'pie',
+                    options3d: {
+                        enabled: true,
+                        alpha: 45,
+                        beta: 0
+                    }
+                },
+                title: {
+                    text: 'Browser market shares at a specific website, 2014'
+                },
+                accessibility: {
+                    point: {
+                        valueSuffix: '%'
+                    }
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        depth: 35,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}'
+                        }
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'Browser share',
+                    data: [
+                        ['Firefox', datos[0]],
+                        ['IE', 26.8],
+                        {
+                            name: 'Chrome',
+                            y: 12.8,
+                            sliced: true,
+                            selected: true
+                        },
+                        ['Safari', 8.5],
+                        ['Opera', 6.2],
+                        ['Others', 0.7]
+                    ]
+                }]
+            });
+        });    
+    }
 
     function seleccionar_todas_sucursales(){
       var seleccionar_todos = true;

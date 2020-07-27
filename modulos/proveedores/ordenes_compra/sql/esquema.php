@@ -461,6 +461,15 @@ $registros["componentes"] = array(
         "orden"           => "0015",
         "carpeta"         => "ordenes_compra",
         "archivo"         => "eliminar"
+    ),
+    array(
+        "id"              => "GRAFOCPR",
+        "padre"           => "GESTOCPR",
+        "id_modulo"       => "PROVEEDORES",
+        "visible"         => "0",
+        "orden"           => "0017",
+        "carpeta"         => "ordenes_compra",
+        "archivo"         => "graficar"
     )
 );
 $vistas = array(
