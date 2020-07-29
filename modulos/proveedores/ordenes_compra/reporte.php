@@ -9,28 +9,31 @@
 * Jobdaily :: Software empresarial a la medida
 *
 * Este programa es software libre: usted puede redistribuirlo y/o
-* modificarlo  bajo los t閞minos de la Licencia P鷅lica General GNU
-* publicada por la Fundaci髇 para el Software Libre, ya sea la versi髇 3
-* de la Licencia, o (a su elecci髇) cualquier versi髇 posterior.
+* modificarlo  bajo los t茅rminos de la Licencia P煤blica General GNU
+* publicada por la Fundaci贸n para el Software Libre, ya sea la versi贸n 3
+* de la Licencia, o (a su elecci贸n) cualquier versi贸n posterior.
 *
-* Este programa se distribuye con la esperanza de que sea 鷗il, pero
-* SIN GARANT虯 ALGUNA; ni siquiera la garant韆 impl韈ita MERCANTIL o
-* de APTITUD PARA UN PROP覵ITO DETERMINADO. Consulte los detalles de
-* la Licencia P鷅lica General GNU para obtener una informaci髇 m醩
+* Este programa se distribuye con la esperanza de que sea 煤til, pero
+* SIN GARANT脥A ALGUNA; ni siquiera la garant铆a impl铆cita MERCANTIL o
+* de APTITUD PARA UN PROP脫SITO DETERMINADO. Consulte los detalles de
+* la Licencia P煤blica General GNU para obtener una informaci贸n m谩s
 * detallada.
 *
-* Deber韆 haber recibido una copia de la Licencia P鷅lica General GNU
+* Deber铆a haber recibido una copia de la Licencia P煤blica General GNU
 * junto a este programa. En caso contrario, consulte:
 * <http://www.gnu.org/licenses/>.
 *
 **/
+require_once ('jpgraph/src/jpgraph.php');
+require_once ('jpgraph/src/jpgraph_pie.php');
+
 $tabla                      = "usuarios";
 $columnas                   = SQL::obtenerColumnas($tabla);
 $consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuario = '$sesion_usuario'");
 $datos                      = SQL::filaEnObjeto($consulta);
 $sesion_id_usuario_ingreso  = $datos->codigo;
 
-/*** Devolver datos para autocompletar la b鷖queda ***/
+/*** Devolver datos para autocompletar la b煤squeda ***/
 if (isset($url_completar)) {
     if (($url_item) == "selector5") {
         echo SQL::datosAutoCompletar("seleccion_proyectos", $url_q);
@@ -50,7 +53,7 @@ if (!empty($url_generar)) {
         "4" => $textos["TODAS"]
     );
 
-    /*** Obtener lista de sucursales para selecci髇 ***/
+    /*** Obtener lista de sucursales para selecci贸n ***/
     $tablas = array(
         "a" => "perfiles_usuario",
         "c" => "sucursales"
@@ -69,7 +72,7 @@ if (!empty($url_generar)) {
     $consulta_privilegios = SQL::seleccionar($tablas, $columnas, $condicion, "", "");
     $sucursales = array();
 
-    /*** Definici髇 de pesta馻s para datos del tercero***/
+    /*** Definici贸n de pesta帽as para datos del tercero***/
     $formularios["PESTANA_REPORTE"] = array(
         array(   
             HTML::listaSeleccionSimple("*estado", $textos["TIPO_ORDEN"], $tipo_orden, "", array("title" => $textos["AYUDA_TIPO_ORDEN"],"onBlur" => "validarItem(this);")),
@@ -148,6 +151,46 @@ if (!empty($url_generar)) {
         /*** Obtener los datos de la tabla ***/
         $ordenes_compra   = SQL::seleccionar(array("ordenes_compra"),array("*"),"$condicion_estado prefijo_codigo_proyecto='$codigo_proyecto'");
         $datos_encabezado = SQL::filaEnObjeto($ordenes_compra);
+        //Calculo los porcentajes de cumplimiento
+        $numero_ordenes_proyecto  = SQL::obtenerValor("ordenes_compra","COUNT(numero_consecutivo)","prefijo_codigo_proyecto='$codigo_proyecto'");
+        $numero_ordenes_grabadas = SQL::obtenerValor("ordenes_compra","COUNT(numero_consecutivo)","prefijo_codigo_proyecto='$codigo_proyecto' AND estado='0'");
+        $numero_ordenes_cumplidas = SQL::obtenerValor("ordenes_compra","COUNT(numero_consecutivo)","prefijo_codigo_proyecto='$codigo_proyecto' AND estado='3'");
+        $numero_ordenes_parciales = SQL::obtenerValor("ordenes_compra","COUNT(numero_consecutivo)","prefijo_codigo_proyecto='$codigo_proyecto' AND estado='1'");
+        $numero_ordenes_anuladas  = SQL::obtenerValor("ordenes_compra","COUNT(numero_consecutivo)","prefijo_codigo_proyecto='$codigo_proyecto' AND estado='2'");
+        $porcentaje_cumplidas     = ($numero_ordenes_cumplidas/$numero_ordenes_proyecto)*100;
+        $porcentaje_parciales     = ($numero_ordenes_parciales/$numero_ordenes_proyecto)*100;
+        $porcentaje_anuladas      = ($numero_ordenes_anuladas/$numero_ordenes_proyecto)*100;
+        $porcentaje_grabadas      = ($numero_ordenes_grabadas/$numero_ordenes_proyecto)*100;
+ 
+        $data    = array($porcentaje_grabadas, $porcentaje_cumplidas, $porcentaje_parciales, $porcentaje_anuladas);
+        $estados = array("Grab","Cumpl","Parc","Anul");
+
+        // Create the Pie Graph. 
+        $graph = new PieGraph(301,217);
+
+        $theme_class="DefaultTheme";
+
+        // Set A title for the plot
+        $graph->title->Set("Analisis estados O.C");
+        $graph->title->SetFont(FF_FONT2,FS_BOLD);
+        $graph->SetBox(true);
+
+        // Create
+        $p1 = new PiePlot($data);
+        $p1->SetLegends($estados);
+        $graph->Add($p1);
+        
+        $p1->ShowBorder();
+        $p1->SetColor('black');
+        $p1->SetSliceColors(array("#0088ff","#61db5c","#ffdf00","#DC143C"));
+    
+        $cadena       = Cadena::generarCadenaAleatoria(8);
+        $nombreImagen = '../archivos'.$cadena.".png";
+ 
+        // Display the graph
+        $graph->Stroke($nombreImagen);
+
+
         //Titulos segun tipo listado
         if ($forma_tipo_listado=="1"){
             //////////////////////////////ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
@@ -166,8 +209,6 @@ if (!empty($url_generar)) {
 
             $archivo->AddPage();
             $archivo->SetFont('Arial','B',8);
-
-            //$datos_encabezado = SQL::filaEnObjeto($ordenes_compra);
 
             $nombre_proyecto  = SQL::obtenerValor("proyectos","nombre","codigo='$datos_encabezado->prefijo_codigo_proyecto'");
             $codigo_empresa   = SQL::obtenerValor("sucursales","codigo_empresa","codigo='$datos_encabezado->codigo_sucursal'");
@@ -195,6 +236,11 @@ if (!empty($url_generar)) {
             $archivo->SetFont('Arial','',8);
             $archivo->Cell(70,4,""."$ ".number_format($valor_proyecto,0),0,0,'L');
             $archivo->Cell(40,4,"",0,1,'R');
+            //Imprime Grafica
+            $archivo->Ln(2);
+            //Aqui agrego la imagen que acabo de crear con jpgraph
+            $archivo->Image($nombreImagen, 222, 16, 52);
+            //$this->Image($graph,10, 10, 20);  
             //////////////////////////////FIN ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
             $archivo->SetFont('Arial','B',6);
             $archivo->SetFillColor(225,225,225);
@@ -341,6 +387,7 @@ if (!empty($url_generar)) {
                     }
                 }
             }
+            
             if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
                 $archivo->SetFillColor(255,255,255);
             } else{

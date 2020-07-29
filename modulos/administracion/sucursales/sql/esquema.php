@@ -57,7 +57,7 @@ $tablas ["sucursales"] = array(
     "cuentas_pagar_proveedores"    => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT 'Permite el manejo de cuentas por pagar proveedores: 0=No, 1=Si'",
     "nomina"                       => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT 'Permite el manejo de  nómina: 0=No, 1=Si'",
     "contabilidad"                 => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT 'permite el manejo contable: 0=No, 1=Si'",
-    "tipo"                         => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT 'Indicador de tipo 1=Consorcio 2=Union temporal'"
+    "tipo"                         => "ENUM('0','1','2') NOT NULL DEFAULT '0' COMMENT 'Indicador de tipo 0=Principal 1=Consorcio 2=Union temporal'"
 );
 
 // Definición de llaves primarias

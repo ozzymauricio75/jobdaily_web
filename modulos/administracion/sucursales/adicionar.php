@@ -105,43 +105,6 @@ if (!empty($url_generar)) {
             )
         );
 
-        /*** Definición de pestañas tributaria ***/
-        /*$formularios["PESTANA_CONTABLE"] = array(
-            array(
-                HTML::campoTextoCorto("codigo_empresa_consolida", $textos["EMPRESA_CONSOLIDA"], 3, 3, "", array("title" => $textos["AYUDA_EMPRESA_CONSOLIDA"], "onKeyPress" => "return campoEntero(event)")),
-                HTML::campoTextoCorto("codigo_sucursal_consolida", $textos["ALMACEN_CONSOLIDA"], 5, 5, "", array("title" => $textos["AYUDA_ALMACEN_CONSOLIDA"], "onKeyPress" => "return campoEntero(event)")),
-                HTML::listaSeleccionSimple("tipo_empresa", $textos["TIPO_EMPRESA"], $tipoEmpresa, "", array("title" => $textos["AYUDA_TIPO_EMPRESA"]))
-            ),
-            array(
-                HTML::campoTextoCorto("orden", $textos["ORDEN"], 3, 3, "", array("title" => $textos["AYUDA_ORDEN"], "onKeyPress" => "return campoEntero(event)")),
-                HTML::campoTextoCorto("fecha_cierre", $textos["FECHA_CIERRE"], 8, 8, "", array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_CIERRE"],"onBlur" => "validarItem(this);"))
-            ),
-            array(
-                HTML::marcaChequeo("maneja_kardex", $textos["MANEJA_KARDEX"])
-            ),
-            array(
-                HTML::marcaChequeo("realiza_orden_compra", $textos["REALIZA_ORDEN_COMPRA"])
-            ),
-            array(
-                HTML::marcaChequeo("inventarios_mercancia", $textos["MANEJA_INVENTARIOS_MERCANCIA"])
-            ),
-            array(
-                HTML::marcaChequeo("cartera_clientes_mayoristas", $textos["CARTERA_CLIENTES_MAYORISTAS"])
-            ),
-            array(
-                HTML::marcaChequeo("cartera_clientes_detallistas", $textos["CARTERA_CLIENTES_DETALLISTAS"])
-            ),
-            array(
-                HTML::marcaChequeo("cuentas_pagar_proveedores", $textos["CUENTAS_PAGAR_PROVEEDORES"])
-            ),
-            array(
-                HTML::marcaChequeo("nomina", $textos["NOMINA"])
-            ),
-            array(
-                HTML::marcaChequeo("contabilidad", $textos["CONTABILIDAD"])
-            )
-        );*/
-
         /*** Definicion de botones ***/
         $botones = array(
             HTML::boton("botonAceptar", $textos["ACEPTAR"], "adicionarItem();", "aceptar")

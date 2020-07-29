@@ -64,7 +64,8 @@ $rutasGlobales["javascript"]  = "javascript";
 $rutasGlobales["imagenes"]    = "imagenes";
 $rutasGlobales["estilos"]     = "css";
 $rutasGlobales["archivos"]    = "../archivos";
-$rutasGlobales["graficosPhp"] = "../Highcharts-8.1.2/code";
+$rutasGlobales["graficosPhp"] = "Highcharts-8.1.2/code";
+$rutasGlobales["graficosPhp"] = "../jpgraph/src";
 
 // Definicion de directorios por modulo o componente
 $rutasComponente["idiomas"]    = "idiomas";

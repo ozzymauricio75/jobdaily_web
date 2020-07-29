@@ -155,6 +155,25 @@ class HTML {
         return $elemento;
     }
 
+    /*** Crear código para insertar una imagen ***/
+    public static function imagenGrafica($ruta, $opciones = "") {
+        $elemento = "<img src=\"$ruta\" alt=\"\"";
+
+        if (!empty($opciones)) {
+            $listaOpciones = array();
+
+            foreach ($opciones as $atributo => $valor) {
+                $listaOpciones[] = "$atributo=\"$valor\"";
+            }
+
+            $opciones = implode(" ", $listaOpciones);
+            $elemento .= " $opciones";
+        }
+
+        $elemento .= ">\n";
+        return $elemento;
+    }
+
     /*** Crear código para insertar un botón de texto ***/
     public static function boton($id, $texto, $accion, $icono = "", $opciones = "") {
         global $imagenesGlobales;
@@ -279,7 +298,7 @@ class HTML {
     }
 
     /*** Crear código para insertar un (div) ***/
-    public static function div($nombre, $opciones = "") {
+    public static function div($nombre, $contenido, $opciones = "") {
         $elemento = "<div id=\"$nombre\"";
 
         if (!empty($opciones)) {
@@ -293,7 +312,7 @@ class HTML {
             $elemento .= " $opciones";
         }
 
-        $elemento .= "></div>\n";
+        $elemento .= ">$contenido</div>\n";
         return $elemento;
     }
 

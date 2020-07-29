@@ -24,6 +24,8 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
+require_once ('jpgraph/src/jpgraph.php');
+require_once ('jpgraph/src/jpgraph_pie.php');
 $tabla                      = "usuarios";
 $columnas                   = SQL::obtenerColumnas($tabla);
 $consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuario = '$sesion_usuario'");
@@ -102,6 +104,14 @@ if (isset($url_completar)) {
                 $total_orden = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$datos_encabezado->codigo'");
                 $acumulado_total = $total_orden + $acumulado_total;
 
+                $numero_ordenes_proyecto  = SQL::obtenerValor("ordenes_compra","COUNT(numero_consecutivo)","prefijo_codigo_proyecto='$codigo_proyecto'");
+                $numero_ordenes_cumplidas = SQL::obtenerValor("ordenes_compra","COUNT(numero_consecutivo)","prefijo_codigo_proyecto='$codigo_proyecto' AND estado='3'");
+                $numero_ordenes_parciales = SQL::obtenerValor("ordenes_compra","COUNT(numero_consecutivo)","prefijo_codigo_proyecto='$codigo_proyecto' AND estado='1'");
+                $numero_ordenes_anuladas  = SQL::obtenerValor("ordenes_compra","COUNT(numero_consecutivo)","prefijo_codigo_proyecto='$codigo_proyecto' AND estado='2'");
+                $porcentaje_cumplidas     = ($numero_ordenes_cumplidas/$numero_ordenes_proyecto)*100;
+                $porcentaje_parciales     = ($numero_ordenes_parciales/$numero_ordenes_proyecto)*100;
+                $porcentaje_anuladas      = ($numero_ordenes_anuladas/$numero_ordenes_proyecto)*100;
+
                 /*** Ordenes ***/
                 $fecha_orden  = $datos_encabezado->fecha_documento;
                 $estado       = $datos_encabezado->estado;
@@ -125,12 +135,22 @@ if (isset($url_completar)) {
     $acumulado_iva         = str_replace(',', '.', $acumulado_iva);
     $acumulado_total       = number_format($acumulado_total, 0);
     $acumulado_total       = str_replace(',', '.', $acumulado_total);
-    $datos = array(
-        $dato1 ='1',
-        $dato2 ='2',
-    );
-    
-    HTTP::enviarJSON($datos);
+
+    require_once ('jpgraph/src/jpgraph.php');
+    require_once ('jpgraph/src/jpgraph_pie.php');
+     
+    $data = array(40,60,21,33);
+     
+    $graph = new PieGraph(300,200);
+    $graph->SetShadow();
+     
+    $graph->title->Set("A simple Pie plot");
+     
+    $p1 = new PiePlot($data);
+    $graph->Add($p1);
+    $graph->Stroke();
+    //echo "<img src=>>$graph>> alt=>>border=>>0>";
+    HTTP::enviarJSON($graph);
     exit;
 }
 /*** Generar el formulario para la captura de datos ***/
@@ -164,7 +184,6 @@ if (!empty($url_generar)) {
     $condicion = "c.codigo = a.codigo_sucursal AND a.codigo_usuario = '$sesion_id_usuario_ingreso'";
     $consulta_privilegios = SQL::seleccionar($tablas, $columnas, $condicion, "", "");
     $sucursales = array();
-
     /*** Definición de pestañas para datos del tercero***/
     $formularios["PESTANA_REPORTE"] = array(
         array(
@@ -173,17 +192,14 @@ if (!empty($url_generar)) {
                     array(
                         array(
                             HTML::campoTextoCorto("*selector5", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable")),
-                            HTML::boton("botonAgregarArticulo", $textos["GRAFICAR"], "grafica()", "graficar","","etiqueta"),
-                            HTML::figura("highcharts-figure",
-                                HTML::div("container",""),""
-                            ) 
+                            HTML::boton("botonAgregarArticulo", $textos["GRAFICAR"], "grafica()", "graficar","","etiqueta")
                         )
                     ),$textos["ANALISIS"]
                 )
             )
-        ) 
+        )
     );
-    $formularios["PESTANA_REPORTE"] = array_merge($formularios["PESTANA_REPORTE"],$sucursales);
+    //$formularios["PESTANA_REPORTE"] = array_merge($formularios["PESTANA_REPORTE"],$sucursales);
     /*** Definición de botones ***/
     $contenido = HTML::generarPestanas($formularios);
 

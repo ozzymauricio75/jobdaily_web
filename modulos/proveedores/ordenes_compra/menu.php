@@ -40,9 +40,9 @@ $botones  = HTML::boton("ADICOCPR",$textos["ADICIONAR"],"ejecutarComando(this,91
 $botones .= HTML::boton("CONSOCPR",$textos["CONSULTAR"],"ejecutarComando(this,900,660);","consultar");
 $botones .= HTML::boton("ANULORCO",$textos["ANULAR"],"ejecutarComando(this,900,660);","anular");
 $botones .= HTML::boton("CRUCORCO",$textos["CRUZAR"],"ejecutarComando(this,960,660);","cruzar");
-$botones .= HTML::boton("REPOORCO",$textos["REPORTE"],"ejecutarComando(this, 650,420);","reporte");
 $botones .= HTML::boton("ELIMOCPR",$textos["ELIMINAR"],"ejecutarComando(this, 900,660);","eliminar");
-$botones .= HTML::boton("GRAFOCPR",$textos["GRAFICAR"],"ejecutarComando(this, 900,660);","graficar");
+$botones .= HTML::boton("REPOORCO",$textos["REPORTE"],"ejecutarComando(this, 650,420);","reporte");
+//$botones .= HTML::boton("GRAFOCPR",$textos["GRAFICAR"],"ejecutarComando(this, 900,660);","graficar");
 
 // Obtener el numero de la pagina actual
 if (empty($url_pagina)) {
