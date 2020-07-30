@@ -51,14 +51,14 @@
                     $('#ficha_tecnica').val(datos[3]);
                     $('#referencia');
                     $('#codigo_barras_alterna');
-                    $('#codigo_impuesto_compra').html('');
-                    $('#codigo_impuesto_compra').append('<option value="'+codigo_impuesto_compra+'">' +nombre_impuesto_compra+ '</option>');
+                    //$('#codigo_impuesto_compra').html('');
+                    //$('#codigo_impuesto_compra').append('<option value="'+codigo_impuesto_compra+'">' +nombre_impuesto_compra+ '</option>');
                     $('#codigo_impuesto_venta').html('');
                     $('#codigo_impuesto_venta').append('<option value="'+codigo_impuesto_venta+'">' +nombre_impuesto_venta+ '</option>');
                     $('#codigo_marca').html('');
                     $('#codigo_marca').append('<option value="'+codigo_marca+'">' +nombre_marca+ '</option>');
-                    $('#codigo_unidad_compra').html('');
-                    $('#codigo_unidad_compra').append('<option value="'+codigo_unidad_compra+'">' +nombre_unidad_compra+ '</option>');
+                    //$('#codigo_unidad_compra').html('');
+                    //$('#codigo_unidad_compra').append('<option value="'+codigo_unidad_compra+'">' +nombre_unidad_compra+ '</option>');
                     $('#codigo_iso').val(datos[16]);
 
                 }/*else{
