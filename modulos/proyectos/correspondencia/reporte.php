@@ -119,7 +119,7 @@ if (!empty($url_generar)) {
         } elseif($forma_estado == 2){
             $condicion_estado = "estado = '$forma_estado' AND ";
         } elseif($forma_estado == 3){
-            $condicion_estado = "estado ='1' OR estado ='2' OR estado ='0' AND ";
+            $condicion_estado = "estado !='' AND ";
         }
         
         $nombre         = "";
@@ -365,12 +365,13 @@ if (!empty($url_generar)) {
                         $total_orden = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden_compra'");
 
                         /*** Ordenes ***/
-                        $fecha_orden  = SQL::obtenerValor("ordenes_compra","fecha_documento","codigo='$codigo_orden_compra'");
-                        $total_orden  = number_format($total_orden, 0);
-                        $total_orden  = str_replace(',', '.', $total_orden);
+                        $fecha_orden     = SQL::obtenerValor("ordenes_compra","fecha_documento","codigo='$codigo_orden_compra'");
+                        $total_orden     = number_format($total_orden, 0);
+                        $total_orden     = str_replace(',', '.', $total_orden);
+                        $valor_documento = $datos_correspondencia->valor_documento;
                                                                                                
                         //Contenido del archivo
-                        $contenido = "$fecha_orden;$numero_orden;$total_orden;$nit;$proveedor;$datos_correspondencia->numero_documento_proveedor;$datos_correspondencia->valor_documento;$estado_correspondencia;$datos_correspondencia->fecha_vencimiento;$datos_correspondencia->fecha_envio\n";
+                        $contenido = "$fecha_orden;$numero_orden;$total_orden;$nit;$proveedor;$datos_correspondencia->numero_documento_proveedor;$valor_documento;$estado_correspondencia;$datos_correspondencia->fecha_vencimiento;$datos_correspondencia->fecha_envio\n";
                         $guardarArchivo = fwrite($archivo,$contenido);
                     }
                 }
