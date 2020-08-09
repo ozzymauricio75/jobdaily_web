@@ -31,6 +31,15 @@ $consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuari
 $datos                      = SQL::filaEnObjeto($consulta);
 $sesion_id_usuario_ingreso  = $datos->codigo;
 
+/*** Devolver datos para autocompletar la búsqueda ***/
+if (isset($url_completar)) {
+
+    if (($url_item) == "documento_soporte_orden") {
+        echo SQL::datosAutoCompletar("aprobaciones", $url_q, "estado_residente='1' AND estado_director='1' AND estado_factura='0'");
+    }
+    exit;
+}
+
 if(isset($url_insertaCantidades)){
     $codigo_orden_compra = $url_codigo_orden_compra;  
     $codigo_articulo     = $url_codigo_articulo;
@@ -237,7 +246,7 @@ if(isset($url_insertaCantidades)){
                 array(
                     HTML::listaSeleccionSimple("*tipo_documento",$textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo>0"), "", array("title",$textos["AYUDA_TIPO_DOCUMENTO"])),
 
-                    HTML::campoTextoCorto("*documento_soporte_orden",$textos["DOCUMENTO_CRUCE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_CRUCE"], "onBlur" => "validarItem(this)"))
+                    HTML::campoTextoCorto("*documento_soporte_orden",$textos["DOCUMENTO_CRUCE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_CRUCE"], "class" => "autocompletable", "onBlur" => "validarItem(this)"))
                 ),
                 array(
                     HTML::agrupador(
@@ -384,6 +393,18 @@ if(isset($url_insertaCantidades)){
         $mensaje = $textos["DOCUMENTO_PROVEEDOR_VACIO"];
     }
 
+    /*** Quitar separador de miles a un numero ***/
+    function quitarMiles($cadena){
+        $valor = array();
+        for ($i = 0; $i < strlen($cadena); $i++) {
+            if (substr($cadena, $i, 1) != ".") {
+                $valor[$i] = substr($cadena, $i, 1);
+            }
+        }
+        $valor = implode($valor);
+        return $valor;
+    }
+
     $consulta_cruce_orden     = SQL::seleccionar(array("cruce_orden_compra"), array("*"), "codigo_orden_compra='$forma_codigo_orden_compra'");
     $consulta_movimiento_cruce = SQL::seleccionar(array("movimiento_cruce_orden_compra"), array("*"), "codigo_cruce_orden_compra >0 '");
     
@@ -396,6 +417,8 @@ if(isset($url_insertaCantidades)){
         "documento_identidad_proveedor" => $forma_documento_identidad_proveedor
     );
 
+    $insertar_cruce_orden  = SQL::insertar("cruce_orden_compra", $datos_cruce_orden);
+
     if($forma_tipo_documento==4){
         $numero_remision_proveedor = $forma_documento_soporte_orden;
         $numero_factura_proveedor  = "";
@@ -407,81 +430,84 @@ if(isset($url_insertaCantidades)){
     //Si se cruza por totales
     if(($forma_tipo==0) && (!$consulta_movimiento_cruce) && ($forma_documento_soporte_orden)){
                 
-        if(isset($consulta_cruce_orden)){
-            $insertar_cruce_orden  = SQL::insertar("cruce_orden_compra", $datos_cruce_orden);
-            $numero_codigos        = count($forma_codigos);
-            $numero_cantidades     = count($forma_cantidades);
-            //Inicia lectura del movimiento
-            $codigo_cruce_orden_compra = SQL::obtenerValor("cruce_orden_compra", "codigo", "codigo_orden_compra = '$forma_codigo_orden_compra' LIMIT 0,1");
-            $consulta_movimiento       = SQL::seleccionar(array("movimiento_ordenes_compra"), array("*"), "codigo_orden_compra = '$forma_codigo_orden_compra' AND codigo_sucursal_destino='$forma_codigo_sucursal'");
-            $datos_item_movimiento     = SQL::filaEnObjeto($consulta_movimiento);
+        $numero_codigos        = count($forma_codigos);
+        $numero_cantidades     = count($forma_cantidades);
+        //Inicia lectura del movimiento
+        $codigo_cruce_orden_compra = SQL::obtenerValor("cruce_orden_compra", "codigo", "codigo_orden_compra = '$forma_codigo_orden_compra' LIMIT 0,1");
+        $consulta_movimiento       = SQL::seleccionar(array("movimiento_ordenes_compra"), array("*"), "codigo_orden_compra = '$forma_codigo_orden_compra' AND codigo_sucursal_destino='$forma_codigo_sucursal'");
+        $datos_item_movimiento     = SQL::filaEnObjeto($consulta_movimiento);
 
-            for ($i=1; $i<=$numero_codigos; $i++) { 
-                $codigo                   = $forma_codigos[$i];
+        for ($i=1; $i<=$numero_codigos; $i++) { 
+            $codigo                   = $forma_codigos[$i];
 
-                $valor_unitario           = SQL::obtenerValor("lista_precio_articulos","costo","codigo_articulo='$codigo'"); 
-                $codigo_tasa_impuesto     = SQL::obtenerValor("articulos","codigo_impuesto_compra","codigo='$codigo'");
-                $codigo_tasa              = SQL::obtenerValor("tasas ","codigo","codigo='$codigo_tasa_impuesto'"); 
-                $porcentaje_tasa_impuesto = SQL::obtenerValor("vigencia_tasas","porcentaje","codigo_tasa='$codigo_tasa'");
+            $valor_unitario           = SQL::obtenerValor("lista_precio_articulos","costo","codigo_articulo='$codigo'"); 
+            $codigo_tasa_impuesto     = SQL::obtenerValor("articulos","codigo_impuesto_compra","codigo='$codigo'");
+            $codigo_tasa              = SQL::obtenerValor("tasas ","codigo","codigo='$codigo_tasa_impuesto'"); 
+            $porcentaje_tasa_impuesto = SQL::obtenerValor("vigencia_tasas","porcentaje","codigo_tasa='$codigo_tasa'");
 
-                $valor_total              = $valor_unitario * $forma_cantidades[$i];
-                $valor_descuento_global1  = ($valor_total * $datos_item_movimiento->descuento_global1)/100;
-                $valor_iva                = (($valor_total - $valor_descuento_global1) * $porcentaje_tasa_impuesto) /100;             
-                $neto_pagar               = $valor_total - $valor_descuento_global1 + $valor_iva;
-                $datos_movimiento_cruce_orden_compra  = array(
-                    "codigo_cruce_orden_compra" => $codigo_cruce_orden_compra,
-                    "codigo_articulo"           => $forma_codigos[$i],
-                    "cantidad_total"            => $forma_cantidades[$i],
-                    "valor_total"               => $valor_total,
-                    "valor_descuento_global1"   => $valor_descuento_global1,
-                    "neto_pagar"                => $neto_pagar,
-                    "valor_iva"                 => $valor_iva,
-                    "codigo_tipo_documento"     => $forma_tipo_documento,
-                    "numero_factura_proveedor"  => $numero_factura_proveedor,
-                    "numero_remision_proveedor" => $numero_remision_proveedor,
-                    "observaciones"             => "",
-                    "fecha_registro"            => date("Y-m-d H:i:s"),
-                    "codigo_usuario_registra"   => $sesion_id_usuario_ingreso
+            $valor_total              = $valor_unitario * $forma_cantidades[$i];
+            $valor_descuento_global1  = ($valor_total * $datos_item_movimiento->descuento_global1)/100;
+            $valor_iva                = (($valor_total - $valor_descuento_global1) * $porcentaje_tasa_impuesto) /100;             
+            $neto_pagar               = $valor_total - $valor_descuento_global1 + $valor_iva;
+            
+            $datos_movimiento_cruce_orden_compra  = array(
+                "codigo_cruce_orden_compra" => $codigo_cruce_orden_compra,
+                "codigo_articulo"           => $forma_codigos[$i],
+                "cantidad_total"            => $forma_cantidades[$i],
+                "valor_total"               => $valor_total,
+                "valor_descuento_global1"   => $valor_descuento_global1,
+                "neto_pagar"                => $neto_pagar,
+                "valor_iva"                 => $valor_iva,
+                "codigo_tipo_documento"     => $forma_tipo_documento,
+                "numero_factura_proveedor"  => $numero_factura_proveedor,
+                "numero_remision_proveedor" => $numero_remision_proveedor,
+                "observaciones"             => "",
+                "fecha_registro"            => date("Y-m-d H:i:s"),
+                "codigo_usuario_registra"   => $sesion_id_usuario_ingreso
+            );
+            $insertar_movimiento_cruce_orden = SQL::insertar("movimiento_cruce_orden_compra", $datos_movimiento_cruce_orden_compra);
+            //Obtengo cantidades por codigo en el movimiento y en el cruce
+            $unidades_orden           = SQL::obtenerValor("movimiento_ordenes_compra","SUM(cantidad_total)","codigo_orden_compra='$forma_codigo_orden_compra'");
+            $unidades_cruce           = SQL::obtenerValor("movimiento_cruce_orden_compra","SUM(cantidad_total)","codigo_cruce_orden_compra='$codigo_cruce_orden_compra'");
+            $unidades_cruce = intval($unidades_cruce);
+            $unidades_orden = intval($unidades_orden);
+            
+            if($unidades_cruce<$unidades_orden){
+                $datos = array(
+                    "estado" => "1"
                 );
-                $insertar_movimiento_cruce_orden = SQL::insertar("movimiento_cruce_orden_compra", $datos_movimiento_cruce_orden_compra);
-                //Obtengo cantidades por codigo en el movimiento y en el cruce
-                $unidades_orden           = SQL::obtenerValor("movimiento_ordenes_compra","SUM(cantidad_total)","codigo_orden_compra='$forma_codigo_orden_compra'");
-                $unidades_cruce           = SQL::obtenerValor("movimiento_cruce_orden_compra","SUM(cantidad_total)","codigo_cruce_orden_compra='$codigo_cruce_orden_compra'");
-                $unidades_cruce = intval($unidades_cruce);
-                $unidades_orden = intval($unidades_orden);
-                
-                if($unidades_cruce<$unidades_orden){
-                    $datos = array(
-                        "estado" => "1"
-                    ); 
-                    $modificar_encabezado = SQL::modificar("ordenes_compra", $datos, "codigo = '$forma_codigo_orden_compra'");
-                    $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, "codigo_orden_compra = '$forma_codigo_orden_compra'");
-                
-                    if (($modificar_encabezado) && ($modificar_movimiento)) {
-                        $error    = false;
-                        $mensaje  = $textos["ORDEN_CUMPLIDA_PARCIALMENTE"]; 
-                    }
+                $datos_factura = array(
+                    "estado_factura" => "1"
+                ); 
+                $modificar_encabezado = SQL::modificar("ordenes_compra", $datos, "codigo = '$forma_codigo_orden_compra'");
+                $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, "codigo_orden_compra = '$forma_codigo_orden_compra'");
+                $modificar_aprobaciones = SQL::modificar("aprobaciones", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
+            
+                if (($modificar_encabezado) && ($modificar_movimiento)) {
                     $error    = false;
                     $mensaje  = $textos["ORDEN_CUMPLIDA_PARCIALMENTE"]; 
-                }elseif($unidades_cruce==$unidades_orden){
-                    $datos = array(
-                        "estado" => "3"
-                    );
-                    $modificar_encabezado = SQL::modificar("ordenes_compra", $datos, "codigo = '$forma_codigo_orden_compra'");
-                    $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, "codigo_orden_compra = '$forma_codigo_orden_compra'");
-                
-                    if (($modificar_encabezado) && ($modificar_movimiento)) {
-                        $error    = false;
-                        $mensaje  = $textos["ORDEN_CUMPLIDA"];
-                    }
-                }    
-            } 
-        }
+                }
+                $error    = false;
+                $mensaje  = $textos["ORDEN_CUMPLIDA_PARCIALMENTE"]; 
+            }elseif($unidades_cruce==$unidades_orden){
+                $datos = array(
+                    "estado" => "3"
+                );
+                $datos_factura = array(
+                    "estado_factura" => "1"
+                );
+                $modificar_encabezado = SQL::modificar("ordenes_compra", $datos, "codigo = '$forma_codigo_orden_compra'");
+                $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, "codigo_orden_compra = '$forma_codigo_orden_compra'");
+                $modificar_aprobaciones = SQL::modificar("aprobaciones", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
+            
+                if (($modificar_encabezado) && ($modificar_movimiento)) {
+                    $error    = false;
+                    $mensaje  = $textos["ORDEN_CUMPLIDA"];
+                }
+            }    
+        } 
     //Si se cruza por unidades x codigo    
-    }elseif(($forma_tipo==1) && ($forma_documento_soporte_orden)){
-        if(isset($consulta_cruce_orden)){
-            $insertar_cruce_orden = SQL::insertar("cruce_orden_compra", $datos_cruce_orden);
-        }    
+    }elseif(($forma_tipo==1) && ($forma_documento_soporte_orden)){ 
         $numero_codigos    = count($forma_codigos);
         $numero_cantidades = count($forma_cantidades);
         //Inicia lectura del movimiento
@@ -501,6 +527,8 @@ if(isset($url_insertaCantidades)){
             $valor_descuento_global1  = ($valor_total * $datos_item_movimiento->descuento_global1)/100;
             $valor_iva                = (($valor_total - $valor_descuento_global1) * $porcentaje_tasa_impuesto) /100;             
             $neto_pagar               = $valor_total - $valor_descuento_global1 + $valor_iva;
+            $forma_cantidades[$i]     = quitarMiles($forma_cantidades[$i]);
+            $forma_cantidades[$i]     = str_replace(",", ".", $forma_cantidades[$i]);
 
             $datos_movimiento_cruce_orden_compra  = array(
                 "codigo_cruce_orden_compra" => $codigo_cruce_orden_compra,
@@ -528,8 +556,12 @@ if(isset($url_insertaCantidades)){
                 $datos_parcial = array(
                     "estado" => "1"
                 ); 
+                $datos_factura = array(
+                    "estado_factura" => "1"
+                );
                 $modificar_encabezado = SQL::modificar("ordenes_compra", $datos_parcial, "codigo = '$forma_codigo_orden_compra'");
                 $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos_parcial, "codigo_orden_compra = '$forma_codigo_orden_compra'");
+                $modificar_aprobaciones = SQL::modificar("aprobaciones", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
 
                 if (($modificar_encabezado) && ($modificar_movimiento)) {
                     $error    = false;
@@ -542,8 +574,12 @@ if(isset($url_insertaCantidades)){
                 $datos_cumplida = array(
                     "estado" => "3"
                 );
-                $modificar_encabezado = SQL::modificar("ordenes_compra", $datos_cumplida, "codigo = '$forma_codigo_orden_compra'");
-                $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos_cumplida, "codigo_orden_compra = '$forma_codigo_orden_compra'");
+                $datos_factura = array(
+                    "estado_factura" => "1"
+                );
+                $modificar_encabezado   = SQL::modificar("ordenes_compra", $datos_cumplida, "codigo = '$forma_codigo_orden_compra'");
+                $modificar_movimiento   = SQL::modificar("movimiento_ordenes_compra", $datos_cumplida, "codigo_orden_compra = '$forma_codigo_orden_compra'");
+                $modificar_aprobaciones = SQL::modificar("aprobaciones", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
             
                 if (($modificar_encabezado) && ($modificar_movimiento)) {
                     $error    = false;
@@ -552,10 +588,6 @@ if(isset($url_insertaCantidades)){
             }    
         }
         
-    }else {
-        $respuesta    = array();
-        $error        = true;
-        $mensaje      = $textos["ERROR_CRUZAR"];
     }
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
     $respuesta    = array();

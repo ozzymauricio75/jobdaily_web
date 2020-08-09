@@ -9,23 +9,23 @@
 * Jobdaily:: Sofware empresarial a la medida
 *
 * Este programa es software libre: usted puede redistribuirlo y/o
-* modificarlo  bajo los t√©rminos de la Licencia P√∫blica General GNU
-* publicada por la Fundaci√≥n para el Software Libre, ya sea la versi√≥n 3
-* de la Licencia, o (a su elecci√≥n) cualquier versi√≥n posterior.
+* modificarlo  bajo los tÈrminos de la Licencia P˙blica General GNU
+* publicada por la FundaciÛn para el Software Libre, ya sea la versiÛn 3
+* de la Licencia, o (a su elecciÛn) cualquier versiÛn posterior.
 *
-* Este programa se distribuye con la esperanza de que sea √∫til, pero
-* SIN GARANT√çA ALGUNA; ni siquiera la garant√≠a impl√≠cita MERCANTIL o
-* de APTITUD PARA UN PROP√ìSITO DETERMINADO. Consulte los detalles de
-* la Licencia P√∫blica General GNU para obtener una informaci√≥n m√°s
+* Este programa se distribuye con la esperanza de que sea ˙til, pero
+* SIN GARANTÕA ALGUNA; ni siquiera la garantÌa implÌcita MERCANTIL o
+* de APTITUD PARA UN PROP”SITO DETERMINADO. Consulte los detalles de
+* la Licencia P˙blica General GNU para obtener una informaciÛn m·s
 * detallada.
 *
-* Deber√≠a haber recibido una copia de la Licencia P√∫blica General GNU
+* DeberÌa haber recibido una copia de la Licencia P˙blica General GNU
 * junto a este programa. En caso contrario, consulte:
 * <http://www.gnu.org/licenses/>.
 *
 **/
 
-/*** Devolver datos para autocompletar la b√∫squeda ***/
+/*** Devolver datos para autocompletar la b˙squeda ***/
 if (isset($url_completar)) {
     if (($url_item) == "selector1") {
         echo SQL::datosAutoCompletar("seleccion_municipios", $url_q);
@@ -42,10 +42,6 @@ if (isset($url_completar)) {
     if (($url_item) == "selector5") {
         echo SQL::datosAutoCompletar("seleccion_proyectos", $url_q);
     }
-
-    if (($url_item) == "documento_soporte") {
-        echo SQL::datosAutoCompletar("aprobaciones", $url_q, "estado_residente='1' AND estado_director='1' AND estado_factura='0'");
-    }
     exit;
 
 }elseif (!empty($url_cargarOrdenes)) {
@@ -58,7 +54,7 @@ if (isset($url_completar)) {
     $llave_proyecto                = explode("-", $codigo_proyecto);
     $codigo_proyecto               = $llave_proyecto[0];
 
-    $consulta_orden  = SQL::seleccionar(array("ordenes_compra"), array("*"), "prefijo_codigo_proyecto = '$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor'");
+    $consulta_orden  = SQL::seleccionar(array("ordenes_compra"), array("*"), "prefijo_codigo_proyecto = '$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor' AND estado!='3'");
 
     if (SQL::filasDevueltas($consulta_orden)) {
         while($datos = SQL::filaEnObjeto($consulta_orden)){
@@ -77,18 +73,6 @@ if (isset($url_completar)) {
     $elementos[2] = $mensaje;
     HTTP::enviarJSON($elementos);
     exit;    
-
-}elseif (!empty($url_cargaValor)) {
-    $documento_soporte             = $url_documento_soporte;
-    $documento_identidad_proveedor = $url_documento_identidad_proveedor;
-
-    $llave                         = explode("-", $url_documento_identidad_proveedor);
-    $documento_identidad_proveedor = $llave[0];
-
-    $datos = SQL::obtenerValor("aprobaciones", "valor_documento", "numero_documento_proveedor = '$documento_soporte' AND documento_identidad_proveedor='$documento_identidad_proveedor'");
-
-    HTTP::enviarJSON($datos);
-    exit;  
 
 }elseif (!empty($url_recargar)) {
 
@@ -121,7 +105,7 @@ elseif (!empty($url_generar)) {
             $codigo = 1;
         }
 
-         /*** Definici√≥n de pesta√±as general ***/
+         /*** DefiniciÛn de pestaÒas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
                 HTML::campoTextoCorto("*selector5", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable"))
@@ -136,16 +120,9 @@ elseif (!empty($url_generar)) {
             array(
                 HTML::listaSeleccionSimple("*orden_compra", $textos["ORDEN_COMPRA"], "", "", array("title",$textos["AYUDA_ORDEN"], "onBlur" => "validarItem(this)")),
 
-                HTML::campoTextoCorto("*documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"], "class" => "autocompletable", "onBlur" => "cargaValor()")),
+                HTML::campoTextoCorto("*documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"], "onBlur" => "validarItem(this)")),
 
-                HTML::campoTextoCorto("*valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, "", array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"]))
-            ),
-            array(
-                HTML::campoTextoCorto("fecha_recepcion", $textos["FECHA_RECEPCION"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_RECEPCION"], "onBlur" => "validarItem(this);")),
-
-                HTML::campoTextoCorto("fecha_vencimiento", $textos["FECHA_VENCIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_VENCIMIENTO"], "onBlur" => "validarItem(this);")),
-
-                //HTML::campoTextoCorto("fecha_envio", $textos["FECHA_ENVIO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_ENVIO"], "onBlur" => "validarItem(this);"))
+                HTML::campoTextoCorto("*valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, "", array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"], "onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
             ),
             array(    
                 HTML::campoTextoCorto("observaciones",$textos["OBSERVACIONES"], 50, 234, "",array("title"=>$textos["AYUDA_OBSERVACIONES"])),
@@ -203,21 +180,13 @@ elseif (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["VALOR_VACIO"];
 
-    }elseif(empty($forma_fecha_recepcion)){
-        $error   = true;
-        $mensaje = $textos["FECHA_RECEPCION_VACIO"];
-
     }elseif(empty($forma_orden_compra)){
         $error   = true;
         $mensaje = $textos["ORDEN_VACIO"];
-
-    }elseif(empty($forma_fecha_vencimiento)){
-        $error   = true;
-        $mensaje = $textos["FECHA_VENCIMIENTO_VACIO"];
     } else {
 
         /*** Quitar separador de miles a un numero ***/
-        /*function quitarMiles($cadena){
+        function quitarMiles($cadena){
             $valor = array();
             for ($i = 0; $i < strlen($cadena); $i++) {
                 if (substr($cadena, $i, 1) != ".") {
@@ -228,7 +197,7 @@ elseif (!empty($url_generar)) {
             return $valor;
         }
 
-        $forma_valor_documento = quitarMiles($forma_valor_documento);*/
+        $forma_valor_documento = quitarMiles($forma_valor_documento);
 
         /*** Insertar datos ***/
         $datos = array(
@@ -238,13 +207,13 @@ elseif (!empty($url_generar)) {
             "numero_documento_proveedor"    => $forma_documento_soporte,
             "numero_orden_compra"           => $forma_orden_compra,
             "valor_documento"               => $forma_valor_documento,
-            "estado"                        => '0',
-            "fecha_recepcion"               => $forma_fecha_recepcion,
-            "fecha_vencimiento"             => $forma_fecha_vencimiento,
-            "fecha_envio"                   => "",
+            "estado_residente"              => '0',
+            "estado_director"               => '0',
+            "fecha_registro_residente"      => date("Y-m-d H:i:s"),
+            "fecha_registro_director"       => "",
             "observaciones"                 => $forma_observaciones
         );
-        $insertar = SQL::insertar("correspondencia", $datos);
+        $insertar = SQL::insertar("aprobaciones", $datos);
 
         /*** Error de insercion ***/
         if (!$insertar) {
@@ -252,7 +221,7 @@ elseif (!empty($url_generar)) {
             $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
         }
     }
-    /*** Enviar datos con la respuesta del proceso al script que origin√≥ la petici√≥n ***/
+    /*** Enviar datos con la respuesta del proceso al script que originÛ la peticiÛn ***/
     $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $mensaje;

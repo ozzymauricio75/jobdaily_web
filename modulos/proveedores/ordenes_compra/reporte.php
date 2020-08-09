@@ -185,7 +185,7 @@ if (!empty($url_generar)) {
         $p1->SetSliceColors(array("#0088ff","#61db5c","#ffdf00","#DC143C"));
     
         $cadena       = Cadena::generarCadenaAleatoria(8);
-        $nombreImagen = '../archivos'.$cadena.".png";
+        $nombreImagen = '../archivos/imagenes/'.$cadena.".png";
  
         // Display the graph
         $graph->Stroke($nombreImagen);

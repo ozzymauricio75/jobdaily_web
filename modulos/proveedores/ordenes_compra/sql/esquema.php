@@ -137,8 +137,7 @@ $llavesUnicas["movimiento_ordenes_compra"] = array(
     "codigo_orden_compra,consecutivo"
 );
 $llavesUnicas["cruce_orden_compra"] = array(
-    "codigo_prefijo_proyecto,codigo_orden_compra,codigo_sucursal,
-                fecha_registro,documento_identidad_proveedor"
+    "codigo_prefijo_proyecto,codigo_orden_compra,codigo_sucursal,fecha_registro,documento_identidad_proveedor"
 );
 
 //  Definicion de llaves Foraneas
@@ -382,6 +381,7 @@ $llavesForaneas["movimiento_cruce_orden_compra"] = array(
         "codigo"
     )
 );
+
 //  Insercion de datos iniciales
 $registros["componentes"] = array(
     array(

@@ -916,29 +916,7 @@ if (!empty($url_generar)){
             )
         );
         
-        $formularios["PESTANA_ARTICULOS"] = array(
-            /*array(
-                HTML::contenedor(
-                    HTML::marcaChequeo("articulo_nuevo", $textos["ARTICULO_NUEVO"], 1, false, array("title"=>$textos["AYUDA_ARTICULO_NUEVO"],"class"=>"crear_articulo","onClick"=>"activaArticulos(this)")),
-                    array("id"=>"contenedor_articulo_nuevo","class"=>"movimiento")
-                )
-            ),*/
-            /*array(
-                HTML::contenedor(
-                    HTML::agrupador(
-                        array(
-                            array(
-                                HTML::campoTextoCorto("total_unidades",$textos["TOTAL_UNIDADES"], 10, 10, ""),
-                                HTML::campoTextoCorto("subtotal_pedido",$textos["SUBTOTAL"], 10, 10, "", ""),
-                                HTML::campoTextoCorto("total_iva_pedido",$textos["TOTAL_IVA"], 10, 10, "", ""),
-                                HTML::campoTextoCorto("total_pedido",$textos["TOTAL_PEDIDO"], 10, 10, "", "")                
-                            )
-                        ), 
-                        $textos["TOTALES_PEDIDO"] 
-                    ),
-                    array("id"=>"contenedor_totales_orden","class"=>"totales_orden oculto")
-                )
-            ),*/   
+        $formularios["PESTANA_ARTICULOS"] = array(  
             array(
                 HTML::contenedor(
                     HTML::agrupador(
@@ -963,10 +941,6 @@ if (!empty($url_generar)){
                                     array("id"=>"estructura_grupo","class"=>"articulo_nuevo modificar_detalle oculto")
                                 ),
                             ),
-                            /*array(
-                                HTML::campoTextoCorto("*selector6", $textos["PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_PROVEEDOR"], "class" => "autocompletable articulo_nuevo oculto"))
-                                .HTML::campoOculto("documento_identidad_proveedor", "")
-                            ),*/
                             array(
                                 HTML::campoTextoCorto("+selector8",$textos["REFERENCIA"], 30, 30, "", array("title"=>$textos["AYUDA_REFERENCIA_PROVEEDOR"],"class"=>"autocompletable oculto modificar articulo_nuevo")),
 
@@ -996,9 +970,6 @@ if (!empty($url_generar)){
                                 HTML::boton("botonModificarArticuloTabla", $textos["MODIFICAR_ARTICULO"], "modificarArticuloTabla()", "modificar",array("class"=>" modificar_articulo_tabla oculto"),"etiqueta")
                                 .HTML::campoOculto("indice_tabla",0)
                             ),
-                            /*array(
-                                HTML::selectorArchivo("foto_articulo", $textos["FOTO"], array("title" => $textos["AYUDA_FOTO"], "class"=>" articulo_nuevo oculto"))
-                            ),*/
                             array(
                                 HTML::contenedor(
                                     HTML::agrupador(
@@ -1033,19 +1004,6 @@ if (!empty($url_generar)){
                     ),
                     array("id"=>"datos_totales_articulo")
                 ),
-                /*HTML::contenedor(
-
-                    HTML::boton("botonActualizar", $textos["ACTUALIZAR_ARTICULO"], "actualizarArticulo();", "restaurar", array("class"=>"actualizarArticulo")),
-                    array("id"=>"boton_actualizar","class"=>"actualizarArticulo oculto")
-                    HTML::contenedor(
-                            HTML::boton("botonModificarArticulo", "", "modificarArticulo(this);", "modificar", array("class"=>"modificarArticuloTabla")),
-                            array("id" => "modificarArticulo", "style" => "display: none")
-                    )
-                    /*HTML::contenedor(
-                        HTML::boton("botonRemoverArticulo", "", "removerArticulo(this);", "eliminar", array("class"=>"removerArticuloTabla")),
-                            array("id" => "removerArticulo", "style" => "display: none")
-                        )
-                ),*/
                 HTML::generarTabla(
                     array("id","ELIMINAR","REFERENCIA","DESCRIPCION","CANTIDAD","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","DESCUENTO","IVA","OBSERVACIONES"),"",array("I","I","I","D","C","D","D","D","D","I"),"listaArticulos",false
                 )
@@ -1097,8 +1055,7 @@ if (!empty($url_generar)){
                                 HTML::mostrarDato("proveedor_total",$textos["PROVEEDOR"], "", "")
                             ),
                             array(
-                                HTML::campoTextoCorto("cantidad_items_total",$textos["CANTIDAD_ITEMS"], 3, 3, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_CANTIDAD_ITEMS"],"", "")),
-                                //HTML::mostrarDato("cantidad_items_total",$textos["CANTIDAD_ITEMS"], "", ""),
+                                HTML::campoTextoCorto("cantidad_items_total",$textos["CANTIDAD_ITEMS"], 3, 3, "", array("readonly" => "true"), array("title"=>$textos["AYUDA_CANTIDAD_ITEMS"],"", ""))
                             ),
                         ),$textos["RESUMEN_ORDEN"]
                     )

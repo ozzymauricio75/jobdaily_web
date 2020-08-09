@@ -1,6 +1,26 @@
     $(document).ready(function() {
         ejecutarFuncionesGlobales();
     });
+    
+    function removerArticulo(boton){
+        var destino  = $("#URLFormulario").val();
+        var id_tabla = $(boton).parents('tr').attr('id').split('_')[0];
+        
+        if (id_tabla == 'fila'){
+            var id_tabla = $(boton).parents('tr').attr('id').split('_')[1];
+        }
+        
+        if (!isNaN(id_tabla))
+            id_tabla = parseInt(id_tabla);
+
+            $.getJSON(destino, {eliminarMovimiento: true, id_tabla: id_tabla}, function(datos){
+                if (!datos[0]){
+                    alert(datos[1]);
+                } else {
+                    $(boton).parents('tr').remove();
+                }
+            });
+    }
 
     function cumplirItem(boton){
         var destino  = $('#URLFormulario').val();
@@ -9,7 +29,7 @@
         //$(boton).prevAll("input[name='estado_documento_tabla[]']").val('3');
         $(boton).removeAttr("onclick");
         $(boton).removeAttr("class");
-        $(boton).html('Recibida');
+        $(boton).html('Aprobada');
         $(boton).prev('span').remove();
         $(boton).next('span').remove();
 
@@ -27,18 +47,6 @@
                 }
                 $('#indicador').val(aceptar);
             });
-    }
-
-    function cargaValor(){
-        var destino           = $('#URLFormulario').val();
-        var documento_soporte = $('#documento_soporte').val();
-        var documento_identidad_proveedor = $('#selector3').val(); 
-
-        $.getJSON(destino, {cargaValor: true, documento_soporte: documento_soporte, documento_identidad_proveedor: 
-            documento_identidad_proveedor}, function(datos) {   
-            $('#valor_documento').val(datos);
-        });
-
     }
 
     function cargarOrdenes(){
