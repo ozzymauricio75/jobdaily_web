@@ -59,6 +59,7 @@ if (!empty($url_generar)) {
         $columnas       = SQL::obtenerColumnas($vistaConsulta);
         $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, $condicion);
         $datos          = SQL::filaEnObjeto($consulta);
+        $codigo         = $url_id; 
 
         /*Obtener Valores*/
         $codigo_proyecto               = $datos->codigo_proyecto;
@@ -131,6 +132,19 @@ if (!empty($url_generar)) {
             )
         );
 
+        /*** Documentos soportes ***/
+        $documentos_cotizaciones = SQL::seleccionar(array("documentos"),array("*"),"codigo_registro_tabla = '$url_id'");
+        $documentos_cotizaciones = SQL::filaEnObjeto($documentos_cotizaciones);
+        $nombre_archivo          = $documentos_cotizaciones->ruta;
+
+        $formularios["PESTANA_DOCUMENTO"] = array(
+            array(
+                HTML::selectorArchivo("archivo", $textos["ARCHIVO_DOCUMENTO"], array("title" => $textos["AYUDA_ARCHIVO_DOCUMENTO"])),
+                HTML::campoTextoCorto("nombre_documento", $textos["NOMBRE_DOCUMENTO"], 15, 255, "", array("title" => $textos["AYUDA_NOMBRE_DOCUMENTO"])),
+                HTML::campoOculto("codigo", $codigo)
+            )
+        );
+
         /*** Definición de botones ***/
         $botones = array(
             HTML::boton("botonAceptar", $textos["ACEPTAR"], "modificarItem('$url_id');", "aceptar")
@@ -145,9 +159,10 @@ if (!empty($url_generar)) {
     $respuesta[1] = $titulo;
     $respuesta[2] = $contenido;
     HTTP::enviarJSON($respuesta);
-
+    exit();
+}
 /*** Modificar el elemento seleccionado ***/
-} elseif (!empty($forma_procesar)) {
+//} elseif (!empty($forma_procesar)) {
 
     /*** Asumir por defecto que no hubo error ***/
     $error   = false;
@@ -166,9 +181,9 @@ if (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["DOCUMENTO_SOPORTE_VACIO"];
 
-    }elseif(empty($forma_valor_documento)){
+    /*}elseif(empty($forma_valor_documento)){
         $error   = true;
-        $mensaje = $textos["VALOR_VACIO"];
+        $mensaje = $textos["VALOR_VACIO"];*/
 
     }elseif(empty($forma_fecha_recepcion)){
         $error   = true;
@@ -218,12 +233,32 @@ if (!empty($url_generar)) {
         $consulta = SQL::modificar("correspondencia", $datos, "codigo = '$forma_id'");
 		
 		/*** Error inserción ***/
-        if ($consulta) {
+        if (!$consulta) {
             $error   = false;
-            $mensaje = $textos["ITEM_MODIFICADO"];
-        } else {
-            $error   = true;
             $mensaje = $textos["ERROR_MODIFICAR_ITEM"];
+        } else {
+            if (!empty($_FILES["archivo"]["name"])) {
+                $original  = $_FILES["archivo"]["name"];
+                $temporal  = $_FILES["archivo"]["tmp_name"];
+                $extension = strtolower(substr($original, (strrpos($original, ".") - strlen($original)) + 1));
+
+                $nombre    = substr(md5(uniqid(rand(), true)), 0, 8);
+                $ruta      = $rutasGlobales["archivos"]."/"."soportes/".$nombre.".".$extension;
+
+                while (file_exists($ruta)) {
+                    $nombre    = substr(md5(uniqid(rand(), true)), 0, 8);
+                    $ruta      = $rutasGlobales["archivos"]."/".$nombre.".".$extension;
+                }
+
+                $copiar   = move_uploaded_file($temporal, $ruta);
+
+                $datos_documento = array(
+                    "titulo"                => $forma_nombre_documento,
+                    "ruta"                  => $ruta,
+                    "nombre_tabla"          => "correspondencia"
+                );
+                $modificar_documento = SQL::modificar("documentos",$datos_documento,"codigo = '$forma_codigo'");
+            }
         }
     }
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
@@ -231,5 +266,4 @@ if (!empty($url_generar)) {
     $respuesta[0] = $error;
     $respuesta[1] = $mensaje;
     HTTP::enviarJSON($respuesta);
-}
 ?>

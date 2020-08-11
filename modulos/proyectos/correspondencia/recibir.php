@@ -182,6 +182,11 @@ if (!empty($url_generar)) {
                 $ocultos = HTML::campoOculto("estado_documento_tabla[]", $datos->codigo, array("class" => "estado_documento_tabla"));
                 $celda   = $ocultos.$cumplido;
 
+                /*** Documentos soportes ***/
+                $documentos_cotizaciones = SQL::seleccionar(array("documentos"),array("*"),"codigo_registro_tabla = '$datos->codigo'");
+                $documentos_cotizaciones = SQL::filaEnObjeto($documentos_cotizaciones);
+                $nombre_archivo          = $documentos_cotizaciones->ruta;
+
                 $items[] = array(
                     //$cumplido     = HTML::boton("botonCumplido", "", "cumplirItem(this);", "aceptar", array("title" => $textos["CUMPLIR"])),
                     $id_tabla = $datos->codigo,
@@ -193,7 +198,8 @@ if (!empty($url_generar)) {
                     $numero_documento_proveedor,
                     $valor = $valor_documento,
                     $fecha_vencimiento,
-                    $fecha_envio
+                    $fecha_envio,
+                    HTML::enlazarPagina($textos["DESCARGAR"]." ".$documentos_cotizaciones->titulo, $nombre_archivo, array("target" => "_new"))
                 ); 
             }
         } 
@@ -212,21 +218,14 @@ if (!empty($url_generar)) {
                 array(
                     HTML::campoOculto("indicador", "")
                 ),
-                /*array(
-                    HTML::campoTextoCorto("*selector5", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable"))
-                    .HTML::campoOculto("codigo_proyecto", ""),
-
-                    HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable","onBlur"=>"cargarDocumentosCorrespondencia()", "onKeyPress"=>"return campoEntero(event)"))
-                        .HTML::campoOculto("documento_identidad_proveedor", ""),
-                ),*/
                 array(
                     HTML::contenedor(HTML::boton("botonCumplir", "", "cumplirItem(this);", "aceptar"), array("id" => "cumplir", "style" => "display: none"))
                 ),
                 array(
                         HTML::generarTabla(
-                            array("id","BOTON_RECIBIR","FECHA_RECEPCION","NIT_PROVEEDOR","RAZON_SOCIAL","TIPO_DOCUMENTO","DOCUMENTO_SOPORTE","VALOR_DOCUMENTO","FECHA_VENCIMIENTO","FECHA_ENVIO"), 
+                            array("id","BOTON_RECIBIR","FECHA_RECEPCION","NIT_PROVEEDOR","RAZON_SOCIAL","TIPO_DOCUMENTO","DOCUMENTO_SOPORTE","VALOR_DOCUMENTO","FECHA_VENCIMIENTO","FECHA_ENVIO","ARCHIVO"), 
                                 $items, 
-                                array("I","C","I","I","C","C","D","C","C"), 
+                                array("I","C","I","I","C","C","D","C","C","C"), 
                                 "listaItems", 
                                 false
                             )
@@ -240,9 +239,9 @@ if (!empty($url_generar)) {
             $contenido = HTML::generarPestanas($formularios, $botones);
         }else {
 
-        $error = $textos["ERROR_ORDEN_ESTADO"];
-        $titulo    = "";
-        $contenido = "";
+            $error = $textos["ERROR_ORDEN_ESTADO"];
+            $titulo    = "";
+            $contenido = "";
         }
     }
     /*** Enviar datos para la generación del formulario al script que originó la petición ***/

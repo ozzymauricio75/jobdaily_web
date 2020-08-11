@@ -42,7 +42,8 @@ $botones .= HTML::boton("CONSCORR",$textos["CONSULTAR"],"ejecutarComando(this, 6
 $botones .= HTML::boton("MODICORR",$textos["MODIFICAR"],"ejecutarComando(this, 600, 450);","modificar");
 $botones .= HTML::boton("ANULCORR",$textos["ANULAR"],"ejecutarComando(this, 600, 450);","anular");
 $botones .= HTML::boton("ELIMCORR",$textos["ELIMINAR"],"ejecutarComando(this, 600, 450);","eliminar");
-$botones .= HTML::boton("RECICORR",$textos["RECIBIR"],"ejecutarComando(this, 800, 550);","recibir");
+$botones .= HTML::boton("RECICORR",$textos["RECIBIR"],"ejecutarComando(this, 900, 550);","recibir");
+$botones .= HTML::boton("APROCORR",$textos["APROBAR"],"ejecutarComando(this, 900, 550);","aprobar");
 $botones .= HTML::boton("REPOCORR",$textos["REPORTE"],"ejecutarComando(this, 650,420);","reporte");
 
 /*** Obtener el número de la página actual ***/
@@ -66,7 +67,8 @@ $registros      = HTML::imprimirRegistros($totalRegistros, $paginaActual, $numer
 $estados["ESTADO_"] = array(
     "0" => "estadoVerde",
     "1" => "estadoAzul",
-    "2" => "estadoRojo"
+    "2" => "estadoRojo",
+    "3" => "estadoNaranja"
 );
 
 /*** Ejecutar la consulta y generar tabla a partir de los resultados ***/

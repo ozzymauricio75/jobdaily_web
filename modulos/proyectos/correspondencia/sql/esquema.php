@@ -38,21 +38,36 @@ $tablas ["correspondencia"] = array(
     "codigo_tipo_documento"         => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código asignado por el usuario'",
     "numero_documento_proveedor"    => "VARCHAR(15) NOT NULL COMMENT 'Número del documento enviado por el proveedor'",
     "valor_documento"               => "DECIMAL(15,2) NULL COMMENT 'Valor del documento del proveedor'",
-    "estado"                        => "ENUM('0','1','2','3') NOT NULL DEFAULT '0' COMMENT '0->Recepcionado 1->Entregado 2->Anulado'",
+    "estado"                        => "ENUM('0','1','2','3') NOT NULL DEFAULT '0' COMMENT '0->Recepcionado 1->Entregado 2->Anulado 3->Autorizado'",
     /******************/
     "fecha_recepcion"               => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema'",
-    "fecha_vencimiento"             => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema'",
-    "fecha_envio"                   => "DATE NOT NULL COMMENT 'Fecha ultima modificación'",
+    "fecha_vencimiento"             => "DATE NOT NULL COMMENT 'Fecha vencimiento'",
+    "fecha_envio"                   => "DATE NOT NULL COMMENT 'Fecha envio'",
+    "fecha_autorizado"              => "DATE NOT NULL COMMENT 'Fecha autorizado'",
     "observaciones"                 => "VARCHAR(234) COMMENT 'Observacion general para la orden de compra'"
+);
+
+/*** Definición de tablas ***/
+$tablas["documentos"] = array(
+    "codigo"                        => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Consecutivo interno de la base de datos'",
+    "titulo"                        => "VARCHAR(255) NOT NULL COMMENT 'Titulo para el archivo'",
+    "ruta"                          => "VARCHAR(255) NOT NULL COMMENT 'Código para uso interno de la empresa'",
+    "nombre_tabla"                  => "VARCHAR(60) NOT NULL COMMENT 'Nombre de la tabla que se le asignara el archivo'",
+    "codigo_registro_tabla"         => "INT(8) UNSIGNED NOT NULL COMMENT 'Id de la tabla que genero el movimiento'",
+    "tipo_archivo"                  => "ENUM('1','2') NOT NULL DEFAULT '1' COMMENT 'Tipo de archivo para la tabla 1->Documento soporte 2->Otros'"
 );
 
 // Definición de llaves primarias
 $llavesPrimarias["correspondencia"] = "codigo";
+$llavesPrimarias["documentos"]      = "codigo";
 
 // Definición de campos únicos
-
 $llavesUnicas["correspondencia"] = array(
     "codigo_proyecto,documento_identidad_proveedor,numero_documento_proveedor"
+);
+
+$llavesUnicas["documentos"] = array(
+    "ruta"
 );
 
 // Definición de llaves foráneas
@@ -88,24 +103,6 @@ $llavesForaneas["correspondencia"] = array(
         "codigo"
     )
 );
-
-// Inserción de datos iniciales proyectos
-
-/*$registros["correspondencia"] = array(
-	array(
-		"codigo"                        => "0",
-		"codigo_proyecto"               => "0",
-		"documento_identidad_proveedor" => "0",
-        "codigo_tipo_documento"         => "0",
-		"numero_documento_proveedor"    => "0",
-		"valor_documento"               => "0",
-		"estado"                        => "",
-        "fecha_recepcion"               => "0000-00-00",
-        "fecha_vencimiento"             => "0000-00-00",
-        "fecha_envio"                   => "0000-00-00",
-        "observaciones"                 => ""
-	)
-);*/
 
 $registros["componentes"] = array(
     array(
@@ -187,11 +184,22 @@ $registros["componentes"] = array(
         "tipo_enlace"  => "1"
     ),
     array(
+        "id"           => "APROCORR",
+        "padre"        => "GESTCORR",
+        "id_modulo"    => "PROYECTOS",
+        "visible"      => "0",
+        "orden"        => "75",
+        "carpeta"      => "correspondencia",
+        "archivo"      => "aprobar",
+        "global"       => "0",
+        "tipo_enlace"  => "1"
+    ),
+    array(
         "id"           => "REPOCORR",
         "padre"        => "GESTCORR",
         "id_modulo"    => "PROYECTOS",
         "visible"      => "0",
-        "orden"        => "72",
+        "orden"        => "80",
         "carpeta"      => "correspondencia",
         "archivo"      => "reporte",
         "global"       => "0",

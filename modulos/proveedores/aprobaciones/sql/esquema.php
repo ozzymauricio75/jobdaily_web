@@ -43,7 +43,7 @@ $tablas ["aprobaciones"] = array(
     /******************/
     "fecha_registro_residente"      => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema x el residente'",
     "fecha_registro_director"       => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema x el director'",
-    "observaciones"                 => "VARCHAR(234) COMMENT 'Observacion general para la orden de compra'"
+    "observaciones"                 => "VARCHAR(234) COMMENT 'Observacion general para la orden de compra'",
     "estado_factura"                => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->No Cruzado 1->Cruzada'"
 );
 

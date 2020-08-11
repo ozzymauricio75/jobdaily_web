@@ -42,7 +42,7 @@ if (!empty($url_generar)) {
         $valor_proyecto = number_format($datos->valor_proyecto,0);
         $estado         = $datos->estado;
 
-        if (($estado!=1)) {
+        if (($estado!=1 && $estado!=3)) {
             /*Obtener Valores*/
             $codigo_proyecto               = $datos->codigo_proyecto;
             $documento_identidad_proveedor = $datos->documento_identidad_proveedor;

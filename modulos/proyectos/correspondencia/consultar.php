@@ -66,8 +66,8 @@ if (!empty($url_generar)) {
                 $razon_social     = SQL::obtenerValor("terceros","razon_social", "documento_identidad = '$documento_identidad_proveedor'");
             }
 
-        $error         = "";
-        $titulo        = $componente->nombre;
+        $error  = "";
+        $titulo = $componente->nombre;
 
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
@@ -94,6 +94,16 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::mostrarDato("observaciones", $textos["OBSERVACIONES"], $observaciones)
+            )
+        );
+        /*** Documentos soportes ***/
+        $documentos_cotizaciones = SQL::seleccionar(array("documentos"),array("*"),"codigo_registro_tabla = '$url_id'");
+        $documentos_cotizaciones = SQL::filaEnObjeto($documentos_cotizaciones);
+        $nombre_archivo          = $documentos_cotizaciones->ruta;
+
+        $formularios["PESTANA_DOCUMENTO"] = array(
+            array(
+                HTML::enlazarPagina($textos["DESCARGAR"]." ".$documentos_cotizaciones->titulo, $nombre_archivo, array("target" => "_new"))
             )
         );
 

@@ -20,6 +20,24 @@
         });    
     }
 
+    function existeFactura(){
+        var destino           = $('#URLFormulario').val();
+        var documento_soporte = $('#documento_soporte_orden').val();
+        var mensaje_error     = "No existe el documento, por favor verifique";
+
+        $.getJSON(destino, {existeFactura: true, documento_soporte: documento_soporte}, function(datos) {
+            if(datos==""){
+                alert(mensaje_error);  
+            }else{
+                $('#documento_soporte_orden').focus();
+                $datos=true;
+            }
+            $('#documento_soporte_orden').focus();
+            $('#documento_soporte_orden').value('');
+            $datos=true; 
+        });    
+    }
+
     function seleccionar_todas_sucursales(){
       var seleccionar_todos = true;
       var contador_casillas_seleccionadas = 0;

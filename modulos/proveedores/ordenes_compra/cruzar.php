@@ -38,9 +38,21 @@ if (isset($url_completar)) {
         echo SQL::datosAutoCompletar("aprobaciones", $url_q, "estado_residente='1' AND estado_director='1' AND estado_factura='0'");
     }
     exit;
-}
 
-if(isset($url_insertaCantidades)){
+} elseif(isset($url_existeFactura)){
+    $documento_soporte = $url_documento_soporte;
+    $documento         = SQL::obtenerValor("aprobaciones","numero_documento_proveedor","numero_documento_proveedor='$documento_soporte'");
+    $mensaje           = $textos["NO_EXISTE_FACTURA"];
+
+    if($documento){
+        $datos = true;
+    } else{
+        $datos = false;
+    }
+    HTTP::enviarJSON($datos);
+    exit; 
+
+} elseif(isset($url_insertaCantidades)){
     $codigo_orden_compra = $url_codigo_orden_compra;  
     $codigo_articulo     = $url_codigo_articulo;
     $unidades_digitadas  = $url_unidades_digitadas;
@@ -66,6 +78,7 @@ if(isset($url_insertaCantidades)){
         $respuesta[0] = false;
         $respuesta[1] = $textos["ERROR_UNIDADES_MAYORES"];
         HTTP::enviarJSON($respuesta);
+
     }else if($unidades_digitadas<=$unidades_pendientes){
         $respuesta[0] = true;
         $respuesta[1] = $indice+1;
@@ -79,8 +92,7 @@ if(isset($url_insertaCantidades)){
         $error     = $textos["ERROR_CRUZAR_VACIO"];
         $titulo    = "";
         $contenido = "";
-
-    } else {
+    }  else {
 
         $error          = "";
         $titulo         = $componente->nombre;
@@ -246,7 +258,7 @@ if(isset($url_insertaCantidades)){
                 array(
                     HTML::listaSeleccionSimple("*tipo_documento",$textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo>0"), "", array("title",$textos["AYUDA_TIPO_DOCUMENTO"])),
 
-                    HTML::campoTextoCorto("*documento_soporte_orden",$textos["DOCUMENTO_CRUCE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_CRUCE"], "class" => "autocompletable", "onBlur" => "validarItem(this)"))
+                    HTML::campoTextoCorto("*documento_soporte_orden",$textos["DOCUMENTO_CRUCE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_CRUCE"], "class" => "autocompletable", "onChange" => "existeFactura()"))
                 ),
                 array(
                     HTML::agrupador(
@@ -386,11 +398,17 @@ if(isset($url_insertaCantidades)){
     /*** Asumir por defecto que no hubo error ***/
     $error   = false;
     $mensaje = $textos["ORDEN_CRUZADA"];
- 
+
     /*** Validar el ingreso de los datos requeridos ***/
     if(empty($forma_documento_soporte_orden)){
         $error   = true;
         $mensaje = $textos["DOCUMENTO_PROVEEDOR_VACIO"];
+    }
+
+    if(empty($forma_documento_soporte_orden)){
+        $error   = true;
+        $mensaje = $textos["NO_EXISTE_FACTURA"];
+
     }
 
     /*** Quitar separador de miles a un numero ***/

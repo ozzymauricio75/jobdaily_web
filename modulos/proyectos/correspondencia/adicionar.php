@@ -138,7 +138,7 @@ elseif (!empty($url_generar)) {
 
                 HTML::campoTextoCorto("*documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"], "class" => "autocompletable", "onBlur" => "cargaValor()")),
 
-                HTML::campoTextoCorto("*valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, "", array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"]))
+                HTML::campoTextoCorto("valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, "", array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"]))
             ),
             array(
                 HTML::campoTextoCorto("fecha_recepcion", $textos["FECHA_RECEPCION"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_RECEPCION"], "onBlur" => "validarItem(this);")),
@@ -148,8 +148,12 @@ elseif (!empty($url_generar)) {
                 //HTML::campoTextoCorto("fecha_envio", $textos["FECHA_ENVIO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_ENVIO"], "onBlur" => "validarItem(this);"))
             ),
             array(    
-                HTML::campoTextoCorto("observaciones",$textos["OBSERVACIONES"], 50, 234, "",array("title"=>$textos["AYUDA_OBSERVACIONES"])),
+                HTML::campoTextoCorto("observaciones",$textos["OBSERVACIONES"], 50, 234, "",array("title"=>$textos["AYUDA_OBSERVACIONES"]))
             ),
+            array(
+                HTML::selectorArchivo("archivo", $textos["ARCHIVO_DOCUMENTO"], array("title" => $textos["AYUDA_ARCHIVO_DOCUMENTO"])),
+                HTML::campoTextoCorto("nombre_documento", $textos["NOMBRE_DOCUMENTO"], 15, 255, "", array("title" => $textos["AYUDA_NOMBRE_DOCUMENTO"]))
+            )
         );
 
         /*** Definicion de botones ***/
@@ -168,9 +172,10 @@ elseif (!empty($url_generar)) {
     $respuesta[1] = $titulo;
     $respuesta[2] = $contenido;
     HTTP::enviarJSON($respuesta);
-
+    exit();
+}
 /*** Adicionar los datos provenientes del formulario ***/
-} elseif (!empty($forma_procesar)) {
+//} elseif (!empty($forma_procesar)) {
 
     /*** Asumir por defecto que no hubo error ***/
     $error   = false;
@@ -199,9 +204,9 @@ elseif (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["DOCUMENTO_SOPORTE_VACIO"];
 
-    }elseif(empty($forma_valor_documento)){
+    /*}elseif(empty($forma_valor_documento)){
         $error   = true;
-        $mensaje = $textos["VALOR_VACIO"];
+        $mensaje = $textos["VALOR_VACIO"];*/
 
     }elseif(empty($forma_fecha_recepcion)){
         $error   = true;
@@ -240,7 +245,7 @@ elseif (!empty($url_generar)) {
             "valor_documento"               => $forma_valor_documento,
             "estado"                        => '0',
             "fecha_recepcion"               => $forma_fecha_recepcion,
-            "fecha_vencimiento"             => $forma_fecha_vencimiento,
+            "fecha_vencimiento"             => $forma_fecha_vencimiento, 
             "fecha_envio"                   => "",
             "observaciones"                 => $forma_observaciones
         );
@@ -250,6 +255,36 @@ elseif (!empty($url_generar)) {
         if (!$insertar) {
             $error   = true;
             $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
+        } else {
+
+            //Asignar codigo siguiente de la tabla 
+            $codigo = SQL::obtenerValor("correspondencia","MAX(codigo)","codigo>0");
+
+            if (!empty($_FILES["archivo"]["name"])) {
+                $original  = $_FILES["archivo"]["name"];
+                $temporal  = $_FILES["archivo"]["tmp_name"];
+                $extension = strtolower(substr($original, (strrpos($original, ".") - strlen($original)) + 1));
+
+                $nombre    = substr(md5(uniqid(rand(), true)), 0, 8);
+                $ruta      = $rutasGlobales["archivos"]."/"."soportes/".$nombre.".".$extension;
+
+                while (file_exists($ruta)) {
+                    $nombre    = substr(md5(uniqid(rand(), true)), 0, 8);
+                    $ruta      = $rutasGlobales["archivos"]."/".$nombre.".".$extension;
+                }
+
+                $copiar   = move_uploaded_file($temporal, $ruta);
+
+                $datos_documento = array(
+                    "titulo"                => $forma_nombre_documento,
+                    "ruta"                  => $ruta,
+                    "nombre_tabla"          => "correspondencia",
+                    "codigo_registro_tabla" => $codigo,
+                    "tipo_archivo"          => '1'
+                );
+
+                $insertar_documento = SQL::insertar("documentos",$datos_documento);
+            }
         }
     }
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
@@ -257,5 +292,4 @@ elseif (!empty($url_generar)) {
     $respuesta[0] = $error;
     $respuesta[1] = $mensaje;
     HTTP::enviarJSON($respuesta);
-}
 ?>
