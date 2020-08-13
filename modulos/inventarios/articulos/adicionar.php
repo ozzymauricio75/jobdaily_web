@@ -297,7 +297,7 @@ if (!empty($url_generar)) {
 
         $formularios["PESTANA_REFERENCIA"] = array(
             array(
-                HTML::campoTextoCorto("*referencia", $textos["REFERENCIA"], 30, 30, "",array("title" => $textos["AYUDA_REFERENCIA"])),
+                HTML::campoTextoCorto("*referencia", $textos["REFERENCIA_ALTERNA"], 30, 30, "",array("title" => $textos["AYUDA_REFERENCIA"])),
                 HTML::campoTextoCorto("codigo_barras_alterna", $textos["CODIGO_BARRAS"], 13, 13, "",array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)"))
             ),
             array(

@@ -425,9 +425,9 @@ if (!empty($url_generar)) {
 
         $insertar_articulo = SQL::insertar("articulos_proveedor", $datos_articulo);
 
-        $datos_lista_precio_articulos   = array(
+        /*$datos_lista_precio_articulos   = array(
             "codigo_articulo"           => $codigo_articulo,
-            "costo"                     => $costo,
+            "costo"                     => $forma_costo,
             "fecha_modificacion"        => date("Y-m-d H:i:s")
         );
 
