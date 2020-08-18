@@ -39,6 +39,17 @@ if (!empty($url_generar)) {
         $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
         $datos          = SQL::filaEnObjeto($consulta);
         
+        $vistaConsultaCorrespondencia  = "correspondencia";
+        $condicionCorrespondencia      = "codigo_aprobaciones = '$url_id'";
+        $columnasCorrespondencia       = SQL::obtenerColumnas($vistaConsultaCorrespondencia);
+        $consultaCorrespondencia       = SQL::seleccionar(array($vistaConsultaCorrespondencia), $columnasCorrespondencia, $condicionCorrespondencia);
+        $datosCorrespondencia          = SQL::filaEnObjeto($consultaCorrespondencia);
+
+        $fecha_recepcion               = $datosCorrespondencia->fecha_recepcion;
+        $fecha_vencimiento             = $datosCorrespondencia->fecha_vencimiento;
+        $fecha_envio                   = $datosCorrespondencia->fecha_envio;
+        $estado                        = $datosCorrespondencia->estado;
+
         /*Obtener Valores*/
         $codigo_proyecto               = $datos->codigo_proyecto;
         $documento_identidad_proveedor = $datos->documento_identidad_proveedor;
@@ -69,7 +80,7 @@ if (!empty($url_generar)) {
         $error  = "";
         $titulo = $componente->nombre;
 
-        if ($estado_director==0) {
+        if ($estado_director==0 && $estado=='0') {
         
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
@@ -108,6 +119,8 @@ if (!empty($url_generar)) {
         } else {
             if ($estado_director==1) {
                 $error = $textos["ERROR_ORDEN_ESTADO"];
+            }elseif($datos_correspondencia->estado!='0') {
+                $error = $textos["ERROR_ORDEN_ESTADOS"];
             } 
             $titulo    = "";
             $contenido = "";
@@ -128,9 +141,15 @@ if (!empty($url_generar)) {
         "estado_residente" => "2"
     );
     
-    $consulta_correspondencia = SQL::modificar("aprobaciones", $datos, "codigo = '$forma_id'");
+    $consulta_aprobaciones = SQL::modificar("aprobaciones", $datos, "codigo = '$forma_id'");
 
-    if ($consulta_correspondencia) {
+    if ($consulta_aprobaciones) {
+        $datos_correspondencia = array(
+            "estado" => "2"
+        );
+        
+        $consulta_correspondencia = SQL::modificar("correspondencia", $datos_correspondencia, "codigo_aprobaciones = '$forma_id'");
+        
         $error    = false;
         $mensaje  = $textos["ITEM_ANULADO"];
     } else {

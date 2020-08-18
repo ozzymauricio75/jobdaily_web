@@ -256,7 +256,7 @@ if (isset($url_completar)) {
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
                 array(
-                    HTML::listaSeleccionSimple("*tipo_documento",$textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo>0"), "", array("title",$textos["AYUDA_TIPO_DOCUMENTO"])),
+                    HTML::listaSeleccionSimple("*tipo_documento",$textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo=4 OR codigo=5"), "", array("title",$textos["AYUDA_TIPO_DOCUMENTO"])),
 
                     HTML::campoTextoCorto("*documento_soporte_orden",$textos["DOCUMENTO_CRUCE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_CRUCE"], "class" => "autocompletable", "onChange" => "existeFactura()"))
                 ),
@@ -392,6 +392,7 @@ if (isset($url_completar)) {
     $respuesta[1] = $titulo;
     $respuesta[2] = $contenido;
     HTTP::enviarJSON($respuesta);
+    exit();
     
 /*** Adicionar los datos provenientes del formulario ***/
 } elseif (!empty($forma_procesar)) {

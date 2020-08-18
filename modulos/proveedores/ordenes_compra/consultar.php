@@ -111,6 +111,8 @@ if (!empty($url_generar)) {
                 $codigo_cruce             = SQL::obtenerValor("cruce_orden_compra","codigo","codigo_orden_compra='$codigo_orden_compra'");
                 $numero_factura_proveedor = SQL::obtenerValor("movimiento_cruce_orden_compra","numero_factura_proveedor","codigo_cruce_orden_compra='$codigo_cruce' LIMIT 0,1");
                 $cantidad_entregada       = SQL::obtenerValor("movimiento_cruce_orden_compra","SUM(cantidad_total)","codigo_cruce_orden_compra='$codigo_orden_compra' AND codigo_articulo='$codigo_articulo'");
+                
+                $cantidad_pendiente       = $datos_item->cantidad_total - $cantidad_entregada;
 
                 $observaciones            = $datos_item->observaciones;
                 $valor_unitario           = $datos_item->valor_unitario;
@@ -127,6 +129,7 @@ if (!empty($url_generar)) {
                                 $descripcion,
                                 number_format($cantidad_total,0),
                                 number_format($cantidad_entregada,0),
+                                number_format($cantidad_pendiente,0),
                                 $nombre_unidad_medida,
                                 number_format($valor_unitario,2),
                                 number_format($valor_total,2),
@@ -227,9 +230,9 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::generarTabla(
-                    array("id","REFERENCIA","DESCRIPCION","CANTIDAD","ENTREGADO","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","DESCUENTO","IVA","OBSERVACIONES"), 
+                    array("id","REFERENCIA","DESCRIPCION","CANTIDAD","ENTREGADO","PENDIENTE","UNIDAD_MEDIDA","VALOR_UNITARIO","SUBTOTAL","DESCUENTO","IVA","OBSERVACIONES"), 
                         $items, 
-                        array("I","I","D","D","D","C","D","D","D","I"), 
+                        array("I","I","D","D","D","D","C","D","D","D","I"), 
                         "listaItems", 
                         false
                     )

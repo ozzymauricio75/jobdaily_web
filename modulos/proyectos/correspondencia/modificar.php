@@ -42,8 +42,18 @@ if (isset($url_completar)) {
     }
 
     HTTP::enviarJSON($respuesta);
-}
+}elseif (!empty($url_ocultarValor)) {
+    $tipo_documento = $url_tipo_documento;
 
+    if($tipo_documento==10){
+        $datos=true;
+    }else{
+        $datos=false;
+    }
+
+    HTTP::enviarJSON($datos);
+    exit;
+}
 /*** Generar el formulario para la captura de datos ***/
 if (!empty($url_generar)) {
 
@@ -101,56 +111,63 @@ if (!empty($url_generar)) {
             }
         }
 
-        /*** Definición de pestañas general ***/
-        $formularios["PESTANA_GENERAL"] = array(
-            array(
-                HTML::mostrarDato("proyecto", $textos["PROYECTO"], $nombre_proyecto),
-                HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
-            ),
-            array(
-                HTML::mostrarDato("nit_proveedor", $textos["NIT_PROVEEDOR"], $documento_identidad_proveedor),
-                HTML::mostrarDato("razon_social", $textos["RAZON_SOCIAL"], $razon_social),
+        if(($codigo_tipo_documento!=3) && ($codigo_tipo_documento!=4) && ($codigo_tipo_documento!=5)){
+            /*** Definición de pestañas general ***/
+            $formularios["PESTANA_GENERAL"] = array(
+                array(
+                    HTML::mostrarDato("proyecto", $textos["PROYECTO"], $nombre_proyecto),
+                    HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
+                ),
+                array(
+                    HTML::mostrarDato("nit_proveedor", $textos["NIT_PROVEEDOR"], $documento_identidad_proveedor),
+                    HTML::mostrarDato("razon_social", $textos["RAZON_SOCIAL"], $razon_social),
+                    HTML::mostrarDato("orden_compra", $textos["ORDEN_COMPRA"], $numero_orden_compra),
+                    //HTML::listaSeleccionSimple("*orden_compra", $textos["ORDEN_COMPRA"], HTML::generarDatosLista("ordenes_compra", "numero_consecutivo","codigo", "prefijo_codigo_proyecto='$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor'"), $numero_orden_compra, array("title" => $textos["AYUDA_ORDEN_COMPRA"],array("readOnly"=>"true"))),
+                ),
+                array(
+                    HTML::listaSeleccionSimple("tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion", "codigo != '1' AND codigo != '3' AND codigo != '4' AND codigo != '5'"), $codigo_tipo_documento, array("title" => $textos["AYUDA_TIPO_DOCUMENTO"],"onchange"=>"ocultarValor(this)")),
 
-                 HTML::listaSeleccionSimple("*orden_compra", $textos["ORDEN_COMPRA"], HTML::generarDatosLista("ordenes_compra", "numero_consecutivo","codigo", "prefijo_codigo_proyecto='$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor'"), $numero_orden_compra, array("title" => $textos["AYUDA_ORDEN_COMPRA"])),
-            ),
-            array(
-                HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion", "codigo != 0"), $datos_tipos_documentos->codigo, array("title" => $textos["AYUDA_TIPO_DOCUMENTO"])),
+                    HTML::campoTextoCorto("documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, $numero_documento_proveedor, array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"])),
 
-                HTML::campoTextoCorto("*documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, $numero_documento_proveedor, array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"], "onBlur" => "validarItem(this)")),
+                    HTML::campoTextoCorto("valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, $valor_documento, array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"], "onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
+                ),
+                array(
+                    HTML::campoTextoCorto("fecha_recepcion", $textos["FECHA_RECEPCION"], 10, 10, $fecha_recepcion, array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_RECEPCION"])),
 
-                HTML::campoTextoCorto("*valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, $valor_documento, array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"], "onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
-            ),
-            array(
-                HTML::campoTextoCorto("fecha_recepcion", $textos["FECHA_RECEPCION"], 10, 10, $fecha_recepcion, array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_RECEPCION"], "onBlur" => "validarItem(this);")),
+                    HTML::campoTextoCorto("fecha_vencimiento", $textos["FECHA_VENCIMIENTO"], 10, 10, $fecha_vencimiento, array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_VENCIMIENTO"])),
 
-                HTML::campoTextoCorto("fecha_vencimiento", $textos["FECHA_VENCIMIENTO"], 10, 10, $fecha_vencimiento, array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_VENCIMIENTO"], "onBlur" => "validarItem(this);")),
+                    //HTML::campoTextoCorto("fecha_envio", $textos["FECHA_ENVIO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_ENVIO"], "onBlur" => "validarItem(this);"))
+                ),
+                array(    
+                    HTML::campoTextoCorto("observaciones",$textos["OBSERVACIONES"], 50, 234, $observaciones,array("title"=>$textos["AYUDA_OBSERVACIONES"]))
+                )
+            );
 
-                //HTML::campoTextoCorto("fecha_envio", $textos["FECHA_ENVIO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_ENVIO"], "onBlur" => "validarItem(this);"))
-            ),
-            array(    
-                HTML::campoTextoCorto("observaciones",$textos["OBSERVACIONES"], 50, 234, $observaciones,array("title"=>$textos["AYUDA_OBSERVACIONES"]))
-            )
-        );
+            /*** Documentos soportes ***/
+            $documentos_correspondencia = SQL::seleccionar(array("documentos"),array("*"),"codigo_registro_tabla = '$datos->codigo_aprobaciones'");
+            $documentos_correspondencia = SQL::filaEnObjeto($documentos_correspondencia);
+            $nombre_archivo             = $documentos_correspondencia->ruta;
+            $titulo_archivo             = $documentos_correspondencia->titulo;
 
-        /*** Documentos soportes ***/
-        $documentos_cotizaciones = SQL::seleccionar(array("documentos"),array("*"),"codigo_registro_tabla = '$url_id'");
-        $documentos_cotizaciones = SQL::filaEnObjeto($documentos_cotizaciones);
-        $nombre_archivo          = $documentos_cotizaciones->ruta;
+            $formularios["PESTANA_DOCUMENTO"] = array(
+                array(
+                    HTML::selectorArchivo("archivo", $textos["ARCHIVO_DOCUMENTO"], array("title" => $textos["AYUDA_ARCHIVO_DOCUMENTO"])),
+                    HTML::campoTextoCorto("nombre_documento", $textos["NOMBRE_DOCUMENTO"], 15, 255, $titulo_archivo, array("title" => $textos["AYUDA_NOMBRE_DOCUMENTO"])),
+                    HTML::campoOculto("codigo", $codigo)
+                )
+            );
 
-        $formularios["PESTANA_DOCUMENTO"] = array(
-            array(
-                HTML::selectorArchivo("archivo", $textos["ARCHIVO_DOCUMENTO"], array("title" => $textos["AYUDA_ARCHIVO_DOCUMENTO"])),
-                HTML::campoTextoCorto("nombre_documento", $textos["NOMBRE_DOCUMENTO"], 15, 255, "", array("title" => $textos["AYUDA_NOMBRE_DOCUMENTO"])),
-                HTML::campoOculto("codigo", $codigo)
-            )
-        );
+            /*** Definición de botones ***/
+            $botones = array(
+                HTML::boton("botonAceptar", $textos["ACEPTAR"], "modificarItem('$url_id');", "aceptar")
+            );
 
-        /*** Definición de botones ***/
-        $botones = array(
-            HTML::boton("botonAceptar", $textos["ACEPTAR"], "modificarItem('$url_id');", "aceptar")
-        );
-
-        $contenido = HTML::generarPestanas($formularios, $botones);
+            $contenido = HTML::generarPestanas($formularios, $botones);
+        }else {
+            $error = $textos["ERROR_TIPO_DOCUMENTOS"];
+            $titulo    = "";
+            $contenido = "";
+        }    
     }
 
     /*** Enviar datos para la generación del formulario al script que originó la petición ***/
@@ -177,30 +194,24 @@ if (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["TIPO_DOCUMENTO_VACIO"];
 
-    }elseif(empty($forma_documento_soporte)){
-        $error   = true;
-        $mensaje = $textos["DOCUMENTO_SOPORTE_VACIO"];
-
-    /*}elseif(empty($forma_valor_documento)){
-        $error   = true;
-        $mensaje = $textos["VALOR_VACIO"];*/
-
-    }elseif(empty($forma_fecha_recepcion)){
-        $error   = true;
-        $mensaje = $textos["FECHA_RECEPCION_VACIO"];
-
-    }elseif(empty($forma_orden_compra)){
-        $error   = true;
-        $mensaje = $textos["ORDEN_VACIO"];
-
-    }elseif(empty($forma_fecha_vencimiento)){
-        $error   = true;
-        $mensaje = $textos["FECHA_VENCIMIENTO_VACIO"];
-    /*}
-
-    elseif(empty($forma_fecha_envio)){
-        $error   = true;
-        $mensaje = $textos["FECHA_ENVIO_VACIO"];*/
+    }
+    if($forma_tipo_documento!=10){
+        if(empty($forma_documento_soporte)){
+            $error   = true;
+            $mensaje = $textos["DOCUMENTO_SOPORTE_VACIO"];
+        }
+        if(empty($forma_fecha_recepcion)){
+            $error   = true;
+             $mensaje = $textos["FECHA_RECEPCION_VACIO"];
+        }
+        if(empty($forma_orden_compra)){
+            $error   = true;
+            $mensaje = $textos["ORDEN_VACIO"];
+        }
+        if(empty($forma_fecha_vencimiento)){
+            $error   = true;
+            $mensaje = $textos["FECHA_VENCIMIENTO_VACIO"];
+        }
     } else {
 
        /*** Quitar separador de miles a un numero ***/
@@ -257,7 +268,7 @@ if (!empty($url_generar)) {
                     "ruta"                  => $ruta,
                     "nombre_tabla"          => "correspondencia"
                 );
-                $modificar_documento = SQL::modificar("documentos",$datos_documento,"codigo = '$forma_codigo'");
+                $modificar_documento = SQL::modificar("documentos",$datos_documento,"codigo_registro_tabla = '$forma_codigo'");
             }
         }
     }

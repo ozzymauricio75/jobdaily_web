@@ -39,6 +39,17 @@ if (!empty($url_generar)) {
         $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
         $datos          = SQL::filaEnObjeto($consulta);
         
+        $vistaConsultaCorrespondencia  = "correspondencia";
+        $condicionCorrespondencia      = "codigo_aprobaciones = '$url_id'";
+        $columnasCorrespondencia       = SQL::obtenerColumnas($vistaConsultaCorrespondencia);
+        $consultaCorrespondencia       = SQL::seleccionar(array($vistaConsultaCorrespondencia), $columnasCorrespondencia, $condicionCorrespondencia);
+        $datosCorrespondencia          = SQL::filaEnObjeto($consultaCorrespondencia);
+
+        $fecha_recepcion               = $datosCorrespondencia->fecha_recepcion;
+        $fecha_vencimiento             = $datosCorrespondencia->fecha_vencimiento;
+        $fecha_envio                   = $datosCorrespondencia->fecha_envio; 
+        $estado                        = $datosCorrespondencia->estado; 
+
         /*Obtener Valores*/
         $codigo_proyecto               = $datos->codigo_proyecto;
         $documento_identidad_proveedor = $datos->documento_identidad_proveedor;
@@ -89,11 +100,27 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("estado_director", $textos["ESTADO_DIRECTOR"], $textos["ESTADO_DIRECTOR_".$estado_director])
             ),
             array(
+                HTML::mostrarDato("fecha_recepcion", $textos["FECHA_RECEPCION"], $fecha_recepcion),
+                HTML::mostrarDato("fecha_vencimiento", $textos["FECHA_VENCIMIENTO"], $fecha_vencimiento),
+                HTML::mostrarDato("fecha_envio", $textos["FECHA_ENVIO"], $fecha_envio)
+            ),
+            array(
                 HTML::mostrarDato("fecha_registro_residente", $textos["FECHA_REGISTRO_RESIDENTE"], $fecha_registro_residente),
                 HTML::mostrarDato("fecha_registro_director", $textos["FECHA_REGISTRO_DIRECTOR"], $fecha_registro_director)
             ),
             array(
                 HTML::mostrarDato("observaciones", $textos["OBSERVACIONES"], $observaciones)
+            )
+        );
+
+        /*** Documentos soportes ***/
+        $documentos_cotizaciones = SQL::seleccionar(array("documentos"),array("*"),"codigo_registro_tabla = '$url_id'");
+        $documentos_cotizaciones = SQL::filaEnObjeto($documentos_cotizaciones);
+        $nombre_archivo          = $documentos_cotizaciones->ruta;
+
+        $formularios["PESTANA_DOCUMENTO"] = array(
+            array(
+                HTML::enlazarPagina($textos["DESCARGAR"]." ".$documentos_cotizaciones->titulo, $nombre_archivo, array("target" => "_new"))
             )
         );
 

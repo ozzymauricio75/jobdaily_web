@@ -70,8 +70,8 @@ if (!empty($url_generar)) {
                     $razon_social     = SQL::obtenerValor("terceros","razon_social", "documento_identidad = '$documento_identidad_proveedor'");
                 }
 
-            $error         = "";
-            $titulo        = $componente->nombre;
+            $error  = "";
+            $titulo = $componente->nombre;
 
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(

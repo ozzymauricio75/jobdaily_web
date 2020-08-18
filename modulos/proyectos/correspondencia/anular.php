@@ -69,8 +69,7 @@ if (!empty($url_generar)) {
         $error         = "";
         $titulo        = $componente->nombre;
 
-        if (($estado==0)) {
-        
+        if (($estado==0) && ($codigo_tipo_documento!=3) && ($codigo_tipo_documento!=4) && ($codigo_tipo_documento!=5)) {
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
                 array(
@@ -108,7 +107,10 @@ if (!empty($url_generar)) {
         } else {
             if ($estado) {
                 $error = $textos["ERROR_ORDEN_ESTADO"];
-            } 
+            }elseif(($estado==0) && ($codigo_tipo_documento!=3) || ($codigo_tipo_documento!=4) || ($codigo_tipo_documento!=5)) {
+                $error = $textos["ERROR_TIPO_DOCUMENTOS"];
+            }
+
             $titulo    = "";
             $contenido = "";
         }

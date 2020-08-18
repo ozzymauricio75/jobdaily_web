@@ -41,15 +41,49 @@
 
     }
 
+    function mostrarOrdenes(){
+        var destino = $('#URLFormulario').val();
+        var aplica  = $('#aplica').is(':checked');
+        
+        if(aplica==false){
+            $('#orden_compra').html('');
+            $('#orden_compra').parent().hide(); 
+        }
+        //$('#orden_compra').attr("disabled","disabled");
+       
+    }
+
+    function ocultarValor(){
+        var destino          = $('#URLFormulario').val();
+        var tipo_documento   = $('#tipo_documento').val();
+        
+        $.getJSON(destino, {ocultarValor: true, tipo_documento: tipo_documento}, function(datos) {
+            if(datos==true){
+                $('#valor_documento').html('');
+                $('#valor_documento').parent().hide();
+                $('#documento_soporte').html('');
+                $('#documento_soporte').parent().hide();  
+            }else{
+                $('#valor_documento').html('');
+                $('#valor_documento').parent().show();
+                $('#documento_soporte').html('');
+                $('#documento_soporte').parent().show();
+            }
+
+        });
+    }
+
     function cargarOrdenes(){
         var destino                       = $('#URLFormulario').val();
         var codigo_proyecto               = $('#selector5').val();
+        var orden_compra                  = $('#orden_compra').val();
+        var tipo_documento                = $('#tipo_documento').val();
         var documento_identidad_proveedor = $('#selector3').val();  
         var error                         = "Error, no existe orden de compra o proveedor asociado al proyecto.";
 
         $.getJSON(destino, {cargarOrdenes: true, codigo_proyecto: codigo_proyecto, documento_identidad_proveedor: 
-            documento_identidad_proveedor}, function(elementos) {
-
+            documento_identidad_proveedor, orden_compra: orden_compra, tipo_documento: tipo_documento}, function(elementos) {
+   
             if (elementos[0]!="") {
                 var id           = elementos[0];
                 vector_id        = id.split('-');
@@ -57,6 +91,7 @@
                 vector_nombre    = nombre.split('-');
                 
                 $('#orden_compra').html('');
+                $('#orden_compra').parent().show();
                 $('#tipo_documento').removeAttr("disabled","disabled");
                 $('#documento_soporte').removeAttr("disabled","disabled");
                 $('#valor_documento').removeAttr("disabled","disabled");
@@ -67,16 +102,16 @@
                     $('#orden_compra').append('<option value="'+vector_id[i]+'">' +vector_nombre[i]+ '</option>');
                 }
                 $('#orden_compra').removeAttr('disabled');
-            }else if(elementos[0]==""){
-                $('#orden_compra').attr('disabled');
-                $('#tipo_documento').attr("disabled","disabled");
-                $('#documento_soporte').attr("disabled","disabled");
-                $('#valor_documento').attr("disabled","disabled");
-                $('#fecha_recepcion').attr("disabled","disabled");
-                $('#fecha_vencimiento').attr("disabled","disabled");
-                $('#observaciones').attr("disabled","disabled");
+            }/*else if(elementos[0]==""){
+                $('#orden_compra').html('');
+                $('#orden_compra').hide();
+                $('#documento_soporte').removeAttr("disabled","disabled");
+                $('#valor_documento').removeAttr("disabled","disabled");
+                $('#fecha_recepcion').removeAttr("disabled","disabled");
+                $('#fecha_vencimiento').removeAttr("disabled","disabled");
+                $('#observaciones').removeAttr("disabled","disabled");
 
-            }      
+            }*/   
         });
     }
 

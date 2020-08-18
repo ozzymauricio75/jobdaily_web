@@ -49,6 +49,67 @@
             });
     }
 
+    function validaTotalOrden(){
+        var destino                       = $('#URLFormulario').val();
+        var codigo_proyecto               = $('#selector5').val();
+        var documento_identidad_proveedor = $('#selector3').val();
+        var orden_compra                  = $('#orden_compra').val();
+        var valor_documento               = $('#valor_documento').val();
+        var error                         = "Error, no existe orden de compra o proveedor asociado al proyecto.";
+
+        $.getJSON(destino, {validaTotalOrden: true, codigo_proyecto: codigo_proyecto, documento_identidad_proveedor: 
+            documento_identidad_proveedor, orden_compra: orden_compra}, function(datos) {
+
+            if (datos[0]==true) {
+                var total_orden               = parseInt(datos[1]);
+                var valor_documentos_cruzados = parseInt(datos[2]);
+                var tolerancia                = parseInt(datos[3]);
+
+                if(!valor_documentos_cruzados){
+                    valor_documentos_cruzados = 0;
+                }
+
+                valor_documentos_cruzados = parseInt(valor_documentos_cruzados); 
+                valor_documento           = valor_documento.replace(/\./g,"");
+                valor_documento           = parseInt(valor_documento); 
+
+                acumulado                 = (valor_documentos_cruzados + valor_documento);
+                total_con_tolerancia      = (((total_orden * tolerancia)/100) + total_orden);
+                total_con_tolerancia      = parseInt(total_con_tolerancia); 
+
+                if(acumulado>total_con_tolerancia){
+                    alert("Error, el valor excede el total de la orden de compra");
+                    $('#valor_documento').val('');
+                }
+            }
+        }); 
+
+    }
+
+    function valoresOrden(){
+        var destino                       = $('#URLFormulario').val();
+        var codigo_proyecto               = $('#selector5').val();
+        var documento_identidad_proveedor = $('#selector3').val();
+        var orden_compra                  = $('#orden_compra').val();
+        var error                         = "Error, no existe orden de compra o proveedor asociado al proyecto.";
+
+        $.getJSON(destino, {valoresOrden: true, codigo_proyecto: codigo_proyecto, documento_identidad_proveedor: 
+            documento_identidad_proveedor, orden_compra: orden_compra}, function(datos) {
+
+            if (datos[0]==true) {
+                var total_orden               = datos[1];
+                var valor_documentos_cruzados = datos[2];
+
+                $('#total_orden').text('$'+total_orden);
+                $('#documentos_cruzados').text(valor_documentos_cruzados);
+
+            }else if(datos[0]==false){
+                alert(error);
+            }    
+        }); 
+
+    }
+
     function cargarOrdenes(){
         var destino                       = $('#URLFormulario').val();
         var codigo_proyecto               = $('#selector5').val();
@@ -174,6 +235,17 @@
         } else{ alert('Solo se permiten numeros');
             input.value = input.value.replace(/[^\d\.]*/g,'');
         }
+    }
+
+    function quitarMiles(cadena){
+        $valor = array();
+        for ($i = 0; $i < strlen($cadena); $i++) {
+            if (substr($cadena, $i, 1) != ".") {
+                $valor[$i] = substr($cadena, $i, 1);
+            }
+        }
+        $valor = implode($valor);
+        return $valor;
     }
 
     

@@ -51,6 +51,7 @@ if (isset($url_completar)) {
 }elseif (!empty($url_cargarOrdenes)) {
     $codigo_proyecto               = $url_codigo_proyecto;
     $documento_identidad_proveedor = $url_documento_identidad_proveedor;
+    $tipo_documento                = $url_tipo_documento;
 
     $llave                         = explode("-", $url_documento_identidad_proveedor);
     $documento_identidad_proveedor = $llave[0];
@@ -65,10 +66,10 @@ if (isset($url_completar)) {
             $codigo.= $datos->codigo."-";
             $numero_consecutivo.= $datos->numero_consecutivo."-";
         }   
-    }else {
+    }/*else {
         $error   = true;
         $mensaje = $textos["ERROR_EXISTE_ORDEN"];
-    }
+    }*/
     $codigo             = trim($codigo,"-");
     $numero_consecutivo = trim($numero_consecutivo,"-");
     /*******************************************************/
@@ -88,7 +89,19 @@ if (isset($url_completar)) {
     $datos = SQL::obtenerValor("aprobaciones", "valor_documento", "numero_documento_proveedor = '$documento_soporte' AND documento_identidad_proveedor='$documento_identidad_proveedor'");
 
     HTTP::enviarJSON($datos);
-    exit;  
+    exit; 
+
+}elseif (!empty($url_ocultarValor)) {
+    $tipo_documento = $url_tipo_documento;
+
+    if($tipo_documento==10){
+        $datos=true;
+    }else{
+        $datos=false;
+    }
+
+    HTTP::enviarJSON($datos);
+    exit;     
 
 }elseif (!empty($url_recargar)) {
 
@@ -128,22 +141,26 @@ elseif (!empty($url_generar)) {
                 .HTML::campoOculto("codigo_proyecto", "")
             ),
             array(  
-                HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable","onBlur"=>"cargarOrdenes()","onKeyPress"=>"return campoEntero(event)"))
+                HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable","onKeyPress"=>"return campoEntero(event)","onBlur"=>"cargarOrdenes()"))
                 .HTML::campoOculto("documento_identidad_proveedor", ""),
 
-                HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo != 0"), "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"]))
+                HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo != '1' AND codigo != '3' AND codigo != '4' AND codigo != '5'"), "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"],"onChange"=>"ocultarValor(this)"))
             ),
             array(
-                HTML::listaSeleccionSimple("*orden_compra", $textos["ORDEN_COMPRA"], "", "", array("title",$textos["AYUDA_ORDEN"], "onBlur" => "validarItem(this)")),
+                //HTML::marcaSeleccion("aplica", $textos["APLICA"], 1, false, array("title"=>$textos["AYUDA_APLICA"],"onChange"=>"mostrarOrdenes(this)")),
+
+                HTML::marcaChequeo("aplica",$textos["APLICA"], 1, false, array("title"=>$textos["AYUDA_APLICA"],"onClick"=>"mostrarOrdenes(this)")),
+
+                HTML::listaSeleccionSimple("orden_compra", $textos["ORDEN_COMPRA"], "", "", array("title",$textos["AYUDA_ORDEN"],"class" => "oculto")),
 
                 HTML::campoTextoCorto("*documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"], "class" => "autocompletable", "onBlur" => "cargaValor()")),
 
-                HTML::campoTextoCorto("valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, "", array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"]))
+                HTML::campoTextoCorto("valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, "", array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"],"onkeyup"=>"formatoMiles(this)"))
             ),
             array(
-                HTML::campoTextoCorto("fecha_recepcion", $textos["FECHA_RECEPCION"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_RECEPCION"], "onBlur" => "validarItem(this);")),
+                HTML::campoTextoCorto("fecha_recepcion", $textos["FECHA_RECEPCION"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_RECEPCION"])),
 
-                HTML::campoTextoCorto("fecha_vencimiento", $textos["FECHA_VENCIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_VENCIMIENTO"], "onBlur" => "validarItem(this);")),
+                HTML::campoTextoCorto("fecha_vencimiento", $textos["FECHA_VENCIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_VENCIMIENTO"])),
 
                 //HTML::campoTextoCorto("fecha_envio", $textos["FECHA_ENVIO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_ENVIO"], "onBlur" => "validarItem(this);"))
             ),
@@ -200,23 +217,14 @@ elseif (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["TIPO_DOCUMENTO_VACIO"];
 
-    }elseif(empty($forma_documento_soporte)){
+    /*}elseif(empty($forma_documento_soporte)){
         $error   = true;
-        $mensaje = $textos["DOCUMENTO_SOPORTE_VACIO"];
-
-    /*}elseif(empty($forma_valor_documento)){
-        $error   = true;
-        $mensaje = $textos["VALOR_VACIO"];*/
-
+        $mensaje = $textos["DOCUMENTO_SOPORTE_VACIO"];*/
     }elseif(empty($forma_fecha_recepcion)){
         $error   = true;
         $mensaje = $textos["FECHA_RECEPCION_VACIO"];
 
-    }elseif(empty($forma_orden_compra)){
-        $error   = true;
-        $mensaje = $textos["ORDEN_VACIO"];
-
-    }elseif(empty($forma_fecha_vencimiento)){
+    }if(empty($forma_fecha_vencimiento)){
         $error   = true;
         $mensaje = $textos["FECHA_VENCIMIENTO_VACIO"];
     } else {
@@ -235,12 +243,15 @@ elseif (!empty($url_generar)) {
 
         $forma_valor_documento = quitarMiles($forma_valor_documento);*/
 
+        if($forma_aplica==true){
+            $forma_orden_compra = "";
+        }
         /*** Insertar datos ***/
         $datos = array(
             "codigo_proyecto"               => $codigo_proyecto,
             "documento_identidad_proveedor" => $documento_identidad_proveedor,
             "codigo_tipo_documento"         => $forma_tipo_documento,
-            "numero_documento_proveedor"    => $forma_documento_soporte,
+            "numero_documento_proveedor"    => "",
             "numero_orden_compra"           => $forma_orden_compra,
             "valor_documento"               => $forma_valor_documento,
             "estado"                        => '0',

@@ -42,7 +42,18 @@ if (!empty($url_generar)) {
         $estado_residente = $datos->estado_residente;
         $estado_director  = $datos->estado_director;
 
-        if (($estado_residente==0 || ($estado_residente==1)) && ($estado_director==0)) {
+        $vistaConsultaCorrespondencia  = "correspondencia";
+        $condicionCorrespondencia      = "codigo_aprobaciones = '$url_id'";
+        $columnasCorrespondencia       = SQL::obtenerColumnas($vistaConsultaCorrespondencia);
+        $consultaCorrespondencia       = SQL::seleccionar(array($vistaConsultaCorrespondencia), $columnasCorrespondencia, $condicionCorrespondencia);
+        $datosCorrespondencia          = SQL::filaEnObjeto($consultaCorrespondencia);
+
+        $fecha_recepcion               = $datosCorrespondencia->fecha_recepcion;
+        $fecha_vencimiento             = $datosCorrespondencia->fecha_vencimiento;
+        $fecha_envio                   = $datosCorrespondencia->fecha_envio;
+        $estado                        = $datosCorrespondencia->estado; 
+
+        if (($estado_residente==0 || ($estado_residente==1)) && ($estado_director==0 && $estado=='0')) {
             /*Obtener Valores*/
             $codigo_proyecto               = $datos->codigo_proyecto;
             $documento_identidad_proveedor = $datos->documento_identidad_proveedor;
@@ -111,6 +122,8 @@ if (!empty($url_generar)) {
         } else {
             if (($estado_director==1)||($estado_residente==2)) {
                 $error = $textos["ERROR_ORDEN_ESTADO"];
+            }else {
+                $error = $textos["ERROR_ORDEN_ESTADOS"];
             } 
             $titulo    = "";
             $contenido = "";
@@ -125,9 +138,11 @@ if (!empty($url_generar)) {
     HTTP::enviarJSON($respuesta);
 
 } elseif (!empty($forma_procesar)) {
-    $consulta = SQL::eliminar("aprobaciones", "codigo = '$forma_id'");
+    $elimina_aprobacion       = SQL::eliminar("aprobaciones", "codigo = '$forma_id'");
+    $elimina_documento        = SQL::eliminar("documentos", "codigo_registro_tabla = '$forma_id'");
+    $elimina_correspondencia  = SQL::eliminar("correspondencia", "codigo_aprobaciones = '$forma_id'");
 
-    if ($consulta) {
+    if ($elimina_aprobacion) {
         $error   = false;
         $mensaje = $textos["ITEM_ELIMINADO"];
     } else {

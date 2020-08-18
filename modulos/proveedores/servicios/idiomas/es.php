@@ -37,7 +37,7 @@ $textos = array(
     "AYUDA_CODIGO"             => "Codigo del servicio",
     "AYUDA_DESCRIPCION"        => "Detalle que describe el servicio",
     "ERROR_EXISTE_DESCRIPCION" => "Ya existe un servicio con esa descripcion",
-    "ERROR_EXISTE_CODIGO"      => "Ya existe un servico con ese código",
+    "ERROR_EXISTE_CODIGO"      => "Ya existe un servicio con ese código",
     "CODIGO_VACIO"			   => "Debe ingresar el código",
     "DESCRIPCION_VACIO"		   => "Debe ingresar la descripción"
 );

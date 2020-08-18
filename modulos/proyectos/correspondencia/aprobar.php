@@ -82,33 +82,33 @@ if (isset($url_completar)) {
 
     //Inicio la construccion de la tabla
     if (SQL::filasDevueltas($consulta)) {
-            while ($fila = mysql_fetch_array($consulta)) {
-                $tipo_documento        = $fila['tipo_documento'];
-                $nombre_tipo_documento = SQL::obtenerValor("tipos_documentos","descripcion", "codigo = '$tipo_documento'");
-                $nombre_proyecto       = SQL::obtenerValor("proyectos","nombre", "codigo = '$codigo_proyecto'");
-                $tipo_persona          = SQL::obtenerValor("terceros", "tipo_persona", "documento_identidad = '".$documento_identidad_proveedor."'");
+        while ($fila = mysql_fetch_array($consulta)) {
+            $tipo_documento        = $fila['tipo_documento'];
+            $nombre_tipo_documento = SQL::obtenerValor("tipos_documentos","descripcion", "codigo = '$tipo_documento'");
+            $nombre_proyecto       = SQL::obtenerValor("proyectos","nombre", "codigo = '$codigo_proyecto'");
+            $tipo_persona          = SQL::obtenerValor("terceros", "tipo_persona", "documento_identidad = '".$documento_identidad_proveedor."'");
 
-                if(($tipo_persona==1)||($tipo_persona==3)){
-                    $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$documento_identidad_proveedor."'");
-                    $segundo_nombre   = SQL::obtenerValor("terceros", "segundo_nombre", "documento_identidad = '".$documento_identidad_proveedor."'");
-                    $primer_apellido  = SQL::obtenerValor("terceros", "primer_apellido", "documento_identidad = '".$documento_identidad_proveedor."'");
-                    $segundo_apellido = SQL::obtenerValor("terceros", "segundo_apellido", "documento_identidad = '".$documento_identidad_proveedor."'");
-                    $razon_social     = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
-                }else{
-                    $razon_social     = SQL::obtenerValor("terceros","razon_social", "documento_identidad = '$documento_identidad_proveedor'");
-                }
+            if(($tipo_persona==1)||($tipo_persona==3)){
+                $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$documento_identidad_proveedor."'");
+                $segundo_nombre   = SQL::obtenerValor("terceros", "segundo_nombre", "documento_identidad = '".$documento_identidad_proveedor."'");
+                $primer_apellido  = SQL::obtenerValor("terceros", "primer_apellido", "documento_identidad = '".$documento_identidad_proveedor."'");
+                $segundo_apellido = SQL::obtenerValor("terceros", "segundo_apellido", "documento_identidad = '".$documento_identidad_proveedor."'");
+                $razon_social     = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
+            }else{
+                $razon_social     = SQL::obtenerValor("terceros","razon_social", "documento_identidad = '$documento_identidad_proveedor'");
+            }
 
-                $id_tabla              = $fila['codigo'];   
-                $fecha_recepcion       = $fila['fecha_recepcion'];
-                $documento_identidad   = $fila['documento_identidad_proveedor'];
-                //$razon_social          = $fila['razon_social'];
-                //$nombre_tipo_documento = $fila['nombre_tipo_documento'];
-                $valor_documento       = $fila['valor_documento'];
-                $fecha_vencimiento     = $fila['fecha_vencimiento'];
-                $fecha_envio           = $fila['fecha_envio'];
+            $id_tabla              = $fila['codigo'];   
+            $fecha_recepcion       = $fila['fecha_recepcion'];
+            $documento_identidad   = $fila['documento_identidad_proveedor'];
+            //$razon_social          = $fila['razon_social'];
+            //$nombre_tipo_documento = $fila['nombre_tipo_documento'];
+            $valor_documento       = $fila['valor_documento'];
+            $fecha_vencimiento     = $fila['fecha_vencimiento'];
+            $fecha_envio           = $fila['fecha_envio'];
 
-                $tabla[] = array('codigo'=> $id_tabla, 'fecha_recepcion'=> $fecha_recepcion, 'documento_identidad_proveedor'=> $documento_identidad, 'valor_documento'=> $valor_documento, 'fecha_vencimiento'=> $fecha_vencimiento, 'fecha_envio'=> $fecha_envio);
-            } 
+            $tabla[] = array('codigo'=> $id_tabla, 'fecha_recepcion'=> $fecha_recepcion, 'documento_identidad_proveedor'=> $documento_identidad, 'valor_documento'=> $valor_documento, 'fecha_vencimiento'=> $fecha_vencimiento, 'fecha_envio'=> $fecha_envio);
+        } 
          
     } else {
         $tabla[] = "";
@@ -140,7 +140,7 @@ if (!empty($url_generar)) {
         //Inicio la construccion de la tabla
         if (SQL::filasDevueltas($consulta)) {
             /*** Consulta todas las ordenes y documentos ***/
-            $consulta_documentos = SQL::seleccionar(array("correspondencia"),array("*"),"codigo_proyecto='$datos_correspondencia->codigo_proyecto' AND documento_identidad_proveedor='$datos_correspondencia->documento_identidad_proveedor' AND estado='1'");
+            $consulta_documentos = SQL::seleccionar(array("correspondencia"),array("*"),"codigo_proyecto='$datos_correspondencia->codigo_proyecto' AND documento_identidad_proveedor='$datos_correspondencia->documento_identidad_proveedor' AND estado='0'");
             while ($datos = SQL::filaEnObjeto($consulta_documentos)) {
                 /*Obtener Valores*/
                 $codigo_proyecto               = $datos->codigo_proyecto;
@@ -169,7 +169,7 @@ if (!empty($url_generar)) {
                     $razon_social = SQL::obtenerValor("terceros","razon_social", "documento_identidad = '$documento_identidad_proveedor'");
                 }
 
-                if ($estado =='1'){
+                if ($estado =='0'){
                     $modificar = "";
                     $cumplido  = HTML::boton("botonCumplido", "", "cumplirItem(this);", "aceptar", array("title" => $textos["CUMPLIR"]));
                 }
@@ -199,7 +199,7 @@ if (!empty($url_generar)) {
             }
         } 
 
-        if (($datos_correspondencia->estado=='1')) {
+        if (($estado=='0')) {
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
                 array(

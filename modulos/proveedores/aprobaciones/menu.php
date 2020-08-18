@@ -37,11 +37,11 @@ if (isset($url_completar)) {
 }
 
 /*** Generar botones de comandos ***/
-$botones  = HTML::boton("ADICAPRO",$textos["ADICIONAR"],"ejecutarComando(this, 600, 450);","adicionar");
-$botones .= HTML::boton("CONSAPRO",$textos["CONSULTAR"],"ejecutarComando(this, 600, 450);","consultar");
-$botones .= HTML::boton("MODIAPRO",$textos["MODIFICAR"],"ejecutarComando(this, 600, 450);","modificar");
-$botones .= HTML::boton("ANULAPRO",$textos["ANULAR"],"ejecutarComando(this, 600, 450);","anular");
-$botones .= HTML::boton("ELIMAPRO",$textos["ELIMINAR"],"ejecutarComando(this, 600, 450);","eliminar");
+$botones  = HTML::boton("ADICAPRO",$textos["ADICIONAR"],"ejecutarComando(this, 650, 500);","adicionar");
+$botones .= HTML::boton("CONSAPRO",$textos["CONSULTAR"],"ejecutarComando(this, 600, 550);","consultar");
+$botones .= HTML::boton("MODIAPRO",$textos["MODIFICAR"],"ejecutarComando(this, 600, 500);","modificar");
+$botones .= HTML::boton("ANULAPRO",$textos["ANULAR"],"ejecutarComando(this, 600, 550);","anular");
+$botones .= HTML::boton("ELIMAPRO",$textos["ELIMINAR"],"ejecutarComando(this, 600, 550);","eliminar");
 $botones .= HTML::boton("APREAPRO",$textos["APROBAR_RESIDENTE"],"ejecutarComando(this, 800, 550);","aprobar_residente");
 $botones .= HTML::boton("APDIAPRO",$textos["APROBAR_DIRECTOR"],"ejecutarComando(this, 800, 550);","aprobar_director");
 

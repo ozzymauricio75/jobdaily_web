@@ -33,7 +33,6 @@
                 $datos=true;
             }
             $('#documento_soporte_orden').focus();
-            $('#documento_soporte_orden').value('');
             $datos=true; 
         });    
     }

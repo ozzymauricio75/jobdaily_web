@@ -140,7 +140,7 @@ if (!empty($url_generar)) {
         //Inicio la construccion de la tabla
         if (SQL::filasDevueltas($consulta)) {
             /*** Consulta todas las ordenes y documentos ***/
-            $consulta_documentos = SQL::seleccionar(array("correspondencia"),array("*"),"codigo_proyecto='$datos_correspondencia->codigo_proyecto' AND documento_identidad_proveedor='$datos_correspondencia->documento_identidad_proveedor' AND estado='0'");
+            $consulta_documentos = SQL::seleccionar(array("correspondencia"),array("*"),"codigo_proyecto='$datos_correspondencia->codigo_proyecto' AND documento_identidad_proveedor='$datos_correspondencia->documento_identidad_proveedor' AND estado='3'");
             while ($datos = SQL::filaEnObjeto($consulta_documentos)) {
                 /*Obtener Valores*/
                 $codigo_proyecto               = $datos->codigo_proyecto;
@@ -169,14 +169,9 @@ if (!empty($url_generar)) {
                     $razon_social = SQL::obtenerValor("terceros","razon_social", "documento_identidad = '$documento_identidad_proveedor'");
                 }
 
-                if ($estado =='0'){
+                if ($estado =='3'){
                     $modificar = "";
                     $cumplido  = HTML::boton("botonCumplido", "", "cumplirItem(this);", "aceptar", array("title" => $textos["CUMPLIR"]));
-                }
-
-                if ($estado !='0' && $estado_articulo !='2'){
-                    $modificar = $textos["RECIBIDO"];
-                    $cumplido  = "";
                 }
 
                 $ocultos = HTML::campoOculto("estado_documento_tabla[]", $datos->codigo, array("class" => "estado_documento_tabla"));
@@ -204,7 +199,7 @@ if (!empty($url_generar)) {
             }
         } 
 
-        if (($datos_correspondencia->estado==0)) {
+        if (($datos_correspondencia->estado==3)) {
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
                 array(

@@ -37,13 +37,13 @@ if (isset($url_completar)) {
 }
 
 /*** Generar botones de comandos ***/
-$botones  = HTML::boton("ADICCORR",$textos["ADICIONAR"],"ejecutarComando(this, 600, 450);","adicionar");
+$botones  = HTML::boton("ADICCORR",$textos["ADICIONAR"],"ejecutarComando(this, 650, 450);","adicionar");
 $botones .= HTML::boton("CONSCORR",$textos["CONSULTAR"],"ejecutarComando(this, 600, 450);","consultar");
 $botones .= HTML::boton("MODICORR",$textos["MODIFICAR"],"ejecutarComando(this, 600, 450);","modificar");
 $botones .= HTML::boton("ANULCORR",$textos["ANULAR"],"ejecutarComando(this, 600, 450);","anular");
 $botones .= HTML::boton("ELIMCORR",$textos["ELIMINAR"],"ejecutarComando(this, 600, 450);","eliminar");
-$botones .= HTML::boton("RECICORR",$textos["RECIBIR"],"ejecutarComando(this, 900, 550);","recibir");
 $botones .= HTML::boton("APROCORR",$textos["APROBAR"],"ejecutarComando(this, 900, 550);","aprobar");
+$botones .= HTML::boton("RECICORR",$textos["RECIBIR"],"ejecutarComando(this, 900, 550);","recibir");
 $botones .= HTML::boton("REPOCORR",$textos["REPORTE"],"ejecutarComando(this, 650,420);","reporte");
 
 /*** Obtener el número de la página actual ***/

@@ -28,8 +28,8 @@ $borrarSiempre = false;
 
 // Definición de tablas
 $tablas ["correspondencia"] = array(
-    "codigo"                        => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno del proyecto'",
-
+    "codigo"                        => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno de la tabla'",
+    "codigo_aprobaciones"           => "INT(9) UNSIGNED ZEROFILL NULL DEFAULT '0' COMMENT 'Codigo interno de la tabla aprobaciones'",
     /*tabla proyectos*/
     "codigo_proyecto"               => "INT(9) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Codigo interno del proyecto'",
     "documento_identidad_proveedor" => "VARCHAR(12) NOT NULL COMMENT 'Llave principal de la tabla de terceros'",

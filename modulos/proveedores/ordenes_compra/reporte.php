@@ -189,7 +189,7 @@ if (!empty($url_generar)) {
  
         // Display the graph
         $graph->Stroke($nombreImagen);
-
+ 
 
         //Titulos segun tipo listado
         if ($forma_tipo_listado=="1"){
@@ -299,6 +299,7 @@ if (!empty($url_generar)) {
                            $estado_orden = $textos["ESTADO_4"];
                         }
                         
+                        //Totales de la orden de compra
                         $subtotal = SQL::obtenerValor("movimiento_ordenes_compra","SUM(valor_total)","codigo_orden_compra='$datos_encabezado->codigo'");
                         $acumulado_subtotal = $subtotal + $acumulado_subtotal;
 
@@ -314,6 +315,11 @@ if (!empty($url_generar)) {
 
                         $total_orden = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$datos_encabezado->codigo'");
                         $acumulado_total = $total_orden + $acumulado_total;
+
+                        //Valores total de la orden vs Valor facturado
+                        $total_entregado_facturado  = SQL::obtenerValor("aprobaciones","SUM(valor_documento)","numero_orden_compra='$numero_orden'");
+
+                        $acumulado_facturado        = $total_entregado_facturado + $acumulado_facturado;
 
                         /*** Ordenes ***/
                         $fecha_orden  = $datos_encabezado->fecha_documento;
@@ -387,7 +393,7 @@ if (!empty($url_generar)) {
                     }
                 }
             }
-            
+
             if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
                 $archivo->SetFillColor(255,255,255);
             } else{
@@ -413,6 +419,24 @@ if (!empty($url_generar)) {
             $archivo->Cell(19,4,"$ ".$acumulado_descuento,1,0,'R',true);
             $archivo->Cell(19,4,"$ ".$acumulado_iva,1,0,'R',true);
             $archivo->Cell(19,4,"$ ".$acumulado_total,1,0,'R',true);
+
+            $archivo->Ln(8);
+            $archivo->SetFont('Arial','B',8);
+            $archivo->Cell(50,4,$textos["FACTURADO"],0,0,'L');
+
+            if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
+                $archivo->SetFillColor(255,255,255);
+            } else{
+                $archivo->SetFillColor(240,240,240);
+            }
+
+            $archivo->Ln(4);
+            $archivo->Cell(19,4,"$ ".$acumulado_facturado."",0);
+
+            /*$archivo->Ln(4);
+            $archivo->SetFont('Arial','B',6);
+            $archivo->Cell(50,4,"Porcentaje",1,0,'R',true);
+            $archivo->Cell(20,4,"$ ".$porcentaje_orden_facturado,1,0,'R',true);*/
 
             if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
                 $archivo->SetFillColor(255,255,255);
