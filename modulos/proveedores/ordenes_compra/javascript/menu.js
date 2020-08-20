@@ -26,14 +26,15 @@
         var mensaje_error     = "No existe el documento, por favor verifique";
 
         $.getJSON(destino, {existeFactura: true, documento_soporte: documento_soporte}, function(datos) {
-            if(datos==""){
-                alert(mensaje_error);  
+            if(datos){
+                //$('#documento_soporte_orden').focus();
+                $datos=true; 
             }else{
-                $('#documento_soporte_orden').focus();
-                $datos=true;
+                alert(mensaje_error);
+                $('#documento_soporte_orden').val('').focus();
+                $datos=false;
             }
-            $('#documento_soporte_orden').focus();
-            $datos=true; 
+            
         });    
     }
 
@@ -219,7 +220,7 @@
 
     function recargarVendedores(){
         var destino  = $('#URLFormulario').val();
-        var nit      = parseInt($('#selector4').val());  
+        var nit      = parseInt($('#selector6').val());  
 
         $.getJSON(destino, {recargarVendedor: true, nit_proveedor: nit}, function(elementos) {
           
@@ -241,7 +242,7 @@
 
     function cargarProveedor(){
         var destino         = $('#URLFormulario').val();
-        var nit_proveedor   = parseInt($('#selector4').val());
+        var nit_proveedor   = $('#selector6').val();
         var codigo_proyecto = parseInt($('#proyecto').val());
 
         $.getJSON(destino, {cargarProveedor: true, nit_proveedor: nit_proveedor, codigo_proyecto: codigo_proyecto}, function(datos) {
@@ -260,7 +261,7 @@
                 $("#prefijo_orden").text(datos[8]);
                 $("#numero_orden").val(datos[9]).attr("disabled","disabled");
                 //Habilita campos pestaña pedidos
-                $("#selector7").parent().show();
+                $("#selector9").parent().show();
                 //recargarVendedores();
             } else {
                 $("#razon_social_proveedor").val('');
@@ -275,7 +276,7 @@
 
     function grabarEncabezado(){
         var destino          = $('#URLFormulario').val();
-        var nit_proveedor    = parseInt($('#selector4').val());
+        var nit_proveedor    = parseInt($('#selector6').val());
         var codigo_proyecto  = parseInt($('#proyecto').val());
         var sucursal         = $('#sucursal').val();
         var fecha_documento  = $('#fecha_documento').val();
@@ -349,8 +350,8 @@
 
     function cargarDatosArticulo(){
         var destino           = $('#URLFormulario').val();
-        var referencia        = $('#selector7').val();
-        var nit_proveedor     = parseInt($('#selector4').val());
+        var referencia        = $('#selector9').val();
+        var nit_proveedor     = parseInt($('#selector6').val());
         var mensajes          = new Array();
         var contador_mensajes = 1;
         var mensaje_error     = "No existe el codigo del articulo, por favor verifique";
@@ -384,7 +385,7 @@
                     alert(mensaje_error);
                     $('#descripcion').val(''); 
                     $('#id_unidad_compra').val(''); 
-                    $('#selector7').val('').focus();
+                    $('#selector9').val('').focus();
                     $('#costo').val('');          
                     /*alert(datos[1]);
                     $('#selector7').val('');
@@ -415,7 +416,7 @@
         var id_sucursal_orden           = $("#sucursal").val();
         var fecha_entrega_orden         = $("#fecha_entrega").val();
         var id_comprador                = $("#codigo_comprador").val();
-        var referencia                  = $("#selector7").val();
+        var referencia                  = $("#selector9").val();
         var descripcion                 = $("#descripcion").val();
         var unidad_compra               = $("#id_unidad_compra").text();
         var codigo_unidad_compra        = $("#id_unidad_compra").val();
@@ -439,7 +440,7 @@
             contador_mensajes++;
         }
         // Proveedor
-        var nit_proveedor = parseInt($("#selector4").val());
+        var nit_proveedor = parseInt($("#selector6").val());
         if (nit_proveedor == undefined || isNaN(nit_proveedor)|| nit_proveedor == 0){
             continuar = false;
             mensajes[contador_mensajes] = $("#error_nit_proveedor").val();
@@ -612,7 +613,7 @@
             }
             alert(mensaje_pantalla);
         } 
-        $('#selector7').val('').focus();
+        $('#selector9').val('').focus();
         $("#descripcion").val('');
         $("#id_unidad_compra").text('');
         $("#id_unidad_compra").val('');
@@ -725,7 +726,7 @@
     function totalPedido(){
         var destino             = $('#URLFormulario').val();
         var numero_orden        = $("#numero_orden").val();
-        var nit_proveedor       = $("#selector4").val();
+        var nit_proveedor       = $("#selector6").val();
         var iva_incluido        = "0";
         var sucursal            = $("#sucursal").val();
         var fecha_documento     = $("#fecha_documento").val();

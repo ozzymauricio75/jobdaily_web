@@ -56,6 +56,9 @@ if (isset($url_completar)) {
     if (($url_item) == "selector8") {
         echo SQL::datosAutoCompletar("seleccion_referencias_proveedor", $url_q);
     }
+    if (($url_item) == "selector9") {
+        echo SQL::datosAutoCompletar("seleccion_articulos", $url_q);
+    }
     exit;
 
 } elseif (isset($url_cargarDatosVendedor)) {
@@ -88,8 +91,11 @@ if (isset($url_completar)) {
 } elseif (isset($url_cargarProveedor)) {
     if (!empty($url_nit_proveedor)) {
 
-        $codigo_proyecto = $url_codigo_proyecto;
-        $tipo_persona    = SQL::obtenerValor("terceros", "tipo_persona", "documento_identidad = '$url_nit_proveedor' AND activo = '1'");
+        $llave             = explode("-", $url_nit_proveedor);
+        $url_nit_proveedor = $llave[0];
+        
+        $codigo_proyecto   = $url_codigo_proyecto;
+        $tipo_persona      = SQL::obtenerValor("terceros", "tipo_persona", "documento_identidad = '$url_nit_proveedor' AND activo = '1'");
         
         if ($tipo_persona == '2' || $tipo_persona == '4') {
 
@@ -180,8 +186,18 @@ if (isset($url_completar)) {
 } elseif (isset($url_cargarDatosArticuloCreado)) {
 
     if (!empty($url_referencia_carga)) {
-        $nit_proveedor   = $url_nit_proveedor;   
-        $respuesta       = array();
+     
+        $llave                = explode("-", $url_nit_proveedor);
+        $url_nit_proveedor    = $llave[0];
+
+        $llave                = explode("*", $url_referencia_carga);
+        $url_referencia_carga = $llave[0];
+
+        $llave                = explode(" ", $url_referencia_carga);
+        $url_referencia_carga = $llave[0];
+
+        $nit_proveedor        = $url_nit_proveedor;   
+        $respuesta            = array();
 
         $codigo_articulo = SQL::obtenerValor("referencias_proveedor", "codigo_articulo", "referencia = '$url_referencia_carga' AND principal = '1' LIMIT 1");
         $activo                        = SQL::obtenerValor("articulos", "activo", "codigo = '$codigo_articulo'");
@@ -299,6 +315,9 @@ if (isset($url_completar)) {
 
     if (!empty($url_nit_proveedor)) {
 
+        $llave             = explode("-", $url_nit_proveedor);
+        $url_nit_proveedor = $llave[0];
+
         $proveedor = $url_nit_proveedor;
         $consulta  = SQL::seleccionar(array("menu_vendedores_proveedor"), array("*"), "DOCUMENTO = '$proveedor'");
 
@@ -354,6 +373,9 @@ if (isset($url_completar)) {
 
 } elseif (isset($url_grabarEncabezado)) {
     if (!empty($url_nit_proveedor)) {
+
+        $llave               = explode("-", $url_nit_proveedor);
+        $url_nit_proveedor   = $llave[0];
 
         $codigo_proyecto     = $url_codigo_proyecto;
         $sucursal            = $url_sucursal;
@@ -432,6 +454,13 @@ if (isset($url_completar)) {
     $indice                  = $forma_indice;
     $vendedor_proveedor      = $forma_vendedor_proveedor;
     $descuento               = $forma_descuento;
+
+    //Obtiene la referencia del campo digitado
+    $llave                = explode("*", $referencia);
+    $referencia = $llave[0];
+
+    $llave                = explode(" ", $referencia);
+    $referencia = $llave[0];
 
     /*** Quitar separador de miles a un numero ***/
     function quitarMiles($cadena){
@@ -641,6 +670,8 @@ if (isset($url_completar)) {
 
 }elseif (isset($url_total_pedido)){
 
+    $llave                = explode("-", $url_nit_proveedor);
+    $url_nit_proveedor    = $llave[0];
     $observaciones_orden  = $url_observaciones_orden;
     $codigo_orden_compra  = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$url_numero_orden'");
     $unidades             = SQL::obtenerValor("movimiento_ordenes_compra","SUM(cantidad_total)","codigo_orden_compra='$codigo_orden_compra'");
@@ -828,7 +859,7 @@ if (!empty($url_generar)){
                 HTML::agrupador(
                     array(
                         array(
-                            HTML::campoTextoCorto("*selector4",$textos["NIT_PROVEEDOR"], 15, 15, "", array("title"=>$textos["AYUDA_NIT_PROVEEDOR"],"class" => "autocompletable", "onKeyPress"=>"return campoEntero(event)", "onBlur"=>"cargarProveedor()")),
+                            HTML::campoTextoCorto("*selector6",$textos["NIT_PROVEEDOR"], 15, 15, "", array("title"=>$textos["AYUDA_NIT_PROVEEDOR"],"class" => "autocompletable", "onBlur"=>"cargarProveedor()")),
 
                             HTML::campoTextoCorto("digito_verificacion", $textos["DIGITO_VERIFICACION"], 1, 1, "", array("readonly" => "true","Class" => "oculto"))
                             .HTML::campoOculto("documento_identidad_proveedor", ""),
@@ -922,7 +953,7 @@ if (!empty($url_generar)){
                     HTML::agrupador(
                         array(
                             array(
-                                HTML::campoTextoCorto("+selector7",$textos["REFERENCIA"], 30, 30, "", array("title"=>$textos["AYUDA_REFERENCIA_PROVEEDOR"],"class"=>"autocompletable articulo_existe modificar","onblur" => "cargarDatosArticulo()"))
+                                HTML::campoTextoCorto("+selector9",$textos["REFERENCIA"], 30, 30, "", array("title"=>$textos["AYUDA_REFERENCIA_PROVEEDOR"],"class"=>"autocompletable articulo_existe modificar","onblur" => "cargarDatosArticulo()"))
                                 .HTML::campoOculto("codigo_articulo","")  
                             ),
                             array(
@@ -1145,6 +1176,9 @@ if (!empty($url_generar)){
     // Asumir por defecto que no hubo error
     $error   = false;
     $mensaje = $textos["ORDEN_GRABADA"];
+
+    $llave                         = explode("-", $forma_selector6);
+    $documento_identidad_proveedor = $llave[0];
 
     $codigo_orden_compra  = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$forma_campo_numero_orden_total' AND documento_identidad_proveedor='$forma_campo_nit_proveedor'");
     $condicion_encabezado = "numero_consecutivo='$forma_campo_numero_orden_total'";

@@ -141,7 +141,7 @@ elseif (!empty($url_generar)) {
                 .HTML::campoOculto("codigo_proyecto", "")
             ),
             array(  
-                HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable","onKeyPress"=>"return campoEntero(event)","onBlur"=>"cargarOrdenes()"))
+                HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable","onBlur"=>"cargarOrdenes()"))
                 .HTML::campoOculto("documento_identidad_proveedor", ""),
 
                 HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo != '1' AND codigo != '3' AND codigo != '4' AND codigo != '5'"), "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"],"onChange"=>"ocultarValor(this)"))
@@ -155,7 +155,7 @@ elseif (!empty($url_generar)) {
 
                 HTML::campoTextoCorto("*documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"], "class" => "autocompletable", "onBlur" => "cargaValor()")),
 
-                HTML::campoTextoCorto("valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, "", array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"],"onkeyup"=>"formatoMiles(this)"))
+                HTML::campoTextoCorto("*valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, "", array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"],"onkeyup"=>"formatoMiles(this)"))
             ),
             array(
                 HTML::campoTextoCorto("fecha_recepcion", $textos["FECHA_RECEPCION"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_RECEPCION"])),
@@ -169,7 +169,7 @@ elseif (!empty($url_generar)) {
             ),
             array(
                 HTML::selectorArchivo("archivo", $textos["ARCHIVO_DOCUMENTO"], array("title" => $textos["AYUDA_ARCHIVO_DOCUMENTO"])),
-                HTML::campoTextoCorto("nombre_documento", $textos["NOMBRE_DOCUMENTO"], 15, 255, "", array("title" => $textos["AYUDA_NOMBRE_DOCUMENTO"]))
+                HTML::campoTextoCorto("*nombre_documento", $textos["NOMBRE_DOCUMENTO"], 15, 255, "", array("title" => $textos["AYUDA_NOMBRE_DOCUMENTO"]))
             )
         );
 
@@ -217,6 +217,10 @@ elseif (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["TIPO_DOCUMENTO_VACIO"];
 
+    }elseif(empty($forma_nombre_documento)){
+        $error   = true;
+        $mensaje = $textos["NOMBRE_DOCUMENTO_VACIO"];    
+
     /*}elseif(empty($forma_documento_soporte)){
         $error   = true;
         $mensaje = $textos["DOCUMENTO_SOPORTE_VACIO"];*/
@@ -230,7 +234,7 @@ elseif (!empty($url_generar)) {
     } else {
 
         /*** Quitar separador de miles a un numero ***/
-        /*function quitarMiles($cadena){
+        function quitarMiles($cadena){
             $valor = array();
             for ($i = 0; $i < strlen($cadena); $i++) {
                 if (substr($cadena, $i, 1) != ".") {
@@ -241,17 +245,20 @@ elseif (!empty($url_generar)) {
             return $valor;
         }
 
-        $forma_valor_documento = quitarMiles($forma_valor_documento);*/
+        $forma_valor_documento = quitarMiles($forma_valor_documento);
 
         if($forma_aplica==true){
             $forma_orden_compra = "";
+        }
+        if(!$forma_documento_soporte){
+            $forma_documento_soporte = "";
         }
         /*** Insertar datos ***/
         $datos = array(
             "codigo_proyecto"               => $codigo_proyecto,
             "documento_identidad_proveedor" => $documento_identidad_proveedor,
             "codigo_tipo_documento"         => $forma_tipo_documento,
-            "numero_documento_proveedor"    => "",
+            "numero_documento_proveedor"    => $forma_documento_soporte,
             "numero_orden_compra"           => $forma_orden_compra,
             "valor_documento"               => $forma_valor_documento,
             "estado"                        => '0',
@@ -260,6 +267,7 @@ elseif (!empty($url_generar)) {
             "fecha_envio"                   => "",
             "observaciones"                 => $forma_observaciones
         );
+
         $insertar = SQL::insertar("correspondencia", $datos);
 
         /*** Error de insercion ***/

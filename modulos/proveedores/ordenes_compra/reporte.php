@@ -109,7 +109,10 @@ if (!empty($url_generar)) {
     
     $llave_proyecto  = explode("-", $forma_selector5);
     $codigo_proyecto = $llave_proyecto[0];
-    
+
+    //Valores total de la orden vs Valor facturado
+    $total_entregado_facturado  = SQL::obtenerValor("aprobaciones","SUM(valor_documento)","codigo_proyecto='$codigo_proyecto'");
+
     /*** Validar ingreso de campo fecha al formulario ***/
     if (empty($forma_selector5)){
         $error   = true;
@@ -141,7 +144,6 @@ if (!empty($url_generar)) {
             $nombreArchivo = $rutasGlobales["archivos"]."/orden".$nombre;
         } while (is_file($nombreArchivo));
         
-        //$nombreArchivo = $rutasGlobales["archivos"]."/plano".$forma_selector5.".csv";
         if (file_exists($nombreArchivo)){
             unlink($nombreArchivo);
             $archivo = fopen($nombreArchivo,"a+");
@@ -161,7 +163,7 @@ if (!empty($url_generar)) {
         $porcentaje_parciales     = ($numero_ordenes_parciales/$numero_ordenes_proyecto)*100;
         $porcentaje_anuladas      = ($numero_ordenes_anuladas/$numero_ordenes_proyecto)*100;
         $porcentaje_grabadas      = ($numero_ordenes_grabadas/$numero_ordenes_proyecto)*100;
- 
+
         $data    = array($porcentaje_grabadas, $porcentaje_cumplidas, $porcentaje_parciales, $porcentaje_anuladas);
         $estados = array("Grab","Cumpl","Parc","Anul");
 
@@ -189,7 +191,6 @@ if (!empty($url_generar)) {
  
         // Display the graph
         $graph->Stroke($nombreImagen);
- 
 
         //Titulos segun tipo listado
         if ($forma_tipo_listado=="1"){
@@ -316,11 +317,6 @@ if (!empty($url_generar)) {
                         $total_orden = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$datos_encabezado->codigo'");
                         $acumulado_total = $total_orden + $acumulado_total;
 
-                        //Valores total de la orden vs Valor facturado
-                        $total_entregado_facturado  = SQL::obtenerValor("aprobaciones","SUM(valor_documento)","numero_orden_compra='$numero_orden'");
-
-                        $acumulado_facturado        = $total_entregado_facturado + $acumulado_facturado;
-
                         /*** Ordenes ***/
                         $fecha_orden  = $datos_encabezado->fecha_documento;
                         $estado       = $datos_encabezado->estado;
@@ -400,14 +396,17 @@ if (!empty($url_generar)) {
                 $archivo->SetFillColor(240,240,240);
             }
 
-            $acumulado_subtotal    = number_format($acumulado_subtotal, 0);
-            $acumulado_subtotal    = str_replace(',', '.', $acumulado_subtotal);  
-            $acumulado_descuento   = number_format($acumulado_descuento, 0);
-            $acumulado_descuento   = str_replace(',', '.', $acumulado_descuento); 
-            $acumulado_iva         = number_format($acumulado_iva, 0);
-            $acumulado_iva         = str_replace(',', '.', $acumulado_iva);
-            $acumulado_total       = number_format($acumulado_total, 0);
-            $acumulado_total       = str_replace(',', '.', $acumulado_total);
+            $porcentaje_fact_orden     = ($total_entregado_facturado/$acumulado_total)*100;
+            $porcentaje_fact_orden     = number_format($porcentaje_fact_orden, 1);
+            $acumulado_subtotal        = number_format($acumulado_subtotal, 0);
+            $acumulado_subtotal        = str_replace(',', '.', $acumulado_subtotal);  
+            $acumulado_descuento       = number_format($acumulado_descuento, 0);
+            $acumulado_descuento       = str_replace(',', '.', $acumulado_descuento); 
+            $acumulado_iva             = number_format($acumulado_iva, 0);
+            $acumulado_iva             = str_replace(',', '.', $acumulado_iva);
+            $acumulado_total           = number_format($acumulado_total, 0);
+            $acumulado_total           = str_replace(',', '.', $acumulado_total);
+            $total_entregado_facturado = number_format($total_entregado_facturado, 0);
 
             $archivo->Ln(4);
             $archivo->SetFont('Arial','B',6);
@@ -421,8 +420,10 @@ if (!empty($url_generar)) {
             $archivo->Cell(19,4,"$ ".$acumulado_total,1,0,'R',true);
 
             $archivo->Ln(8);
-            $archivo->SetFont('Arial','B',8);
+            $archivo->SetFont('Arial','B',6);
             $archivo->Cell(50,4,$textos["FACTURADO"],0,0,'L');
+            $archivo->Cell(20,4,$textos["TOTAL_ORDENES"],0,0,'L');
+            $archivo->Cell(20,4,$textos["PORCENTAJE_FACT_ORDEN"],0,0,'L');
 
             if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
                 $archivo->SetFillColor(255,255,255);
@@ -431,7 +432,9 @@ if (!empty($url_generar)) {
             }
 
             $archivo->Ln(4);
-            $archivo->Cell(19,4,"$ ".$acumulado_facturado."",0);
+            $archivo->Cell(50,4,"$ ".$total_entregado_facturado."",0);
+            $archivo->Cell(20,4,"$ ".$acumulado_total."",0);
+            $archivo->Cell(20,4,$porcentaje_fact_orden."%",0);
 
             /*$archivo->Ln(4);
             $archivo->SetFont('Arial','B',6);

@@ -416,7 +416,7 @@ $vistas = array(
                 job_articulos.codigo = job_lista_precio_articulos.codigo_articulo AND
                 job_articulos.codigo != 0;"
     ),
-    array(
+    /*array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_seleccion_articulos AS
         SELECT 	job_articulos.codigo AS id,
                 CONCAT(
@@ -428,6 +428,20 @@ $vistas = array(
             job_articulos	
         WHERE
             job_articulos.codigo != '';"
+    ),*/
+    array(
+        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_seleccion_articulos AS
+        SELECT  job_articulos.codigo AS id,
+                CONCAT(
+                    job_referencias_proveedor.referencia, ' ',
+                    job_articulos.descripcion,
+                    '*', job_articulos.codigo
+                ) AS descripcion
+        FROM
+            job_articulos,
+            job_referencias_proveedor   
+        WHERE
+            job_articulos.codigo = job_referencias_proveedor.codigo_articulo;"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_seleccion_referencias_proveedor AS

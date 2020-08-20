@@ -38,6 +38,7 @@ if (!empty($url_generar)) {
         $columnas       = SQL::obtenerColumnas($vistaConsulta);
         $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
         $datos          = SQL::filaEnObjeto($consulta);
+        $codigo         = $url_id;
         
         /*Obtener Valores*/
         $codigo_proyecto               = $datos->codigo_proyecto;
@@ -97,7 +98,7 @@ if (!empty($url_generar)) {
             )
         );
         /*** Documentos soportes ***/
-        $documentos_correspondencia = SQL::seleccionar(array("documentos"),array("*"),"codigo_registro_tabla = '$datos->codigo_aprobaciones'");
+        $documentos_correspondencia = SQL::seleccionar(array("documentos"),array("*"),"codigo_registro_tabla = '$url_id'");
         $documentos_correspondencia = SQL::filaEnObjeto($documentos_correspondencia);
         $nombre_archivo          = $documentos_correspondencia->ruta;
 

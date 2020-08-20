@@ -42,6 +42,7 @@ if (isset($url_completar)) {
     if (($url_item) == "selector5") {
         echo SQL::datosAutoCompletar("seleccion_proyectos", $url_q);
     }
+
     exit;
 
 }elseif (!empty($url_cargarOrdenes)) {
@@ -167,7 +168,7 @@ elseif (!empty($url_generar)) {
                 .HTML::campoOculto("codigo_proyecto", "")
             ),
             array(  
-                HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable","onBlur"=>"cargarOrdenes()","onKeyPress"=>"return campoEntero(event)"))
+                HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable","onBlur"=>"cargarOrdenes()"))
                 .HTML::campoOculto("documento_identidad_proveedor", ""),
 
                 HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo=4 OR codigo=5"), "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"]))
