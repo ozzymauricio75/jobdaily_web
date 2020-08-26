@@ -51,6 +51,8 @@ if (!empty($url_generar)) {
         $fecha_envio                   = $datos->fecha_envio; 
         $observaciones                 = $datos->observaciones;
         $estado                        = $datos->estado;
+        $estado_residente              = $datos->estado_residente;
+        $estado_director               = $datos->estado_director;
         $numero_orden_compra           = $datos->numero_orden_compra;
 
         $nombre_tipo_documento = SQL::obtenerValor("tipos_documentos","descripcion", "codigo = '$codigo_tipo_documento'");
@@ -87,6 +89,10 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
+            ),
+            array(
+                HTML::mostrarDato("estado_residente", $textos["ESTADO_RESIDENTE"], $textos["ESTADO_RESIDENTE_".$estado_residente]),
+                HTML::mostrarDato("estado_director", $textos["ESTADO_DIRECTOR"], $textos["ESTADO_DIRECTOR_".$estado_director])
             ),
             array(
                 HTML::mostrarDato("fecha_recepcion", $textos["FECHA_RECEPCION"], $fecha_recepcion),

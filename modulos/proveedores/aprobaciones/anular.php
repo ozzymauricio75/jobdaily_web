@@ -80,7 +80,7 @@ if (!empty($url_generar)) {
         $error  = "";
         $titulo = $componente->nombre;
 
-        if ($estado_director==0 && $estado=='0') {
+        if ($estado_director==0 && $estado=='0' && $estado_residente==0) {
         
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(

@@ -31,7 +31,7 @@ if (isset($url_completar)) {
     }
     exit;
 
-}elseif (!empty($url_recargar)) {
+} elseif (!empty($url_recargar)) {
 
     if ($url_elemento == "empresa") {
        $respuesta = HTML::generarDatosLista("empresas", "codigo", "nombre", "codigo = '$url_origen'");
@@ -40,9 +40,10 @@ if (isset($url_completar)) {
     if ($url_elemento == "sucursal") {
        $respuesta = HTML::generarDatosLista("sucursales", "codigo", "nombre", "codigo_empresa = '".$url_codigo."'");
     }
-
     HTTP::enviarJSON($respuesta);
-}elseif (!empty($url_ocultarValor)) {
+    exit;
+
+} elseif (!empty($url_ocultarValor)) {
     $tipo_documento = $url_tipo_documento;
 
     if($tipo_documento==10){
@@ -111,7 +112,8 @@ if (!empty($url_generar)) {
             }
         }
 
-        if(($codigo_tipo_documento!=3) && ($codigo_tipo_documento!=4) && ($codigo_tipo_documento!=5)){
+         if (($estado==0) && ($estado_residente==0) && ($estado_director==0)) {
+
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
                 array(
@@ -121,15 +123,14 @@ if (!empty($url_generar)) {
                 array(
                     HTML::mostrarDato("nit_proveedor", $textos["NIT_PROVEEDOR"], $documento_identidad_proveedor),
                     HTML::mostrarDato("razon_social", $textos["RAZON_SOCIAL"], $razon_social),
-                    HTML::mostrarDato("orden_compra", $textos["ORDEN_COMPRA"], $numero_orden_compra),
-                    //HTML::listaSeleccionSimple("*orden_compra", $textos["ORDEN_COMPRA"], HTML::generarDatosLista("ordenes_compra", "numero_consecutivo","codigo", "prefijo_codigo_proyecto='$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor'"), $numero_orden_compra, array("title" => $textos["AYUDA_ORDEN_COMPRA"],array("readOnly"=>"true"))),
+                    HTML::mostrarDato("orden_compra", $textos["ORDEN_COMPRA"], $numero_orden_compra)
                 ),
                 array(
-                    HTML::listaSeleccionSimple("tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion", "codigo != '1' AND codigo != '3' AND codigo != '4' AND codigo != '5'"), $codigo_tipo_documento, array("title" => $textos["AYUDA_TIPO_DOCUMENTO"],"onchange"=>"ocultarValor(this)")),
+                    HTML::listaSeleccionSimple("tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion", ""), $codigo_tipo_documento, array("title" => $textos["AYUDA_TIPO_DOCUMENTO"],"onchange"=>"ocultarValor(this)")),
 
                     HTML::campoTextoCorto("documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, $numero_documento_proveedor, array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"])),
 
-                    HTML::campoTextoCorto("valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, $valor_documento, array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"], "onkeyup"=>"formatoMiles(this)", "onchange"=>"formatoMiles(this)"))
+                    HTML::campoTextoCorto("valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, $valor_documento, array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"], "onkeyup"=>"formatoMiles(this)"))
                 ),
                 array(
                     HTML::campoTextoCorto("fecha_recepcion", $textos["FECHA_RECEPCION"], 10, 10, $fecha_recepcion, array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_RECEPCION"])),
@@ -164,7 +165,7 @@ if (!empty($url_generar)) {
 
             $contenido = HTML::generarPestanas($formularios, $botones);
         }else {
-            $error = $textos["ERROR_TIPO_DOCUMENTOS"];
+            $error = $textos["ERROR_AUTORIZADOS"];
             $titulo    = "";
             $contenido = "";
         }    
@@ -195,7 +196,7 @@ if (!empty($url_generar)) {
         $mensaje = $textos["TIPO_DOCUMENTO_VACIO"];
 
     }
-    if($forma_tipo_documento!=10){
+    /*if($forma_tipo_documento!=10){
         if(empty($forma_documento_soporte)){
             $error   = true;
             $mensaje = $textos["DOCUMENTO_SOPORTE_VACIO"];
@@ -203,10 +204,6 @@ if (!empty($url_generar)) {
         if(empty($forma_fecha_recepcion)){
             $error   = true;
              $mensaje = $textos["FECHA_RECEPCION_VACIO"];
-        }
-        if(empty($forma_orden_compra)){
-            $error   = true;
-            $mensaje = $textos["ORDEN_VACIO"];
         }
         if(empty($forma_fecha_vencimiento)){
             $error   = true;
@@ -226,13 +223,16 @@ if (!empty($url_generar)) {
             return $valor;
         }
 
-        $forma_valor_documento = quitarMiles($forma_valor_documento);
-
+        if (strpos($forma_valor_documento, '.') !== false) {
+            $forma_valor_documento = quitarMiles($forma_valor_documento); 
+        } else { 
+            $forma_valor_documento = str_replace(",","",$forma_valor_documento);
+        }
+    
         /*** Insertar datos ***/
         $datos = array(
             "codigo_tipo_documento"         => $forma_tipo_documento,
             "numero_documento_proveedor"    => $forma_documento_soporte,
-            "numero_orden_compra"           => $forma_orden_compra,  
             "valor_documento"               => $forma_valor_documento,
             "estado"                        => '0',
             "fecha_recepcion"               => $forma_fecha_recepcion,
@@ -271,7 +271,8 @@ if (!empty($url_generar)) {
                 $modificar_documento = SQL::modificar("documentos",$datos_documento,"codigo_registro_tabla = '$forma_codigo'");
             }
         }
-    }
+    //}
+//}    
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
     $respuesta    = array();
     $respuesta[0] = $error;

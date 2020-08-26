@@ -198,19 +198,21 @@ if (!empty($url_generar)) {
             $archivo->SetFillColor(225,225,225);
 
             $archivo->Ln(6);
-            $archivo->Cell(25,4,$textos["FECHA_DOCUMENTO"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["ORDEN_COMPRA"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["VALOR_ORDEN_COMPRA"],1,0,'C',true);
+            $archivo->Cell(20,4,$textos["FECHA_DOCUMENTO"],1,0,'C',true);
+            $archivo->Cell(25,4,$textos["TIPO_DOCUMENTO"],1,0,'L',true);
+            $archivo->Cell(20,4,$textos["ORDEN_COMPRA"],1,0,'C',true);
+            $archivo->Cell(20,4,$textos["VALOR_ORDEN_COMPRA"],1,0,'C',true);
             $archivo->Cell(15,4,$textos["NIT_PROVEEDOR"],1,0,'C',true);
-            $archivo->Cell(60,4,$textos["RAZON_SOCIAL"],1,0,'C',true);
+            $archivo->Cell(43,4,$textos["RAZON_SOCIAL"],1,0,'C',true);
             $archivo->Cell(20,4,$textos["FACTURA"],1,0,'C',true);
-            $archivo->Cell(25,4,$textos["VALOR_TOTAL"],1,0,'C',true);
-            $archivo->Cell(18,4,$textos["ESTADO_PDF"],1,0,'C',true);
-            $archivo->Cell(22,4,$textos["FECHA_VENCIMIENTO"],1,0,'C',true);
-            $archivo->Cell(22,4,$textos["FECHA_ENVIO"],1,0,'C',true);
+            $archivo->Cell(16,4,$textos["CRUZADO"],1,0,'C',true);
+            $archivo->Cell(18,4,$textos["VALOR_TOTAL"],1,0,'C',true);
+            $archivo->Cell(18,4,$textos["ESTADO_PDF"],1,0,'L',true);
+            $archivo->Cell(21,4,$textos["FECHA_VENCIMIENTO"],1,0,'C',true);
+            $archivo->Cell(21,4,$textos["FECHA_ENVIO"],1,0,'C',true);
             //////////////////////////////FIN ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
             /*** Obtener los datos de la tabla ***/
-            $consulta_correspondencia = SQL::seleccionar(array("correspondencia"),array("*"),"$condicion_estado codigo_proyecto='$codigo_proyecto'");
+            $consulta_correspondencia = SQL::seleccionar(array("correspondencia"),array("*"),"$condicion_estado codigo_proyecto='$codigo_proyecto' ORDER BY codigo DESC");
             //Se lee el movimiento de la tabla movimientos
             if (SQL::filasDevueltas($consulta_correspondencia)){
                 while($datos_correspondencia=SQL::filaEnObjeto($consulta_correspondencia)){
@@ -239,7 +241,8 @@ if (!empty($url_generar)) {
                            $estado_correspondencia = $textos["ESTADO_2"];
                         }
 
-                        $total_orden = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden_compra'");
+                        $tipo_documento = SQL::obtenerValor("tipos_documentos","descripcion","codigo='$datos_correspondencia->codigo_tipo_documento'"); 
+                        $total_orden    = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden_compra'");
 
                         /*** Ordenes ***/
                         $fecha_orden  = SQL::obtenerValor("ordenes_compra","fecha_documento","codigo='$codigo_orden_compra'");
@@ -248,16 +251,18 @@ if (!empty($url_generar)) {
                         
                         /////////////////////////////////////////////////////////////////////////////////////////////////
                         $archivo->Ln(4);
-                        $archivo->Cell(25,4,$fecha_orden,1,0,'C',true);
-                        $archivo->Cell(25,4,$numero_orden,1,0,'R',true);
-                        $archivo->Cell(25,4,$total_orden,1,0,'R',true);
+                        $archivo->Cell(20,4,$fecha_orden,1,0,'C',true);
+                        $archivo->Cell(25,4,$tipo_documento,1,0,'L',true);
+                        $archivo->Cell(20,4,$numero_orden,1,0,'R',true);
+                        $archivo->Cell(20,4,$total_orden,1,0,'R',true);
                         $archivo->Cell(15,4,$nit,1,0,'C',true);
-                        $archivo->Cell(60,4,$proveedor,1,0,'L',true);
+                        $archivo->Cell(43,4,$proveedor,1,0,'L',true);
                         $archivo->Cell(20,4,$datos_correspondencia->numero_documento_proveedor,1,0,'R',true);
-                        $archivo->Cell(25,4,number_format($datos_correspondencia->valor_documento,0),1,0,'R',true);
-                        $archivo->Cell(18,4,$estado_correspondencia,1,0,'C',true);
-                        $archivo->Cell(22,4,$datos_correspondencia->fecha_vencimiento,1,0,'C',true);
-                        $archivo->Cell(22,4,$datos_correspondencia->fecha_envio,1,0,'C',true);
+                        $archivo->Cell(16,4,$datos_correspondencia->documento_cruzado_por_factura,1,0,'R',true);
+                        $archivo->Cell(18,4,number_format($datos_correspondencia->valor_documento,0),1,0,'R',true);
+                        $archivo->Cell(18,4,$estado_correspondencia,1,0,'L',true);
+                        $archivo->Cell(21,4,$datos_correspondencia->fecha_vencimiento,1,0,'C',true);
+                        $archivo->Cell(21,4,$datos_correspondencia->fecha_envio,1,0,'C',true);
                         /////////////////////////////////////////////////////////////////////////////////////////////////
                         $imprime_cabecera = $archivo->breakCell(8);
 
@@ -287,16 +292,18 @@ if (!empty($url_generar)) {
                             $archivo->SetFillColor(225,225,225);
 
                             $archivo->Ln(6);
-                            $archivo->Cell(25,4,$textos["FECHA_DOCUMENTO"],1,0,'C',true);
-                            $archivo->Cell(25,4,$textos["ORDEN_COMPRA"],1,0,'C',true);
-                            $archivo->Cell(25,4,$textos["VALOR_ORDEN_COMPRA"],1,0,'C',true);
+                            $archivo->Cell(20,4,$textos["FECHA_DOCUMENTO"],1,0,'C',true);
+                            $archivo->Cell(25,4,$textos["TIPO_DOCUMENTO"],1,0,'L',true);
+                            $archivo->Cell(20,4,$textos["ORDEN_COMPRA"],1,0,'C',true);
+                            $archivo->Cell(20,4,$textos["VALOR_ORDEN_COMPRA"],1,0,'C',true);
                             $archivo->Cell(15,4,$textos["NIT_PROVEEDOR"],1,0,'C',true);
-                            $archivo->Cell(60,4,$textos["RAZON_SOCIAL"],1,0,'C',true);
+                            $archivo->Cell(43,4,$textos["RAZON_SOCIAL"],1,0,'C',true);
                             $archivo->Cell(20,4,$textos["FACTURA"],1,0,'C',true);
-                            $archivo->Cell(25,4,$textos["VALOR_TOTAL"],1,0,'C',true);
-                            $archivo->Cell(18,4,$textos["ESTADO_PDF"],1,0,'C',true);
-                            $archivo->Cell(22,4,$textos["FECHA_VENCIMIENTO"],1,0,'C',true);
-                            $archivo->Cell(22,4,$textos["FECHA_ENVIO"],1,0,'C',true);
+                            $archivo->Cell(16,4,$textos["CRUZADO"],1,0,'C',true);
+                            $archivo->Cell(18,4,$textos["VALOR_TOTAL"],1,0,'C',true);
+                            $archivo->Cell(18,4,$textos["ESTADO_PDF"],1,0,'L',true);
+                            $archivo->Cell(21,4,$textos["FECHA_VENCIMIENTO"],1,0,'C',true);
+                            $archivo->Cell(21,4,$textos["FECHA_ENVIO"],1,0,'C',true);
                         }
                         $i++;
                         $item++;
@@ -334,11 +341,11 @@ if (!empty($url_generar)) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
         } else{
             //Se crean los titulos del archivo excel
-            $titulos_plano = "FECHA_DOCUMENTO;ORDEN_COMPRA;VALOR ORDEN;NIT;PROVEEDOR;FACTURA;VALOR TOTAL;ESTADO;FECHA_VENCIMIENTO;FECHA_ENVIO\n";
+            $titulos_plano = "FECHA_DOCUMENTO;TIPO_DOCUMENTO;ORDEN_COMPRA;VALOR ORDEN;NIT;PROVEEDOR;FACTURA;CRUZADO_CON;VALOR TOTAL;ESTADO;FECHA_VENCIMIENTO;FECHA_ENVIO\n";
             fwrite($archivo, $titulos_plano);
             
             /*** Obtener los datos de la tabla ***/
-            $consulta_correspondencia = SQL::seleccionar(array("correspondencia"),array("*"),"$condicion_estado codigo_proyecto='$codigo_proyecto'");
+            $consulta_correspondencia = SQL::seleccionar(array("correspondencia"),array("*"),"$condicion_estado codigo_proyecto='$codigo_proyecto' ORDER BY codigo DESC");
             //Se lee el movimiento de la tabla movimientos
             if (SQL::filasDevueltas($consulta_correspondencia)){
                 while($datos_correspondencia=SQL::filaEnObjeto($consulta_correspondencia)){
@@ -369,9 +376,13 @@ if (!empty($url_generar)) {
                         $total_orden     = number_format($total_orden, 0);
                         $total_orden     = str_replace(',', '.', $total_orden);
                         $valor_documento = $datos_correspondencia->valor_documento;
+                        $valor_documento = number_format($valor_documento, 0);
+                        $valor_documento = str_replace(',', '.', $valor_documento);
+                        $tipo_documento  = SQL::obtenerValor("tipos_documentos","descripcion","codigo='$datos_correspondencia->codigo_tipo_documento'"); 
+                        $cruzado         = $datos_correspondencia->documento_cruzado_por_factura;
                                                                                                
                         //Contenido del archivo
-                        $contenido = "$fecha_orden;$numero_orden;$total_orden;$nit;$proveedor;$datos_correspondencia->numero_documento_proveedor;$valor_documento;$estado_correspondencia;$datos_correspondencia->fecha_vencimiento;$datos_correspondencia->fecha_envio\n";
+                        $contenido = "$fecha_orden;$tipo_documento;$numero_orden;$total_orden;$nit;$proveedor;$datos_correspondencia->numero_documento_proveedor;$cruzado;$valor_documento;$estado_correspondencia;$datos_correspondencia->fecha_vencimiento;$datos_correspondencia->fecha_envio\n";
                         $guardarArchivo = fwrite($archivo,$contenido);
                     }
                 }

@@ -114,9 +114,151 @@ if (isset($url_completar)) {
     }
 
     HTTP::enviarJSON($respuesta);
+    exit;
+
+}elseif (!empty($url_valoresOrden)) {
+    $codigo_proyecto               = $url_codigo_proyecto;
+    $documento_identidad_proveedor = $url_documento_identidad_proveedor;
+    $orden_compra                  = $url_orden_compra;
+
+    $llave                         = explode("-", $url_documento_identidad_proveedor);
+    $documento_identidad_proveedor = $llave[0];
+
+    $llave_proyecto                = explode("-", $codigo_proyecto);
+    $codigo_proyecto               = $llave_proyecto[0];
+
+    $codigo_orden              = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$orden_compra'");
+    $total_orden               = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden'");
+    $valor_documentos_cruzados = SQL::obtenerValor("correspondencia","SUM(valor_documento)","numero_orden_compra='$orden_compra'");
+    $tolerancia                = SQL::obtenerValor("tolerancia","porcentaje","codigo>'0'");
+    $total_orden               = number_format($total_orden,2);
+    $valor_documentos_cruzados = number_format($valor_documentos_cruzados,2);
+    $indicador  = true;
+    /*******************************************************/
+    $datos = array(
+        $indicador,
+        $total_orden,
+        $valor_documentos_cruzados,
+        $tolerancia
+    );
+    HTTP::enviarJSON($datos);
+    exit;    
+
+}elseif (!empty($url_validaTotalOrden)) {
+    $codigo_proyecto               = $url_codigo_proyecto;
+    $documento_identidad_proveedor = $url_documento_identidad_proveedor;
+    $orden_compra                  = $url_orden_compra;
+
+    $llave                         = explode("-", $url_documento_identidad_proveedor);
+    $documento_identidad_proveedor = $llave[0];
+
+    $llave_proyecto                = explode("-", $codigo_proyecto);
+    $codigo_proyecto               = $llave_proyecto[0];
+
+    $codigo_orden              = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$orden_compra'");
+    $total_orden               = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden'");
+    $valor_documentos_cruzados = SQL::obtenerValor("aprobaciones","SUM(valor_documento)","numero_orden_compra='$orden_compra'");
+    $tolerancia                = SQL::obtenerValor("tolerancia","porcentaje","codigo>'0'");
+    
+    $indicador  = true;
+    /*******************************************************/
+    $datos = array(
+        $indicador,
+        $total_orden,
+        $valor_documentos_cruzados,
+        $tolerancia
+    );
+    HTTP::enviarJSON($datos);
     exit; 
+
+}elseif (!empty($url_existeDocumento)) {
+    $documento_soporte             = $url_documento_soporte;
+    $documento_identidad_proveedor = $url_documento_identidad_proveedor;
+
+    $llave                         = explode("-", $url_documento_identidad_proveedor);
+    $documento_identidad_proveedor = $llave[0];
+
+    $datos = SQL::obtenerValor("correspondencia", "valor_documento", "numero_documento_proveedor = '$documento_soporte' AND documento_identidad_proveedor='$documento_identidad_proveedor'");
+    if($datos){
+        $respuesta=true;
+    }else{
+        $respuesta=false;
+    }
+
+    HTTP::enviarJSON($respuesta);
+    exit;       
+}
+/*** Mostrar los tipos de documentos a cruzar con la factura ***/
+elseif(isset($url_cruzarDocumentos)){
+    $tipo_documento = $url_tipo_documento;
+
+    if($tipo_documento==5){
+        $lista = HTML::generarDatosLista("tipos_documentos","codigo","descripcion","codigo = '0' OR codigo ='7' OR codigo='8' OR codigo='11' OR codigo= '12'");
+    }
+    
+    if(empty($lista)){
+        $lista = array("0" => $textos["NO_ES_FACTURA"]);
+    }
+
+    HTTP::enviarJSON($lista);
+    exit;
 }
 
+/*** Mostrar los numeros de documentos a cruzar con la factura ***/
+elseif(isset($url_tipo_documento_cruce)){
+
+    $tipo_documento_cruce          = $url_tipo_documento_cruce;
+    $codigo_proyecto               = $url_codigo_proyecto;
+    $documento_identidad_proveedor = $url_documento_identidad_proveedor;
+    $orden_compra                  = $url_orden_compra;
+
+    $llave                         = explode("-", $url_documento_identidad_proveedor);
+    $documento_identidad_proveedor = $llave[0];
+
+    $llave_proyecto                = explode("-", $codigo_proyecto);
+    $codigo_proyecto               = $llave_proyecto[0];
+
+    $consulta = SQL::seleccionar(array("correspondencia"), array("*"), "codigo_tipo_documento='$tipo_documento_cruce' AND documento_identidad_proveedor='$documento_identidad_proveedor' AND numero_orden_compra='$orden_compra' AND codigo_proyecto='$codigo_proyecto'");
+
+    if (SQL::filasDevueltas($consulta)) {
+        while($datos = SQL::filaEnObjeto($consulta)){  
+            $codigo.= $datos->codigo."-";
+            $numero_documento_proveedor.= $datos->numero_documento_proveedor."-";
+            $valor_documento.= $datos->valor_documento."-";
+        }   
+    }
+    $codigo                     = trim($codigo,"-");
+    $numero_documento_proveedor = trim($numero_documento_proveedor,"-");
+    $valor_documento            = trim($valor_documento,"-");
+    /*******************************************************/
+    $elementos_documento[0] = $codigo;
+    $elementos_documento[1] = $numero_documento_proveedor;
+    $elementos_documento[2] = $valor_documento;
+
+    HTTP::enviarJSON($elementos_documento);
+    exit;
+
+}elseif (isset($url_cruzarConFactura)) {
+    $codigo            = $url_id_tabla;
+    $documento_soporte = $url_documento_soporte;
+
+    $datos_documento_cruzado_por_factura = array(
+        "documento_cruzado_por_factura" => $documento_soporte, 
+    );
+
+    $documento_cruzado = SQL::modificar("correspondencia",$datos_documento_cruzado_por_factura,"codigo='$codigo'");
+    $respuesta[0]      = true;
+
+    if (!$documento_cruzado){
+        $respuesta[0] = false;
+        $respuesta[1] = $textos["ITEM_CRUZADO"];
+    }else if($documento_cruzado) {
+        $error   = true;
+        $mensaje = $textos["ERROR_CRUZAR_ITEM"];
+    }
+    HTTP::enviarJSON($respuesta);
+    exit;
+}
 /*** Generar el formulario para la captura de datos ***/
 elseif (!empty($url_generar)) {
     $error    = "";
@@ -134,33 +276,56 @@ elseif (!empty($url_generar)) {
             $codigo = 1;
         }
 
+        //$tipos_documentos  = HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","");
+        //$documentos_cruce  = HTML::generarDatosLista("correspondencia", "codigo", "numero_documento_proveedor","");
+
          /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::campoTextoCorto("*selector5", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable"))
+                HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion",""), "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"],"onClick"=>"ocultarValor(this)","onChange"=>"cruzarDocumentos()")),
+
+                HTML::listaSeleccionSimple("*tipo_documento_cruce", $textos["TIPO_DOCUMENTO_CRUCE"], $tipos_documentos, "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"],"class" => "extracto","disabled" => "true")),
+
+                //HTML::listaSeleccionSimple("*documento_cruce", $textos["DOCUMENTO_CRUCE"], $documentos_cruce, array("title" => $textos["AYUDA_DOCUMENTO_CRUCE"], "disabled" => "true"))
+            ),
+            array(
+                HTML::campoTextoCorto("selector5", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
                 .HTML::campoOculto("codigo_proyecto", "")
             ),
             array(  
-                HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable","onBlur"=>"cargarOrdenes()"))
-                .HTML::campoOculto("documento_identidad_proveedor", ""),
-
-                HTML::listaSeleccionSimple("*tipo_documento", $textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo != '1' AND codigo != '3' AND codigo != '4' AND codigo != '5'"), "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"],"onChange"=>"ocultarValor(this)"))
+                HTML::campoTextoCorto("*selector3", $textos["NIT_PROVEEDOR"], 40, 255, "", array("title" => $textos["AYUDA_NIT_PROVEEDOR"], "class" => "autocompletable extracto","onBlur"=>"cargarOrdenes()"))
+                .HTML::campoOculto("documento_identidad_proveedor", "")
             ),
             array(
-                //HTML::marcaSeleccion("aplica", $textos["APLICA"], 1, false, array("title"=>$textos["AYUDA_APLICA"],"onChange"=>"mostrarOrdenes(this)")),
+                HTML::listaSeleccionSimple("orden_compra", $textos["ORDEN_COMPRA"], "", "", array("title",$textos["AYUDA_ORDEN"],"class" => " extracto", "onBlur"=>"documentosCruce()"))
+                .HTML::campoOculto("orden_compra_seleccionada", ""),
 
-                HTML::marcaChequeo("aplica",$textos["APLICA"], 1, false, array("title"=>$textos["AYUDA_APLICA"],"onClick"=>"mostrarOrdenes(this)")),
+                HTML::campoTextoCorto("*documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"], "class" => "autocompletable extracto", "onBlur" => "cargaValor(),existeDocumento(),valoresOrden()")),
 
-                HTML::listaSeleccionSimple("orden_compra", $textos["ORDEN_COMPRA"], "", "", array("title",$textos["AYUDA_ORDEN"],"class" => "oculto")),
+                HTML::mostrarDato("total_orden", $textos["TOTAL_ORDEN"], $total_orden),
 
-                HTML::campoTextoCorto("*documento_soporte",$textos["DOCUMENTO_SOPORTE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_SOPORTE"], "class" => "autocompletable", "onBlur" => "cargaValor()")),
+                HTML::mostrarDato("documentos_cruzados", $textos["TOTAL_CRUZADO"], $total_cruzado),
 
-                HTML::campoTextoCorto("*valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, "", array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"],"onkeyup"=>"formatoMiles(this)"))
+                HTML::campoTextoCorto("*valor_documento",$textos["VALOR_DOCUMENTO"], 15, 15, "", array("title"=>$textos["AYUDA_VALOR_DOCUMENTO"],"class"=>"extracto","onkeyup"=>"formatoMiles(this)","onChange"=>"validaTotalOrden()"))
             ),
             array(
-                HTML::campoTextoCorto("fecha_recepcion", $textos["FECHA_RECEPCION"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_RECEPCION"])),
+                /*HTML::contenedor(
+                    HTML::marcaChequeo("seleccion",$textos[""], 1, false, array("title"=>$textos["AYUDA_APLICA"], "class" => "extracto")),
+                    array("id" => "seleccion", "style" => "display: none")
+                ),*/
+                HTML::contenedor(HTML::boton("botonCruzar", "", "cruzarItem(this);", "aceptar"), array("id" => "botonCruzar", "style" => "display: none")),
+                
+                HTML::contenedor(
+                    HTML::generarTabla(
+                        array("id","ITEM","NUMERO","VALOR"),"",array("C","I","I"),"listaDocumentos",false
+                    ),
+                    array("id"=>"documentos","class"=>"extracto")
+                )
+            ),
+            array(
+                HTML::campoTextoCorto("fecha_recepcion", $textos["FECHA_RECEPCION"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_RECEPCION"])),
 
-                HTML::campoTextoCorto("fecha_vencimiento", $textos["FECHA_VENCIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_VENCIMIENTO"])),
+                HTML::campoTextoCorto("fecha_vencimiento", $textos["FECHA_VENCIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha extracto"), array("title" => $textos["AYUDA_FECHA_VENCIMIENTO"])),
 
                 //HTML::campoTextoCorto("fecha_envio", $textos["FECHA_ENVIO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_ENVIO"], "onBlur" => "validarItem(this);"))
             ),
@@ -247,25 +412,31 @@ elseif (!empty($url_generar)) {
 
         $forma_valor_documento = quitarMiles($forma_valor_documento);
 
-        if($forma_aplica==true){
+        /*if($forma_aplica==true){
             $forma_orden_compra = "";
         }
         if(!$forma_documento_soporte){
             $forma_documento_soporte = "";
-        }
+        }*/
+        
         /*** Insertar datos ***/
         $datos = array(
             "codigo_proyecto"               => $codigo_proyecto,
             "documento_identidad_proveedor" => $documento_identidad_proveedor,
             "codigo_tipo_documento"         => $forma_tipo_documento,
             "numero_documento_proveedor"    => $forma_documento_soporte,
-            "numero_orden_compra"           => $forma_orden_compra,
+            "numero_orden_compra"           => $forma_orden_compra_seleccionada,
             "valor_documento"               => $forma_valor_documento,
             "estado"                        => '0',
             "fecha_recepcion"               => $forma_fecha_recepcion,
             "fecha_vencimiento"             => $forma_fecha_vencimiento, 
             "fecha_envio"                   => "",
-            "observaciones"                 => $forma_observaciones
+            "observaciones"                 => $forma_observaciones,
+            "estado_residente"              => '0',
+            "estado_director"               => '0',
+            "fecha_registro_residente"      => "",
+            "fecha_registro_director"       => "",
+            "documento_cruzado_por_factura" => ""
         );
 
         $insertar = SQL::insertar("correspondencia", $datos);

@@ -28,7 +28,7 @@
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
 $vistaMenu     = "menu_correspondencia";
 $vistaBuscador = "buscador_correspondencia";
-$alineacion    = array("D","C","D","D","D","D","C","I","C","C","C","C");
+$alineacion    = array("D","C","D","D","D","D","D","C","I","C","C","C","C");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {
@@ -37,7 +37,7 @@ if (isset($url_completar)) {
 }
 
 /*** Generar botones de comandos ***/
-$botones  = HTML::boton("ADICCORR",$textos["ADICIONAR"],"ejecutarComando(this, 650, 450);","adicionar");
+$botones  = HTML::boton("ADICCORR",$textos["ADICIONAR"],"ejecutarComando(this, 750, 580);","adicionar");
 $botones .= HTML::boton("CONSCORR",$textos["CONSULTAR"],"ejecutarComando(this, 600, 450);","consultar");
 $botones .= HTML::boton("MODICORR",$textos["MODIFICAR"],"ejecutarComando(this, 600, 450);","modificar");
 $botones .= HTML::boton("ANULCORR",$textos["ANULAR"],"ejecutarComando(this, 600, 450);","anular");

@@ -34,21 +34,15 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
-        $vistaConsulta  = "aprobaciones";
+        $vistaConsulta  = "correspondencia";
         $columnas       = SQL::obtenerColumnas($vistaConsulta);
         $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
         $datos          = SQL::filaEnObjeto($consulta);
-        
-        $vistaConsultaCorrespondencia  = "correspondencia";
-        $condicionCorrespondencia      = "codigo_aprobaciones = '$url_id'";
-        $columnasCorrespondencia       = SQL::obtenerColumnas($vistaConsultaCorrespondencia);
-        $consultaCorrespondencia       = SQL::seleccionar(array($vistaConsultaCorrespondencia), $columnasCorrespondencia, $condicionCorrespondencia);
-        $datosCorrespondencia          = SQL::filaEnObjeto($consultaCorrespondencia);
 
-        $fecha_recepcion               = $datosCorrespondencia->fecha_recepcion;
-        $fecha_vencimiento             = $datosCorrespondencia->fecha_vencimiento;
-        $fecha_envio                   = $datosCorrespondencia->fecha_envio; 
-        $estado                        = $datosCorrespondencia->estado; 
+        $fecha_recepcion               = $datos->fecha_recepcion;
+        $fecha_vencimiento             = $datos->fecha_vencimiento;
+        $fecha_envio                   = $datos->fecha_envio; 
+        $estado                        = $datos->estado; 
 
         /*Obtener Valores*/
         $codigo_proyecto               = $datos->codigo_proyecto;

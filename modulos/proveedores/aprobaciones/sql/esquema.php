@@ -24,24 +24,24 @@
 *
 **/
 // Eliminar la tabla y crearla de nuevo cada vez que se ejecute el script de creación
-$borrarSiempre = false;
+/*$borrarSiempre = false;
 
 $borrarSiempre["aprobaciones"] = false;
 //Definicion de tablas
 $tablas ["aprobaciones"] = array(
     "codigo"                        => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno del proyecto'",
     /*tabla proyectos*/
-    "codigo_proyecto"               => "INT(9) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Codigo interno del proyecto'",
+/*    "codigo_proyecto"               => "INT(9) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Codigo interno del proyecto'",
     "documento_identidad_proveedor" => "VARCHAR(12) NOT NULL COMMENT 'Llave principal de la tabla de terceros'",
     /***************/
-    "numero_orden_compra"           => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Numero consecutivo de la orden de compra'",
+/*    "numero_orden_compra"           => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Numero consecutivo de la orden de compra'",
     "codigo_tipo_documento"         => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código asignado por el usuario'",
     "numero_documento_proveedor"    => "VARCHAR(15) NOT NULL COMMENT 'Número del documento enviado por el proveedor'",
     "valor_documento"               => "DECIMAL(15,2) NULL COMMENT 'Valor del documento del proveedor'",
     "estado_residente"              => "ENUM('0','1','2') NOT NULL DEFAULT '0' COMMENT '0->No Aprobado 1->Aprobado residente 2-> Anulado'",
     "estado_director"               => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->No Aprobado 1->Aprobado director'",
     /******************/
-    "fecha_registro_residente"      => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema x el residente'",
+/*    "fecha_registro_residente"      => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema x el residente'",
     "fecha_registro_director"       => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema x el director'",
     "observaciones"                 => "VARCHAR(234) COMMENT 'Observacion general para la orden de compra'",
     "estado_factura"                => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->No Cruzado 1->Cruzada'"

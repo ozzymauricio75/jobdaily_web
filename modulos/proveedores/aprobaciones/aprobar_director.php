@@ -45,12 +45,12 @@ if (isset($url_completar)) {
 }elseif (isset($url_recibirDocumento)) {
     $codigo = $url_id_tabla;
 
-    $datos_aprobaciones = array(
+    $datos_correspondencia= array(
         "estado_director"          => '1', 
         "fecha_registro_director " => date("Y-m-d H:i:s")
     );
 
-    $aprobar_documento = SQL::modificar("aprobaciones",$datos_aprobaciones,"codigo='$codigo'");
+    $aprobar_documento = SQL::modificar("correspondencia",$datos_correspondencia,"codigo='$codigo'");
     $respuesta[0]      = true;
 
     if (!$aprobar_documento){
@@ -77,15 +77,15 @@ if (!empty($url_generar)) {
         $titulo         = $componente->nombre;
         $contenido      = "";
 
-        $vistaConsulta         = "aprobaciones";
+        $vistaConsulta         = "correspondencia";
         $columnas              = SQL::obtenerColumnas($vistaConsulta);
         $consulta              = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
-        $datos_aprobaciones    = SQL::filaEnObjeto($consulta);
+        $datos_correspondencia = SQL::filaEnObjeto($consulta);
 
         //Inicio la construccion de la tabla
         if (SQL::filasDevueltas($consulta)) {
             /*** Consulta todas las ordenes y documentos ***/
-            $consulta_documentos = SQL::seleccionar(array("aprobaciones"),array("*"),"codigo_proyecto='$datos_aprobaciones->codigo_proyecto' AND documento_identidad_proveedor='$datos_aprobaciones->documento_identidad_proveedor' AND estado_residente='1' AND estado_director='0'");
+            $consulta_documentos = SQL::seleccionar(array("correspondencia"),array("*"),"codigo_proyecto='$datos_correspondencia->codigo_proyecto' AND documento_identidad_proveedor='$datos_correspondencia->documento_identidad_proveedor' AND estado_residente='1' AND estado_director='0'");
             while ($datos = SQL::filaEnObjeto($consulta_documentos)) {
                 /*Obtener Valores*/
                 $codigo_proyecto               = $datos->codigo_proyecto;
@@ -140,7 +140,7 @@ if (!empty($url_generar)) {
             }
         } 
 
-        if (($datos_aprobaciones->estado_director==0 && $datos_aprobaciones->estado_residente==1)) {
+        if (($datos_correspondencia->estado_director==0 && $datos_correspondencia->estado_residente==1)) {
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
                 array(

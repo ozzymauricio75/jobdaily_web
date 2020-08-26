@@ -50,6 +50,8 @@ if (!empty($url_generar)) {
         $fecha_envio                   = $datos->fecha_envio; 
         $observaciones                 = $datos->observaciones;
         $estado                        = $datos->estado;
+        $estado_residente              = $datos->estado_residente;
+        $estado_director               = $datos->estado_director;
         $numero_orden_compra           = $datos->numero_orden_compra;
 
         $nombre_tipo_documento = SQL::obtenerValor("tipos_documentos","descripcion", "codigo = '$codigo_tipo_documento'");
@@ -69,7 +71,7 @@ if (!empty($url_generar)) {
         $error         = "";
         $titulo        = $componente->nombre;
 
-        if (($estado==0) && ($codigo_tipo_documento!=3) && ($codigo_tipo_documento!=4) && ($codigo_tipo_documento!=5)) {
+        if (($estado==0) && ($estado_residente==0) && ($estado_director==0)) {
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
                 array(
@@ -77,13 +79,15 @@ if (!empty($url_generar)) {
                     HTML::mostrarDato("orden_compra", $textos["ORDEN_COMPRA"], $numero_orden_compra),
                 ),
                 array(
-                    HTML::mostrarDato("nit_proveedor", $textos["NIT_PROVEEDOR"], $documento_identidad_proveedor),
+                    HTML::mostrarDato("nit_proveedor", $textos["NIT_PROVEEDOR"], $documento_identidad_proveedor)
+                    .HTML::campoOculto("documento_identidad_proveedor", $documento_identidad_proveedor),
                     HTML::mostrarDato("razon_social", $textos["RAZON_SOCIAL"], $razon_social),
                 ),
                 array(
                     HTML::mostrarDato("tipo_documento", $textos["TIPO_DOCUMENTO"], $nombre_tipo_documento),
                     HTML::mostrarDato("numero_documento", $textos["DOCUMENTO_SOPORTE"], $numero_documento_proveedor),
-                    HTML::mostrarDato("valor_documento", $textos["VALOR_DOCUMENTO"], "$".$valor_documento),
+                    HTML::mostrarDato("valor_documento", $textos["VALOR_DOCUMENTO"], "$".$valor_documento)
+                    .HTML::campoOculto("numero_documento_proveedor", $numero_documento_proveedor)
                 ),
                 array(
                     HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
@@ -126,6 +130,18 @@ if (!empty($url_generar)) {
 /*** Adicionar los datos provenientes del formulario ***/
 } elseif (!empty($forma_procesar)) {
     /*** Asumir por defecto que no hubo error ***/
+    $consulta_documentos_cruzados = SQL::seleccionar(array("correspondencia"),array("codigo"),"documento_cruzado_por_factura = '$forma_numero_documento_proveedor' AND documento_identidad_proveedor='$forma_documento_identidad_proveedor'");
+
+    if (SQL::filasDevueltas($consulta_documentos_cruzados)) {
+        while ($documentos_cruzados = SQL::filaEnObjeto($consulta_documentos_cruzados)) {
+            $codigo_documento = $documentos_cruzados->codigo;
+            $datos_cruce = array(
+                "documento_cruzado_por_factura" => ""
+            );
+            $modificar = SQL::modificar("correspondencia", $datos_cruce, "codigo = '$codigo_documento'");
+        }
+    }
+
     $datos = array(
         "estado" => "2"
     );

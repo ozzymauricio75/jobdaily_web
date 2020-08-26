@@ -44,7 +44,14 @@ $tablas ["correspondencia"] = array(
     "fecha_vencimiento"             => "DATE NOT NULL COMMENT 'Fecha vencimiento'",
     "fecha_envio"                   => "DATE NOT NULL COMMENT 'Fecha envio'",
     "fecha_autorizado"              => "DATE NOT NULL COMMENT 'Fecha autorizado'",
-    "observaciones"                 => "VARCHAR(234) COMMENT 'Observacion general para la orden de compra'"
+    "observaciones"                 => "VARCHAR(234) COMMENT 'Observacion general para la orden de compra'",
+    /******************/
+    "estado_residente"              => "ENUM('0','1','2') NOT NULL DEFAULT '0' COMMENT '0->No Aprobado 1->Aprobado residente 2-> Anulado'",
+    "estado_director"               => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->No Aprobado 1->Aprobado director'",
+    "fecha_registro_residente"      => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema x el residente'",
+    "fecha_registro_director"       => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema x el director'",
+    "estado_factura"                => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->No Cruzado 1->Cruzada'",
+    "documento_cruzado_por_factura" => "VARCHAR(15) NOT NULL COMMENT 'Número del documento que cruza contra la fcatura del proveedor'"
 );
 
 /*** Definición de tablas ***/
@@ -229,10 +236,52 @@ $vistas = array(
                 FORMAT(job_correspondencia.valor_documento,0) AS VALOR,
                 job_tipos_documentos.descripcion AS TIPO_DOCUMENTO,
                 job_correspondencia.numero_documento_proveedor AS FACTURA,
+                job_correspondencia.documento_cruzado_por_factura AS CRUZADO,
                 CONCAT('ESTADO_',job_correspondencia.estado) AS ESTADO,
                 job_correspondencia.fecha_recepcion AS FECHA_RECEPCION,
                 job_correspondencia.fecha_vencimiento AS FECHA_VENCIMIENTO,
                 job_correspondencia.fecha_envio AS FECHA_ENVIO,
+                job_correspondencia.observaciones AS OBSERVACIONES 
+        FROM    job_proyectos,
+                job_correspondencia,
+                job_terceros,
+                job_tipos_documentos,
+                job_tipos_documento_identidad
+        WHERE   
+                job_correspondencia.codigo_proyecto = job_proyectos.codigo
+                AND job_correspondencia.documento_identidad_proveedor = job_terceros.documento_identidad
+                AND job_correspondencia.codigo_tipo_documento = job_tipos_documentos.codigo
+                AND job_tipos_documento_identidad.codigo = job_terceros.codigo_tipo_documento 
+                AND job_correspondencia.codigo != 0 
+        ORDER BY
+                job_correspondencia.estado,job_correspondencia.codigo ASC;"
+    ),
+    array(
+        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_correspondencia_directores AS
+        SELECT  job_correspondencia.codigo AS id,
+                job_correspondencia.codigo AS CODIGO,
+                job_proyectos.nombre AS PROYECTO,
+
+                CONCAT(
+                    IF(job_terceros.primer_nombre IS NOT NULL,
+                        CONCAT(
+                            CONCAT(job_terceros.primer_nombre,' '),
+                            IF(job_terceros.segundo_nombre IS NOT NULL,CONCAT(job_terceros.segundo_nombre,' '),''),
+                            IF(job_terceros.primer_apellido IS NOT NULL,CONCAT(job_terceros.primer_apellido,' '),''),
+                            IF(job_terceros.segundo_apellido IS NOT NULL,CONCAT(job_terceros.segundo_apellido,''),'')
+                        ),
+                        job_terceros.razon_social
+                    )
+                ) AS RAZON_SOCIAL,
+                job_correspondencia.numero_orden_compra AS ORDEN_COMPRA,
+                FORMAT(job_correspondencia.valor_documento,0) AS VALOR,
+                job_tipos_documentos.descripcion AS TIPO_DOCUMENTO,
+                job_correspondencia.numero_documento_proveedor AS FACTURA,
+                job_correspondencia.documento_cruzado_por_factura AS CRUZADO,
+                CONCAT('ESTADO_RESIDENTE_',job_correspondencia.estado_residente) AS ESTADO_RESIDENTE,
+                CONCAT('ESTADO_DIRECTOR_',job_correspondencia.estado_director) AS ESTADO_DIRECTOR,
+                job_correspondencia.fecha_registro_residente AS FECHA_REGISTRO_RESIDENTE,
+                job_correspondencia.fecha_registro_director AS FECHA_REGISTRO_DIRECTOR,
                 job_correspondencia.observaciones AS OBSERVACIONES 
         FROM    job_proyectos,
                 job_correspondencia,
@@ -283,6 +332,47 @@ $vistas = array(
                 job_correspondencia.codigo_proyecto = job_proyectos.codigo
                 AND job_correspondencia.documento_identidad_proveedor = job_terceros.documento_identidad
                 AND job_correspondencia.codigo_tipo_documento = job_tipos_documentos.codigo
+                AND job_tipos_documento_identidad.codigo = job_terceros.codigo_tipo_documento 
+                AND job_correspondencia.codigo != 0;"
+    ),
+    array(
+        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_correspondencia_directores AS
+        SELECT  job_correspondencia.codigo AS id,
+                job_correspondencia.codigo AS codigo,
+                job_proyectos.nombre AS proyecto,
+
+                CONCAT(
+                    IF(job_terceros.primer_nombre IS NOT NULL,
+                        CONCAT(
+                            CONCAT(job_terceros.primer_nombre,' '),
+                            IF(job_terceros.segundo_nombre IS NOT NULL,CONCAT(job_terceros.segundo_nombre,' '),''),
+                            IF(job_terceros.primer_apellido IS NOT NULL,CONCAT(job_terceros.primer_apellido,' '),''),
+                            IF(job_terceros.segundo_apellido IS NOT NULL,CONCAT(job_terceros.segundo_apellido,''),'')
+                        ),
+                        job_terceros.razon_social
+                    )
+                ) AS RAZON_SOCIAL,
+                job_correspondencia.numero_orden_compra AS orden_compra,
+                FORMAT(job_correspondencia.valor_documento,0) AS valor,
+                job_tipos_documentos.descripcion AS tipo_documento,
+                job_correspondencia.numero_documento_proveedor AS factura,
+                CONCAT('ESTADO_',job_correspondencia.estado) AS estado,
+                job_correspondencia.fecha_recepcion AS fecha_recepcion,
+                job_correspondencia.fecha_vencimiento AS fecha_vencimiento,
+                job_correspondencia.fecha_envio AS fecha_envio,
+                job_correspondencia.observaciones AS observaciones 
+        FROM    job_proyectos,
+                job_correspondencia,
+                job_terceros,
+                job_tipos_documentos,
+                job_tipos_documento_identidad
+        WHERE   
+                job_correspondencia.codigo_proyecto = job_proyectos.codigo
+                AND job_correspondencia.documento_identidad_proveedor = job_terceros.documento_identidad
+                AND job_correspondencia.codigo_tipo_documento = '4' OR job_correspondencia.codigo_tipo_documento = '5' 
+                OR job_correspondencia.codigo_tipo_documento = '7' OR job_correspondencia.codigo_tipo_documento = '8' 
+                OR job_correspondencia.codigo_tipo_documento = '9' OR job_correspondencia.codigo_tipo_documento = '11' 
+                OR job_correspondencia.codigo_tipo_documento = '12'   
                 AND job_tipos_documento_identidad.codigo = job_terceros.codigo_tipo_documento 
                 AND job_correspondencia.codigo != 0;"
     )

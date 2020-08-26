@@ -58,8 +58,8 @@ if (!empty($url_generar)) {
 
             $nombre_tipo_documento = SQL::obtenerValor("tipos_documentos","descripcion", "codigo = '$codigo_tipo_documento'");
             $nombre_proyecto       = SQL::obtenerValor("proyectos","nombre", "codigo = '$codigo_proyecto'");
-            
             $tipo_persona          = SQL::obtenerValor("terceros", "tipo_persona", "documento_identidad = '".$documento_identidad_proveedor."'");
+
                 if(($tipo_persona==1)||($tipo_persona==3)){
                     $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$documento_identidad_proveedor."'");
                     $segundo_nombre   = SQL::obtenerValor("terceros", "segundo_nombre", "documento_identidad = '".$documento_identidad_proveedor."'");
@@ -80,13 +80,15 @@ if (!empty($url_generar)) {
                     HTML::mostrarDato("orden_compra", $textos["ORDEN_COMPRA"], $numero_orden_compra)
                 ),
                 array(
-                    HTML::mostrarDato("nit_proveedor", $textos["NIT_PROVEEDOR"], $documento_identidad_proveedor),
+                    HTML::mostrarDato("nit_proveedor", $textos["NIT_PROVEEDOR"], $documento_identidad_proveedor)
+                    .HTML::campoOculto("documento_identidad_proveedor", $documento_identidad_proveedor),
                     HTML::mostrarDato("razon_social", $textos["RAZON_SOCIAL"], $razon_social),
                 ),
                 array(
                     HTML::mostrarDato("tipo_documento", $textos["TIPO_DOCUMENTO"], $nombre_tipo_documento),
                     HTML::mostrarDato("numero_documento", $textos["DOCUMENTO_SOPORTE"], $numero_documento_proveedor),
-                    HTML::mostrarDato("valor_documento", $textos["VALOR_DOCUMENTO"], "$".$valor_documento),
+                    HTML::mostrarDato("valor_documento", $textos["VALOR_DOCUMENTO"], "$".$valor_documento)
+                    .HTML::campoOculto("numero_documento_proveedor", $numero_documento_proveedor),
                 ),
                 array(
                     HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
@@ -125,8 +127,20 @@ if (!empty($url_generar)) {
     HTTP::enviarJSON($respuesta);
 
 } elseif (!empty($forma_procesar)) {
-    $consulta = SQL::eliminar("correspondencia", "codigo = '$forma_id'");
+    $consulta_documentos_cruzados = SQL::seleccionar(array("correspondencia"),array("codigo"),"documento_cruzado_por_factura = '$forma_numero_documento_proveedor' AND documento_identidad_proveedor='$forma_documento_identidad_proveedor'");
 
+    if (SQL::filasDevueltas($consulta_documentos_cruzados)) {
+        while ($documentos_cruzados = SQL::filaEnObjeto($consulta_documentos_cruzados)) {
+            $codigo_documento = $documentos_cruzados->codigo;
+            $datos_cruce = array(
+                "documento_cruzado_por_factura" => ""
+            );
+            $modificar = SQL::modificar("correspondencia", $datos_cruce, "codigo = '$codigo_documento'");
+        }
+    }
+
+    $consulta = SQL::eliminar("correspondencia", "codigo = '$forma_id'");
+    
     if ($consulta) {
         $error   = false;
         $mensaje = $textos["ITEM_ELIMINADO"];

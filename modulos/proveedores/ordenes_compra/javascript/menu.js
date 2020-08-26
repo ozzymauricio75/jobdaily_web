@@ -575,22 +575,19 @@
                             valorClase = 'odd';
                         }
                         var item  = '<tr id="'+indice+'" class="'+valorClase+'">'+
-                                /*'<td align="center">'+
-                                    botonModificar+
-                                '</td>'+*/
-                                '<td align="center">'+
-                                    botonEliminar+
-                                '</td>'+
-                                '<td align="left">'+datos[3]+'</td>'+
-                                '<td align="left">'+datos[4]+'</td>'+
-                                '<td align="right">'+datos[5]+'</td>'+
-                                '<td align="left">'+datos[6]+'</td>'+
-                                '<td align="right">'+datos[7]+'</td>'+
-                                '<td align="right">'+datos[8]+'</td>'+
-                                '<td align="right">'+datos[11]+'</td>'+
-                                '<td align="right">'+datos[12]+'</td>'+
-                                '<td align="left">'+datos[9]+'</td>'+
-                            '</tr>';
+                            '<td align="center">'+
+                                botonEliminar+
+                            '</td>'+
+                            '<td align="left">'+datos[3]+'</td>'+
+                            '<td align="left">'+datos[4]+'</td>'+
+                            '<td align="right">'+datos[5]+'</td>'+
+                            '<td align="left">'+datos[6]+'</td>'+
+                            '<td align="right">'+datos[7]+'</td>'+
+                            '<td align="right">'+datos[8]+'</td>'+
+                            '<td align="right">'+datos[11]+'</td>'+
+                            '<td align="right">'+datos[12]+'</td>'+
+                            '<td align="left">'+datos[9]+'</td>'+
+                        '</tr>';
 
                         $('#listaArticulos').append(item);
                         $('#referencia').val('');

@@ -35,13 +35,13 @@ $sesion_id_usuario_ingreso  = $datos->codigo;
 if (isset($url_completar)) {
 
     if (($url_item) == "documento_soporte_orden") {
-        echo SQL::datosAutoCompletar("aprobaciones", $url_q, "estado_residente='1' AND estado_director='1' AND estado_factura='0'");
+        echo SQL::datosAutoCompletar("correspondencia", $url_q, "estado_residente='1' AND estado_director='1' AND estado_factura='0' AND codigo_tipo_documento=5");
     }
     exit;
 
 } elseif(isset($url_existeFactura)){
     $documento_soporte = $url_documento_soporte;
-    $documento         = SQL::obtenerValor("aprobaciones","numero_documento_proveedor","numero_documento_proveedor='$documento_soporte'");
+    $documento         = SQL::obtenerValor("correspondencia","numero_documento_proveedor","numero_documento_proveedor='$documento_soporte'");
     $mensaje           = $textos["NO_EXISTE_FACTURA"];
 
     if($documento){
@@ -153,7 +153,7 @@ if (isset($url_completar)) {
             $items                 = array();
             $unidades_mayores      = 0;
             $numero_filas          = mysql_affected_rows();
-           
+          
             if($consulta_movimiento){
 
                 if (SQL::filasDevueltas($consulta_movimiento)) {
@@ -500,7 +500,7 @@ if (isset($url_completar)) {
                 ); 
                 $modificar_encabezado = SQL::modificar("ordenes_compra", $datos, "codigo = '$forma_codigo_orden_compra'");
                 $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, "codigo_orden_compra = '$forma_codigo_orden_compra'");
-                $modificar_aprobaciones = SQL::modificar("aprobaciones", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
+                $modificar_correspondencia = SQL::modificar("correspondencia", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
             
                 if (($modificar_encabezado) && ($modificar_movimiento)) {
                     $error    = false;
@@ -517,7 +517,7 @@ if (isset($url_completar)) {
                 );
                 $modificar_encabezado = SQL::modificar("ordenes_compra", $datos, "codigo = '$forma_codigo_orden_compra'");
                 $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos, "codigo_orden_compra = '$forma_codigo_orden_compra'");
-                $modificar_aprobaciones = SQL::modificar("aprobaciones", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
+                $modificar_correspondencia = SQL::modificar("correspondencia", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
             
                 if (($modificar_encabezado) && ($modificar_movimiento)) {
                     $error    = false;
@@ -580,7 +580,7 @@ if (isset($url_completar)) {
                 );
                 $modificar_encabezado = SQL::modificar("ordenes_compra", $datos_parcial, "codigo = '$forma_codigo_orden_compra'");
                 $modificar_movimiento = SQL::modificar("movimiento_ordenes_compra", $datos_parcial, "codigo_orden_compra = '$forma_codigo_orden_compra'");
-                $modificar_aprobaciones = SQL::modificar("aprobaciones", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
+                $modificar_correspondencia = SQL::modificar("correspondencia", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
 
                 if (($modificar_encabezado) && ($modificar_movimiento)) {
                     $error    = false;
@@ -598,7 +598,7 @@ if (isset($url_completar)) {
                 );
                 $modificar_encabezado   = SQL::modificar("ordenes_compra", $datos_cumplida, "codigo = '$forma_codigo_orden_compra'");
                 $modificar_movimiento   = SQL::modificar("movimiento_ordenes_compra", $datos_cumplida, "codigo_orden_compra = '$forma_codigo_orden_compra'");
-                $modificar_aprobaciones = SQL::modificar("aprobaciones", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
+                $modificar_correspondencia = SQL::modificar("correspondencia", $datos_factura, "numero_documento_proveedor = '$numero_factura_proveedor' OR numero_documento_proveedor = '$numero_remision_proveedor'");
             
                 if (($modificar_encabezado) && ($modificar_movimiento)) {
                     $error    = false;

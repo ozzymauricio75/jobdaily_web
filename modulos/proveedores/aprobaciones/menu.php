@@ -26,9 +26,10 @@
 **/
 
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
-$vistaMenu     = "menu_aprobaciones";
-$vistaBuscador = "buscador_aprobaciones";
-$alineacion    = array("D","C","D","D","D","D","C","C","I","C","C","C");
+$vistaMenu     = "menu_correspondencia_directores";
+$vistaBuscador = "buscador_correspondencia_directores";
+//$alineacion    = array("D","C","D","D","D","D","C","C","I","C","C","C");
+$alineacion    = array("D","C","I","D","D","I","D","C","I","I","C","C","C");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {
@@ -37,11 +38,11 @@ if (isset($url_completar)) {
 }
 
 /*** Generar botones de comandos ***/
-$botones  = HTML::boton("ADICAPRO",$textos["ADICIONAR"],"ejecutarComando(this, 650, 500);","adicionar");
+//$botones  = HTML::boton("ADICAPRO",$textos["ADICIONAR"],"ejecutarComando(this, 650, 500);","adicionar");
 $botones .= HTML::boton("CONSAPRO",$textos["CONSULTAR"],"ejecutarComando(this, 600, 550);","consultar");
-$botones .= HTML::boton("MODIAPRO",$textos["MODIFICAR"],"ejecutarComando(this, 600, 500);","modificar");
-$botones .= HTML::boton("ANULAPRO",$textos["ANULAR"],"ejecutarComando(this, 600, 550);","anular");
-$botones .= HTML::boton("ELIMAPRO",$textos["ELIMINAR"],"ejecutarComando(this, 600, 550);","eliminar");
+//$botones .= HTML::boton("MODIAPRO",$textos["MODIFICAR"],"ejecutarComando(this, 600, 500);","modificar");
+//$botones .= HTML::boton("ANULAPRO",$textos["ANULAR"],"ejecutarComando(this, 600, 550);","anular");
+//$botones .= HTML::boton("ELIMAPRO",$textos["ELIMINAR"],"ejecutarComando(this, 600, 550);","eliminar");
 $botones .= HTML::boton("APREAPRO",$textos["APROBAR_RESIDENTE"],"ejecutarComando(this, 800, 550);","aprobar_residente");
 $botones .= HTML::boton("APDIAPRO",$textos["APROBAR_DIRECTOR"],"ejecutarComando(this, 800, 550);","aprobar_director");
 
@@ -71,6 +72,13 @@ $estados["ESTADO_RESIDENTE_"] = array(
 $estados["ESTADO_DIRECTOR_"] = array(
     "0" => "estadoAzul",
     "1" => "estadoVerde"
+);
+// Definir colores para los estados //
+$estados["ESTADO_"] = array(
+    "0" => "estadoVerde",
+    "1" => "estadoAzul",
+    "2" => "estadoRojo",
+    "3" => "estadoNaranja"
 );
 
 /*** Ejecutar la consulta y generar tabla a partir de los resultados ***/
