@@ -47,7 +47,8 @@ $tablas ["cuentas_bancarias"] = array(//No se esta seguro de si la cuenta debier
     "codigo_auxiliar_contable" => "INT(8) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código del auxiliar si aplica'",
     ////////////////////////////////////////////////////////
     "estado"                   => "ENUM('0','1') NOT NULL DEFAULT '1' COMMENT 'Estado de la cuenta bancaria: 1->Activa, 2->Inactiva'",
-    "plantilla"                => "TEXT NOT NULL COMMENT 'Plantilla para impresion de cheques'"
+    "plantilla"                => "TEXT NOT NULL COMMENT 'Plantilla para impresion de cheques'",
+    "tipo_cuenta"              => "ENUM('1','2') NOT NULL COMMENT 'Tipo de cuenta: 1->Cuenta de ahorro, 2->Cuenta corriente'"
 );
 
 /*** Definición de llaves primarias ***/

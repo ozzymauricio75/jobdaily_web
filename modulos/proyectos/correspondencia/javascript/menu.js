@@ -210,7 +210,7 @@
 
                 if(acumulado>total_con_tolerancia){
                     alert("Error, el valor excede el total de la orden de compra");
-                    $('#valor_documento').val('');
+                    $('#valor_documento').val('').focus();
                 }
             }
         }); 

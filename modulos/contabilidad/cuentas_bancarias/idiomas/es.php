@@ -45,6 +45,9 @@ $textos = array(
     "ESTADO"                        => "Estado",
     "ACTIVA"                        => "Activa",
     "INACTIVA"                      => "Inactiva",
+    "TIPO_CUENTA"                   => "Tipo de cuenta",
+    "AHORROS"                       => "Ahorros",
+    "CORRIENTE"                     => "Corriente",
     "PLANTILLA"                     => "Plantilla",
 
     "PLANTILLA_INICIAL"             =>

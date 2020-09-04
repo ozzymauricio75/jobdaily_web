@@ -44,7 +44,7 @@ if (isset($url_completar)) {
     }
 
     if (($url_item) == "documento_soporte") {
-        echo SQL::datosAutoCompletar("aprobaciones", $url_q, "estado_residente='1' AND estado_director='1' AND estado_factura='0'");
+        echo SQL::datosAutoCompletar("correspondencia", $url_q, "estado_residente='1' AND estado_director='1' AND estado_factura='0'");
     }
     exit;
 
@@ -86,7 +86,7 @@ if (isset($url_completar)) {
     $llave                         = explode("-", $url_documento_identidad_proveedor);
     $documento_identidad_proveedor = $llave[0];
 
-    $datos = SQL::obtenerValor("aprobaciones", "valor_documento", "numero_documento_proveedor = '$documento_soporte' AND documento_identidad_proveedor='$documento_identidad_proveedor'");
+    $datos = SQL::obtenerValor("correspondencia", "valor_documento", "numero_documento_proveedor = '$documento_soporte' AND documento_identidad_proveedor='$documento_identidad_proveedor'");
 
     HTTP::enviarJSON($datos);
     exit; 
@@ -129,7 +129,7 @@ if (isset($url_completar)) {
 
     $codigo_orden              = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$orden_compra'");
     $total_orden               = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden'");
-    $valor_documentos_cruzados = SQL::obtenerValor("correspondencia","SUM(valor_documento)","numero_orden_compra='$orden_compra'");
+    $valor_documentos_cruzados = SQL::obtenerValor("correspondencia","SUM(valor_documento)","numero_orden_compra='$orden_compra' AND codigo_tipo_documento=5");
     $tolerancia                = SQL::obtenerValor("tolerancia","porcentaje","codigo>'0'");
     $total_orden               = number_format($total_orden,2);
     $valor_documentos_cruzados = number_format($valor_documentos_cruzados,2);
@@ -157,7 +157,7 @@ if (isset($url_completar)) {
 
     $codigo_orden              = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$orden_compra'");
     $total_orden               = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden'");
-    $valor_documentos_cruzados = SQL::obtenerValor("aprobaciones","SUM(valor_documento)","numero_orden_compra='$orden_compra'");
+    $valor_documentos_cruzados = SQL::obtenerValor("correspondencia","SUM(valor_documento)","numero_orden_compra='$orden_compra'");
     $tolerancia                = SQL::obtenerValor("tolerancia","porcentaje","codigo>'0'");
     
     $indicador  = true;
@@ -360,8 +360,9 @@ elseif (!empty($url_generar)) {
 //} elseif (!empty($forma_procesar)) {
 
     /*** Asumir por defecto que no hubo error ***/
-    $error   = false;
-    $mensaje = $textos["ITEM_ADICIONADO"];
+    $error     = false;
+    $mensaje   = $textos["ITEM_ADICIONADO"];
+    $indicador = 0;
 
     $llave                         = explode("-", $forma_selector3);
     $documento_identidad_proveedor = $llave[0];
@@ -369,57 +370,86 @@ elseif (!empty($url_generar)) {
     $llave_proyecto                = explode("-", $forma_selector5);
     $codigo_proyecto               = $llave_proyecto[0];
 
-    /*** Validar el ingreso de los datos requeridos ***/
-    if(empty($forma_selector5)){
-        $error   = true;
-        $mensaje = $textos["PROYECTO_VACIO"];
-
-    }elseif(empty($forma_selector3)){
-        $error   = true;
-        $mensaje = $textos["PROVEEDOR_VACIO"];
-
-    }elseif(empty($forma_tipo_documento)){
-        $error   = true;
-        $mensaje = $textos["TIPO_DOCUMENTO_VACIO"];
-
-    }elseif(empty($forma_nombre_documento)){
-        $error   = true;
-        $mensaje = $textos["NOMBRE_DOCUMENTO_VACIO"];    
-
-    /*}elseif(empty($forma_documento_soporte)){
-        $error   = true;
-        $mensaje = $textos["DOCUMENTO_SOPORTE_VACIO"];*/
-    }elseif(empty($forma_fecha_recepcion)){
-        $error   = true;
-        $mensaje = $textos["FECHA_RECEPCION_VACIO"];
-
-    }if(empty($forma_fecha_vencimiento)){
-        $error   = true;
-        $mensaje = $textos["FECHA_VENCIMIENTO_VACIO"];
-    } else {
-
-        /*** Quitar separador de miles a un numero ***/
-        function quitarMiles($cadena){
-            $valor = array();
-            for ($i = 0; $i < strlen($cadena); $i++) {
-                if (substr($cadena, $i, 1) != ".") {
-                    $valor[$i] = substr($cadena, $i, 1);
-                }
+    /*** Quitar separador de miles a un numero ***/
+    function quitarMiles($cadena){
+        $valor = array();
+        for ($i = 0; $i < strlen($cadena); $i++) {
+            if (substr($cadena, $i, 1) != ".") {
+                $valor[$i] = substr($cadena, $i, 1);
             }
-            $valor = implode($valor);
-            return $valor;
+        }
+        $valor = implode($valor);
+        return $valor;
+    }
+
+    $forma_valor_documento = quitarMiles($forma_valor_documento);
+
+    /*if($forma_aplica==true){
+        $forma_orden_compra = "";
+    }
+    if(!$forma_documento_soporte){
+        $forma_documento_soporte = "";
+    }*/
+  
+    /*** Insertar datos ***/
+    if($forma_tipo_documento==10){
+        $datos = array(
+            "codigo_proyecto"               => 1,
+            "documento_identidad_proveedor" => 0,
+            "codigo_tipo_documento"         => $forma_tipo_documento,
+            "numero_documento_proveedor"    => 0,
+            "numero_orden_compra"           => 0,
+            "valor_documento"               => 0,
+            "estado"                        => '0',
+            "fecha_recepcion"               => $forma_fecha_recepcion,
+            "fecha_vencimiento"             => "", 
+            "fecha_envio"                   => "",
+            "observaciones"                 => $forma_observaciones,
+            "estado_residente"              => '0',
+            "estado_director"               => '0',
+            "fecha_registro_residente"      => "",
+            "fecha_registro_director"       => "",
+            "documento_cruzado_por_factura" => ""
+        ); 
+
+    }else{
+        /*** Validar el ingreso de los datos requeridos ***/
+        if(empty($forma_selector5)){
+            $error     = true;
+            $mensaje   = $textos["PROYECTO_VACIO"];
+            $indicador = 1;
+
+        }elseif(empty($forma_selector3)){
+            $error     = true;
+            $mensaje   = $textos["PROVEEDOR_VACIO"];
+            $indicador = 1;
+
+        }elseif(empty($forma_tipo_documento)){
+            $error     = true;
+            $mensaje   = $textos["TIPO_DOCUMENTO_VACIO"];
+            $indicador = 1;
+
+        }elseif(empty($forma_nombre_documento)){
+            $error     = true;
+            $mensaje   = $textos["NOMBRE_DOCUMENTO_VACIO"];  
+            $indicador = 1;  
+
+        }elseif(empty($forma_documento_soporte)){
+            $error     = true;
+            $mensaje   = $textos["DOCUMENTO_SOPORTE_VACIO"];
+            $indicador = 1;
+
+        }elseif(empty($forma_fecha_recepcion)){
+            $error     = true;
+            $mensaje   = $textos["FECHA_RECEPCION_VACIO"];
+            $indicador = 1;
+
+        }elseif(empty($forma_fecha_vencimiento)){
+            $error     = true;
+            $mensaje   = $textos["FECHA_VENCIMIENTO_VACIO"];
+            $indicador = 1;
         }
 
-        $forma_valor_documento = quitarMiles($forma_valor_documento);
-
-        /*if($forma_aplica==true){
-            $forma_orden_compra = "";
-        }
-        if(!$forma_documento_soporte){
-            $forma_documento_soporte = "";
-        }*/
-        
-        /*** Insertar datos ***/
         $datos = array(
             "codigo_proyecto"               => $codigo_proyecto,
             "documento_identidad_proveedor" => $documento_identidad_proveedor,
@@ -438,45 +468,48 @@ elseif (!empty($url_generar)) {
             "fecha_registro_director"       => "",
             "documento_cruzado_por_factura" => ""
         );
+    }   
 
+    if($indicador=0){
         $insertar = SQL::insertar("correspondencia", $datos);
+    }
 
-        /*** Error de insercion ***/
-        if (!$insertar) {
-            $error   = true;
-            $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
-        } else {
+    /*** Error de insercion ***/
+    if (!$insertar) {
+        $error   = true;
+        $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
+    } else {
 
-            //Asignar codigo siguiente de la tabla 
-            $codigo = SQL::obtenerValor("correspondencia","MAX(codigo)","codigo>0");
+        //Asignar codigo siguiente de la tabla 
+        $codigo = SQL::obtenerValor("correspondencia","MAX(codigo)","codigo>0");
 
-            if (!empty($_FILES["archivo"]["name"])) {
-                $original  = $_FILES["archivo"]["name"];
-                $temporal  = $_FILES["archivo"]["tmp_name"];
-                $extension = strtolower(substr($original, (strrpos($original, ".") - strlen($original)) + 1));
+        if (!empty($_FILES["archivo"]["name"])) {
+            $original  = $_FILES["archivo"]["name"];
+            $temporal  = $_FILES["archivo"]["tmp_name"];
+            $extension = strtolower(substr($original, (strrpos($original, ".") - strlen($original)) + 1));
 
+            $nombre    = substr(md5(uniqid(rand(), true)), 0, 8);
+            $ruta      = $rutasGlobales["archivos"]."/"."soportes/".$nombre.".".$extension;
+
+            while (file_exists($ruta)) {
                 $nombre    = substr(md5(uniqid(rand(), true)), 0, 8);
-                $ruta      = $rutasGlobales["archivos"]."/"."soportes/".$nombre.".".$extension;
-
-                while (file_exists($ruta)) {
-                    $nombre    = substr(md5(uniqid(rand(), true)), 0, 8);
-                    $ruta      = $rutasGlobales["archivos"]."/".$nombre.".".$extension;
-                }
-
-                $copiar   = move_uploaded_file($temporal, $ruta);
-
-                $datos_documento = array(
-                    "titulo"                => $forma_nombre_documento,
-                    "ruta"                  => $ruta,
-                    "nombre_tabla"          => "correspondencia",
-                    "codigo_registro_tabla" => $codigo,
-                    "tipo_archivo"          => '1'
-                );
-
-                $insertar_documento = SQL::insertar("documentos",$datos_documento);
+                $ruta      = $rutasGlobales["archivos"]."/".$nombre.".".$extension;
             }
+
+            $copiar   = move_uploaded_file($temporal, $ruta);
+
+            $datos_documento = array(
+                "titulo"                => $forma_nombre_documento,
+                "ruta"                  => $ruta,
+                "nombre_tabla"          => "correspondencia",
+                "codigo_registro_tabla" => $codigo,
+                "tipo_archivo"          => '1'
+            );
+
+            $insertar_documento = SQL::insertar("documentos",$datos_documento);
         }
     }
+
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
     $respuesta    = array();
     $respuesta[0] = $error;

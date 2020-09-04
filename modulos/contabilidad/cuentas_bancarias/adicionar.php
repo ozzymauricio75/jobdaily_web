@@ -80,6 +80,11 @@ if (!empty($url_generar)) {
     $estado = array (
         "1" => $textos["ACTIVA"],
         "0" => $textos["INACTIVA"]
+    );
+
+    $tipo_cuenta = array(
+        "1" => $textos["AHORROS"],
+        "2" => $textos["CORRIENTE"]
     );    
 
     $bancos            = HTML::generarDatosLista("bancos", "codigo", "descripcion","codigo > 0");
@@ -104,7 +109,8 @@ if (!empty($url_generar)) {
             HTML::mostrarDato("errorDialogo","","")
         ),
         array(
-            HTML::campoTextoCorto("*numero", $textos["NUMERO"], 40, 30, "", array("title" => $textos["AYUDA_NUMERO"]))
+            HTML::campoTextoCorto("*numero", $textos["NUMERO"], 40, 30, "", array("title" => $textos["AYUDA_NUMERO"])),
+            HTML::listaSeleccionSimple("tipo_cuenta", $textos["TIPO_CUENTA"], $tipo_cuenta)
         ),
         array(
             HTML::campoTextoCorto("*selector1", $textos["PLAN_CONTABLE"], 40, 255, "", array("title" => $textos["AYUDA_PLAN_CONTABLE"], "class" => "autocompletable"))
@@ -118,7 +124,7 @@ if (!empty($url_generar)) {
         )
     );
 
-    $formularios["PESTANA_PLANTILLA"] = array(
+    /*$formularios["PESTANA_PLANTILLA"] = array(
         array(
             HTML::campoTextoLargo("plantilla", $textos["PLANTILLA"], 34, 76, $textos["PLANTILLA_INICIAL"], array("class" => "plantilla"))
         ),
@@ -173,14 +179,15 @@ if (!empty($url_generar)) {
 	}elseif(empty($forma_codigo_sucursal_banco)){
 		$error   = true;
 		$mensaje = $textos["SUCURSAL_BANCO_VACIO"];
-	}elseif(empty($forma_plantilla)) {
-        $error   = true;
-        $mensaje = $textos["PALNTILLA_VACIA"];
+	//}elseif(empty($forma_plantilla)) {
+    //    $error   = true;
+    //    $mensaje = $textos["PLANTILLA_VACIA"];
     } else {
 		/*** Insertar datos ***/
 
-        $sucursal = explode('|',$forma_codigo_sucursal_banco);
-        $auxiliar = explode('|',$forma_auxiliar_contable);
+        $sucursal        = explode('|',$forma_codigo_sucursal_banco);
+        $auxiliar        = explode('|',$forma_auxiliar_contable);
+        $forma_plantilla = "AAAA";
 
         $existe = SQL::existeItem("cuentas_bancarias","numero",$forma_numero,"codigo_sucursal = '".$forma_codigo_sucursal."' AND codigo_tipo_documento = '".$forma_codigo_tipo_documento."' AND codigo_sucursal_banco = '".$sucursal[0]."' AND codigo_iso = '".$sucursal[2]."' AND codigo_dane_departamento = '".$sucursal[3]."' AND codigo_dane_municipio = '".$sucursal[4]."' AND codigo_banco = '".$sucursal[1]."'");
 
@@ -212,7 +219,8 @@ if (!empty($url_generar)) {
                     "codigo_anexo_contable"    => $auxiliar[1],
                     "codigo_auxiliar_contable" => $auxiliar[2],
                     "estado"                   => $forma_estado,
-                    "plantilla"                => $forma_plantilla
+                    "plantilla"                => $forma_plantilla,
+                    "tipo_cuenta"              => $forma_tipo_cuenta
                 );
                 $insertar = SQL::insertar("cuentas_bancarias", $datos);
 

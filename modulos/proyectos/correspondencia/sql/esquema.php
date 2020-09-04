@@ -29,29 +29,29 @@ $borrarSiempre = false;
 // Definición de tablas
 $tablas ["correspondencia"] = array(
     "codigo"                        => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno de la tabla'",
-    "codigo_aprobaciones"           => "INT(9) UNSIGNED ZEROFILL NULL DEFAULT '0' COMMENT 'Codigo interno de la tabla aprobaciones'",
+    //"codigo_aprobaciones"           => "INT(9) UNSIGNED ZEROFILL NULL DEFAULT '0' COMMENT 'Codigo interno de la tabla aprobaciones'",
     /*tabla proyectos*/
-    "codigo_proyecto"               => "INT(9) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' COMMENT 'Codigo interno del proyecto'",
-    "documento_identidad_proveedor" => "VARCHAR(12) NOT NULL COMMENT 'Llave principal de la tabla de terceros'",
+    "codigo_proyecto"               => "INT(9) UNSIGNED ZEROFILL NULL DEFAULT '0' COMMENT 'Codigo interno del proyecto'",
+    "documento_identidad_proveedor" => "VARCHAR(12) NULL DEFAULT '0' COMMENT 'Llave principal de la tabla de terceros'",
     /***************/
-    "numero_orden_compra"           => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Numero consecutivo de la orden de compra'",
+    "numero_orden_compra"           => "INT(9) UNSIGNED ZEROFILL NULL DEFAULT '0' COMMENT 'Numero consecutivo de la orden de compra'",
     "codigo_tipo_documento"         => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Código asignado por el usuario'",
-    "numero_documento_proveedor"    => "VARCHAR(15) NOT NULL COMMENT 'Número del documento enviado por el proveedor'",
-    "valor_documento"               => "DECIMAL(15,2) NULL COMMENT 'Valor del documento del proveedor'",
+    "numero_documento_proveedor"    => "VARCHAR(15) NULL DEFAULT '0' COMMENT 'Número del documento enviado por el proveedor'",
+    "valor_documento"               => "DECIMAL(15,2) NULL DEFAULT '0' COMMENT 'Valor del documento del proveedor'",
     "estado"                        => "ENUM('0','1','2','3') NOT NULL DEFAULT '0' COMMENT '0->Recepcionado 1->Entregado 2->Anulado 3->Autorizado'",
     /******************/
     "fecha_recepcion"               => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema'",
     "fecha_vencimiento"             => "DATE NOT NULL COMMENT 'Fecha vencimiento'",
     "fecha_envio"                   => "DATE NOT NULL COMMENT 'Fecha envio'",
     "fecha_autorizado"              => "DATE NOT NULL COMMENT 'Fecha autorizado'",
-    "observaciones"                 => "VARCHAR(234) COMMENT 'Observacion general para la orden de compra'",
+    "observaciones"                 => "VARCHAR(234) NULL COMMENT 'Observacion general para la orden de compra'",
     /******************/
     "estado_residente"              => "ENUM('0','1','2') NOT NULL DEFAULT '0' COMMENT '0->No Aprobado 1->Aprobado residente 2-> Anulado'",
     "estado_director"               => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->No Aprobado 1->Aprobado director'",
     "fecha_registro_residente"      => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema x el residente'",
     "fecha_registro_director"       => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema x el director'",
-    "estado_factura"                => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->No Cruzado 1->Cruzada'",
-    "documento_cruzado_por_factura" => "VARCHAR(15) NOT NULL COMMENT 'Número del documento que cruza contra la fcatura del proveedor'"
+    "estado_factura"                => "ENUM('0','1') NULL DEFAULT '0' COMMENT '0->No Cruzado 1->Cruzada'",
+    "documento_cruzado_por_factura" => "VARCHAR(15) NOT NULL DEFAULT '0' COMMENT 'Número del documento que cruza contra la factura del proveedor'"
 );
 
 /*** Definición de tablas ***/
@@ -78,7 +78,7 @@ $llavesUnicas["documentos"] = array(
 );
 
 // Definición de llaves foráneas
-$llavesForaneas["correspondencia"] = array(
+/*llavesForaneas["correspondencia"] = array(
     array(
         // Nombre de la llave
         "correspondencia_proyectos",
@@ -109,7 +109,7 @@ $llavesForaneas["correspondencia"] = array(
         // Nombre del campo clave en la tabla relacionada
         "codigo"
     )
-);
+);*/
 
 $registros["componentes"] = array(
     array(
