@@ -322,6 +322,12 @@ $registros["modulos"] = array(
         "nombre"      => "Financiera",
         "descripcion" => "Operaciones y datos de control relacionados con lo financiero",
         "carpeta"     => "financiera"
+    ),
+    array(
+        "id"          => "TESORERIA",
+        "nombre"      => "Tesoreria",
+        "descripcion" => "Operaciones y datos de control relacionados con la tesoreria",
+        "carpeta"     => "tesoreria"
     )
 );
 
@@ -425,13 +431,13 @@ $registros["componentes"] = array(
         "carpeta"   => "principal",
         "archivo"   => "NULL",
         "global"    => "0"
-    ),/*
-    array(
+    ),
+    /*array(
         "id"        => "MENUFINA",
         "padre"     => "NULL",
         "id_modulo" => "ADMINISTRACION",
         "visible"   => "1",
-        "orden"     => "500",
+        "orden"     => "850",
         "carpeta"   => "principal",
         "archivo"   => "NULL",
         "global"    => "0"
@@ -456,7 +462,16 @@ $registros["componentes"] = array(
         "archivo"   => "NULL",
         "global"    => "0"
     ),*/
-
+    array(
+        "id"        => "MENUTESO",
+        "padre"     => "NULL",
+        "id_modulo" => "ADMINISTRACION",
+        "visible"   => "1",
+        "orden"     => "880",
+        "carpeta"   => "principal",
+        "archivo"   => "NULL",
+        "global"    => "0"
+    ),
     array(
         "id"        => "MENUNOMI",
         "padre"     => "NULL",

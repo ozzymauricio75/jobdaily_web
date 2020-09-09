@@ -1,0 +1,19 @@
+1  - job_movimientos_contables
+2  - job_movimiento_novedades_manuales
+3  - job_control_prestamos_empleados
+4  - job_movimiento_control_prestamos_empleados
+5  - job_movimientos_salud
+6  - job_movimientos_pension
+7  - job_movimientos_salarios
+8  - job_movimientos_auxilio_transporte
+9  - job_reporte_incapacidades
+10 - job_movimiento_tiempos_laborados
+
+
+
+Pendientes:
+
+11 - tiempos no laborados
+12 - prestamos a terceros
+13 - pago en planilla
+14 - cxc y cxp en salud y pension

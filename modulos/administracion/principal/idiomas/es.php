@@ -47,6 +47,7 @@ $textos = array(
     "MENUPROY"                  => "Proyectos",
     "MENUMERC"                  => "Mercadeo",
     "MENUFINA"                  => "Financiera",
+    "MENUTESO"                  => "Tesoreria",
     "MENULOGI"                  => "Logística",
     "MENUNOMI"                  => "Recursos Humanos",
     "MENUCONT"                  => "Contabilidad",

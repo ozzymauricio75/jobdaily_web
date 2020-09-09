@@ -62,14 +62,18 @@ if(!empty($url_generar)){
             "1" => $textos["ACTIVA"]
         );
 
+        $tipo_cuenta = array(
+            "1" => $textos["AHORROS"],
+            "2" => $textos["CORRIENTE"]
+        ); 
         
         $formularios["PESTANA_GENERAL"] = array(
             array(
                 HTML::mostrarDato("sucursal", $textos["SUCURSAL"], $sucursal)
             ),
-            array(
+            /*array(
                 HTML::mostrarDato("tipo_documento", $textos["TIPO_DOCUMENTO"], $tipo_documento)
-            ),
+            ),*/
             array(
                 HTML::mostrarDato("banco", $textos["BANCO"], $banco)
             ),
@@ -77,7 +81,8 @@ if(!empty($url_generar)){
                 HTML::mostrarDato("sucursal_banco", $textos["SUCURSALES_BANCOS"], $sucursal_banco)
             ),
             array(
-                HTML::mostrarDato("numero", $textos["NUMERO"], $datos->numero)
+                HTML::mostrarDato("numero", $textos["NUMERO"], $datos->numero),
+                HTML::mostrarDato("tipo", $textos["TIPO_CUENTA"], $tipo_cuenta[$datos->tipo_cuenta])
             ),
             array(
                 HTML::mostrarDato("plan_contable", $textos["PLAN_CONTABLE"], $plan_contable)
@@ -88,11 +93,11 @@ if(!empty($url_generar)){
             )
         );
 
-        $formularios["PESTANA_PLANTILLA"] = array(
+        /*$formularios["PESTANA_PLANTILLA"] = array(
             array(
                 HTML::campoTextoLargo("plantilla", $textos["PLANTILLA"], 34, 76, $datos->plantilla, array("class" => "plantilla", "readonly" => "readonly"))
             )
-        );
+        );*/
 
         $contenido = HTML::generarPestanas($formularios);
     }

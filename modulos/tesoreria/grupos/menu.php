@@ -3,7 +3,6 @@
 /**
 *
 * Copyright (C) 2020 Jobdaily
-* Raul Mauricio Oidor Lozano <ozzymauricio75@gmail.com>
 *
 * Este archivo es parte de:
 * Jobdaily:: Sofware empresarial a la medida
@@ -14,8 +13,8 @@
 * de la Licencia, o (a su elección) cualquier versión posterior.
 *
 * Este programa se distribuye con la esperanza de que sea útil, pero
-* SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
-* de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de
+* SIN GARANÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
+* de APTITUD PARA UN PROPOSITO DETERMINADO. Consulte los detalles de
 * la Licencia Pública General GNU para obtener una información más
 * detallada.
 *
@@ -26,22 +25,21 @@
 **/
 
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
-$vistaMenu     = "menu_cuentas_bancarias";
-$vistaBuscador = "buscador_cuentas_bancarias";
-$alineacion    = array("I","I","I","I","I");
+$vistaMenu     = "menu_grupos_tesoreria";
+$vistaBuscador = "buscador_grupos_tesoreria";
+$alineacion    = array("C","I");
 
-/*** Devolver datos para autocompletar la busqueda ***/
+/*** Devolver datos para autocompletar la b?squeda ***/
 if (isset($url_completar)) {
     echo SQL::datosAutoCompletar($vistaBuscador, $url_q);
     exit;
 }
 
 /*** Generar botones de comandos ***/
-$botones  = HTML::boton("ADICCUBA",$textos["ADICIONAR"],"ejecutarComando(this, 650, 550);","adicionar");
-$botones .= HTML::boton("CONSCUBA",$textos["CONSULTAR"],"ejecutarComando(this, 650, 550);","consultar");
-$botones .= HTML::boton("MODICUBA",$textos["MODIFICAR"],"ejecutarComando(this, 650, 550);","modificar");
-$botones .= HTML::boton("ELIMCUBA",$textos["ELIMINAR"],"ejecutarComando(this, 650, 550);","eliminar");
-$botones .= HTML::boton("LISTCUBA",$textos["EXPORTAR"],"ejecutarComando(this, 420, 350);","exportar");
+$botones  = HTML::boton("ADICGRTE",$textos["ADICIONAR"],"ejecutarComando(this,330,300);","adicionar");
+$botones .= HTML::boton("CONSGRTE",$textos["CONSULTAR"],"ejecutarComando(this,300,280);","consultar");
+$botones .= HTML::boton("MODIGRTE",$textos["MODIFICAR"],"ejecutarComando(this,330,300);","modificar");
+$botones .= HTML::boton("ELIMGRTE",$textos["ELIMINAR"],"ejecutarComando(this,300,280);","eliminar");
 
 /*** Obtener el número de la página actual ***/
 if (empty($url_pagina)) {
@@ -60,11 +58,17 @@ $totalRegistros = SQL::filasDevueltas(SQL::seleccionar(array($vistaMenu), $colum
 $paginador      = HTML::insertarPaginador($totalRegistros, $paginaActual, $numeroFilas);
 $registros      = HTML::imprimirRegistros($totalRegistros, $paginaActual, $numeroFilas);
 
-/*** Ejecutar la consulta y generar tabla a partir de los resultados ***/
-$consulta     = SQL::seleccionar(array($vistaMenu), $columnas, $condicion, $agrupamiento, $ordenamiento, $paginaActual, $numeroFilas);
-$tabla        = HTML::generarTabla($columnas, $consulta, $alineacion);
+/*** Definir estados ***/
+$estados["INTERNO_"] = array(
+    "0" => "estadoNeutro",
+    "1" => "estadoNeutro"
+);
 
-/*** Generar y enviar plantilla completa si la petición no se realiza vía AJAX ***/
+/*** Ejecutar la consulta y generar tabla a partir de los resultados ***/
+$consulta = SQL::seleccionar(array($vistaMenu), $columnas, $condicion, $agrupamiento, $ordenamiento, $paginaActual, $numeroFilas);
+$tabla    = HTML::generarTabla($columnas, SQL::recursoEnArreglo($consulta, $estados), $alineacion);
+
+/*** Generar y enviar plantilla completa si la peticiï¿½n no se realiza vï¿½a AJAX ***/
 if (empty($url_origen) || ($url_origen != "ajax")) {
     Plantilla::iniciar();
     Plantilla::sustituir("menu", $sesion_menu);
@@ -78,7 +82,7 @@ if (empty($url_origen) || ($url_origen != "ajax")) {
     Plantilla::sustituir("cuadroDialogo");
     Plantilla::enviarCodigo();
 } else {
-    /*** Devolver sólo datos en formato JSON para las consultas vía AJAX ***/
+    /*** Devolver sï¿½lo datos en formato JSON para las consultas vï¿½a AJAX ***/
     $datos[0] = $tabla;
     $datos[1] = $paginador;
     $datos[2] = $registros;

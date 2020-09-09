@@ -103,6 +103,11 @@ if (!empty($url_generar)) {
         $estado = array (
             "1" => $textos["ACTIVA"],
             "0" => $textos["INACTIVA"]
+        ); 
+
+        $tipo_cuenta = array(
+            "1" => $textos["AHORROS"],
+            "2" => $textos["CORRIENTE"]
         );    
 
         $bancos               = HTML::generarDatosLista("bancos", "codigo", "descripcion","codigo > 0");
@@ -117,9 +122,9 @@ if (!empty($url_generar)) {
             array(
                 HTML::listaSeleccionSimple("*codigo_sucursal", $textos["SUCURSAL"], HTML::generarDatosLista("sucursales", "codigo", "nombre"), $datos->codigo_sucursal, array("title" => $textos["AYUDA_SUCURSAL"]))
             ),
-            array(
+            /*array(
                 HTML::listaSeleccionSimple("*codigo_tipo_documento", $textos["TIPO_DOCUMENTO"], $tipos_documentos, $datos->codigo_tipo_documento, array("title" => $textos["AYUDA_TIPO_DOCUMENTO"]))
-            ),
+            ),*/
             array(
                 HTML::listaSeleccionSimple("*codigo_banco", $textos["BANCO"], $bancos, $datos->codigo_banco,array("title" => $textos["AYUDA_BANCO"],"onChange" => "verificarSucursales();"))
             ),
@@ -127,7 +132,7 @@ if (!empty($url_generar)) {
                 HTML::listaSeleccionSimple("*codigo_sucursal_banco", $textos["SUCURSALES_BANCOS"], $listar_sucursales, $llave_sucursal_banco)
             ),
             array(
-                HTML::campoTextoCorto("*numero", $textos["NUMERO"], 40, 30, $datos->numero, array("title" => $textos["AYUDA_NUMERO"]))
+                HTML::campoTextoCorto("*numero", $textos["NUMERO"], 40, 30, $datos->numero, array("title" => $textos["AYUDA_NUMERO"])),
             ),
             array(
                 HTML::campoTextoCorto("*selector1", $textos["PLAN_CONTABLE"], 40, 255, $plan_contable[0], array("title" => $textos["AYUDA_PLAN_CONTABLE"], "class" => "autocompletable"))
@@ -141,7 +146,7 @@ if (!empty($url_generar)) {
             )
         );
 
-        $formularios["PESTANA_PLANTILLA"] = array(
+        /*$formularios["PESTANA_PLANTILLA"] = array(
             array(
                 HTML::campoTextoLargo("plantilla", $textos["PLANTILLA"], 34, 76, $datos->plantilla, array("class" => "plantilla"))
             ),
@@ -154,7 +159,7 @@ if (!empty($url_generar)) {
                 .HTML::mostrarDato("suma", "S", $textos["SUMA"])
                 .HTML::mostrarDato("comprobante", "C", $textos["COMPROBANTE"])
             )
-        );
+        );*/
 
         /*** Definición de botones ***/
         $botones = array(
@@ -206,8 +211,10 @@ if (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["CUENTA_EXISTE"];
     }else{
-        $sucursal = explode('|',$forma_codigo_sucursal_banco);
-        $auxiliar = explode('|',$forma_auxiliar_contable);
+        $sucursal                    = explode('|',$forma_codigo_sucursal_banco);
+        $auxiliar                    = explode('|',$forma_auxiliar_contable);
+        $forma_codigo_tipo_documento = 0;
+
         $datos = array(
             "codigo_sucursal"          => $forma_codigo_sucursal,
             "codigo_tipo_documento"    => $forma_codigo_tipo_documento,

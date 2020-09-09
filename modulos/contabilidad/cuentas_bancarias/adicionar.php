@@ -96,9 +96,9 @@ if (!empty($url_generar)) {
         array(
             HTML::listaSeleccionSimple("*codigo_sucursal", $textos["SUCURSAL"], HTML::generarDatosLista("sucursales", "codigo", "nombre"), "", array("title" => $textos["AYUDA_SUCURSAL"]))
         ),
-        array(
+        /*array(
             HTML::listaSeleccionSimple("*codigo_tipo_documento", $textos["TIPO_DOCUMENTO"], $tipos_documentos, "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"]))
-        ),
+        ),*/
         array(
             HTML::listaSeleccionSimple("*codigo_banco", $textos["BANCO"], $bancos, "",array("title" => $textos["AYUDA_BANCO"],"onChange" => "verificarSucursales();"))
         ),
@@ -184,10 +184,10 @@ if (!empty($url_generar)) {
     //    $mensaje = $textos["PLANTILLA_VACIA"];
     } else {
 		/*** Insertar datos ***/
-
-        $sucursal        = explode('|',$forma_codigo_sucursal_banco);
-        $auxiliar        = explode('|',$forma_auxiliar_contable);
-        $forma_plantilla = "AAAA";
+        $sucursal                    = explode('|',$forma_codigo_sucursal_banco);
+        $auxiliar                    = explode('|',$forma_auxiliar_contable);
+        $forma_plantilla             = "AAAA";
+        $forma_codigo_tipo_documento = 0;
 
         $existe = SQL::existeItem("cuentas_bancarias","numero",$forma_numero,"codigo_sucursal = '".$forma_codigo_sucursal."' AND codigo_tipo_documento = '".$forma_codigo_tipo_documento."' AND codigo_sucursal_banco = '".$sucursal[0]."' AND codigo_iso = '".$sucursal[2]."' AND codigo_dane_departamento = '".$sucursal[3]."' AND codigo_dane_municipio = '".$sucursal[4]."' AND codigo_banco = '".$sucursal[1]."'");
 

@@ -92,11 +92,11 @@ if (!empty($url_generar)) {
             )
         );
 
-        $formularios["PESTANA_PLANTILLA"] = array(
+        /*$formularios["PESTANA_PLANTILLA"] = array(
             array(
                 HTML::campoTextoLargo("plantilla", $textos["PLANTILLA"], 34, 76, $datos->plantilla, array("class" => "plantilla", "readonly" => "readonly"))
             )
-        );
+        );*/
 
         /*** Definición de botones ***/
         $botones = array(

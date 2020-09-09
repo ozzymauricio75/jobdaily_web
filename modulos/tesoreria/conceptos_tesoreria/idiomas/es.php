@@ -26,16 +26,16 @@
 **/
 
 $textos = array(
-    "GESTCUBA"                      => "Cuentas bancarias",
-    "ADICCUBA"                      => "Adicionar cuenta bancaria",
-    "CONSCUBA"                      => "Consultar cuenta bancaria",
-    "MODICUBA"                      => "Modificar cuenta bancaria",
-    "ELIMCUBA"                      => "Eliminar cuenta bancaria",
-    "LISTCUBA"                      => "Listar cuentas bancarias",
-    "REPORTE_CUBA"                  => "Listado de cuentas bancarias",
+    "GESTCOTE"                      => "Conceptos de tesoreria",
+    "ADICCOTE"                      => "Adicionar conceptos de tesoreria",
+    "CONSCOTE"                      => "Consultar conceptos de tesoreria",
+    "MODICOTE"                      => "Modificar conceptos de tesoreria",
+    "ELIMCOTE"                      => "Eliminar conceptos de tesoreria",
+    "LISTCOTE"                      => "Listar conceptos de tesoreria",
 
-    "BANCO"                         => "Banco",
-    "NUMERO"                        => "Número",
+    "GRUPO_TESORERIA"               => "Grupo tesoreria",
+    "NOMBRE"                        => "Descripcion",
+    "CODIGO"                        => "Codigo",
     "PESTANA_GENERAL"               => "General",
     "PESTANA_PLANTILLA"             => "Plantilla cheque",
     "SUCURSAL"                      => "Almacén",
@@ -50,43 +50,6 @@ $textos = array(
     "CORRIENTE"                     => "Corriente",
     "FIDUCIA"                       => "Fiducia",
     "PLANTILLA"                     => "Plantilla",
-
-    "PLANTILLA_INICIAL"             =>
-"
-
-
-                                         AAAA  MM  DD   VVVVVVVVVVV
-
-              PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
-
-         SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-SSSSSSSSSSSSSSSSSSSSSSSSSS
-
-
-
-
-
-
-
-
-
-
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-
-
-
-
-
-
-                                                                              ",
-
     "ANO"                           => "Año. Cuatro 'A' seguidas",
     "MES"                           => "Mes. Dos 'M' seguidas",
     "DIA"                           => "Día. Dos 'D' seguidas",

@@ -26,9 +26,9 @@
 **/
 
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
-$vistaMenu     = "menu_cuentas_bancarias";
-$vistaBuscador = "buscador_cuentas_bancarias";
-$alineacion    = array("I","I","I","I","I");
+$vistaMenu     = "menu_conceptos_tesoreria";
+$vistaBuscador = "buscador_conceptos_tesoreria";
+$alineacion    = array("I","I","I");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {
@@ -37,11 +37,11 @@ if (isset($url_completar)) {
 }
 
 /*** Generar botones de comandos ***/
-$botones  = HTML::boton("ADICCUBA",$textos["ADICIONAR"],"ejecutarComando(this, 650, 550);","adicionar");
-$botones .= HTML::boton("CONSCUBA",$textos["CONSULTAR"],"ejecutarComando(this, 650, 550);","consultar");
-$botones .= HTML::boton("MODICUBA",$textos["MODIFICAR"],"ejecutarComando(this, 650, 550);","modificar");
-$botones .= HTML::boton("ELIMCUBA",$textos["ELIMINAR"],"ejecutarComando(this, 650, 550);","eliminar");
-$botones .= HTML::boton("LISTCUBA",$textos["EXPORTAR"],"ejecutarComando(this, 420, 350);","exportar");
+$botones  = HTML::boton("ADICCOTE",$textos["ADICIONAR"],"ejecutarComando(this, 650, 550);","adicionar");
+$botones .= HTML::boton("CONSCOTE",$textos["CONSULTAR"],"ejecutarComando(this, 650, 550);","consultar");
+$botones .= HTML::boton("MODICOTE",$textos["MODIFICAR"],"ejecutarComando(this, 650, 550);","modificar");
+$botones .= HTML::boton("ELIMCOTE",$textos["ELIMINAR"],"ejecutarComando(this, 650, 550);","eliminar");
+$botones .= HTML::boton("LISTCOTE",$textos["EXPORTAR"],"ejecutarComando(this, 420, 350);","exportar");
 
 /*** Obtener el número de la página actual ***/
 if (empty($url_pagina)) {
