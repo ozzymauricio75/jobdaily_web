@@ -28,12 +28,15 @@
 /*** Inserción de datos iniciales ***/
 $registros["componentes"] = array(
     array(
-        "id"        => "SUBMMOTE",
-        "padre"     => "MENUTESO",
-        "id_modulo" => "TESORERIA",
-        "orden"     => "3000",
-        "carpeta"   => "principal",
-        "archivo"   => "NULL"
+        "id"            => "SUBMMOTE",
+        "padre"         => "MENUTESO",
+        "id_modulo"     => "TESORERIA",
+        "orden"         => "3000",
+        "carpeta"       => "principal",
+        "archivo"       => "menu",
+        "global"        => "0",
+        "requiere_item" => "0",
+        "tipo_enlace"   => "1"
     ),
     array(
         "id"        => "SUBMCRED",

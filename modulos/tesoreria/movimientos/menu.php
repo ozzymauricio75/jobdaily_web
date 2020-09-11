@@ -26,9 +26,9 @@
 **/
 
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
-$vistaMenu     = "menu_conceptos_tesoreria";
-$vistaBuscador = "buscador_conceptos_tesoreria";
-$alineacion    = array("I","I","I");
+$vistaMenu     = "menu_movimientos_tesoreria";
+$vistaBuscador = "buscador_movimientos_tesoreria";
+$alineacion    = array("I","I","I","I","I","I","I","I");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {
@@ -37,10 +37,10 @@ if (isset($url_completar)) {
 }
 
 /*** Generar botones de comandos ***/
-$botones  = HTML::boton("ADICCOTE",$textos["ADICIONAR"],"ejecutarComando(this, 650, 400);","adicionar");
-$botones .= HTML::boton("CONSCOTE",$textos["CONSULTAR"],"ejecutarComando(this, 650, 400);","consultar");
-$botones .= HTML::boton("MODICOTE",$textos["MODIFICAR"],"ejecutarComando(this, 650, 400);","modificar");
-$botones .= HTML::boton("ELIMCOTE",$textos["ELIMINAR"],"ejecutarComando(this, 650, 400);","eliminar");
+$botones  = HTML::boton("ADICMVTE",$textos["ADICIONAR"],"ejecutarComando(this, 650, 400);","adicionar");
+$botones .= HTML::boton("CONSMVTE",$textos["CONSULTAR"],"ejecutarComando(this, 650, 400);","consultar");
+$botones .= HTML::boton("MODIMVTE",$textos["MODIFICAR"],"ejecutarComando(this, 650, 400);","modificar");
+$botones .= HTML::boton("ELIMMVTE",$textos["ELIMINAR"],"ejecutarComando(this, 650, 400);","eliminar");
 //$botones .= HTML::boton("LISTCOTE",$textos["EXPORTAR"],"ejecutarComando(this, 420, 400);","exportar");
 
 /*** Obtener el número de la página actual ***/

@@ -27,7 +27,7 @@ $borrarSiempre = false;
 
 // Definición de tablas
 $tablas["grupos_tesoreria"] = array(
-    "codigo "       => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
+    "codigo"        => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
     "nombre_grupo"  => "VARCHAR(50) NOT NULL COMMENT 'Nombre del grupo'"
 );
 

@@ -140,24 +140,24 @@ $registros["componentes"] = array(
 $vistas = array(
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_conceptos_tesoreria AS
-        SELECT job_grupos_tesoreria.codigo AS id,
-            job_grupos_tesoreria.codigo AS CODIGO,
+        SELECT job_conceptos_tesoreria.codigo AS id,
+            job_conceptos_tesoreria.codigo AS CODIGO,
             job_conceptos_tesoreria.nombre_concepto AS NOMBRE,
             job_grupos_tesoreria.nombre_grupo AS GRUPO_TESORERIA
         FROM job_conceptos_tesoreria, 
              job_grupos_tesoreria
-        WHERE job_conceptos_tesoreria.codigo = job_grupos_tesoreria.codigo 
+        WHERE job_conceptos_tesoreria.codigo_grupo_tesoreria = job_grupos_tesoreria.codigo 
         AND job_conceptos_tesoreria.codigo != 0;"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_conceptos_tesoreria AS
-        SELECT job_grupos_tesoreria.codigo AS id,
-            job_grupos_tesoreria.codigo AS codigo,
+        SELECT job_conceptos_tesoreria.codigo AS id,
+            job_conceptos_tesoreria.codigo AS codigo,
             job_conceptos_tesoreria.nombre_concepto AS nombre,
             job_grupos_tesoreria.nombre_grupo AS grupo_tesoreria
         FROM job_conceptos_tesoreria, 
              job_grupos_tesoreria
-         WHERE job_conceptos_tesoreria.codigo = job_grupos_tesoreria.codigo 
+        WHERE job_conceptos_tesoreria.codigo_grupo_tesoreria = job_grupos_tesoreria.codigo 
         AND job_conceptos_tesoreria.codigo != 0;"
     )
 );
