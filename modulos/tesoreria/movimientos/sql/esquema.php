@@ -26,16 +26,6 @@
 $borrarSiempre = false;
 
 // Definición de tablas
-$tablas["saldo_inicial_cuentas"]  = array(
-    "codigo"                      => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
-    "cuenta_origen"               => "VARCHAR(30) NULL COMMENT 'Numero de la cuenta bancaria origen'",
-    "saldo"                       => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Valor total del movimiento'",
-    "fecha_saldo"                 => "DATETIME NOT NULL COMMENT 'Fecha inicio del saldo'",
-    "fecha_registra"              => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
-    "codigo_usuario_registra"     => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genera el registro'",
-    "observaciones"               => "VARCHAR(255) COMMENT 'Observacion general del movimiento'"
-);
-
 $tablas["saldos_movimientos"]  = array(
     "codigo"                      => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
     "codigo_movimiento"           => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo de la tabla movimientos de tesoreria'",
@@ -62,15 +52,10 @@ $tablas["movimientos_tesoreria"]  = array(
 );
 
 // Definición de llaves primarias
-$llavesPrimarias["saldo_inicial_cuentas"] = "codigo";
 $llavesPrimarias["saldos_movimientos"]    = "codigo";
 $llavesPrimarias["movimientos_tesoreria"] = "codigo";
 
 // Definición de las llaves unicas
-$llavesUnicas["saldo_inicial_cuentas"] = array(
-    "codigo,cuenta_origen,saldo,fecha_saldo"
-);
-
 $llavesUnicas["saldos_movimientos"] = array(
     "codigo,codigo_movimiento"
 );
@@ -85,7 +70,7 @@ $registros["componentes"] = array(
         "padre"           => "MENUTESO",
         "id_modulo"       => "TESORERIA",
         "orden"           => "3000",
-        "carpeta"         => "principal",
+        "carpeta"         => "movimientos",
         "archivo"         => "menu",
         "global"          => "0",
         "requiere_item"   => "0",
@@ -143,17 +128,6 @@ $registros["componentes"] = array(
 
 $vistas = array(
     array(
-        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_saldo_inicial_cuentas AS
-        SELECT job_saldo_inicial_cuentas.codigo AS id,
-            job_saldo_inicial_cuentas.codigo AS CODIGO,
-            job_saldo_inicial_cuentas.cuenta_origen AS CUENTA_ORIGEN,
-            job_saldo_inicial_cuentas.saldo AS SALDO_INICIAL,
-            job_saldo_inicial_cuentas.fecha_saldo AS FECHA_INICIO,
-            job_saldo_inicial_cuentas.observaciones AS OBSERVACIONES
-        FROM job_saldo_inicial_cuentas
-        WHERE job_saldo_inicial_cuentas.codigo != 0;"
-    ),
-    array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_movimientos_tesoreria AS
         SELECT job_movimientos_tesoreria.codigo AS id,
             job_movimientos_tesoreria.codigo AS CODIGO,
@@ -169,17 +143,6 @@ $vistas = array(
         WHERE job_grupos_tesoreria.nombre_grupo = job_movimientos_tesoreria.codigo_grupo_tesoreria
         AND   job_conceptos_tesoreria.nombre_concepto = job_movimientos_tesoreria.codigo_concepto_tesoreria 
         AND   job_movimientos_tesoreria.codigo != 0;"
-    ),
-    array(
-        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_saldo_inicial_cuentas AS
-        SELECT job_saldo_inicial_cuentas.codigo AS id,
-            job_saldo_inicial_cuentas.codigo AS codigo,
-            job_saldo_inicial_cuentas.cuenta_origen AS cuenta_origen,
-            job_saldo_inicial_cuentas.saldo AS saldo_inicial,
-            job_saldo_inicial_cuentas.fecha_saldo AS fecha_inicio,
-            job_saldo_inicial_cuentas.observaciones AS observaciones
-        FROM job_saldo_inicial_cuentas
-        WHERE job_saldo_inicial_cuentas.codigo != 0;"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_movimientos_tesoreria AS

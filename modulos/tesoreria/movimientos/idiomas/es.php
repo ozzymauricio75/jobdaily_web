@@ -26,11 +26,11 @@
 **/
 
 $textos = array(
-    "SUBMMOTE"                      => "Conceptos de tesoreria",
-    "ADICMVTE"                      => "Adicionar conceptos de tesoreria",
-    "CONSMVTE"                      => "Consultar conceptos de tesoreria",
-    "MODIMVTE"                      => "Modificar conceptos de tesoreria",
-    "ELIMMVTE"                      => "Eliminar conceptos de tesoreria",
+    "SUBMMOTE"                      => "Movimientos de tesoreria",
+    "ADICMVTE"                      => "Adicionar movimientos de tesoreria",
+    "CONSMVTE"                      => "Consultar movimientos de tesoreria",
+    "MODIMVTE"                      => "Modificar movimientos de tesoreria",
+    "ELIMMVTE"                      => "Eliminar movimientos de tesoreria",
     "GRUPO_TESORERIA"               => "Grupo tesoreria",
     "CONCEPTO_TESORERIA"            => "Concepto tesoreria",
     "NOMBRE"                        => "Descripcion",
