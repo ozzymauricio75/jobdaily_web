@@ -24,16 +24,20 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
+$tabla                      = "usuarios";
+$columnas                   = SQL::obtenerColumnas($tabla);
+$consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuario = '$sesion_usuario'");
+$datos                      = SQL::filaEnObjeto($consulta);
+$sesion_id_usuario_ingreso  = $datos->codigo;
 
 if (isset($url_completar)) {
     if (($url_item) == "selector1") {
-        echo SQL::datosAutoCompletar("seleccion_municipios", $url_q);
+        echo SQL::datosAutoCompletar("menu_cuentas_bancarias", $url_q);
     }
     exit;
-}
 
 /*** Generar el formulario para la captura de datos ***/
-if (!empty($url_generar)) {
+}elseif (!empty($url_generar)) {
 
     /*** Verificar que se haya enviado el ID del elemento a modificar ***/
     if (empty($url_id)) {
@@ -42,28 +46,44 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
-        $vistaConsulta = "conceptos_tesoreria";
+        $vistaConsulta = "saldo_inicial_cuentas";
         $condicion     = "codigo = '$url_id'";
         $columnas      = SQL::obtenerColumnas($vistaConsulta);
         $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, $condicion);
         $datos         = SQL::filaEnObjeto($consulta);
+        $saldo         = number_format($datos->saldo,0);
 
         $error         = "";
         $titulo        = $componente->nombre;
 
         /*** Obtener valores ***/
-        $grupo_tesoreria = SQL::obtenerValor("grupos_tesoreria","nombre_grupo","codigo = '$datos->codigo_grupo_tesoreria'");
+        $consulta_cuentas_bancarias = SQL::seleccionar(array("cuentas_bancarias"), array("*"), "numero='$datos->cuenta_origen'");
+        $datos_cuenta               = SQL::filaEnObjeto($consulta_cuentas_bancarias);
+
+        $nombre_banco = SQL::obtenerValor("bancos","descripcion","codigo='$datos_cuenta->codigo_banco'");
+        $tercero      = SQL::obtenerValor("sucursales","nombre","codigo='$datos_cuenta->codigo_sucursal'");
 
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, $datos->codigo, array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)"))
+                HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo)
             ),
             array(
-                HTML::listaSeleccionSimple("*codigo_grupo", $textos["EMPRESA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo != 0"), $datos->grupo_tesoreria, array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onBlur" => "validarItem(this);"))
+                HTML::mostrarDato("numero", $textos["NUMERO_CUENTA"], $datos->cuenta_origen)
             ),
             array(
-                HTML::campoTextoCorto("*nombre", $textos["NOMBRE"], 40, 60, $datos->nombre_concepto, array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);"))
+                HTML::mostrarDato("banco", $textos["BANCO"], $nombre_banco)
+            ),
+            array(
+                HTML::mostrarDato("tercero", $textos["TERCERO"], $tercero)  
+            ),
+            array(    
+                HTML::campoTextoCorto("*saldo", $textos["SALDO_INICIAL"], 20, 20, $saldo, array("title" => $textos["AYUDA_SALDO_INICIAL"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this)")),
+
+                HTML::campoTextoCorto("observaciones", $textos["OBSERVACIONES"], 20, 20, $datos->observaciones, array("title" => $textos["AYUDA_OBSERVACIONES"]))
+            ),
+            array(
+                HTML::campoTextoCorto("fecha_saldo", $textos["FECHA_SALDO"], 10, 10, $datos->fecha_saldo, array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_SALDO"]))
             )
         );
 
@@ -95,15 +115,6 @@ if (!empty($url_generar)) {
             $respuesta = $textos["ERROR_EXISTE_CODIGO"];
         }
     }
-
-    /*** Validar nombre ***/ 
-    if ($url_item == "nombre" && $url_valor) {
-        $existe = SQL::existeItem("conceptos_tesoreria", "nombre_concepto", $url_valor, "codigo != '$url_id' AND nombre_concepto !=''");
-
-        if ($existe) {
-            $respuesta = $textos["ERROR_EXISTE_NOMBRE"];
-        }
-    }
     
     HTTP::enviarJSON($respuesta);
 
@@ -115,32 +126,41 @@ if (!empty($url_generar)) {
     $mensaje = $textos["ITEM_MODIFICADO"];
 
     /*** Validar el ingreso de los datos requeridos ***/
-    if(empty($forma_codigo)){
-		$error   = true;
-        $mensaje = $textos["CODIGO_VACIO"];
-            
-	}elseif(empty($forma_nombre)){
-		$error   = true;
-        $mensaje = $textos["NOMBRE_VACIO"];
-            
-	}elseif(SQL::existeItem("conceptos_tesoreria", "codigo", $forma_codigo,"codigo !='' AND codigo !='$forma_id'")){
-	    $error   = true;
-        $mensaje = $textos["ERROR_EXISTE_CODIGO"];
+    if(empty($forma_saldo)){
+        $error   = true;
+        $mensaje = $textos["SALDO_VACIO"];
 
-     }elseif(SQL::existeItem("conceptos_tesoreria", "nombre_concepto", $forma_nombre,"nombre_concepto !='' AND codigo !='$forma_id'")){
-	    $error   = true;
-        $mensaje = $textos["ERROR_EXISTE_NOMBRE"];
+    }elseif(empty($forma_fecha_saldo)){
+        $error   = true;
+        $mensaje = $textos["FECHA_VACIO"];
 
     } else {
 
+        /*** Quitar separador de miles a un numero ***/
+        function quitarMiles($cadena){
+            $valor = array();
+            for ($i = 0; $i < strlen($cadena); $i++) {
+                if (substr($cadena, $i, 1) != ".") {
+                    $valor[$i] = substr($cadena, $i, 1);
+                }
+            }
+            $valor = implode($valor);
+            return $valor;
+        }
+        
+        $forma_saldo = quitarMiles($forma_saldo);
+        $forma_saldo = str_replace(",", "", $forma_saldo);
+
         /*** Insertar datos ***/
         $datos = array(
-            "codigo"                       => $forma_codigo,
-            "codigo_grupo_tesoreria"       => $forma_codigo_grupo,
-            "nombre_concepto"              => $forma_nombre
+            "saldo"                   => $forma_saldo,
+            "fecha_saldo"             => $forma_fecha_saldo,
+            "fecha_registra"          => date("Y-m-d H:i:s"),
+            "codigo_usuario_registra" => $sesion_id_usuario_ingreso,
+            "observaciones"           => $forma_observaciones
         );
 
-        $consulta = SQL::modificar("conceptos_tesoreria", $datos, "codigo = '$forma_id'");
+        $consulta = SQL::modificar("saldo_inicial_cuentas", $datos, "codigo = '$forma_id'");
 		
 		/*** Error inserción ***/
         if ($consulta) {

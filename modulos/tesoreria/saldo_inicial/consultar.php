@@ -55,7 +55,8 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo)
             ),
             array(
-                HTML::mostrarDato("numero", $textos["NUMERO_CUENTA"], $datos->cuenta_origen)
+                HTML::mostrarDato("numero", $textos["NUMERO_CUENTA"], $datos->cuenta_origen),
+                HTML::mostrarDato("saldo", $textos["SALDO_INICIAL"], "$".number_format($datos->saldo,2))
             ),
             array(
                 HTML::mostrarDato("banco", $textos["BANCO"], $nombre_banco)

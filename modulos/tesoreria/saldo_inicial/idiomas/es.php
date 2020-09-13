@@ -52,6 +52,8 @@ $textos = array(
     "CREAR_CUENTAS_BANCO"           => "Error, debe existir cuentas bancarias creadas",
     "ERROR_EXISTE_NUMERO"           => "Error, ya existe es numero de cuenta",
     "CODIGO_VACIO"                  => "Error, codigo vacio",
+    "SALDO_VACIO"                   => "Error, saldo vacio",
+    "FECHA_VACIO"                   => "Error, fecha saldo vacia",
     "NUMERO_VACIO"                  => "Error, número de la cuenta vacio",
 );
 ?>

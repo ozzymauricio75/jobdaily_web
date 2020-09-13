@@ -35,16 +35,20 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
-        $vistaConsulta = "conceptos_tesoreria";
+        $vistaConsulta = "saldo_inicial_cuentas";
         $columnas      = SQL::obtenerColumnas($vistaConsulta);
         $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
         $datos         = SQL::filaEnObjeto($consulta);
-
+        
         $error         = "";
         $titulo        = $componente->nombre;
 
         /*** Obtener valores ***/
-        $grupo_tesoreria = SQL::obtenerValor("grupos_tesoreria","nombre_grupo","codigo = '$datos->codigo_grupo_tesoreria'");
+        $consulta_cuentas_bancarias = SQL::seleccionar(array("cuentas_bancarias"), array("*"), "numero='$datos->cuenta_origen'");
+        $datos_cuenta               = SQL::filaEnObjeto($consulta_cuentas_bancarias);
+
+        $nombre_banco = SQL::obtenerValor("bancos","descripcion","codigo='$datos_cuenta->codigo_banco'");
+        $tercero      = SQL::obtenerValor("sucursales","nombre","codigo='$datos_cuenta->codigo_sucursal'");
 
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
@@ -52,13 +56,17 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo)
             ),
             array(
-                HTML::mostrarDato("nombre_grupo", $textos["GRUPO_TESORERIA"], $grupo_tesoreria)
+                HTML::mostrarDato("numero", $textos["NUMERO_CUENTA"], $datos->cuenta_origen),
+                HTML::mostrarDato("saldo", $textos["SALDO_INICIAL"], "$".number_format($datos->saldo,2))
             ),
             array(
-                HTML::mostrarDato("nombre", $textos["NOMBRE"], $datos->nombre_concepto)
+                HTML::mostrarDato("banco", $textos["BANCO"], $nombre_banco)
+            ),
+            array(
+                HTML::mostrarDato("tercero", $textos["TERCERO"], $tercero)  
             )
         );
-
+        
         /*** Definición de botones ***/
         $botones = array(
             HTML::boton("botonAceptar", $textos["ACEPTAR"], "eliminarItem('$url_id');", "aceptar")
@@ -75,7 +83,7 @@ if (!empty($url_generar)) {
     HTTP::enviarJSON($respuesta);
 
 } elseif (!empty($forma_procesar)) {
-    $consulta = SQL::eliminar("conceptos_tesoreria", "codigo = '$forma_id'");
+    $consulta = SQL::eliminar("saldo_inicial_cuentas", "codigo = '$forma_id'");
 
     if ($consulta) {
         $error   = false;
