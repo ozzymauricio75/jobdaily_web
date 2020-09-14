@@ -49,6 +49,12 @@ if (!empty($url_generar)) {
         } else {
             $codigo = 1;
         }
+
+        $sentidos = array(
+            "D" => $textos["DEBITO"],
+            "C" => $textos["CREDITO"]
+        );
+
          /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
@@ -57,7 +63,8 @@ if (!empty($url_generar)) {
                 HTML::listaSeleccionSimple("*codigo_grupo", $textos["GRUPO_TESORERIA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo != 0"), "", array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onBlur" => "validarItem(this);"))
             ),
             array(
-                HTML::campoTextoCorto("*nombre", $textos["NOMBRE"], 50, 60, "", array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);"))
+                HTML::campoTextoCorto("*nombre", $textos["NOMBRE"], 50, 60, "", array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);")),
+                HTML::listaSeleccionSimple("sentido", $textos["SENTIDO"], $sentidos, "", array("title" => $textos["AYUDA_SENTIDO"])),
             )
         );
 
@@ -132,7 +139,8 @@ if (!empty($url_generar)) {
         $datos = array(
             "codigo"                       => $forma_codigo,
             "codigo_grupo_tesoreria"       => $forma_codigo_grupo,
-            "nombre_concepto"              => $forma_nombre
+            "nombre_concepto"              => $forma_nombre,
+            "sentido"                      => $forma_sentido,
         );
         $insertar = SQL::insertar("conceptos_tesoreria", $datos);
 

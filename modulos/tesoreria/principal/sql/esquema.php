@@ -28,31 +28,31 @@
 /*** Inserción de datos iniciales ***/
 $registros["componentes"] = array(
     array(
-        "id"            => "SUBMMOTE",
-        "padre"         => "MENUTESO",
-        "id_modulo"     => "TESORERIA",
-        "orden"         => "3000",
-        "carpeta"       => "principal",
-        "archivo"       => "menu",
-        "global"        => "0",
-        "requiere_item" => "0",
-        "tipo_enlace"   => "1"
+        "id"              => "SUBMMOTE",
+        "padre"           => "MENUTESO",
+        "id_modulo"       => "TESORERIA",
+        "orden"           => "3000",
+        "carpeta"         => "movimientos",
+        "archivo"         => "menu",
+        "global"          => "0",
+        "requiere_item"   => "0",
+        "tipo_enlace"     => "1"
     ),
     array(
-        "id"        => "SUBMCRED",
-        "padre"     => "MENUTESO",
-        "id_modulo" => "TESORERIA",
-        "orden"     => "5000",
-        "carpeta"   => "principal",
-        "archivo"   => "NULL"
+        "id"               => "SUBMCRED",
+        "padre"            => "MENUTESO",
+        "id_modulo"        => "TESORERIA",
+        "orden"            => "5000",
+        "carpeta"          => "principal",
+        "archivo"          => "NULL"
     ),
     array(
-        "id"        => "SUBMDCTE",
-        "padre"     => "MENUTESO",
-        "id_modulo" => "TESORERIA",
-        "orden"     => "9000",
-        "carpeta"   => "principal",
-        "archivo"   => "NULL"
+        "id"               => "SUBMDCTE",
+        "padre"            => "MENUTESO",
+        "id_modulo"        => "TESORERIA",
+        "orden"            => "9000",
+        "carpeta"          => "principal",
+        "archivo"          => "NULL"
     )
 );
 

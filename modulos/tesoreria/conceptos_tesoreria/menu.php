@@ -28,7 +28,7 @@
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
 $vistaMenu     = "menu_conceptos_tesoreria";
 $vistaBuscador = "buscador_conceptos_tesoreria";
-$alineacion    = array("I","I","I");
+$alineacion    = array("I","I","I","I");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {

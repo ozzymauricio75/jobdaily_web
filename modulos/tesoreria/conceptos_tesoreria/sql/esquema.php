@@ -30,13 +30,14 @@ $borrarSiempre = false;
 
 /*** Definición de tablas ***/
 $tablas ["conceptos_tesoreria"] = array(//No se esta seguro de si la cuenta debiera llevar la sucursal el banco
-    "codigo"                 => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
+    "codigo"                 => "SMALLINT(3) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
     "codigo_grupo_tesoreria" => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno del grupo de tesoreria'",
-    "nombre_concepto"        => "VARCHAR(50) NOT NULL COMMENT 'Nombre del concepto'"
+    "nombre_concepto"        => "VARCHAR(50) NOT NULL COMMENT 'Nombre del concepto'",
+    "sentido"                => "ENUM('D','C') COMMENT 'Sentido del movimiento tesoreria: D->Debito, C->Credito'"
 );
 
 /*** Definición de llaves primarias ***/
-$llavesPrimarias["conceptos_tesoreria"] = "codigo_grupo_tesoreria,nombre_concepto";
+$llavesPrimarias["conceptos_tesoreria"] = "codigo,codigo_grupo_tesoreria,nombre_concepto";
 
 /*** Definici{on de llaves Foraneas ***/
 $llavesForaneas["conceptos_tesoreria"] = array(
@@ -143,7 +144,8 @@ $vistas = array(
         SELECT job_conceptos_tesoreria.codigo AS id,
             job_conceptos_tesoreria.codigo AS CODIGO,
             job_conceptos_tesoreria.nombre_concepto AS NOMBRE,
-            job_grupos_tesoreria.nombre_grupo AS GRUPO_TESORERIA
+            job_grupos_tesoreria.nombre_grupo AS GRUPO_TESORERIA,
+            if(job_conceptos_tesoreria.sentido='D','Debito','Credito') AS SENTIDO
         FROM job_conceptos_tesoreria, 
              job_grupos_tesoreria
         WHERE job_conceptos_tesoreria.codigo_grupo_tesoreria = job_grupos_tesoreria.codigo 
@@ -153,6 +155,17 @@ $vistas = array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_conceptos_tesoreria AS
         SELECT job_conceptos_tesoreria.codigo AS id,
             job_conceptos_tesoreria.codigo AS codigo,
+            job_conceptos_tesoreria.nombre_concepto AS nombre,
+            job_grupos_tesoreria.nombre_grupo AS grupo_tesoreria,
+            if(job_conceptos_tesoreria.sentido='D','Debito','Credito') AS sentido
+        FROM job_conceptos_tesoreria, 
+             job_grupos_tesoreria
+        WHERE job_conceptos_tesoreria.codigo_grupo_tesoreria = job_grupos_tesoreria.codigo 
+        AND job_conceptos_tesoreria.codigo != 0;"
+    ),
+    array(
+        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_seleccion_conceptos_tesoreria AS
+        SELECT job_conceptos_tesoreria.codigo AS codigo,
             job_conceptos_tesoreria.nombre_concepto AS nombre,
             job_grupos_tesoreria.nombre_grupo AS grupo_tesoreria
         FROM job_conceptos_tesoreria, 

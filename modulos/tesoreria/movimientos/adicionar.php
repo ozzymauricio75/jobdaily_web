@@ -30,6 +30,10 @@ if (isset($url_completar)) {
     if (($url_item) == "selector1") {
         echo SQL::datosAutoCompletar("seleccion_municipios", $url_q);
     }
+    
+    if (($url_item) == "selector2") {
+        echo SQL::datosAutoCompletar("seleccion_proyectos", $url_q);
+    }
     exit;
 }
 
@@ -49,12 +53,20 @@ if (!empty($url_generar)) {
         } else {
             $codigo = 1;
         }
+        $grupos    = HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo > 0");
+        $conceptos = HTML::generarDatosLista("seleccion_conceptos_tesoreria", "codigo", "nombre","grupo_tesoreria = '".array_shift(array_keys($grupos))."'");
+    
          /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
                 HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, $codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
                 
-                HTML::listaSeleccionSimple("*codigo_grupo", $textos["GRUPO_TESORERIA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo != 0"), "", array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onBlur" => "validarItem(this);"))
+                HTML::listaSeleccionSimple("*codigo_grupo", $textos["GRUPO_TESORERIA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo != 0"), "", array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onBlur" => "validarItem(this);")),
+
+                HTML::listaSeleccionSimple("*codigo_concepto", $textos["CONCEPTO_TESORERIA"], $conceptos, "")
+            ),
+            array(    
+                HTML::campoTextoCorto("selector2", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
             ),
             array(
                 HTML::campoTextoCorto("*nombre", $textos["NOMBRE"], 50, 60, "", array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);"))

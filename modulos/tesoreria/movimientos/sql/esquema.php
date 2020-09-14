@@ -38,7 +38,7 @@ $tablas["saldos_movimientos"]  = array(
 
 $tablas["movimientos_tesoreria"]  = array(
     "codigo"                      => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
-    "sentido"                     => "ENUM('1','2') COMMENT 'Indicador de sentido del movimiento: 1=Debito, 2=Credito'",
+    "sentido"                     => "ENUM('D','C') COMMENT 'Indicador de sentido del movimiento: D=Debito, C=Credito'",
     "codigo_proyecto"             => "INT(9) NULL COMMENT 'Codigo interno del proyecto'",
     "codigo_grupo_tesoreria"      => "SMALLINT(3) NOT NULL COMMENT 'Codigo interno del grupo tesoreria'",
     "codigo_concepto_tesoreria"   => "SMALLINT(3) NOT NULL COMMENT 'Codigo interno del concepto tesoreria'",
@@ -61,11 +61,12 @@ $llavesUnicas["saldos_movimientos"] = array(
 );
 
 $llavesUnicas["movimientos_tesoreria"] = array(
-    "codigo,sentido,codigo_proyecto,codigo_grupo_tesoreria,codigo_concepto_tesoreria,cuenta_proveedor,cuenta_origen,valor_movimiento,documento_identidad_tercero,fecha_registra"
+    "codigo,sentido,codigo_proyecto,codigo_grupo_tesoreria,codigo_concepto_tesoreria,cuenta_proveedor,cuenta_origen,valor_movimiento,
+    documento_identidad_tercero,fecha_registra"
 );
 
 $registros["componentes"] = array(
-    array(
+    /*array(
         "id"              => "SUBMMOTE",
         "padre"           => "MENUTESO",
         "id_modulo"       => "TESORERIA",
@@ -75,7 +76,7 @@ $registros["componentes"] = array(
         "global"          => "0",
         "requiere_item"   => "0",
         "tipo_enlace"     => "1"
-    ),
+    ),*/
     array(
         "id"              => "ADICMVTE",
         "padre"           => "SUBMMOTE",

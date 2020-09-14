@@ -24,6 +24,13 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
+/*** Devolver datos para autocompletar la búsqueda ***/
+if (isset($url_completar)) {
+    if (($url_item) == "selector1") {
+        echo SQL::datosAutoCompletar("seleccion_municipios", $url_q);
+    }
+    exit;
+}
 
 /*** Generar el formulario para la captura de datos ***/
 if (!empty($url_generar)) {
@@ -61,15 +68,17 @@ if (!empty($url_generar)) {
     
 /*** Validar los datos provenientes del formulario ***/
 } elseif (!empty($url_validar)) {
-
+    
+    $respuesta = "";
     /*** Validar nombre ***/
     if ($url_item == "nombre") {
-        $existe = SQL::existeItem("grupos_tesoreria", "nombre", $url_valor,"nombre !=''");
+        $existe = SQL::existeItem("grupos_tesoreria", "nombre_grupo", $url_valor,"nombre_grupo !=''");
 
         if ($existe) {
             HTTP::enviarJSON($textos["ERROR_EXISTE_NOMBRE"]);
         }
     }
+    HTTP::enviarJSON($respuesta);
 
 /*** Procesar los datos del formulario ***/
 }  elseif (!empty($forma_procesar)) {
@@ -90,7 +99,7 @@ if (!empty($url_generar)) {
 	$error   = true;
         $mensaje = $textos["ERROR_EXISTE_CODIGO"];
         
-    }elseif(SQL::existeItem("grupos_tesoreria", "nombre", $forma_nombre)){
+    }elseif(SQL::existeItem("grupos_tesoreria", "nombre_grupo", $forma_nombre)){
 	    $error   = true;
         $mensaje = $textos["ERROR_EXISTE_NOMBRE"];    
     
