@@ -28,7 +28,7 @@
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
 $vistaMenu     = "menu_movimientos_tesoreria";
 $vistaBuscador = "buscador_movimientos_tesoreria";
-$alineacion    = array("I","I","I","I","I","I","I");
+$alineacion    = array("I","I","I","I","D","I","I");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {
@@ -37,7 +37,7 @@ if (isset($url_completar)) {
 }
 
 /*** Generar botones de comandos ***/
-$botones  = HTML::boton("ADICMVTE",$textos["ADICIONAR"],"ejecutarComando(this, 650, 400);","adicionar");
+$botones  = HTML::boton("ADICMVTE",$textos["ADICIONAR"],"ejecutarComando(this, 650, 520);","adicionar");
 $botones .= HTML::boton("CONSMVTE",$textos["CONSULTAR"],"ejecutarComando(this, 650, 400);","consultar");
 $botones .= HTML::boton("MODIMVTE",$textos["MODIFICAR"],"ejecutarComando(this, 650, 400);","modificar");
 $botones .= HTML::boton("ELIMMVTE",$textos["ELIMINAR"],"ejecutarComando(this, 650, 400);","eliminar");

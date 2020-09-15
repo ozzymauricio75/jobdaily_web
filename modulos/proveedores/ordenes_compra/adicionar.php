@@ -1232,6 +1232,7 @@ if (!empty($url_generar)){
     $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $mensaje;
+    
     if (isset($ruta_archivo)){
         $respuesta[2] = $ruta_archivo;
     }

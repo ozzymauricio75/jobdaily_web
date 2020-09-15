@@ -24,6 +24,11 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
+$tabla                      = "usuarios";
+$columnas                   = SQL::obtenerColumnas($tabla);
+$consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuario = '$sesion_usuario'");
+$datos                      = SQL::filaEnObjeto($consulta);
+$sesion_id_usuario_ingreso  = $datos->codigo;
 
 /*** Devolver datos para autocompletar la búsqueda ***/
 if (isset($url_completar)) {
@@ -34,6 +39,63 @@ if (isset($url_completar)) {
     if (($url_item) == "selector2") {
         echo SQL::datosAutoCompletar("seleccion_proyectos", $url_q);
     }
+
+    if (($url_item) == "selector3") {
+        echo SQL::datosAutoCompletar("menu_cuentas_bancarias", $url_q);
+    }
+
+    if (($url_item) == "selector4") {
+        echo SQL::datosAutoCompletar("seleccion_proveedores", $url_q);
+    }
+
+    exit;
+/*** Mostrar los datos de la cuenta ***/
+} elseif (!empty($url_cargarCuenta)) {
+    $cuenta       = $url_cuenta;
+    $consulta     = SQL::seleccionar(array("cuentas_bancarias"), array("*"), "numero='$cuenta'");
+    $datos_cuenta = SQL::filaEnObjeto($consulta);
+    $banco        = $datos_cuenta->codigo_banco;
+    $sucursal     = $datos_cuenta->codigo_sucursal;
+
+    $nombre_banco = SQL::obtenerValor("bancos","descripcion","codigo='$banco'");
+    $tercero      = SQL::obtenerValor("sucursales","nombre","codigo='$sucursal'");
+
+    if($nombre_banco){
+        $datos = array(
+            $nombre_banco,
+            $tercero
+        );
+    }else{
+        $datos = "";
+    }
+    
+    HTTP::enviarJSON($datos);
+    exit; 
+
+/*** Mostrar los datos de la cuenta ***/
+} elseif (!empty($url_cargarCuentaProveedor)) {
+    $llave             = explode("-", $url_nit_proveedor);
+    $url_nit_proveedor = $llave[0];
+
+    $lista = HTML::generarDatosLista("cuentas_bancarias_proveedores","codigo_banco","cuenta","documento_identidad_proveedor = '".$url_nit_proveedor."'");
+    
+    if(empty($lista)){
+        $lista = array("0" => $textos["PROVEEDOR_SIN_CUENTA"]);
+    }
+
+    HTTP::enviarJSON($lista);
+    exit;
+}
+/*** Mostrar los conceptos de tesoreria ***/
+if(isset($url_recargar_conceptos)){
+    
+    $lista = HTML::generarDatosLista("conceptos_tesoreria","codigo","nombre_concepto","codigo_grupo_tesoreria = '".$url_codigo_grupo."'");
+    
+    if(empty($lista)){
+        $lista = array("0" => $textos["CONCEPTO_SIN_GRUPO"]);
+    }
+
+    HTTP::enviarJSON($lista);
     exit;
 }
 
@@ -42,34 +104,65 @@ if (!empty($url_generar)) {
     $error    = "";
     $titulo   = $componente->nombre;
     
-    $consulta_conceptos_tesoreria = SQL::seleccionar(array("grupos_tesoreria"),array("*"),"codigo>0");
+    $consulta_conceptos_tesoreria = SQL::seleccionar(array("conceptos_tesoreria"),array("*"),"codigo>0");
     if (SQL::filasDevueltas($consulta_conceptos_tesoreria)){
 
         //Asignar codigo siguiente de la tabla 
-        $codigo = SQL::obtenerValor("conceptos_tesoreria","MAX(codigo)","codigo>0");
+        $codigo = SQL::obtenerValor("movimientos_tesoreria","MAX(codigo)","codigo>0");
 
         if ($codigo){
             $codigo++;
         } else {
             $codigo = 1;
         }
-        $grupos    = HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo > 0");
-        $conceptos = HTML::generarDatosLista("seleccion_conceptos_tesoreria", "codigo", "nombre","grupo_tesoreria = '".array_shift(array_keys($grupos))."'");
+        $grupos    = HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo>0");
+        $conceptos = HTML::generarDatosLista("conceptos_tesoreria", "codigo_grupo_tesoreria", "nombre_concepto","codigo_grupo_tesoreria = '".array_shift(array_keys($grupos))."'");
     
          /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
                 HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, $codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
                 
-                HTML::listaSeleccionSimple("*codigo_grupo", $textos["GRUPO_TESORERIA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo != 0"), "", array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onBlur" => "validarItem(this);")),
+                HTML::listaSeleccionSimple("*codigo_grupo", $textos["GRUPO_TESORERIA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo"), "", array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onChange" => "verificarConceptos();")),
 
-                HTML::listaSeleccionSimple("*codigo_concepto", $textos["CONCEPTO_TESORERIA"], $conceptos, "")
+                HTML::listaSeleccionSimple("*codigo_concepto", $textos["CONCEPTO_TESORERIA"], $concepto, "")
+            ),
+            array(
+                HTML::agrupador(
+                    array(
+                        array(
+                            HTML::campoTextoCorto("*selector3",$textos["NUMERO_CUENTA"], 15, 15, "", array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "autocompletable", "onChange"=>"cargarCuenta()")),
+
+                            HTML::campoTextoCorto("banco", $textos["BANCO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_BANCO"],"onBlur" => "validarItem(this);")),
+
+                            HTML::campoTextoCorto("tercero", $textos["TERCERO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_TERCERO"],"onBlur" => "validarItem(this);"))
+                        )
+                    ),
+                    $textos["CUENTA_ORIGEN"]
+                )
+            ),
+            array(
+                HTML::agrupador(
+                    array(
+                        array(
+                            HTML::campoTextoCorto("selector4",$textos["PROVEEDOR"], 45, 45, "", array("title"=>$textos["AYUDA_PROVEEDOR"],"class" => "autocompletable oculto", "onBlur"=>"cargarCuentaProveedor()")),
+
+                            HTML::listaSeleccionSimple("cuenta_destino", $textos["CUENTA_DESTINO"], HTML::generarDatosLista("cuentas_bancarias_proveedores", "documento_identidad_proveedor", "cuenta","documento_identidad_proveedor = 0"), "", array("title" => $textos["AYUDA_CUENTA_DESTINO"], "class" => "oculto","onChange" => "cargarCuentaProveedor();")),
+                        )
+                    ),
+                    $textos["CUENTA_DESTINO"]
+                )
             ),
             array(    
                 HTML::campoTextoCorto("selector2", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
             ),
             array(
-                HTML::campoTextoCorto("*nombre", $textos["NOMBRE"], 50, 60, "", array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);"))
+                HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
+
+                HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this)"))
+            ),
+            array(
+                HTML::campoTextoCorto("*observaciones", $textos["OBSERVACIONES"], 75, 254, "", array("title" => $textos["AYUDA_OBSERVACIONES"]))
             )
         );
 
@@ -81,7 +174,7 @@ if (!empty($url_generar)) {
         $contenido = HTML::generarPestanas($formularios, $botones);
     } else {
         $contenido = "";
-        $error     = $textos["CREAR_GRUPOS_TESORERIA"];
+        $error     = $textos["CREAR_CONCEPTOS_TESORERIA"];
     }
 
     /*** Enviar datos para la generacion del formulario al script que origino la peticion ***/
@@ -97,19 +190,10 @@ if (!empty($url_generar)) {
 
     /*** Validar codigo ***/
     if ($url_item == "codigo") {
-        $existe = SQL::existeItem("conceptos_tesoreria", "codigo", $url_valor, "codigo != '0'");
+        $existe = SQL::existeItem("movimientos_tesoreria", "codigo", $url_valor, "codigo != '0'");
 
         if ($existe) {
             $respuesta = $textos["ERROR_EXISTE_CODIGO"];
-        }
-    }
-
-    /*** Validar nombre ***/
-    if ($url_item == "nombre") {
-        $existe = SQL::existeItem("conceptos_tesoreria", "nombre_concepto", $url_valor, "nombre_concepto !=''");
-
-        if ($existe) {
-            $respuesta = $textos["ERROR_EXISTE_NOMBRE"];
         }
     }
 
@@ -127,32 +211,76 @@ if (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["CODIGO_VACIO"];
 
-    }elseif(empty($forma_nombre)){
+    } elseif(empty($forma_selector3)){
         $error   = true;
-        $mensaje = $textos["NOMBRE_VACIO"];
+        $mensaje = $textos["CUENTA_VACIO"];
 
-    }elseif(SQL::existeItem("conceptos_tesoreria", "codigo", $forma_codigo,"codigo !=''")){
+    } elseif(empty($forma_fecha_movimiento)){
+        $error   = true;
+        $mensaje = $textos["FECHA_VACIO"];
+
+    } elseif(empty($forma_valor)){
+        $error   = true;
+        $mensaje = $textos["VALOR_VACIO"];
+
+    } elseif(SQL::existeItem("movimientos_tesoreria", "codigo", $forma_codigo,"codigo !=''")){
         $error   = true;
         $mensaje = $textos["ERROR_EXISTE_CODIGO"];
 
-    }elseif(SQL::existeItem("conceptos_tesoreria", "nombre_concepto", $forma_nombre,"nombre_concepto !=''")){
-        $error   = true;
-        $mensaje = $textos["ERROR_EXISTE_NOMBRE"];
-
     } else {
+        $sentido                       = SQL::obtenerValor("conceptos_tesoreria","sentido","codigo='$forma_codigo_concepto'");
+        $llave                         = explode("-", $forma_selector4);
+        $documento_identidad_proveedor = $llave[0];
+
+        if(!$forma_selector2){
+            $forma_selector2 = "";
+        
+        } elseif(!$forma_cuenta_destino){
+            $forma_cuenta_destino = "";
+
+        } elseif(!$forma_selector4){
+            $documento_identidad_proveedor = "";
+        }
+
+        /*** Quitar separador de miles a un numero ***/
+        function quitarMiles($cadena){
+            $valor = array();
+            for ($i = 0; $i < strlen($cadena); $i++) {
+                if (substr($cadena, $i, 1) != ".") {
+                    $valor[$i] = substr($cadena, $i, 1);
+                }
+            }
+            $valor = implode($valor);
+            return $valor;
+        }
+
+        $forma_valor = quitarMiles($forma_valor);
+        $forma_valor = quitarMiles($forma_valor);
+
         /*** Insertar datos ***/
         $datos = array(
             "codigo"                       => $forma_codigo,
+            "sentido"                      => $sentido,
+            "codigo_proyecto"              => $forma_selector2,
             "codigo_grupo_tesoreria"       => $forma_codigo_grupo,
-            "nombre_concepto"              => $forma_nombre
+            "codigo_concepto_tesoreria"    => $forma_codigo_concepto,
+            "cuenta_proveedor"             => $forma_cuenta_destino,
+            "cuenta_origen"                => $forma_selector3,
+            "valor_movimiento"             => $forma_valor,
+            "documento_identidad_tercero"  => $documento_identidad_proveedor,
+            "fecha_registra"               => $forma_fecha_movimiento,
+            "codigo_usuario_registra"      => $forma_sesion_id_usuario_ingreso,
+            "observaciones"                => $forma_observaciones
         );
-        $insertar = SQL::insertar("conceptos_tesoreria", $datos);
+
+        $insertar = SQL::insertar("movimientos_tesoreria", $datos);
 
         /*** Error de insercion ***/
         if (!$insertar) {
             $error   = true;
             $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
         }
+
     }
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
     $respuesta    = array();

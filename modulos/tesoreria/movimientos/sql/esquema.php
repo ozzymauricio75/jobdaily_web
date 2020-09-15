@@ -27,7 +27,7 @@ $borrarSiempre = false;
 
 // Definición de tablas
 $tablas["saldos_movimientos"]  = array(
-    "codigo"                      => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
+    "codigo"                      => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
     "codigo_movimiento"           => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo de la tabla movimientos de tesoreria'",
     "cuenta_origen"               => "VARCHAR(30) NULL COMMENT 'Numero de la cuenta bancaria origen'",
     "saldo"                       => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Valor total del movimiento'",
@@ -37,7 +37,7 @@ $tablas["saldos_movimientos"]  = array(
 );
 
 $tablas["movimientos_tesoreria"]  = array(
-    "codigo"                      => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
+    "codigo"                      => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
     "sentido"                     => "ENUM('D','C') COMMENT 'Indicador de sentido del movimiento: D=Debito, C=Credito'",
     "codigo_proyecto"             => "INT(9) NULL COMMENT 'Codigo interno del proyecto'",
     "codigo_grupo_tesoreria"      => "SMALLINT(3) NOT NULL COMMENT 'Codigo interno del grupo tesoreria'",
@@ -46,7 +46,7 @@ $tablas["movimientos_tesoreria"]  = array(
     "cuenta_origen"               => "VARCHAR(30) NULL COMMENT 'Numero de la cuenta bancaria origen'",
     "valor_movimiento"            => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Valor total del movimiento'",
     "documento_identidad_tercero" => "VARCHAR(12) NULL COMMENT 'Número del documento de identidad del tercero'",
-    "fecha_registra"              => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
+    "fecha_registra"              => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema'",
     "codigo_usuario_registra"     => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genera el registro'",
     "observaciones"               => "VARCHAR(255) COMMENT 'Observacion general del movimiento'"
 );
@@ -135,14 +135,14 @@ $vistas = array(
             job_grupos_tesoreria.nombre_grupo AS GRUPO_TESORERIA,
             job_conceptos_tesoreria.nombre_concepto AS CONCEPTO_TESORERIA,
             job_movimientos_tesoreria.cuenta_origen AS CUENTA_ORIGEN,
-            job_movimientos_tesoreria.valor_movimiento AS VALOR_MOVIMIENTO,
+            FORMAT(job_movimientos_tesoreria.valor_movimiento,0) AS VALOR_MOVIMIENTO,
             job_movimientos_tesoreria.fecha_registra AS FECHA_REGISTRO,
             job_movimientos_tesoreria.observaciones AS OBSERVACIONES
         FROM job_movimientos_tesoreria,
              job_grupos_tesoreria,
              job_conceptos_tesoreria   
-        WHERE job_grupos_tesoreria.nombre_grupo = job_movimientos_tesoreria.codigo_grupo_tesoreria
-        AND   job_conceptos_tesoreria.nombre_concepto = job_movimientos_tesoreria.codigo_concepto_tesoreria 
+        WHERE job_grupos_tesoreria.codigo = job_movimientos_tesoreria.codigo_grupo_tesoreria
+        AND   job_conceptos_tesoreria.codigo = job_movimientos_tesoreria.codigo_concepto_tesoreria 
         AND   job_movimientos_tesoreria.codigo != 0;"
     ),
     array(
@@ -158,8 +158,8 @@ $vistas = array(
         FROM job_movimientos_tesoreria,
              job_grupos_tesoreria,
              job_conceptos_tesoreria   
-        WHERE job_grupos_tesoreria.nombre_grupo = job_movimientos_tesoreria.codigo_grupo_tesoreria
-        AND   job_conceptos_tesoreria.nombre_concepto = job_movimientos_tesoreria.codigo_concepto_tesoreria 
+        WHERE job_grupos_tesoreria.codigo = job_movimientos_tesoreria.codigo_grupo_tesoreria
+        AND   job_conceptos_tesoreria.codigo = job_movimientos_tesoreria.codigo_concepto_tesoreria 
         AND   job_movimientos_tesoreria.codigo != 0;"
     )
 )
