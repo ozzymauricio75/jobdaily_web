@@ -143,7 +143,10 @@ $vistas = array(
              job_conceptos_tesoreria   
         WHERE job_grupos_tesoreria.codigo = job_movimientos_tesoreria.codigo_grupo_tesoreria
         AND   job_conceptos_tesoreria.codigo = job_movimientos_tesoreria.codigo_concepto_tesoreria 
-        AND   job_movimientos_tesoreria.codigo != 0;"
+        AND   job_movimientos_tesoreria.codigo != 0 
+        GROUP BY 
+              job_movimientos_tesoreria.codigo
+        ORDER BY job_movimientos_tesoreria.codigo ASC;"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_movimientos_tesoreria AS

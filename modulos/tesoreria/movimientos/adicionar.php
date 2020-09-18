@@ -77,7 +77,7 @@ if (isset($url_completar)) {
     $llave             = explode("-", $url_nit_proveedor);
     $url_nit_proveedor = $llave[0];
 
-    $lista = HTML::generarDatosLista("cuentas_bancarias_proveedores","codigo_banco","cuenta","documento_identidad_proveedor = '".$url_nit_proveedor."'");
+    $lista = HTML::generarDatosLista("cuentas_bancarias_proveedores","cuenta","cuenta","documento_identidad_proveedor = '".$url_nit_proveedor."'");
     
     if(empty($lista)){
         $lista = array("0" => $textos["PROVEEDOR_SIN_CUENTA"]);
@@ -144,25 +144,32 @@ if (!empty($url_generar)) {
             array(
                 HTML::agrupador(
                     array(
+                        array(    
+                            HTML::campoTextoCorto("selector2", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
+                        ),
                         array(
-                            HTML::campoTextoCorto("selector4",$textos["PROVEEDOR"], 45, 45, "", array("title"=>$textos["AYUDA_PROVEEDOR"],"class" => "autocompletable oculto", "onBlur"=>"cargarCuentaProveedor()")),
+                            HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
 
-                            HTML::listaSeleccionSimple("cuenta_destino", $textos["CUENTA_DESTINO"], HTML::generarDatosLista("cuentas_bancarias_proveedores", "documento_identidad_proveedor", "cuenta","documento_identidad_proveedor = 0"), "", array("title" => $textos["AYUDA_CUENTA_DESTINO"], "class" => "oculto","onChange" => "cargarCuentaProveedor();")),
+                            HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this)"))
+                        ),
+                        array(
+                            HTML::campoTextoCorto("*observaciones", $textos["OBSERVACIONES"], 75, 254, "", array("title" => $textos["AYUDA_OBSERVACIONES"]))
+                        )
+                    ),
+                    $textos["DATOS_MOVIMIENTO"]
+                )
+            ),
+            array(
+                HTML::agrupador(
+                    array(
+                        array(
+                            HTML::campoTextoCorto("selector4",$textos["PROVEEDOR"], 45, 45, "", array("title"=>$textos["AYUDA_PROVEEDOR"],"class" => "autocompletable", "onBlur"=>"cargarCuentaProveedor()")),
+
+                            HTML::listaSeleccionSimple("cuenta_destino", $textos["CUENTA_DESTINO"], HTML::generarDatosLista("cuentas_bancarias_proveedores", "documento_identidad_proveedor", "cuenta","documento_identidad_proveedor = 0"), "", array("title" => $textos["AYUDA_CUENTA_DESTINO"], "onChange" => "cargarCuentaProveedor();")),
                         )
                     ),
                     $textos["CUENTA_DESTINO"]
                 )
-            ),
-            array(    
-                HTML::campoTextoCorto("selector2", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
-            ),
-            array(
-                HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
-
-                HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this)"))
-            ),
-            array(
-                HTML::campoTextoCorto("*observaciones", $textos["OBSERVACIONES"], 75, 254, "", array("title" => $textos["AYUDA_OBSERVACIONES"]))
             )
         );
 
@@ -254,8 +261,9 @@ if (!empty($url_generar)) {
             return $valor;
         }
 
-        $forma_valor = quitarMiles($forma_valor);
-        $forma_valor = quitarMiles($forma_valor);
+        $forma_valor      = quitarMiles($forma_valor);
+        $forma_valor      = quitarMiles($forma_valor);
+        $cuenta_proveedor = SQL::obtenerValor("cuentas_bancarias_proveedores","cuenta","documento_identidad_proveedor='$documento_identidad_proveedor'");
 
         /*** Insertar datos ***/
         $datos = array(

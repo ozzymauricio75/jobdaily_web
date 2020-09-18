@@ -34,7 +34,7 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
-        $vistaConsulta = "conceptos_tesoreria";
+        $vistaConsulta = "movimientos_tesoreria";
         $columnas      = SQL::obtenerColumnas($vistaConsulta);
         $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
         $datos         = SQL::filaEnObjeto($consulta);
@@ -43,7 +43,22 @@ if (!empty($url_generar)) {
         $titulo        = $componente->nombre;
 
         /*** Obtener valores ***/
-        $grupo_tesoreria = SQL::obtenerValor("grupos_tesoreria","nombre_grupo","codigo = '$datos->codigo_grupo_tesoreria'");
+        $grupo_tesoreria    = SQL::obtenerValor("grupos_tesoreria","nombre_grupo","codigo='$datos->codigo_grupo_tesoreria'");
+        $concepto_tesoreria = SQL::obtenerValor("conceptos_tesoreria","nombre_concepto","codigo='$datos->codigo_concepto_tesoreria'");
+        $sucursal           = SQL::obtenerValor("cuentas_bancarias","codigo_sucursal","numero='$datos->cuenta_origen'");
+        $sucursal           = SQL::obtenerValor("sucursales","nombre","codigo='$sucursal'");
+        $nit_proveedor      = SQL::obtenerValor("cuentas_bancarias_proveedores","documento_identidad_proveedor","cuenta='$datos->cuenta_proveedor'");
+        $tipo_persona       = SQL::obtenerValor("terceros","tipo_persona","documento_identidad='$proveedor'");
+
+        if($tipo_persona==1){
+            $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$nit_proveedor."'");
+            $segundo_nombre   = SQL::obtenerValor("terceros", "segundo_nombre", "documento_identidad = '".$nit_proveedor."'");
+            $primer_apellido  = SQL::obtenerValor("terceros", "primer_apellido", "documento_identidad = '".$nit_proveedor."'");
+            $segundo_apellido = SQL::obtenerValor("terceros", "segundo_apellido", "documento_identidad = '".$nit_proveedor."'");
+            $nombre_proveedor = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
+        }else{
+           $nombre_proveedor  = SQL::obtenerValor("terceros", "razon_social", "documento_identidad = '".$nit_proveedor."'"); 
+        }
 
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
@@ -51,10 +66,16 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo)
             ),
             array(
-                HTML::mostrarDato("nombre_grupo", $textos["GRUPO_TESORERIA"], $grupo_tesoreria)
+                HTML::mostrarDato("nombre_grupo", $textos["GRUPO_TESORERIA"], $grupo_tesoreria),
+                HTML::mostrarDato("nombre_concepto", $textos["CONCEPTO_TESORERIA"], $concepto_tesoreria)
             ),
             array(
-                HTML::mostrarDato("nombre", $textos["NOMBRE"], $datos->nombre_concepto)
+                HTML::mostrarDato("cuenta_origen", $textos["CUENTA_ORIGEN"], $datos->cuenta_origen),
+                HTML::mostrarDato("sucursal", $textos["TERCERO"], $sucursal)
+            ),
+            array(    
+                HTML::mostrarDato("cuenta_destino", $textos["CUENTA_DESTINO"], $datos->cuenta_proveedor),
+                HTML::mostrarDato("proveedor", $textos["TERCERO"], $nombre_proveedor)
             )
         );
         

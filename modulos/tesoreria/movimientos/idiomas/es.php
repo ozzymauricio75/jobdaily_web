@@ -47,6 +47,7 @@ $textos = array(
     "FECHA_REGISTRO"                => "Fecha registro",
     "SALDO_INICIAL"                 => "Saldo inicial",
     "VALOR_MOVIMIENTO"              => "Valor movimiento",
+    "DATOS_MOVIMIENTO"              => "Datos del movimiento",
     "CONCEPTO_SIN_GRUPO"            => "NO existe grupo con ese concepto",
     "BANCO"                         => "Banco",
     "TERCERO"                       => "Tercero",
