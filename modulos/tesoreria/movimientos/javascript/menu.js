@@ -2,6 +2,59 @@
         ejecutarFuncionesGlobales();
     });
 
+    function activaCamposCuentas(){
+        var destino = $('#URLFormulario').val();
+
+        if ($(".por_cuenta").is(':checked')){
+            $('.por_banco').parent().show();
+            $('#por_cuenta_activo').val(2);
+
+        }else{
+            $('.por_banco').val('');
+            $('.por_banco').parent().hide();
+        }
+    }
+
+    function activaCamposProyectos(){
+        var destino = $('#URLFormulario').val();
+
+        if ($(".por_proyecto").is(':checked')){
+            $('.por_proyecto_seleccionado').parent().show();
+            $('#por_proyecto_activo').val(2);
+
+        }else{
+            $('.por_proyecto_seleccionado').val('');
+            $('.por_proyecto_seleccionado').parent().hide();
+        }
+    }
+
+    function activaCamposProveedores(){
+        var destino = $('#URLFormulario').val();
+
+        if ($(".por_proveedor").is(':checked')){
+            $('.por_proveedor_seleccionado').parent().show();
+            $('#por_proveedor_activo').val(2);
+            
+        }else{
+            $('.por_proveedor_seleccionado').val('');
+            $('.por_proveedor_seleccionado').parent().hide();
+        }
+    }
+
+    function activaCamposConceptos(){
+        var destino = $('#URLFormulario').val();
+
+        if ($(".por_concepto").is(':checked')){
+            $('.por_concepto_seleccionado').parent().show();
+            $('#por_concepto_activo').val(2);
+            
+        }else{
+            $('.por_concepto_seleccionado').val('');
+            $('#codigo_concepto').text('');
+            $('.por_concepto_seleccionado').parent().hide();
+        }
+    }
+
     function cargarCuenta() {
         var destino     = $('#URLFormulario').val();
         var cuenta      = $('#selector3').val();
@@ -12,10 +65,25 @@
                 $('#tercero').val(datos[1]);
             }else{
                 alert('No existen datos con ese numero de cuenta');
-                $('#selector3').focus();
                 $('#selector3').val('');
                 $('#banco').val('');
                 $('#tercero').val('');
+                $('#selector3').focus();
+            }
+        });
+    }
+
+    function saldoCuenta() {
+        var destino     = $('#URLFormulario').val();
+        var cuenta      = $('#selector3').val();
+
+        $.getJSON(destino, {saldoCuenta: true, cuenta: cuenta}, function(datos) {
+            if(datos==0){
+                alert('No existe saldo inicial de la cuenta origen');
+                $('#selector3').val('');
+                $('#banco').val('');
+                $('#tercero').val('');
+                $('#selector3').focus();
             }
         });
     }

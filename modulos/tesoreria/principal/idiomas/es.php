@@ -28,6 +28,7 @@
 $textos = array(
     "SUBMMOTE"  => "Movimientos tesoreria",
     "SUBMCRED"  => "Creditos bancos",
+    "SUBMREPO"  => "Reportes",
     "SUBMDCTE"  => "Datos de control" 
 );
 ?>

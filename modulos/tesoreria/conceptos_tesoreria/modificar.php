@@ -57,7 +57,7 @@ if (!empty($url_generar)) {
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, $datos->codigo, array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)"))
+                HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, $datos->codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)"))
             ),
             array(
                 HTML::listaSeleccionSimple("*codigo_grupo", $textos["EMPRESA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo != 0"), $datos->grupo_tesoreria, array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onBlur" => "validarItem(this);"))

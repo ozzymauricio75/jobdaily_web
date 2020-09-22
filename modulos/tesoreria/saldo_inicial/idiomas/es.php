@@ -51,6 +51,7 @@ $textos = array(
     "AYUDA_SALDO_INICIAL"           => "Valor del saldo inicial de la cuenta",
     "CREAR_CUENTAS_BANCO"           => "Error, debe existir cuentas bancarias creadas",
     "ERROR_EXISTE_NUMERO"           => "Error, ya existe es numero de cuenta",
+    "ERROR_EXISTE_SALDO"            => "Error, ya existe un saldo inicial en esa cuenta, Verifique!!",
     "CODIGO_VACIO"                  => "Error, codigo vacio",
     "SALDO_VACIO"                   => "Error, saldo vacio",
     "FECHA_VACIO"                   => "Error, fecha saldo vacia",

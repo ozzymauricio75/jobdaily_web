@@ -72,6 +72,21 @@ if (isset($url_completar)) {
     HTTP::enviarJSON($datos);
     exit; 
 
+    /*** Verificar si existe saldo inicial ***/
+} elseif (!empty($url_saldoCuenta)) {
+    $cuenta       = $url_cuenta;
+    //$consulta     = SQL::seleccionar(array("saldo_inicial_cuentas"), array("*"), "cuenta_origen='$cuenta'");
+    $consulta     = SQL::obtenerValor("saldo_inicial_cuentas","saldo","cuenta_origen='$cuenta'");
+
+    if($consulta){
+        $indicador = 1;
+    }else{
+        $indicador = 0;
+    }
+    
+    HTTP::enviarJSON($indicador);
+    exit; 
+
 /*** Mostrar los datos de la cuenta ***/
 } elseif (!empty($url_cargarCuentaProveedor)) {
     $llave             = explode("-", $url_nit_proveedor);
@@ -131,7 +146,7 @@ if (!empty($url_generar)) {
                 HTML::agrupador(
                     array(
                         array(
-                            HTML::campoTextoCorto("*selector3",$textos["NUMERO_CUENTA"], 15, 15, "", array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "autocompletable", "onChange"=>"cargarCuenta()")),
+                            HTML::campoTextoCorto("*selector3",$textos["NUMERO_CUENTA"], 15, 15, "", array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "autocompletable", "onChange"=>"cargarCuenta(),saldoCuenta()")),
 
                             HTML::campoTextoCorto("banco", $textos["BANCO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_BANCO"],"onBlur" => "validarItem(this);")),
 
@@ -165,7 +180,7 @@ if (!empty($url_generar)) {
                         array(
                             HTML::campoTextoCorto("selector4",$textos["PROVEEDOR"], 45, 45, "", array("title"=>$textos["AYUDA_PROVEEDOR"],"class" => "autocompletable", "onBlur"=>"cargarCuentaProveedor()")),
 
-                            HTML::listaSeleccionSimple("cuenta_destino", $textos["CUENTA_DESTINO"], HTML::generarDatosLista("cuentas_bancarias_proveedores", "documento_identidad_proveedor", "cuenta","documento_identidad_proveedor = 0"), "", array("title" => $textos["AYUDA_CUENTA_DESTINO"], "onChange" => "cargarCuentaProveedor();")),
+                            HTML::listaSeleccionSimple("cuenta_destino", $textos["CUENTA_DESTINO"], HTML::generarDatosLista("cuentas_bancarias_proveedores", "cuenta", "documento_identidad_proveedor","documento_identidad_proveedor = 0"), "", array("title" => $textos["AYUDA_CUENTA_DESTINO"])),
                         )
                     ),
                     $textos["CUENTA_DESTINO"]
@@ -230,10 +245,6 @@ if (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["VALOR_VACIO"];
 
-    } elseif(SQL::existeItem("movimientos_tesoreria", "codigo", $forma_codigo,"codigo !=''")){
-        $error   = true;
-        $mensaje = $textos["ERROR_EXISTE_CODIGO"];
-
     } else {
         $sentido                       = SQL::obtenerValor("conceptos_tesoreria","sentido","codigo='$forma_codigo_concepto'");
         $llave                         = explode("-", $forma_selector4);
@@ -261,9 +272,19 @@ if (!empty($url_generar)) {
             return $valor;
         }
 
-        $forma_valor      = quitarMiles($forma_valor);
-        $forma_valor      = quitarMiles($forma_valor);
-        $cuenta_proveedor = SQL::obtenerValor("cuentas_bancarias_proveedores","cuenta","documento_identidad_proveedor='$documento_identidad_proveedor'");
+        $forma_valor = quitarMiles($forma_valor);
+        $forma_valor = quitarMiles($forma_valor);
+        
+        /*** Verificar saldos iniciales ****/
+        $codigo_saldos_movimientos = SQL::obtenerValor("saldos_movimientos","MAX(codigo)","cuenta_origen='$forma_selector3'");
+        //$existe_movimiento = SQL::obtenerValor("saldos_movimientos","saldo",$condicion);
+
+        if(!$codigo_saldos_movimientos){
+            $saldo_inicial  = SQL::obtenerValor("saldo_inicial_cuentas","saldo","cuenta_origen='$forma_selector3'");
+            $saldo_anterior = $saldo_inicial; 
+        } else{
+            $saldo_anterior = SQL::obtenerValor("saldos_movimientos","saldo","codigo='$codigo_saldos_movimientos'");
+        }
 
         /*** Insertar datos ***/
         $datos = array(
@@ -278,17 +299,28 @@ if (!empty($url_generar)) {
             "documento_identidad_tercero"  => $documento_identidad_proveedor,
             "fecha_registra"               => $forma_fecha_movimiento,
             "codigo_usuario_registra"      => $forma_sesion_id_usuario_ingreso,
-            "observaciones"                => $forma_observaciones
+            "observaciones"                => $forma_observaciones,
+            "estado"                       => 0
         );
-
         $insertar = SQL::insertar("movimientos_tesoreria", $datos);
 
         /*** Error de insercion ***/
         if (!$insertar) {
             $error   = true;
             $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
+        }else{
+            /*** Grabar nuevo saldo en la tabla saldos_movimientos ****/
+            $nuevo_saldo = $saldo_anterior - $forma_valor;
+            $datos_saldos_movimientos = array(
+                "codigo_movimiento"       => $forma_codigo,
+                "cuenta_origen"           => $forma_selector3,
+                "saldo"                   => $nuevo_saldo,
+                "fecha_saldo"             => $forma_fecha_movimiento,
+                "codigo_usuario_registra" => $forma_sesion_id_usuario_ingreso,
+                "observaciones"           => $forma_observaciones
+            );
+            $insertar_saldo = SQL::insertar("saldos_movimientos", $datos_saldos_movimientos);     
         }
-
     }
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
     $respuesta    = array();

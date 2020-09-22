@@ -28,7 +28,7 @@
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
 $vistaMenu     = "menu_movimientos_tesoreria";
 $vistaBuscador = "buscador_movimientos_tesoreria";
-$alineacion    = array("I","I","I","I","D","I","I");
+$alineacion    = array("I","I","I","I","D","I","I","I");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {
@@ -39,8 +39,10 @@ if (isset($url_completar)) {
 /*** Generar botones de comandos ***/
 $botones  = HTML::boton("ADICMVTE",$textos["ADICIONAR"],"ejecutarComando(this, 650, 550);","adicionar");
 $botones .= HTML::boton("CONSMVTE",$textos["CONSULTAR"],"ejecutarComando(this, 650, 400);","consultar");
-$botones .= HTML::boton("MODIMVTE",$textos["MODIFICAR"],"ejecutarComando(this, 650, 400);","modificar");
-$botones .= HTML::boton("ELIMMVTE",$textos["ELIMINAR"],"ejecutarComando(this, 650, 400);","eliminar");
+$botones .= HTML::boton("MODIMVTE",$textos["MODIFICAR"],"ejecutarComando(this, 650, 550);","modificar");
+$botones .= HTML::boton("ANULMVTE",$textos["ANULAR"],"ejecutarComando(this, 650, 400);","anular");
+$botones .= HTML::boton("REPOMVTE",$textos["REPORTE"],"ejecutarComando(this, 790, 600);","reporte");
+//$botones .= HTML::boton("ELIMMVTE",$textos["ELIMINAR"],"ejecutarComando(this, 650, 400);","eliminar");
 //$botones .= HTML::boton("LISTCOTE",$textos["EXPORTAR"],"ejecutarComando(this, 420, 400);","exportar");
 
 /*** Obtener el número de la página actual ***/
@@ -53,16 +55,22 @@ if (empty($url_pagina)) {
 /*** Datos por defecto para realizar la consulta ***/
 $condicion      = SQL::evaluarBusqueda($vistaBuscador, $vistaMenu);
 $agrupamiento   = "";
-$ordenamiento   = SQL::ordenColumnas();
+$ordenamiento   = SQL::ordenColumnas("CODIGO DESC");
 $numeroFilas    = SQL::$filasPorConsulta;
 $columnas       = SQL::obtenerColumnas($vistaMenu);
 $totalRegistros = SQL::filasDevueltas(SQL::seleccionar(array($vistaMenu), $columnas, $condicion, $agrupamiento, $ordenamiento));
 $paginador      = HTML::insertarPaginador($totalRegistros, $paginaActual, $numeroFilas);
 $registros      = HTML::imprimirRegistros($totalRegistros, $paginaActual, $numeroFilas);
 
+// Definir colores para los estados //
+$estados["ESTADO_"] = array(
+    "0" => "estadoVerde",
+    "1" => "estadoRojo"
+);
+
 /*** Ejecutar la consulta y generar tabla a partir de los resultados ***/
 $consulta     = SQL::seleccionar(array($vistaMenu), $columnas, $condicion, $agrupamiento, $ordenamiento, $paginaActual, $numeroFilas);
-$tabla        = HTML::generarTabla($columnas, $consulta, $alineacion);
+$tabla        = HTML::generarTabla($columnas, SQL::recursoEnArreglo($consulta, $estados), $alineacion);
 
 /*** Generar y enviar plantilla completa si la petición no se realiza vía AJAX ***/
 if (empty($url_origen) || ($url_origen != "ajax")) {

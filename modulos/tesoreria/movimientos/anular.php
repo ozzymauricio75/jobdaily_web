@@ -34,15 +34,12 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
-        $vistaConsulta = "movimientos_tesoreria";
-        $columnas      = SQL::obtenerColumnas($vistaConsulta);
-        $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
-        $datos         = SQL::filaEnObjeto($consulta);
-        $estado        = $datos->estado;
+        $vistaConsulta  = "movimientos_tesoreria";
+        $columnas       = SQL::obtenerColumnas($vistaConsulta);
+        $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
+        $datos          = SQL::filaEnObjeto($consulta);
+        $estado         = $datos->estado;
         
-        $error         = "";
-        $titulo        = $componente->nombre;
-
         /*** Obtener valores ***/
         $grupo_tesoreria    = SQL::obtenerValor("grupos_tesoreria","nombre_grupo","codigo='$datos->codigo_grupo_tesoreria'");
         $concepto_tesoreria = SQL::obtenerValor("conceptos_tesoreria","nombre_concepto","codigo='$datos->codigo_concepto_tesoreria'");
@@ -61,6 +58,9 @@ if (!empty($url_generar)) {
         } else{
            $nombre_proveedor  = SQL::obtenerValor("terceros", "razon_social", "documento_identidad = '".$datos->documento_identidad_tercero."'"); 
         }
+
+        $error  = "";
+        $titulo = $componente->nombre;
 
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
@@ -86,8 +86,13 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
             )
         );
-        
-        $contenido = HTML::generarPestanas($formularios);
+
+        /*** Definición de botones ***/
+        $botones = array(
+            HTML::boton("botonAceptar", $textos["ACEPTAR"], "eliminarItem('$url_id');", "aceptar")
+        );
+
+        $contenido = HTML::generarPestanas($formularios, $botones);
     }
 
     /*** Enviar datos para la generación del formulario al script que originó la petición ***/
@@ -95,6 +100,32 @@ if (!empty($url_generar)) {
     $respuesta[0] = $error;
     $respuesta[1] = $titulo;
     $respuesta[2] = $contenido;
+    HTTP::enviarJSON($respuesta);
+
+/*** Adicionar los datos provenientes del formulario ***/
+} elseif (!empty($forma_procesar)) {
+    /*** Asumir por defecto que no hubo error ***/
+    $error   = false;
+    $mensaje = $textos["ITEM_ANULADO"];
+
+    $datos = array(
+        "estado" => "1"
+    );
+    
+    $consulta = SQL::modificar("movimientos_tesoreria", $datos, "codigo = '$forma_id'");
+
+    if ($consulta) {
+        $error    = false;
+        $mensaje  = $textos["ITEM_ANULADO"];
+    } else {
+        $error   = true;
+        $mensaje = $textos["ERROR_ANULAR_ITEM"];
+    }
+
+    /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
+    $respuesta    = array();
+    $respuesta[0] = $error;
+    $respuesta[1] = $mensaje;
     HTTP::enviarJSON($respuesta);
 }
 ?>

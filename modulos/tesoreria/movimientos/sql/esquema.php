@@ -48,7 +48,8 @@ $tablas["movimientos_tesoreria"]  = array(
     "documento_identidad_tercero" => "VARCHAR(12) NULL COMMENT 'Número del documento de identidad del tercero'",
     "fecha_registra"              => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema'",
     "codigo_usuario_registra"     => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genera el registro'",
-    "observaciones"               => "VARCHAR(255) COMMENT 'Observacion general del movimiento'"
+    "observaciones"               => "VARCHAR(255) COMMENT 'Observacion general del movimiento'",
+    "estado"                      => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->Activo 1->Anulado'",
 );
 
 // Definición de llaves primarias
@@ -124,6 +125,29 @@ $registros["componentes"] = array(
         "requiere_item"   => "1",
         "tabla_principal" => "movimientos_tesoreria",
         "tipo_enlace"     => "1"
+    ),
+    array(
+        "id"              => "ANULMVTE",
+        "padre"           => "SUBMMOTE",
+        "id_modulo"       => "TESORERIA",
+        "visible"         => "0",
+        "orden"           => "50",
+        "carpeta"         => "movimientos",
+        "archivo"         => "anular",
+        "requiere_item"   => "1",
+        "tabla_principal" => "movimientos_tesoreria",
+        "tipo_enlace"     => "1"
+    ),
+    array(
+        "id"              => "REPOMVTE",
+        "padre"           => "SUBMMOTE",
+        "id_modulo"       => "TESORERIA",
+        "visible"         => "0",
+        "orden"           => "50",
+        "carpeta"         => "movimientos",
+        "archivo"         => "reporte",
+        "global"          => "0",
+        "tipo_enlace"     => "1"
     )
 );
 
@@ -137,16 +161,14 @@ $vistas = array(
             job_movimientos_tesoreria.cuenta_origen AS CUENTA_ORIGEN,
             FORMAT(job_movimientos_tesoreria.valor_movimiento,0) AS VALOR_MOVIMIENTO,
             job_movimientos_tesoreria.fecha_registra AS FECHA_REGISTRO,
-            job_movimientos_tesoreria.observaciones AS OBSERVACIONES
+            job_movimientos_tesoreria.observaciones AS OBSERVACIONES,
+            CONCAT('ESTADO_',job_movimientos_tesoreria.estado) AS ESTADO
         FROM job_movimientos_tesoreria,
              job_grupos_tesoreria,
              job_conceptos_tesoreria   
         WHERE job_grupos_tesoreria.codigo = job_movimientos_tesoreria.codigo_grupo_tesoreria
         AND   job_conceptos_tesoreria.codigo = job_movimientos_tesoreria.codigo_concepto_tesoreria 
-        AND   job_movimientos_tesoreria.codigo != 0 
-        GROUP BY 
-              job_movimientos_tesoreria.codigo
-        ORDER BY job_movimientos_tesoreria.codigo ASC;"
+        AND   job_movimientos_tesoreria.codigo != 0;"
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_movimientos_tesoreria AS
@@ -157,7 +179,8 @@ $vistas = array(
             job_movimientos_tesoreria.cuenta_origen AS cuenta_origen,
             job_movimientos_tesoreria.valor_movimiento AS valor_movimiento,
             job_movimientos_tesoreria.fecha_registra AS fecha_registra,
-            job_movimientos_tesoreria.observaciones AS observaciones
+            job_movimientos_tesoreria.observaciones AS observaciones,
+            CONCAT('ESTADO_',job_movimientos_tesoreria.estado) AS estado
         FROM job_movimientos_tesoreria,
              job_grupos_tesoreria,
              job_conceptos_tesoreria   

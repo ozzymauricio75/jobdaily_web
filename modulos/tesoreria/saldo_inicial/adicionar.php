@@ -145,9 +145,9 @@ elseif (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["NUMERO_VACIO"];
 
-    }elseif(SQL::existeItem("saldo_inicial_cuentas", "codigo", $forma_codigo,"codigo !=''")){
+    }elseif(SQL::existeItem("saldo_inicial_cuentas", "cuenta_origen", $forma_selector1,"codigo !=''")){
         $error   = true;
-        $mensaje = $textos["ERROR_EXISTE_CODIGO"];
+        $mensaje = $textos["ERROR_EXISTE_SALDO"];
 
     } else {
         /*** Quitar separador de miles a un numero ***/
