@@ -88,6 +88,20 @@
         });
     }
 
+    function valorSaldo() {
+        var destino     = $('#URLFormulario').val();
+        var cuenta      = $('#selector3').val();
+        var valor       = $('#valor').val();
+
+        $.getJSON(destino, {valorSaldo: true, cuenta: cuenta, valor: valor}, function(datos) {
+            if(datos==0){
+                alert('El valor del movimiento es mayor que el saldo de la cuenta');
+                $('#valor').val('');
+                $('#valor').focus();
+            }
+        });
+    }
+
     function cargarCuentaProveedor() {
         var destino         = $('#URLFormulario').val();
         var nit_proveedor   = $('#selector4').val();

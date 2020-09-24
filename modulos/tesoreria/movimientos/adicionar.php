@@ -75,7 +75,6 @@ if (isset($url_completar)) {
     /*** Verificar si existe saldo inicial ***/
 } elseif (!empty($url_saldoCuenta)) {
     $cuenta       = $url_cuenta;
-    //$consulta     = SQL::seleccionar(array("saldo_inicial_cuentas"), array("*"), "cuenta_origen='$cuenta'");
     $consulta     = SQL::obtenerValor("saldo_inicial_cuentas","saldo","cuenta_origen='$cuenta'");
 
     if($consulta){
@@ -86,6 +85,45 @@ if (isset($url_completar)) {
     
     HTTP::enviarJSON($indicador);
     exit; 
+
+    /*** Verificar si el saldo es mayor que el movimiento a ingresar ***/
+} elseif (!empty($url_valorSaldo)) {
+    $cuenta       = $url_cuenta;
+    $valor        = $url_valor;
+
+    /*** Quitar separador de miles a un numero ***/
+    function quitarMiles($cadena){
+        $valor = array();
+        for ($i = 0; $i < strlen($cadena); $i++) {
+            if (substr($cadena, $i, 1) != ".") {
+                $valor[$i] = substr($cadena, $i, 1);
+            }
+        }
+        $valor = implode($valor);
+        return $valor;
+    }
+
+    $valor = quitarMiles($valor);
+    $valor = quitarMiles($valor);
+
+    /*** Verificar saldos iniciales ****/
+    $codigo_saldos_movimientos = SQL::obtenerValor("saldos_movimientos","MAX(codigo)","cuenta_origen='$cuenta'");
+
+    if(!$codigo_saldos_movimientos){
+        $saldo_inicial  = SQL::obtenerValor("saldo_inicial_cuentas","saldo","cuenta_origen='$cuenta'");
+        $saldo_anterior = $saldo_inicial; 
+    } else{
+        $saldo_anterior = SQL::obtenerValor("saldos_movimientos","saldo","codigo='$codigo_saldos_movimientos'");
+    }
+
+    if($saldo_anterior>=$valor){
+        $indicador = 1;
+    } else{
+        $indicador = 0;
+    }
+    
+    HTTP::enviarJSON($indicador);
+    exit;     
 
 /*** Mostrar los datos de la cuenta ***/
 } elseif (!empty($url_cargarCuentaProveedor)) {
@@ -146,7 +184,7 @@ if (!empty($url_generar)) {
                 HTML::agrupador(
                     array(
                         array(
-                            HTML::campoTextoCorto("*selector3",$textos["NUMERO_CUENTA"], 15, 15, "", array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "autocompletable", "onChange"=>"cargarCuenta(),saldoCuenta()")),
+                            HTML::campoTextoCorto("*selector3",$textos["NUMERO_CUENTA"], 15, 15, "", array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "autocompletable", "onChange"=>"cargarCuenta(), saldoCuenta()")),
 
                             HTML::campoTextoCorto("banco", $textos["BANCO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_BANCO"],"onBlur" => "validarItem(this);")),
 
@@ -165,7 +203,7 @@ if (!empty($url_generar)) {
                         array(
                             HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
 
-                            HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this)"))
+                            HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this),valorSaldo(this)"))
                         ),
                         array(
                             HTML::campoTextoCorto("*observaciones", $textos["OBSERVACIONES"], 75, 254, "", array("title" => $textos["AYUDA_OBSERVACIONES"]))
@@ -277,7 +315,6 @@ if (!empty($url_generar)) {
         
         /*** Verificar saldos iniciales ****/
         $codigo_saldos_movimientos = SQL::obtenerValor("saldos_movimientos","MAX(codigo)","cuenta_origen='$forma_selector3'");
-        //$existe_movimiento = SQL::obtenerValor("saldos_movimientos","saldo",$condicion);
 
         if(!$codigo_saldos_movimientos){
             $saldo_inicial  = SQL::obtenerValor("saldo_inicial_cuentas","saldo","cuenta_origen='$forma_selector3'");

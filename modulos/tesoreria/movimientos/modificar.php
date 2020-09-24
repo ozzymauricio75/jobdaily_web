@@ -81,6 +81,45 @@ if (isset($url_completar)) {
 
     HTTP::enviarJSON($lista);
     exit;
+
+/*** Verificar si el saldo es mayor que el movimiento a ingresar ***/
+} elseif (!empty($url_valorSaldo)) {
+    $cuenta       = $url_cuenta;
+    $valor        = $url_valor;
+
+    /*** Quitar separador de miles a un numero ***/
+    function quitarMiles($cadena){
+        $valor = array();
+        for ($i = 0; $i < strlen($cadena); $i++) {
+            if (substr($cadena, $i, 1) != ".") {
+                $valor[$i] = substr($cadena, $i, 1);
+            }
+        }
+        $valor = implode($valor);
+        return $valor;
+    }
+
+    $valor = quitarMiles($valor);
+    $valor = quitarMiles($valor);
+
+    /*** Verificar saldos iniciales ****/
+    $codigo_saldos_movimientos = SQL::obtenerValor("saldos_movimientos","MAX(codigo)","cuenta_origen='$cuenta'");
+
+    if(!$codigo_saldos_movimientos){
+        $saldo_inicial  = SQL::obtenerValor("saldo_inicial_cuentas","saldo","cuenta_origen='$cuenta'");
+        $saldo_anterior = $saldo_inicial; 
+    } else{
+        $saldo_anterior = SQL::obtenerValor("saldos_movimientos","saldo","codigo='$codigo_saldos_movimientos'");
+    }
+
+    if($saldo_anterior>=$valor){
+        $indicador = 1;
+    } else{
+        $indicador = 0;
+    }
+    
+    HTTP::enviarJSON($indicador);
+    exit;     
 }
 /*** Generar el formulario para la captura de datos ***/
 if (!empty($url_generar)) {
@@ -156,7 +195,8 @@ if (!empty($url_generar)) {
                         array(
                             HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, $datos->fecha_registra, array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
 
-                            HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, number_format($datos->valor_movimiento,0,',','.'), array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this)"))
+                            HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, number_format($datos->valor_movimiento,0,',','.'), array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this), valorSaldo(this)"))
+                            .HTML::campoOculto("valor_movimiento_anterior", $datos->valor_movimiento)
                         ),
                         array(
                             HTML::campoTextoCorto("observaciones", $textos["OBSERVACIONES"], 75, 254, $datos->observaciones, array("title" => $textos["AYUDA_OBSERVACIONES"]))
@@ -267,6 +307,18 @@ if (!empty($url_generar)) {
             $documento_identidad_proveedor = $cuenta_proveedor;
         }
 
+        /*** Verificar saldos movimiento ****/
+        $valor_movimiento_anterior = SQL::obtenerValor("movimientos_tesoreria","valor_movimiento","codigo='$forma_codigo'");
+        $saldos_movimientos        = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$forma_codigo'");
+
+        if($valor_movimiento_anterior>$forma_valor){
+            $diferencia  = $valor_movimiento_anterior - $forma_valor;
+            $nuevo_saldo = $saldos_movimientos + $diferencia;
+        } else{
+            $diferencia  = $forma_valor - $valor_movimiento_anterior;
+            $nuevo_saldo = $saldos_movimientos - $diferencia;
+        }
+
         /*** Insertar datos ***/
         $datos = array(
             "codigo_proyecto"              => $forma_selector2,
@@ -279,15 +331,26 @@ if (!empty($url_generar)) {
             "observaciones"                => $forma_observaciones
         );
 
-        $consulta = SQL::modificar("movimientos_tesoreria", $datos, "codigo = '$forma_codigo'");
+        $consulta = SQL::modificar("movimientos_tesoreria", $datos, "codigo='$forma_codigo'");
 		
 		/*** Error inserción ***/
         if ($consulta) {
+            /*** Grabar nuevo saldo en la tabla saldos_movimientos ****/
+            $datos_saldos_movimientos = array(
+                "codigo_movimiento"       => $forma_codigo,
+                "cuenta_origen"           => $forma_selector3,
+                "saldo"                   => $nuevo_saldo,
+                "fecha_saldo"             => $forma_fecha_movimiento,
+                "codigo_usuario_registra" => $forma_sesion_id_usuario_ingreso,
+                "observaciones"           => $forma_observaciones
+            );
+            $modificar_saldo = SQL::modificar("saldos_movimientos", $datos_saldos_movimientos, "codigo_movimiento='$forma_codigo'"); 
+            
             $error   = false;
             $mensaje = $textos["ITEM_MODIFICADO"];
-        } else {
+        } else{
             $error   = true;
-            $mensaje = $textos["ERROR_MODIFICAR_ITEM"];
+            $mensaje = $textos["ERROR_MODIFICAR_ITEM"];    
         }
     }
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/

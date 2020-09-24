@@ -51,6 +51,8 @@ if (!empty($url_generar)) {
         $tipo_persona       = SQL::obtenerValor("terceros","tipo_persona","documento_identidad='$datos->documento_identidad_tercero'");
         $valor_movimiento   = number_format($datos->valor_movimiento,0);
         $proyecto           = SQL::obtenerValor("proyectos","nombre","codigo='$datos->codigo_proyecto'");
+        $saldo              = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos->codigo'");
+        $saldo              = number_format($saldo,0);
 
         if($tipo_persona==1){
             $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$datos->documento_identidad_tercero."'");
@@ -83,7 +85,8 @@ if (!empty($url_generar)) {
             array(
                 HTML::mostrarDato("valor", $textos["VALOR_MOVIMIENTO"], "$".$valor_movimiento),
                 HTML::mostrarDato("fecha", $textos["FECHA_MOVIMIENTO"], $datos->fecha_registra),
-                HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
+                HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado]),
+                HTML::mostrarDato("saldo", $textos["SALDO_FECHA"], "$".$saldo)
             )
         );
         
