@@ -24,6 +24,11 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
+$tabla                      = "usuarios";
+$columnas                   = SQL::obtenerColumnas($tabla);
+$consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuario = '$sesion_usuario'");
+$datos                      = SQL::filaEnObjeto($consulta);
+$sesion_id_usuario_ingreso  = $datos->codigo;
 
 /*** Devolver datos para autocompletar la búsqueda ***/
 if (isset($url_completar)) {

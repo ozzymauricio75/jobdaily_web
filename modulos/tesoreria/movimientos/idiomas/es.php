@@ -32,6 +32,8 @@ $textos = array(
     "MODIMVTE"                      => "Modificar movimientos de tesoreria",
     "ELIMMVTE"                      => "Eliminar movimientos de tesoreria",
     "ANULMVTE"                      => "Anular movimientos de tesoreria",
+    "REPOMVTO"                      => "Reporte de Movimiento",
+    "PIE_PAGINA_EMPRESA"            => "Documento impreso por: Jobdaily - Trabajo Diario.",
     "REPOMVTE"                      => "Reportes de movimientos tesoreria",
     "REPORTE"                       => "Reporte",
     "BANCOS"                        => "Bancos",
@@ -105,6 +107,7 @@ $textos = array(
     "PROVEEDOR_SIN_CUENTA"          => "Error, el proveedor no tiene una cuenta de banco creada",
     "ERROR_EXISTE_NOMBRE"           => "Error, ya existe un nombre para el concepto de tesoreria",
     "ERROR_ADICIONAR_ITEM"          => "Error, No se pudo adicionar el item",
-    "ERROR_SALDO_INICIAL_CUENTA"    => "Error, No existe saldo inicial en esa cuenta, Verifique!!"
+    "ERROR_SALDO_INICIAL_CUENTA"    => "Error, No existe saldo inicial en esa cuenta, Verifique!!",
+    "ERROR_ESTADO_ANULADO"          => "Error, el registro ya esta anulado"
 );
 ?>

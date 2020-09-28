@@ -23,7 +23,32 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
+$tabla                      = "usuarios";
+$columnas                   = SQL::obtenerColumnas($tabla);
+$consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuario = '$sesion_usuario'");
+$datos                      = SQL::filaEnObjeto($consulta);
+$sesion_id_usuario_ingreso  = $datos->codigo;
 
+/*** Devolver datos para autocompletar la búsqueda ***/
+if (isset($url_completar)) {
+    if (($url_item) == "selector1") {
+        echo SQL::datosAutoCompletar("seleccion_municipios", $url_q);
+    }
+    
+    if (($url_item) == "selector2") {
+        echo SQL::datosAutoCompletar("seleccion_proyectos", $url_q);
+    }
+
+    if (($url_item) == "selector3") {
+        echo SQL::datosAutoCompletar("menu_cuentas_bancarias", $url_q);
+    }
+
+    if (($url_item) == "selector4") {
+        echo SQL::datosAutoCompletar("seleccion_proveedores", $url_q);
+    }
+
+    exit;
+}
 /*** Generar el formulario para la captura de datos ***/
 if (!empty($url_generar)) {
 
@@ -48,6 +73,8 @@ if (!empty($url_generar)) {
         $tipo_persona       = SQL::obtenerValor("terceros","tipo_persona","documento_identidad='$datos->documento_identidad_tercero'");
         $valor_movimiento   = number_format($datos->valor_movimiento,0);
         $proyecto           = SQL::obtenerValor("proyectos","nombre","codigo='$datos->codigo_proyecto'");
+        $saldo              = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos->codigo'");
+        $saldo              = number_format($saldo,0);
 
         if($tipo_persona==1){
             $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$datos->documento_identidad_tercero."'");
@@ -62,37 +89,47 @@ if (!empty($url_generar)) {
         $error  = "";
         $titulo = $componente->nombre;
 
-        /*** Definición de pestañas general ***/
-        $formularios["PESTANA_GENERAL"] = array(
-            array(
-                HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo)
-            ),
-            array(
-                HTML::mostrarDato("nombre_grupo", $textos["GRUPO_TESORERIA"], $grupo_tesoreria),
-                HTML::mostrarDato("nombre_concepto", $textos["CONCEPTO_TESORERIA"], $concepto_tesoreria),
-                HTML::mostrarDato("proyecto", $textos["PROYECTO"], $proyecto),
-            ),
-            array(
-                HTML::mostrarDato("cuenta_origen", $textos["CUENTA_ORIGEN"], $datos->cuenta_origen),
-                HTML::mostrarDato("sucursal", $textos["TERCERO"], $sucursal)
-            ),
-            array(    
-                HTML::mostrarDato("cuenta_destino", $textos["CUENTA_DESTINO"], $datos->cuenta_proveedor),
-                HTML::mostrarDato("proveedor", $textos["TERCERO"], $nombre_proveedor)
-            ),
-            array(
-                HTML::mostrarDato("valor", $textos["VALOR_MOVIMIENTO"], "$".$valor_movimiento),
-                HTML::mostrarDato("fecha", $textos["FECHA_MOVIMIENTO"], $datos->fecha_registra),
-                HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado])
-            )
-        );
+        if($estado==1){
+            $error     = $textos["ERROR_ESTADO_ANULADO"];
+            $titulo    = "";
+            $contenido = "";
 
-        /*** Definición de botones ***/
-        $botones = array(
-            HTML::boton("botonAceptar", $textos["ACEPTAR"], "eliminarItem('$url_id');", "aceptar")
-        );
+        }else{
+            /*** Definición de pestañas general ***/
+            $formularios["PESTANA_GENERAL"] = array(
+                array(
+                    HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo)
+                    .HTML::campoOculto("valor_movimiento", $datos->valor_movimiento)
+                    .HTML::campoOculto("id", $datos->codigo)
+                ),
+                array(
+                    HTML::mostrarDato("nombre_grupo", $textos["GRUPO_TESORERIA"], $grupo_tesoreria),
+                    HTML::mostrarDato("nombre_concepto", $textos["CONCEPTO_TESORERIA"], $concepto_tesoreria),
+                    HTML::mostrarDato("proyecto", $textos["PROYECTO"], $proyecto),
+                ),
+                array(
+                    HTML::mostrarDato("cuenta_origen", $textos["CUENTA_ORIGEN"], $datos->cuenta_origen),
+                    HTML::mostrarDato("sucursal", $textos["TERCERO"], $sucursal)
+                ),
+                array(    
+                    HTML::mostrarDato("cuenta_destino", $textos["CUENTA_DESTINO"], $datos->cuenta_proveedor),
+                    HTML::mostrarDato("proveedor", $textos["TERCERO"], $nombre_proveedor)
+                ),
+                array(
+                    HTML::mostrarDato("valor", $textos["VALOR_MOVIMIENTO"], "$".$valor_movimiento),
+                    HTML::mostrarDato("fecha", $textos["FECHA_MOVIMIENTO"], $datos->fecha_registra),
+                    HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado]),
+                    HTML::mostrarDato("saldo", $textos["SALDO_FECHA"], "$".$saldo)
+                )
+            );
 
-        $contenido = HTML::generarPestanas($formularios, $botones);
+            /*** Definición de botones ***/
+            $botones = array(
+                HTML::boton("botonAceptar", $textos["ACEPTAR"], "eliminarItem('$url_id');", "aceptar")
+            );
+
+            $contenido = HTML::generarPestanas($formularios, $botones);
+        }
     }
 
     /*** Enviar datos para la generación del formulario al script que originó la petición ***/
@@ -109,14 +146,25 @@ if (!empty($url_generar)) {
     $mensaje = $textos["ITEM_ANULADO"];
 
     $datos = array(
-        "estado" => "1"
+        "estado"         => "1",
+        "fecha_registra" => date("Y-m-d H:i:s")
     );
     
     $consulta = SQL::modificar("movimientos_tesoreria", $datos, "codigo = '$forma_id'");
 
     if ($consulta) {
-        $error    = false;
-        $mensaje  = $textos["ITEM_ANULADO"];
+        $saldo       = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$forma_id'");
+        $nuevo_saldo = $saldo + $forma_valor_movimiento;
+
+        $datos_saldos_movimientos = array(
+            "saldo"                   => $nuevo_saldo,
+            "fecha_saldo"             => date("Y-m-d H:i:s"),
+            "codigo_usuario_registra" => $forma_sesion_id_usuario_ingreso
+        );
+        $modificar_saldo = SQL::modificar("saldos_movimientos", $datos_saldos_movimientos, "codigo_movimiento='$forma_id'"); 
+        
+        $error       = false;
+        $mensaje     = $textos["ITEM_ANULADO"];
     } else {
         $error   = true;
         $mensaje = $textos["ERROR_ANULAR_ITEM"];

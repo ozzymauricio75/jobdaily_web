@@ -26,6 +26,7 @@
 **/
 
 //include("clases/diario.php");
+
 /*** Devolver datos para autocompletar la búsqueda ***/
 if (isset($url_completar)) {
     if (($url_item) == "selector1") {
@@ -45,6 +46,7 @@ if (isset($url_completar)) {
     }
 
     exit;
+
 /*** Cargar cuenta de banco ***/
 } elseif (!empty($url_cargarCuenta)) {
     $cuenta       = $url_cuenta;
@@ -68,7 +70,7 @@ if (isset($url_completar)) {
     HTTP::enviarJSON($datos);
     exit; 
 
-    /*** Verificar si existe saldo inicial ***/
+/*** Verificar si existe saldo inicial ***/
 } elseif (!empty($url_saldoCuenta)) {
     $cuenta       = $url_cuenta;
     $consulta     = SQL::seleccionar(array("saldo_inicial_cuentas"), array("*"), "cuenta_origen='$cuenta'");
@@ -94,7 +96,7 @@ if (isset($url_completar)) {
     HTTP::enviarJSON($lista);
     exit;
 
-// Generar el formulario para la captura de datos
+/*** Generar el formulario para la captura de datos ***/
 } if (!empty($url_generar)) {
 
     $consulta   = SQL::seleccionar(array("bancos"), array("*"), "codigo != '0'");
@@ -133,12 +135,19 @@ if (isset($url_completar)) {
         $grupos    = HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo>0");
         $conceptos = HTML::generarDatosLista("conceptos_tesoreria", "codigo_grupo_tesoreria", "nombre_concepto","codigo_grupo_tesoreria = '".array_shift(array_keys($grupos))."'");
 
+        $tipo_listado = array(
+            "1" => "PDF",
+            "2" => "EXCEL"
+        );
+
         // Definicion de pestanas
         $fecha_inicial = date("Y/m/d")." - ".date("Y/m/d");
 
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::campoTextoCorto("*fechas", $textos["FECHA_DESDE"].'  -  '.$textos["FECHA_HASTA"], 25, 25,$fecha_inicial, array("title" => $textos["RANGO_FECHAS"], "class" => "fechaRango"))
+                HTML::campoTextoCorto("*fechas", $textos["FECHA_DESDE"].'  -  '.$textos["FECHA_HASTA"], 25, 25, $fecha_inicial, array("title" => $textos["RANGO_FECHAS"], "class" => "fechaRango")),
+
+                HTML::listaSeleccionSimple("tipo_listado",$textos["TIPO_LISTADO"], $tipo_listado,1,array("title"=>$textos["AYUDA_TIPO_LISTADO"]))
             ),
             array(
                 HTML::agrupador(
@@ -248,198 +257,81 @@ if (isset($url_completar)) {
     $error          = false;
     $mensaje        = $textos["ITEM_ADICIONADO"];
     $ruta_archivo   = "";
-var_dump("expression",$forma_por_cuenta_activo);
+
     $fechas            = explode('-',$forma_fechas);
     $forma_fecha_desde = trim($fechas[0]);
     $forma_fecha_hasta = trim($fechas[1]);
 
-    if (!isset($forma_sucursales)) {
-        $error   = true;
-        $mensaje = $textos["SUCURSAL_VACIO"];
+    $llave_proyecto    = explode("-", $forma_selector2);
+    $codigo_proyecto   = $llave_proyecto[0];
 
+    $llave                         = explode("-", $forma_selector4);
+    $documento_identidad_proveedor = $llave[0];
+
+    $nombre         = "";
+    $nombreArchivo  = "";
+
+    do {
+        $cadena = Cadena::generarCadenaAleatoria(8);
+        if ($forma_tipo_listado=="1"){
+            $nombre = $codigo_proyecto.$cadena.".pdf";
+
+        } else{
+            $nombre = $codigo_proyecto.$cadena.".csv";
+        }
+        $nombreArchivo = $rutasGlobales["archivos"]."/".$nombre;
+    } while (is_file($nombreArchivo));
+        
+    if (file_exists($nombreArchivo)){
+        unlink($nombreArchivo);
+        $archivo = fopen($nombreArchivo,"a+");
     } else {
+        $archivo = fopen($nombreArchivo,"a+");
+    } 
 
-        $nombre         = "";
-        $nombreArchivo  = "";
-        do {
-            $cadena         = Cadena::generarCadenaAleatoria(8);
-            $nombre         = $sesion_sucursal.$cadena.".pdf";
-            $nombreArchivo  = $rutasGlobales["archivos"]."/".$nombre;
-        } while (is_file($nombreArchivo));
+    if($forma_por_cuenta_activo==2){
+        $condicion_cuenta = "AND cuenta_origen='$forma_selector3'";
+    } else{
+        $condicion_cuenta = "AND cuenta_origen!='0'";
+    }
 
-        $detalles = false;
-        if (isset($forma_mostrar_detalle)) {
-            $detalles = true;
-        }
+    if($forma_por_proyecto_activo==2){
+        $condicion_proyecto = "AND codigo_proyecto='$codigo_proyecto'";
+    } else{
+        $condicion_proyecto = "AND codigo_proyecto!='0'";
+    }
 
-        $archivo                 = new PDF("L","mm","Legal");
+    if($forma_por_proveedor_activo==2){
+        $condicion_proveedor = "AND documento_identidad_tercero='$documento_identidad_proveedor'";
+    } else{
+        $condicion_proveedor = "AND documento_identidad_tercero!='0'";
+    }
+
+    if($forma_por_concepto_activo==2){
+        $condicion_concepto = "AND codigo_concepto_tesoreria='$forma_codigo_concepto'";
+    } else{
+        $condicion_concepto = "AND codigo_concepto_tesoreria!='0'";
+    }
+
+    //Titulos segun tipo listado
+    if ($forma_tipo_listado=="1"){
+        //////////////////////////////ENCABEZADO DEL DOCUMENTO PDF REPORTE DE MOVIMIENTO/////////////////////////////
+        $anchoColumnas           = array(20,50);
+        $alineacionColumnas      = array("I","I");
+        $saldo_actual            = 0;
+
+        $archivo                 = new PDF("L","mm","Letter");
         $archivo->textoCabecera  = $textos["FECHA"].": ".date("Y-m-d");
-        $archivo->textoPiePagina = "";
+        $archivo->textoTitulo    = $textos["REPOMVTO"];
+        $archivo->textoPiePagina = $textos["PIE_PAGINA_EMPRESA"];
 
-        $condicion_comprobante = "AND codigo_tipo_comprobante = '".$forma_tipo_comprobante."'";
-        if ($forma_tipo_comprobante == 0) {
-            $condicion_comprobante = "";
-        }
+        $archivo->AddPage();
+        $archivo->SetFont('Arial','B',8);
 
-        $sucursales_reporte = array();
-        foreach ($forma_sucursales AS $sucursal) {
-            if (!isset($sucursales_reporte[$forma_consolidar[$sucursal]])){
-                $sucursales_reporte[$forma_consolidar[$sucursal]] = "'".$sucursal."',";
-            } else {
-                $sucursales_reporte[$forma_consolidar[$sucursal]] .= "'".$sucursal."',";
-            }
-        }
+        // Inicia la generacion de datos para el reporte
 
-        $total_debito_empresa  = 0;
-        $total_credito_empresa = 0;
-
-        $contador_registros = 0;
-
-        foreach ($sucursales_reporte AS $sucursal => $condicion_sucursal) {
-
-            $condicion_sucursal = trim($condicion_sucursal, ",");
-            $consolidadas       = explode(",", $condicion_sucursal);
-
-            $total_debito_sucursal  = 0;
-            $total_credito_sucursal = 0;
-
-            $total_debito_documento  = 0;
-            $total_credito_documento = 0;
-
-            $documento_actual   = '';
-            $consecutivo_actual = '';
-
-            $primera = true;
-
-            $consulta   = SQL::seleccionar(array("movimientos_contables_consolidados"),array("*"),"(fecha_contabilizacion BETWEEN '".$forma_fecha_desde."' AND '".$forma_fecha_hasta."')AND codigo_sucursal_genera IN (".$condicion_sucursal.") ".$condicion_comprobante,"","codigo_tipo_documento ASC, numero_consecutivo ASC, codigo_tipo_comprobante ASC, numero_comprobante ASC");
-
-            if (SQL::filasDevueltas($consulta)) {
-
-                cabeceraComprobante($archivo,$textos,$sucursal,$forma_fecha_desde,$forma_fecha_hasta,$consolidadas,"REPODIMD");
-                titulosDMD($archivo,$textos);
-
-                while ($datos = SQL::filaEnObjeto($consulta)) {
-
-                    if($archivo->breakCell(10)){
-                        cabeceraComprobante($archivo,$textos,$sucursal,$forma_fecha_desde,$forma_fecha_hasta,$consolidadas,"REPODIMD");
-                        titulosDMD($archivo,$textos);
-                    }
-
-                    if(!$primera && ($documento_actual != $datos->codigo_tipo_documento || $consecutivo_actual != $datos->numero_consecutivo)){
-                        $archivo->SetFont('Arial','B',7);
-                        $archivo->Cell(225,5,"",0,0,'L');
-                        $archivo->Cell(40,5,$textos["TOTAL"].":",0,0,'R');
-                        $archivo->Cell(35,5,"$".number_format($total_debito_documento,0),0,0,'R');
-                        $archivo->Cell(35,5,"$".number_format($total_credito_documento,0),0,0,'R');
-                        $archivo->Ln(5);
-                        $total_debito_documento  = 0;
-                        $total_credito_documento = 0;
-                    }
-                    $archivo->SetFont('Arial','',7);
-                    $maneja_saldo    = SQL::obtenerValor("plan_contable","maneja_saldos","codigo_contable = '".$datos->codigo_contable."'");
-                    $documento_cruce = "";
-                    if($maneja_saldo == '1'){
-                        $tabla = SQL::obtenerValor("tablas","nombre_tabla","id = '".$datos->id_tabla."'");
-                        if($tabla == "movimientos_contables"){
-                            if($datos->sentido_cuenta != $datos->sentido_movimiento){
-                                $llave_item = $datos->llave_registro."|".str_pad($datos->consecutivo_item,9,"0", STR_PAD_LEFT);
-                                $llave_saldo = SQL::obtenerValor("buscador_abonos_movimientos_contables","id_saldo","id_item_movimiento = '".$llave_item."'","","",0,1);
-                                if($llave_saldo){
-                                    $llave_saldo = explode('|',$llave_saldo);
-                                    $documento_cruce = $llave_saldo[4]." - ".$llave_saldo[5];
-                                }
-                            }
-                        }
-                    }
-                    $tercero = SQL::obtenerValor("seleccion_terceros","SUBSTRING_INDEX(nombre,'|',1)","id = '".$datos->documento_identidad_tercero."'");
-                    $archivo->Cell(30,4,$datos->codigo_tipo_documento." - ".$datos->numero_consecutivo,0,0,'L');
-                    $archivo->Cell(30,4,$documento_cruce,0,0,'L');
-                    $archivo->Cell(35,4,$datos->codigo_tipo_comprobante." - ".$datos->numero_comprobante,0,0,'L');
-                    $archivo->Cell(30,4,$datos->fecha_contabilizacion,0,0,'C');
-                    $archivo->Cell(50,4,$tercero,0,0,'L',false,"",true);
-                    $archivo->Cell(50,4,$datos->codigo_contable." - ".$datos->descripcion_cuenta,0,0,'L',false,"",true);
-                    $archivo->Cell(20,4,$datos->codigo_anexo_contable,0,0,'L');
-                    $archivo->Cell(20,4,$datos->codigo_auxiliar_contable,0,0,'L');
-
-                    if($datos->sentido_movimiento == "D"){
-                        $debito  = "$".number_format($datos->valor,0);
-                        $credito = "$0";
-                        $total_debito_sucursal  += $datos->valor;
-                        $total_debito_empresa   += $datos->valor;
-                        $total_debito_documento += $datos->valor;
-                    }else{
-                        $credito = "$".number_format($datos->valor,0);
-                        $debito  = "$0";
-                        $total_credito_sucursal  += $datos->valor;
-                        $total_credito_empresa   += $datos->valor;
-                        $total_credito_documento += $datos->valor;
-                    }
-
-                    $archivo->Cell(35,4,$debito,0,0,'R');
-                    $archivo->Cell(35,4,$credito,0,0,'R');
-                    $archivo->Ln(4);
-
-                    if($detalles && !empty($datos->detalle)){
-                        $archivo->SetFillColor(240,240,240);
-                        $archivo->Cell(30,4,$textos["OBSERVACIONES"].":",0,0,'L',true);
-                        $archivo->Cell(305,4,$datos->detalle,0,0,'L',true,"",true);
-                        $archivo->Ln(4);
-                    }
-
-                    $documento_actual   = $datos->codigo_tipo_documento;
-                    $consecutivo_actual = $datos->numero_consecutivo;
-                    $primera            = false;
-                    $contador_registros++;
-                }
-                $archivo->SetFont('Arial','B',7);
-                $archivo->Cell(225,5,"",0,0,'L');
-                $archivo->Cell(40,5,$textos["TOTAL"].":",0,0,'R');
-                $archivo->Cell(35,5,"$".number_format($total_debito_documento,0),0,0,'R');
-                $archivo->Cell(35,5,"$".number_format($total_credito_documento,0),0,0,'R');
-                $archivo->Ln(5);
-                totalSucursalDMD($archivo,$textos,$total_debito_sucursal,$total_credito_sucursal);
-            }
-        }
-
-        if($total_credito_empresa > 0 || $total_debito_empresa > 0){
-            $archivo->SetFont('Arial','B',7);
-            $archivo->Cell(225,5,"",0,0,'L');
-            $archivo->Cell(40,5,$textos["TOTAL_EMPRESA"].":",0,0,'R');
-            $archivo->Cell(35,5,"$".number_format($total_debito_empresa,0),0,0,'R');
-            $archivo->Cell(35,5,"$".number_format($total_credito_empresa,0),0,0,'R');
-            $archivo->Ln(5);
-            $archivo->Cell(225,5,"",0,0,'L');
-            $archivo->Cell(40,5,$textos["DIFERENCIA"].":",0,0,'R');
-            $archivo->Cell(70,5,"$".number_format($total_debito_empresa-$total_credito_empresa,0),0,0,'C');
-            $archivo->Ln(5);
-        }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        if($contador_registros > 0){
-            $archivo->Output($nombreArchivo, "F");
-
-            $consecutivo_arc = SQL::obtenerValor("archivos","MAX(consecutivo)","codigo_sucursal='".$sesion_sucursal."'");
-            if ($consecutivo_arc){
-                $consecutivo_arc++;
-            } else {
-                $consecutivo_arc = 1;
-            }
-            $consecutivo_arc = (int)$consecutivo_arc;
-
-            $datos_archivo = array(
-                "codigo_sucursal" => $sesion_sucursal,
-                "consecutivo"     => $consecutivo_arc,
-                "nombre"          => $nombre
-            );
-            SQL::insertar("archivos", $datos_archivo);
-            $id_archivo   = $sesion_sucursal."|".$consecutivo_arc;
-            $ruta_archivo = HTTP::generarURL("DESCARCH")."&id=".$id_archivo."&temporal=1";
-        }else{
-            $error   = true;
-            $mensaje = $textos["ERROR_GENERAR_ARCHIVO"];
-        }
+    } else{
+        //Se crean los titulos del archivo excel
     }
 
     // Enviar datos con la respuesta del proceso al script que origino la peticion
