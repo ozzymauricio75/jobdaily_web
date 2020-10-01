@@ -347,7 +347,12 @@ if (!empty($url_generar)) {
             $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
         }else{
             /*** Grabar nuevo saldo en la tabla saldos_movimientos ****/
-            $nuevo_saldo = $saldo_anterior - $forma_valor;
+            if($sentido=="D"){
+                $nuevo_saldo = $saldo_anterior - $forma_valor;
+            } else{
+                $nuevo_saldo = $saldo_anterior + $forma_valor;
+            }
+
             $datos_saldos_movimientos = array(
                 "codigo_movimiento"       => $forma_codigo,
                 "cuenta_origen"           => $forma_selector3,

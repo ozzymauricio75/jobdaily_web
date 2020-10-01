@@ -274,12 +274,12 @@ if (isset($url_completar)) {
     do {
         $cadena = Cadena::generarCadenaAleatoria(8);
         if ($forma_tipo_listado=="1"){
-            $nombre = $codigo_proyecto.$cadena.".pdf";
+            $nombre = $cadena.".pdf";
 
         } else{
-            $nombre = $codigo_proyecto.$cadena.".csv";
+            $nombre = $cadena.".csv";
         }
-        $nombreArchivo = $rutasGlobales["archivos"]."/".$nombre;
+        $nombreArchivo = $rutasGlobales["movimientos"]."/movimiento".$nombre;
     } while (is_file($nombreArchivo));
         
     if (file_exists($nombreArchivo)){
@@ -290,27 +290,27 @@ if (isset($url_completar)) {
     } 
 
     if($forma_por_cuenta_activo==2){
-        $condicion_cuenta = "AND cuenta_origen='$forma_selector3'";
+        $condicion_cuenta = "cuenta_origen='$forma_selector3'";
     } else{
-        $condicion_cuenta = "AND cuenta_origen!='0'";
+        $condicion_cuenta = "cuenta_origen!='0'";
     }
 
     if($forma_por_proyecto_activo==2){
-        $condicion_proyecto = "AND codigo_proyecto='$codigo_proyecto'";
+        $condicion_proyecto = " AND codigo_proyecto='$codigo_proyecto'";
     } else{
-        $condicion_proyecto = "AND codigo_proyecto!='0'";
+        $condicion_proyecto = " AND codigo_proyecto!='0'";
     }
 
     if($forma_por_proveedor_activo==2){
-        $condicion_proveedor = "AND documento_identidad_tercero='$documento_identidad_proveedor'";
+        $condicion_proveedor = " AND documento_identidad_tercero='$documento_identidad_proveedor'";
     } else{
-        $condicion_proveedor = "AND documento_identidad_tercero!='0'";
+        $condicion_proveedor = " AND documento_identidad_tercero!='0' OR documento_identidad_tercero IS NULL";
     }
 
     if($forma_por_concepto_activo==2){
-        $condicion_concepto = "AND codigo_concepto_tesoreria='$forma_codigo_concepto'";
+        $condicion_concepto = " AND codigo_concepto_tesoreria='$forma_codigo_concepto'";
     } else{
-        $condicion_concepto = "AND codigo_concepto_tesoreria!='0'";
+        $condicion_concepto = " AND codigo_concepto_tesoreria!='0'";
     }
 
     //Titulos segun tipo listado
@@ -328,8 +328,119 @@ if (isset($url_completar)) {
         $archivo->AddPage();
         $archivo->SetFont('Arial','B',8);
 
-        // Inicia la generacion de datos para el reporte
+        $archivo->SetFont('Arial','B',8);
+        $archivo->Ln(0);
+        $archivo->Cell(35,4,$textos["FECHA_DESDE_HASTA"]." :",0,0,'L');
+        $archivo->SetFont('Arial','',8);
+        $archivo->Cell(70,4,"".$forma_fecha_desde."-".$forma_fecha_hasta,0,0,'L');
+        $archivo->Cell(40,4,"",0,1,'R');  
+  
+        $archivo->SetFont('Arial','B',6);
+        $archivo->SetFillColor(225,225,225);
 
+        $archivo->Ln(6);
+        $archivo->Cell(40,4,$textos["BANCOS"],1,0,'C',true);
+        $archivo->Cell(20,4,$textos["CUENTA_ORIGEN"],1,0,'C',true);
+        $archivo->Cell(40,4,$textos["CONCEPTO"],1,0,'C',true);
+        $archivo->Cell(20,4,$textos["VALOR"],1,0,'C',true);
+        $archivo->Cell(20,4,$textos["FECHA_MOVIMIENTO"],1,0,'C',true);
+        $archivo->Cell(20,4,$textos["SALDO"],1,0,'C',true);
+        $archivo->Cell(30,4,$textos["PROYECTO"],1,0,'C',true);
+        $archivo->Cell(50,4,$textos["PROVEEDOR"],1,0,'C',true);
+        $archivo->Cell(20,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
+        //////////////////////////////FIN ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
+        
+        /*** Obtener los datos de la tabla movimientos tesoreria ***/
+        $condiciones           = $condicion_cuenta.$condicion_proyecto.$condicion_proveedor.$condicion_concepto;
+        $movimientos_tesoreria = SQL::seleccionar(array("movimientos_tesoreria"),array("*"),"$condiciones");
+
+        if (SQL::filasDevueltas($movimientos_tesoreria)){
+            while($datos_movimiento = SQL::filaEnObjeto($movimientos_tesoreria)){
+                if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
+                    $archivo->SetFillColor(255,255,255);
+                } else{
+                    $archivo->SetFillColor(240,240,240);
+                }
+                //Se lee el movimiento de la tabla movimientos
+                $codigo_banco      = SQL::obtenerValor("cuentas_bancarias","codigo_banco","numero='$datos_movimiento->cuenta_origen'");
+                $nombre_banco      = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco'");
+                $saldo_fecha       = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos_movimiento->codigo'");
+                $nombre_proyecto   = SQL::obtenerValor("proyectos","nombre","codigo='$datos_movimiento->codigo_proyecto'");
+                $nombre_concepto   = SQL::obtenerValor("conceptos_tesoreria","nombre_concepto","codigo='$datos_movimiento->codigo_concepto_tesoreria'");
+                $tipo_persona      = SQL::obtenerValor("terceros","tipo_persona","documento_identidad='$datos_movimiento->documento_identidad_tercero'");
+
+                if($tipo_persona==1){
+                    $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
+                    $segundo_nombre   = SQL::obtenerValor("terceros", "segundo_nombre", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
+                    $primer_apellido  = SQL::obtenerValor("terceros", "primer_apellido", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
+                    $segundo_apellido = SQL::obtenerValor("terceros", "segundo_apellido", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
+                    $nombre_proveedor = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
+                } else{
+                    $nombre_proveedor  = SQL::obtenerValor("terceros", "razon_social", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'"); 
+                }
+                /////////////////////////////////////////////////////////////////////////////////////////////////
+                $archivo->Ln(4);
+                $archivo->Cell(40,4,$nombre_banco,1,0,'L',true);
+                $archivo->Cell(20,4,$datos_movimiento->cuenta_origen,1,0,'L',true);
+                $archivo->Cell(40,4,$nombre_concepto,1,0,'L',true);
+                $archivo->Cell(20,4,""."$ ".number_format($datos_movimiento->valor_movimiento,0),1,0,'R',true);
+                $archivo->Cell(20,4,$datos_movimiento->fecha_registra,1,0,'C',true);
+                $archivo->Cell(20,4,""."$ ".number_format($saldo_fecha,0),1,0,'R',true);
+                $archivo->Cell(30,4,$nombre_proyecto,1,0,'L',true);
+                $archivo->Cell(50,4,$nombre_proveedor,1,0,'L',true);
+                $archivo->Cell(20,4,$datos_movimiento->cuenta_proveedor,1,0,'L',true);
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////
+                $imprime_cabecera = $archivo->breakCell(8);
+
+                if($imprime_cabecera){
+                    $archivo->Ln(4);
+                    $archivo->SetFont('Arial','B',8);
+                    $archivo->Ln(0);
+                    $archivo->Cell(35,4,$textos["FECHA_DESDE_HASTA"]." :",0,0,'L');
+                    $archivo->SetFont('Arial','',8);
+                    $archivo->Cell(70,4,"".$forma_fecha_desde."-".$forma_fecha_hasta,0,0,'L');
+                    $archivo->Cell(40,4,"",0,1,'R');  
+  
+                    $archivo->SetFont('Arial','B',6);
+                    $archivo->SetFillColor(225,225,225);
+
+                    $archivo->Ln(6);
+                    $archivo->Cell(40,4,$textos["BANCOS"],1,0,'C',true);
+                    $archivo->Cell(20,4,$textos["CUENTA_ORIGEN"],1,0,'C',true);
+                    $archivo->Cell(40,4,$textos["CONCEPTO"],1,0,'C',true);
+                    $archivo->Cell(20,4,$textos["VALOR"],1,0,'C',true);
+                    $archivo->Cell(20,4,$textos["FECHA_MOVIMIENTO"],1,0,'C',true);
+                    $archivo->Cell(20,4,$textos["SALDO"],1,0,'C',true);
+                    $archivo->Cell(30,4,$textos["PROYECTO"],1,0,'C',true);
+                    $archivo->Cell(50,4,$textos["PROVEEDOR"],1,0,'C',true);
+                    $archivo->Cell(20,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
+                }
+                $i++;
+                $item++;
+            }
+        }
+        if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
+                $archivo->SetFillColor(255,255,255);
+        } else{
+                $archivo->SetFillColor(240,240,240);
+        }
+        $archivo->Output($nombreArchivo, "F");
+        $consecutivo = SQL::obtenerValor("archivos","MAX(consecutivo)","codigo_sucursal='".$datos_encabezado->codigo_sucursal."'");
+
+        if ($consecutivo){
+            $consecutivo++;
+        } else {
+            $consecutivo = 1;
+        }
+
+        $datos_archivo = array(
+            "codigo_sucursal" => $datos_encabezado->codigo_sucursal,
+            "consecutivo"     => $consecutivo,
+            "nombre"          => $nombre
+        );
+        SQL::insertar("archivos", $datos_archivo);
+        $mensaje = HTML::enlazarPagina($textos["GENERAR_PLANO"], $nombreArchivo, array("target" => "_new"));
     } else{
         //Se crean los titulos del archivo excel
     }
