@@ -65,6 +65,7 @@ $textos = array(
     "PROVEEDOR"                     => "Proveedor",
     "FECHA_MOVIMIENTO"              => "Fecha movimiento",
     "MOVIMIENTO"                    => "Movimiento",
+    "TOTAL_MOVIMIENTOS"             => "Total movimientos",
     "CODIGO"                        => "Código",
     "SALDO_FECHA"                   => "Saldo a esa fecha",
     "PROYECTO"                      => "Proyecto",

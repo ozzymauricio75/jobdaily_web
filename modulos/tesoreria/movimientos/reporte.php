@@ -25,8 +25,6 @@
 *
 **/
 
-//include("clases/diario.php");
-
 /*** Devolver datos para autocompletar la búsqueda ***/
 if (isset($url_completar)) {
     if (($url_item) == "selector1") {
@@ -142,6 +140,7 @@ if (isset($url_completar)) {
 
         // Definicion de pestanas
         $fecha_inicial = date("Y/m/d")." - ".date("Y/m/d");
+        $sucursales    = array();
 
         $formularios["PESTANA_GENERAL"] = array(
             array(
@@ -235,17 +234,18 @@ if (isset($url_completar)) {
                 )
             )
         );
+    
+        $formularios["PESTANA_GENERAL"] = array_merge($formularios["PESTANA_GENERAL"],$sucursales);
 
         // Definicion de botones
         $botones = array(
-            HTML::boton("botonAceptar", $textos["ACEPTAR"], "imprimirItem('0');", "aceptar")
+            HTML::boton("botonAceptar", $textos["ACEPTAR"], "exportarDatosIndice(1);", "aceptar")
         );
 
         $contenido = HTML::generarPestanas($formularios, $botones);
     }
 
     // Enviar datos para la generacion del formulario al script que origino la peticion
-    $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $titulo;
     $respuesta[2] = $contenido;
@@ -254,9 +254,9 @@ if (isset($url_completar)) {
 // Adicionar los datos provenientes del formulario
 } elseif (!empty($forma_procesar)) {
     // Asumir por defecto que no hubo error
-    $error          = false;
-    $mensaje        = $textos["ITEM_ADICIONADO"];
-    $ruta_archivo   = "";
+    $error        = false;
+    $cargaPdf     = 0;
+    $mensaje      = $textos["PLANO_GENERADO"];
 
     $fechas            = explode('-',$forma_fechas);
     $forma_fecha_desde = trim($fechas[0]);
@@ -347,9 +347,10 @@ if (isset($url_completar)) {
         $archivo->Cell(20,4,$textos["VALOR"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["FECHA_MOVIMIENTO"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["SALDO"],1,0,'C',true);
-        $archivo->Cell(30,4,$textos["PROYECTO"],1,0,'C',true);
-        $archivo->Cell(50,4,$textos["PROVEEDOR"],1,0,'C',true);
+        $archivo->Cell(20,4,$textos["PROYECTO"],1,0,'C',true);
+        $archivo->Cell(40,4,$textos["PROVEEDOR"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
+        $archivo->Cell(10,4,$textos["ESTADO"],1,0,'C',true);
         //////////////////////////////FIN ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
         
         /*** Obtener los datos de la tabla movimientos tesoreria ***/
@@ -366,6 +367,7 @@ if (isset($url_completar)) {
                 }
                 //Se lee el movimiento de la tabla movimientos
                 $codigo_banco      = SQL::obtenerValor("cuentas_bancarias","codigo_banco","numero='$datos_movimiento->cuenta_origen'");
+                $codigo_sucursal   = SQL::obtenerValor("cuentas_bancarias","codigo_sucursal","numero='$datos_movimiento->cuenta_origen'");
                 $nombre_banco      = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco'");
                 $saldo_fecha       = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos_movimiento->codigo'");
                 $nombre_proyecto   = SQL::obtenerValor("proyectos","nombre","codigo='$datos_movimiento->codigo_proyecto'");
@@ -381,6 +383,14 @@ if (isset($url_completar)) {
                 } else{
                     $nombre_proveedor  = SQL::obtenerValor("terceros", "razon_social", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'"); 
                 }
+
+                if ($datos_movimiento->estado == '0'){
+                    $estado = $textos["ESTADO_0"];
+                }
+                if ($datos_movimiento->estado == '1'){
+                    $estado = $textos["ESTADO_1"];
+                }
+
                 /////////////////////////////////////////////////////////////////////////////////////////////////
                 $archivo->Ln(4);
                 $archivo->Cell(40,4,$nombre_banco,1,0,'L',true);
@@ -389,9 +399,10 @@ if (isset($url_completar)) {
                 $archivo->Cell(20,4,""."$ ".number_format($datos_movimiento->valor_movimiento,0),1,0,'R',true);
                 $archivo->Cell(20,4,$datos_movimiento->fecha_registra,1,0,'C',true);
                 $archivo->Cell(20,4,""."$ ".number_format($saldo_fecha,0),1,0,'R',true);
-                $archivo->Cell(30,4,$nombre_proyecto,1,0,'L',true);
-                $archivo->Cell(50,4,$nombre_proveedor,1,0,'L',true);
+                $archivo->Cell(20,4,$nombre_proyecto,1,0,'L',true);
+                $archivo->Cell(40,4,$nombre_proveedor,1,0,'L',true);
                 $archivo->Cell(20,4,$datos_movimiento->cuenta_proveedor,1,0,'L',true);
+                $archivo->Cell(10,4,$estado,1,0,'L',true);
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////
                 $imprime_cabecera = $archivo->breakCell(8);
@@ -415,21 +426,42 @@ if (isset($url_completar)) {
                     $archivo->Cell(20,4,$textos["VALOR"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["FECHA_MOVIMIENTO"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["SALDO"],1,0,'C',true);
-                    $archivo->Cell(30,4,$textos["PROYECTO"],1,0,'C',true);
-                    $archivo->Cell(50,4,$textos["PROVEEDOR"],1,0,'C',true);
+                    $archivo->Cell(20,4,$textos["PROYECTO"],1,0,'C',true);
+                    $archivo->Cell(40,4,$textos["PROVEEDOR"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
+                    $archivo->Cell(10,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
                 }
                 $i++;
                 $item++;
             }
         }
+
         if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
-                $archivo->SetFillColor(255,255,255);
+            $archivo->SetFillColor(255,255,255);
         } else{
-                $archivo->SetFillColor(240,240,240);
+            $archivo->SetFillColor(240,240,240);
         }
+
+        //Calcula totales del movimiento
+        $total_movimientos     = SQL::obtenerValor("movimientos_tesoreria","SUM(valor_movimiento)","$condiciones");
+        $acumulado_movimientos = $total_movimientos + $acumulado_movimientos;
+        $acumulado_movimientos = number_format($acumulado_movimientos, 0);
+
+        $archivo->Ln(8);
+        $archivo->SetFont('Arial','B',6);
+        $archivo->Cell(100,4,$textos["TOTAL_MOVIMIENTOS"],0,0,'L');
+
+        $archivo->Ln(4);
+        $archivo->Cell(100,4,"$ ".$acumulado_movimientos."",0);
+
+        if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
+            $archivo->SetFillColor(255,255,255);
+        } else{
+            $archivo->SetFillColor(240,240,240);
+        }
+
         $archivo->Output($nombreArchivo, "F");
-        $consecutivo = SQL::obtenerValor("archivos","MAX(consecutivo)","codigo_sucursal='".$datos_encabezado->codigo_sucursal."'");
+        $consecutivo = SQL::obtenerValor("archivos","MAX(consecutivo)","codigo_sucursal='".$codigo_sucursal."'");
 
         if ($consecutivo){
             $consecutivo++;
@@ -438,7 +470,7 @@ if (isset($url_completar)) {
         }
 
         $datos_archivo = array(
-            "codigo_sucursal" => $datos_encabezado->codigo_sucursal,
+            "codigo_sucursal" => $codigo_sucursal,
             "consecutivo"     => $consecutivo,
             "nombre"          => $nombre
         );
@@ -447,7 +479,7 @@ if (isset($url_completar)) {
         
     } else{
         //Se crean los titulos del archivo excel
-        $titulos_plano = "BANCOS;CUENTA ORIGEN;CONCEPTO;VALOR;FECHA MOVIMIENTO;SALDO;PROYECTO;PROVEEDOR;CUENTA DESTINO\n";
+        $titulos_plano = "BANCOS;CUENTA ORIGEN;CONCEPTO;VALOR;FECHA MOVIMIENTO;SALDO;PROYECTO;PROVEEDOR;CUENTA DESTINO;ESTADO\n";
             fwrite($archivo, $titulos_plano);
 
         /*** Obtener los datos de la tabla movimientos tesoreria ***/
@@ -459,6 +491,7 @@ if (isset($url_completar)) {
             while($datos_movimiento = SQL::filaEnObjeto($movimientos_tesoreria)){
                 //Se lee el movimiento de la tabla movimientos
                 $codigo_banco      = SQL::obtenerValor("cuentas_bancarias","codigo_banco","numero='$datos_movimiento->cuenta_origen'");
+                $codigo_sucursal   = SQL::obtenerValor("cuentas_bancarias","codigo_sucursal","numero='$datos_movimiento->cuenta_origen'");
                 $nombre_banco      = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco'");
                 $saldo_fecha       = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos_movimiento->codigo'");
                 $nombre_proyecto   = SQL::obtenerValor("proyectos","nombre","codigo='$datos_movimiento->codigo_proyecto'");
@@ -474,20 +507,29 @@ if (isset($url_completar)) {
                 } else{
                     $nombre_proveedor  = SQL::obtenerValor("terceros", "razon_social", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'"); 
                 }
+
+                if ($datos_movimiento->estado == '0'){
+                    $estado = $textos["ESTADO_0"];
+                }
+                if ($datos_movimiento->estado == '1'){
+                    $estado = $textos["ESTADO_1"];
+                }
                 /////////////////////////////////////////////////////////////////////////////////////////////////
-                $cuenta_origen    = $datos_movimiento->cuenta_origen;
-                $valor_movimiento = $datos_movimiento->valor_movimiento;
-                $fecha_registra   = $datos_movimiento->fecha_registra;
-                $cuenta_destino   = $datos_movimiento->cuenta_proveedor;
+                $cuenta_origen      = $datos_movimiento->cuenta_origen;
+                $valor_movimiento   = $datos_movimiento->valor_movimiento;
+                $valor_movimiento   = number_format($valor_movimiento, 0);
+                $valor_movimiento   = str_replace(',', '.', $valor_movimiento);
+                $fecha_registra     = $datos_movimiento->fecha_registra;
+                $saldo_fecha        = number_format($saldo_fecha, 0);
+                $saldo_fecha        = str_replace(',', '.', $saldo_fecha);
+                $cuenta_destino     = $datos_movimiento->cuenta_proveedor;
 
                 //Contenido del archivo
-                $contenido = "$nombre_banco;$cuenta_origen;$nombre_concepto;$valor_movimiento;$fecha_registra;$saldo_fecha;$nombre_proyecto;$nombre_proveedor;$cuenta_destino\n";
+                $contenido = "$nombre_banco;$cuenta_origen;$nombre_concepto;$valor_movimiento;$fecha_registra;$saldo_fecha;$nombre_proyecto;$nombre_proveedor;$cuenta_destino;$estado\n";
                 $guardarArchivo = fwrite($archivo,$contenido);
             }
         }
-       
-        $archivo->Output($nombreArchivo, "F");
-        $consecutivo = SQL::obtenerValor("archivos","MAX(consecutivo)","codigo_sucursal='".$datos_encabezado->codigo_sucursal."'");
+        $consecutivo = SQL::obtenerValor("archivos","MAX(consecutivo)","codigo_sucursal='".$codigo_sucursal."'");
 
         if ($consecutivo){
             $consecutivo++;
@@ -496,19 +538,18 @@ if (isset($url_completar)) {
         }
 
         $datos_archivo = array(
-            "codigo_sucursal" => $datos_encabezado->codigo_sucursal,
+            "codigo_sucursal" => $codigo_sucursal,
             "consecutivo"     => $consecutivo,
             "nombre"          => $nombre
         );
-        SQL::insertar("archivos", $datos_archivo);
-        $mensaje = HTML::enlazarPagina($textos["GENERAR_PLANO"], $nombreArchivo, array("target" => "_new"));    
+        fclose($archivo);
+        $mensaje = HTML::enlazarPagina($textos["GENERAR_PLANO"], $nombreArchivo, array("target" => "_new"));  
     }
-
     // Enviar datos con la respuesta del proceso al script que origino la peticion
     $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $mensaje;
-    $respuesta[2] = $ruta_archivo;
+    $respuesta[2] = $mensaje;
     HTTP::enviarJSON($respuesta);
 }
 ?>

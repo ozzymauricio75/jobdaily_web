@@ -338,7 +338,7 @@ if (!empty($url_generar)) {
             );
             SQL::insertar("archivos", $datos_archivo);
             $mensaje = HTML::enlazarPagina($textos["GENERAR_PLANO"], $nombreArchivo, array("target" => "_new"));
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
         } else{
             //Se crean los titulos del archivo excel
             $titulos_plano = "FECHA_DOCUMENTO;TIPO_DOCUMENTO;ORDEN_COMPRA;VALOR ORDEN;NIT;PROVEEDOR;FACTURA;CRUZADO_CON;VALOR TOTAL;ESTADO;FECHA_VENCIMIENTO;FECHA_ENVIO\n";
