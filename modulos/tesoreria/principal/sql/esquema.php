@@ -43,8 +43,8 @@ $registros["componentes"] = array(
         "padre"            => "MENUTESO",
         "id_modulo"        => "TESORERIA",
         "orden"            => "5000",
-        "carpeta"          => "principal",
-        "archivo"          => "NULL"
+        "carpeta"          => "credito_bancos",
+        "archivo"          => "menu"
     ),
     array(
         "id"               => "SUBMDCTE",
