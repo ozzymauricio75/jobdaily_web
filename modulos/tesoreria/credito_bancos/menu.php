@@ -28,7 +28,7 @@
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
 $vistaMenu     = "menu_creditos_bancos";
 $vistaBuscador = "buscador_creditos_bancos";
-$alineacion    = array("I","I","I","I","D","I","I","I");
+$alineacion    = array("D","D","D","C","D","D","I","I");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {
@@ -37,11 +37,11 @@ if (isset($url_completar)) {
 }
 
 /*** Generar botones de comandos ***/
-$botones  = HTML::boton("ADICCRBA",$textos["ADICIONAR"],"ejecutarComando(this, 650, 550);","adicionar");
-$botones .= HTML::boton("CONSCRBA",$textos["CONSULTAR"],"ejecutarComando(this, 650, 400);","consultar");
-$botones .= HTML::boton("MODICRBA",$textos["MODIFICAR"],"ejecutarComando(this, 650, 550);","modificar");
-$botones .= HTML::boton("ELIMCRBA",$textos["ELIMINAR"],"ejecutarComando(this, 650, 400);","eliminar");
-$botones .= HTML::boton("ANULCRBA",$textos["ANULAR"],"ejecutarComando(this, 650, 400);","anular");
+$botones  = HTML::boton("ADICCRBA",$textos["ADICIONAR"],"ejecutarComando(this, 650, 450);","adicionar");
+$botones .= HTML::boton("CONSCRBA",$textos["CONSULTAR"],"ejecutarComando(this, 650, 500);","consultar");
+//$botones .= HTML::boton("MODICRBA",$textos["MODIFICAR"],"ejecutarComando(this, 650, 550);","modificar");
+$botones .= HTML::boton("ELIMCRBA",$textos["ELIMINAR"],"ejecutarComando(this, 650, 500);","eliminar");
+//$botones .= HTML::boton("ANULCRBA",$textos["ANULAR"],"ejecutarComando(this, 650, 400);","anular");
 $botones .= HTML::boton("REPOCRBA",$textos["REPORTE"],"ejecutarComando(this, 790, 600);","reporte");
 
 /*** Obtener el número de la página actual ***/

@@ -328,6 +328,7 @@ if (!empty($url_generar)) {
             "codigo"                       => $forma_codigo,
             "sentido"                      => $sentido,
             "codigo_proyecto"              => $forma_selector2,
+            "numero_credito"               => "",
             "codigo_grupo_tesoreria"       => $forma_codigo_grupo,
             "codigo_concepto_tesoreria"    => $forma_codigo_concepto,
             "cuenta_proveedor"             => $forma_cuenta_destino,

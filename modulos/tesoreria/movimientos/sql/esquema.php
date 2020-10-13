@@ -40,6 +40,7 @@ $tablas["movimientos_tesoreria"]  = array(
     "codigo"                      => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
     "sentido"                     => "ENUM('D','C') COMMENT 'Indicador de sentido del movimiento: D=Debito, C=Credito'",
     "codigo_proyecto"             => "INT(9) NULL COMMENT 'Codigo interno del proyecto'",
+    "numero_credito"              => "VARCHAR(30) NULL COMMENT 'Número del credito'",
     "codigo_grupo_tesoreria"      => "SMALLINT(3) NOT NULL COMMENT 'Codigo interno del grupo tesoreria'",
     "codigo_concepto_tesoreria"   => "SMALLINT(3) NOT NULL COMMENT 'Codigo interno del concepto tesoreria'",
     "cuenta_proveedor"            => "VARCHAR(50) NULL COMMENT 'Numero de la cuenta bancaria del proveedor'",

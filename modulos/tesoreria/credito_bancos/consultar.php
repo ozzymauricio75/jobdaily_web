@@ -34,62 +34,108 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
-        $vistaConsulta = "movimientos_tesoreria";
-        $columnas      = SQL::obtenerColumnas($vistaConsulta);
-        $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
-        $datos         = SQL::filaEnObjeto($consulta);
-        $estado        = $datos->estado;
+        $vistaConsulta  = "creditos_bancos";
+        $columnas       = SQL::obtenerColumnas($vistaConsulta);
+        $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
+        $datos          = SQL::filaEnObjeto($consulta);
+        $estado_credito = $datos->estado_credito;
         
-        $error         = "";
-        $titulo        = $componente->nombre;
+        $error  = "";
+        $titulo = $componente->nombre;
 
         /*** Obtener valores ***/
-        $grupo_tesoreria    = SQL::obtenerValor("grupos_tesoreria","nombre_grupo","codigo='$datos->codigo_grupo_tesoreria'");
-        $concepto_tesoreria = SQL::obtenerValor("conceptos_tesoreria","nombre_concepto","codigo='$datos->codigo_concepto_tesoreria'");
-        $sucursal           = SQL::obtenerValor("cuentas_bancarias","codigo_sucursal","numero='$datos->cuenta_origen'");
-        $sucursal           = SQL::obtenerValor("sucursales","nombre","codigo='$sucursal'");
-        $tipo_persona       = SQL::obtenerValor("terceros","tipo_persona","documento_identidad='$datos->documento_identidad_tercero'");
-        $valor_movimiento   = number_format($datos->valor_movimiento,0);
-        $proyecto           = SQL::obtenerValor("proyectos","nombre","codigo='$datos->codigo_proyecto'");
-        $saldo              = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos->codigo'");
-        $saldo              = number_format($saldo,0);
+        $vistaConsultaCuotas  = "cuotas_creditos_bancos";
+        $columnas_cuota       = SQL::obtenerColumnas($vistaConsultaCuotas);
+        $consulta_cuota       = SQL::seleccionar(array($vistaConsultaCuotas), $columnas_cuota, "codigo_credito = '$url_id'");
+        $datos_cuota_credito  = SQL::filaEnObjeto($consulta_cuota);
+        $estado_cuota_credito = $datos_cuota_credito->estado_cuota;
 
-        if($tipo_persona==1){
-            $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$datos->documento_identidad_tercero."'");
-            $segundo_nombre   = SQL::obtenerValor("terceros", "segundo_nombre", "documento_identidad = '".$datos->documento_identidad_tercero."'");
-            $primer_apellido  = SQL::obtenerValor("terceros", "primer_apellido", "documento_identidad = '".$datos->documento_identidad_tercero."'");
-            $segundo_apellido = SQL::obtenerValor("terceros", "segundo_apellido", "documento_identidad = '".$datos->documento_identidad_tercero."'");
-            $nombre_proveedor = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
-        } else{
-           $nombre_proveedor  = SQL::obtenerValor("terceros", "razon_social", "documento_identidad = '".$datos->documento_identidad_tercero."'"); 
+        $proyecto = SQL::obtenerValor("proyectos","nombre","codigo=$datos->codigo_proyecto");
+        $banco    = SQL::obtenerValor("bancos","descripcion","codigo=$datos->codigo_banco");
+
+        /* Obtener cuentas bancarias relacionadas con el proveedor */
+        $consulta_cuotas = SQL::seleccionar(array("cuotas_creditos_bancos"), array("*"), "codigo_credito = '$url_id'");
+        if (SQL::filasDevueltas($consulta_cuotas)) {
+
+            $estados_cuota = array(
+                "0" => $textos["ESTADO_0"],
+                "1" => $textos["ESTADO_1"],
+                "2" => $textos["ESTADO_2"]
+            );
+            while ($datos_cuotas = SQL::filaEnObjeto($consulta_cuotas)) {
+
+                $id_cuota             = $datos_cuotas->codigo;
+                $numero_cuota         = $datos_cuotas->numero_cuota;
+                $interes              = $datos_cuotas->interes;
+                $interes_pagado       = $datos_cuotas->interes_pagado;
+                $abono_capital        = $datos_cuotas->abono_capital;
+                $abono_capital_pagado = $datos_cuotas->abono_capital_pagado;
+                $saldo_capital_pagado = $datos_cuotas->saldo_capital_pagado;
+                $estado_cuota         = $estados_cuota[$datos_cuotas->estado_cuota];
+
+                $item_cuota[]  = array( $id_cuota,
+                                        $numero_cuota,
+                                        $interes,
+                                        $interes_pagado,
+                                        $abono_capital,
+                                        $abono_capital_pagado,
+                                        $saldo_capital_pagado,
+                                        $estado_cuota
+                );
+            }
         }
 
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo)
+                HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo),
+                HTML::mostrarDato("proyecto", $textos["PROYECTO"], $proyecto)
             ),
             array(
-                HTML::mostrarDato("nombre_grupo", $textos["GRUPO_TESORERIA"], $grupo_tesoreria),
-                HTML::mostrarDato("nombre_concepto", $textos["CONCEPTO_TESORERIA"], $concepto_tesoreria),
-                HTML::mostrarDato("proyecto", $textos["PROYECTO"], $proyecto),
+                HTML::agrupador(
+                    array(
+                        array(   
+                            HTML::mostrarDato("banco", $textos["BANCO"], $banco),
+                            HTML::mostrarDato("numero_credito", $textos["NUMERO_CREDITO"], $datos->numero_credito),
+                            HTML::mostrarDato("valor_credito", $textos["VALOR_CREDITO"], "$".number_format($datos->valor_credito,0)),
+                            HTML::mostrarDato("estado_cuota", $textos["ESTADO_CUOTA"], $textos["ESTADO_".$estado_cuota_credito])
+                        )
+                    ),
+                    $textos["DATOS_BANCO"]
+                )
             ),
             array(
-                HTML::mostrarDato("cuenta_origen", $textos["CUENTA_ORIGEN"], $datos->cuenta_origen),
-                HTML::mostrarDato("sucursal", $textos["TERCERO"], $sucursal)
-            ),
-            array(    
-                HTML::mostrarDato("cuenta_destino", $textos["CUENTA_DESTINO"], $datos->cuenta_proveedor),
-                HTML::mostrarDato("proveedor", $textos["TERCERO"], $nombre_proveedor)
+                HTML::agrupador(
+                    array(
+                        array(
+                            HTML::mostrarDato("tasa_mensual", $textos["TASA_MENSUAL"], $datos->tasa_mensual),
+                            HTML::mostrarDato("numero_cuotas", $textos["NUMERO_CUOTAS"], $datos->periodos),
+                            HTML::mostrarDato("valor_cuota", $textos["VALOR_CUOTA"], "$".number_format($datos->valor_cuota,0)),
+                            HTML::mostrarDato("fecha_credito", $textos["FECHA_CREDITO"], $datos->fecha_credito)
+                        )
+                    ),
+                    $textos["DATOS_CREDITO"]
+                )
             ),
             array(
-                HTML::mostrarDato("valor", $textos["VALOR_MOVIMIENTO"], "$".$valor_movimiento),
-                HTML::mostrarDato("fecha", $textos["FECHA_MOVIMIENTO"], $datos->fecha_registra),
-                HTML::mostrarDato("estado", $textos["ESTADO"], $textos["ESTADO_".$estado]),
-                HTML::mostrarDato("saldo", $textos["SALDO_FECHA"], "$".$saldo)
+                HTML::mostrarDato("observaciones", $textos["OBSERVACIONES"], $datos->observaciones)    
             )
         );
-        
+        /*** Definición de pestaña de cuentas bancarias relacionadas ***/
+        if (isset($item_cuota)) {
+
+            $formularios["PESTANA_CUOTAS"] = array(
+                array(
+                    HTML::generarTabla(
+                        array("id","NRO_CUOTA","INTERES","INTERES_PAGADO","ABONO_CAPITAL","ABONO_CAPITAL_PAGADO","SALDO_CAPITAL_PAGADO","ESTADO_CUOTA"),
+                        $item_cuota,
+                        array("I","D","D","D","D","D","I"),
+                        "lista_items_cuotas",
+                        false)
+                )
+            );
+        } 
+
         $contenido = HTML::generarPestanas($formularios);
     }
 
