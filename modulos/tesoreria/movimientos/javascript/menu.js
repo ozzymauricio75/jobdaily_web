@@ -182,6 +182,26 @@
         });
     }
 
+    function cargarCreditos(){
+        var destino         = $('#URLFormulario').val();
+        var codigo_concepto = $('#codigo_concepto').val();
+        var lista_credito   = '';
+
+        $.getJSON(destino,{cargarCreditos:true, codigo_concepto: codigo_concepto},function(datos){
+            jQuery.each(datos,function(valor, descripcion){
+                
+                if(valor=="0"){
+                    alert(descripcion);
+                    lista_credito = lista_credito+'<option value="">'+''+'</option>';
+                }else{
+                    lista_credito = lista_credito+'<option value="'+valor+'">'+descripcion+'</option>';
+                    $('#numero_credito').parent().show();
+                    $('#numero_credito').html(lista_credito);
+                }
+            });
+        });
+    }
+
     function verificarSucursalesListado(){
         var destino  = $('#URLFormulario').val();
         var id_banco = $('#codigo_banco').val();

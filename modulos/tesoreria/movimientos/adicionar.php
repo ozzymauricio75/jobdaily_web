@@ -152,6 +152,22 @@ if(isset($url_recargar_conceptos)){
     exit;
 }
 
+/*** Mostrar los creditos activos ***/
+if(isset($url_cargarCreditos)){
+    $codigo_concepto = $url_codigo_concepto;
+    
+    if($codigo_concepto==4){
+        $lista_credito   = HTML::generarDatosLista("creditos_bancos","codigo","numero_credito","estado_credito = '1'");
+    }
+    
+    /*if(empty($lista_credito)){
+        $lista_credito = array("0" => $textos["CREDITO_NO_EXISTE"]);
+    }*/
+
+    HTTP::enviarJSON($lista_credito);
+    exit;
+}
+
 /*** Generar el formulario para la captura de datos ***/
 if (!empty($url_generar)) {
     $error    = "";
@@ -178,7 +194,9 @@ if (!empty($url_generar)) {
                 
                 HTML::listaSeleccionSimple("*codigo_grupo", $textos["GRUPO_TESORERIA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo"), "", array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onChange" => "verificarConceptos();")),
 
-                HTML::listaSeleccionSimple("*codigo_concepto", $textos["CONCEPTO_TESORERIA"], $concepto, "")
+                HTML::listaSeleccionSimple("*codigo_concepto", $textos["CONCEPTO_TESORERIA"], HTML::generarDatosLista("conceptos_tesoreria", "codigo", "nombre_concepto"), "", array("title" => $textos["AYUDA_CONCEPTO_TESORERIA"],"onChange" => "cargarCreditos()")),
+
+                HTML::listaSeleccionSimple("*numero_credito", $textos["NUMERO_CREDITO"], $numero_credito, "",array("title" => $textos["AYUDA_NUMERO_CREDITO"],"class" => "oculto"))
             ),
             array(
                 HTML::agrupador(
