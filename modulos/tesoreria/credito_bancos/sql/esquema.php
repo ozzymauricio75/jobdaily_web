@@ -168,6 +168,15 @@ $vistas = array(
             job_creditos_bancos.observaciones AS observaciones
         FROM job_creditos_bancos   
         WHERE job_creditos_bancos.codigo != 0;"
+    ),
+    array(
+        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_seleccion_creditos_bancos AS
+        SELECT job_creditos_bancos.codigo AS id,
+            job_creditos_bancos.codigo AS codigo,
+            job_creditos_bancos.numero_credito AS numero_credito,
+            FORMAT(job_creditos_bancos.valor_credito,0) AS valor_credito
+        FROM job_creditos_bancos   
+        WHERE job_creditos_bancos.codigo != 0;"
     )
 )
 ?>
