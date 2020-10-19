@@ -53,7 +53,7 @@ if (!empty($url_generar)) {
         $proyecto = SQL::obtenerValor("proyectos","nombre","codigo=$datos->codigo_proyecto");
         $banco    = SQL::obtenerValor("bancos","descripcion","codigo=$datos->codigo_banco");
 
-        /* Obtener cuentas bancarias relacionadas con el proveedor */
+        /* Obtener cuotas relacionadas con el credito */
         $consulta_cuotas = SQL::seleccionar(array("cuotas_creditos_bancos"), array("*"), "codigo_credito = '$url_id'");
         if (SQL::filasDevueltas($consulta_cuotas)) {
 

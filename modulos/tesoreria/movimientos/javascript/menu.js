@@ -182,21 +182,20 @@
         });
     }
 
-    function cargarCreditos(){
+    function cargarCuotasCreditos(){
         var destino         = $('#URLFormulario').val();
-        var codigo_concepto = $('#codigo_concepto').val();
-        var lista_credito   = '';
+        var numero_credito  = $('#selector5').val();
+        var lista_cuotas    = '';
 
-        $.getJSON(destino,{cargarCreditos:true, codigo_concepto: codigo_concepto},function(datos){
+        $.getJSON(destino,{cargarCuotasCreditos:true, numero_credito: numero_credito},function(datos){
             jQuery.each(datos,function(valor, descripcion){
                 
                 if(valor=="0"){
                     alert(descripcion);
-                    lista_credito = lista_credito+'<option value="">'+''+'</option>';
+                    lista_cuotas = lista_cuotas+'<option value="">'+''+'</option>';
                 }else{
-                    lista_credito = lista_credito+'<option value="'+valor+'">'+descripcion+'</option>';
-                    $('#numero_credito').parent().show();
-                    $('#numero_credito').html(lista_credito);
+                    lista_cuotas = lista_cuotas+'<option value="'+valor+'">'+descripcion+'</option>';
+                    $('#cuotas_credito').html(lista_cuotas);
                 }
             });
         });

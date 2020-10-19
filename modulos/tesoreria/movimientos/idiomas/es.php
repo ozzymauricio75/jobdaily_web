@@ -39,6 +39,7 @@ $textos = array(
     "REPORTE"                       => "Reporte",
     "BANCOS"                        => "Bancos",
     "CUENTAS"                       => "Cuentas",
+    "CUOTAS_CREDITO"                => "Cuotas credito",
     "SALDO"                         => "Saldo",
     "PROYECTO"                      => "Proyecto",
     "PROVEEDOR"                     => "Proveedor",
