@@ -295,7 +295,8 @@ if (!empty($url_generar)) {
                     "interes_pagado"       => 0,
                     "abono_capital"        => $abono_capital,
                     "abono_capital_pagado" => 0,
-                    "saldo_capital_pagado" => $nuevo_saldo_credito,
+                    "saldo_capital"        => $nuevo_saldo_credito,
+                    "saldo_capital_pagado" => 0,
                     "observaciones"        => "",
                     "estado_cuota"         => 1
                 );

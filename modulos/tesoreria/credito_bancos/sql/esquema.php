@@ -48,7 +48,8 @@ $tablas["cuotas_creditos_bancos"] = array(
     "interes_pagado"              => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'interes pagado del credito'",
     "abono_capital"               => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'abono capital del credito'",
     "abono_capital_pagado"        => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'abono capital pagado del credito'",
-    "saldo_capital_pagado"        => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'saldo de capital del credito'",
+    "saldo_capital"               => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'saldo de capital del credito'",
+    "saldo_capital_pagado"        => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'saldo de capital pagado del credito'",
     "observaciones"               => "VARCHAR(255) COMMENT 'Observacion general del credito'",
     "estado_cuota"                => "ENUM('0','1','2') NOT NULL DEFAULT '0' COMMENT '0->Pagado 1->Por pagar 2->Abonada'"
 );
