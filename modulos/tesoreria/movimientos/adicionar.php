@@ -407,7 +407,6 @@ if (!empty($url_generar)) {
             $cuota_del_credito   = SQL::obtenerValor("creditos_bancos","valor_cuota","numero_credito='$numero_credito'");
             $cuota_del_credito   = (int)$cuota_del_credito;
             $valor_credito       = SQL::obtenerValor("creditos_bancos","valor_credito","numero_credito='$numero_credito'");
-            $nuevo_saldo_credito = $valor_credito;
 
             /* Obtener cuotas relacionadas con el credito */
             $consulta_cuotas = SQL::seleccionar(array("cuotas_creditos_bancos"), array("*"), "codigo_credito = '$codigo_credito' AND numero_cuota>='$forma_cuotas_credito'");
@@ -417,46 +416,64 @@ if (!empty($url_generar)) {
  
                 while ($datos_cuotas = SQL::filaEnObjeto($consulta_cuotas)) {
                     
+                    if($forma_cuotas_credito==1){
+                        $nuevo_saldo_credito = $valor_credito;
+                    } else{
+                        $nuevo_saldo_credito = $datos_cuotas->saldo_capital;
+                    }
+                    
                     if($valor_movimiento_cuota>=$cuota_del_credito){
                         $interes_pagado       = $datos_cuotas->interes;
                         $abono_capital_pagado = $datos_cuotas->abono_capital;
-                        $nuevo_saldo_credito  = $nuevo_saldo_credito - $abono_capital_pagado;aqui voy
+                        $nuevo_saldo_credito  = $nuevo_saldo_credito - $abono_capital_pagado;
 
                         $datos_cuotas_credito = array(
                             "codigo_credito"       => $codigo_credito,
-                            "numero_cuota"         => $forma_cuotas_credito,
+                            "numero_cuota"         => $datos_cuotas->numero_cuota,
                             "interes_pagado"       => $interes_pagado,
                             "abono_capital_pagado" => $abono_capital_pagado,
                             "saldo_capital_pagado" => $nuevo_saldo_credito,
                             "observaciones"        => "",
-                            "estado_cuota"         => 0
+                            "estado_cuota"         => '0'
                         );
-                        $insertar_cuotas        = SQL::insertar("cuotas_creditos_bancos", $datos_cuotas_credito);
+                        $modificar_cuotas = SQL::modificar("cuotas_creditos_bancos", $datos_cuotas_credito, "codigo_credito='$codigo_credito' AND numero_cuota='$datos_cuotas->numero_cuota'"); 
                         $valor_movimiento_cuota = $valor_movimiento_cuota-$cuota_del_credito;
 
-                    } elseif($valor_movimiento_cuota < $cuota_del_credito){
+                    } else{
                         
                         if($valor_movimiento_cuota>=$datos_cuotas->interes){
                             $interes_pagado         = $datos_cuotas->interes;
                             $abono_capital_pagado   = $valor_movimiento_cuota - $datos_cuotas->interes;
                             $valor_movimiento_cuota = $valor_movimiento_cuota - $interes_pagado - $abono_capital_pagado; 
                             $nuevo_saldo_credito    = $nuevo_saldo_credito - $abono_capital_pagado;
-                        } else{
+
+                            $datos_cuotas_credito = array(
+                                "codigo_credito"       => $codigo_credito,
+                                "numero_cuota"         => $datos_cuotas->numero_cuota,
+                                "interes_pagado"       => $interes_pagado,
+                                "abono_capital_pagado" => $abono_capital_pagado,
+                                "saldo_capital_pagado" => $nuevo_saldo_credito,
+                                "observaciones"        => "",
+                                "estado_cuota"         => '0'
+                            );
+                            $modificar_cuotas = SQL::modificar("cuotas_creditos_bancos", $datos_cuotas_credito, "codigo_credito='$codigo_credito' AND numero_cuota='$datos_cuotas->numero_cuota'");
+                        } elseif (($valor_movimiento_cuota<$datos_cuotas->interes) && ($valor_movimiento_cuota!=0)){
                             $interes_pagado         = $valor_movimiento_cuota;
                             $abono_capital_pagado   = 0;
                             $valor_movimiento_cuota = 0;
+                            $nuevo_saldo_credito    = $datos_cuotas->saldo_capital;
+
+                            $datos_cuotas_credito = array(
+                                "codigo_credito"       => $codigo_credito,
+                                "numero_cuota"         => $datos_cuotas->numero_cuota,
+                                "interes_pagado"       => $interes_pagado,
+                                "abono_capital_pagado" => $abono_capital_pagado,
+                                "saldo_capital_pagado" => $nuevo_saldo_credito,
+                                "observaciones"        => "",
+                                "estado_cuota"         => '0'
+                            );
+                            $modificar_cuotas = SQL::modificar("cuotas_creditos_bancos", $datos_cuotas_credito, "codigo_credito='$codigo_credito' AND numero_cuota='$datos_cuotas->numero_cuota'");
                         }
-                        
-                        $datos_cuotas_credito = array(
-                            "codigo_credito"       => $codigo_credito,
-                            "numero_cuota"         => $forma_cuotas_credito,
-                            "interes_pagado"       => $interes_pagado,
-                            "abono_capital_pagado" => $abono_capital_pagado,
-                            "saldo_capital_pagado" => $nuevo_saldo_credito,
-                            "observaciones"        => "",
-                            "estado_cuota"         => 0
-                        );
-                        $insertar_cuotas = SQL::insertar("cuotas_creditos_bancos", $datos_cuotas_credito);
                     }
                 }    
             }
