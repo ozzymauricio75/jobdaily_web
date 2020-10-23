@@ -98,7 +98,7 @@ if (!empty($url_generar)) {
                             HTML::mostrarDato("banco", $textos["BANCO"], $banco),
                             HTML::mostrarDato("numero_credito", $textos["NUMERO_CREDITO"], $datos->numero_credito),
                             HTML::mostrarDato("valor_credito", $textos["VALOR_CREDITO"], "$".number_format($datos->valor_credito,0)),
-                            HTML::mostrarDato("estado_cuota", $textos["ESTADO_CUOTA"], $textos["ESTADO_".$estado_cuota_credito])
+                            HTML::mostrarDato("estado_cuota", $textos["ESTADO"], $textos["ESTADO_".$estado_credito])
                         )
                     ),
                     $textos["DATOS_BANCO"]
@@ -108,7 +108,7 @@ if (!empty($url_generar)) {
                 HTML::agrupador(
                     array(
                         array(
-                            HTML::mostrarDato("tasa_mensual", $textos["TASA_MENSUAL"], $datos->tasa_mensual),
+                            HTML::mostrarDato("tasa_mensual", $textos["TASA_MENSUAL"], number_format($datos->tasa_mensual,2)),
                             HTML::mostrarDato("numero_cuotas", $textos["NUMERO_CUOTAS"], $datos->periodos),
                             HTML::mostrarDato("valor_cuota", $textos["VALOR_CUOTA"], "$".number_format($datos->valor_cuota,0)),
                             HTML::mostrarDato("fecha_credito", $textos["FECHA_CREDITO"], $datos->fecha_credito)

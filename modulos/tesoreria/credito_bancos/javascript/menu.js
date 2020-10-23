@@ -30,3 +30,21 @@
             }
         });
     }
+
+    function cargarCuenta() {
+        var destino     = $('#URLFormulario').val();
+        var cuenta      = $('#selector5').val();
+
+        $.getJSON(destino, {cargarCuenta: true, cuenta: cuenta}, function(datos) {
+            if(datos!=""){
+                $('#banco').val(datos[0]);
+                //$('#tercero').val(datos[1]);
+            }else{
+                alert('No existen datos con ese numero de cuenta');
+                $('#selector5').val('');
+                $('#banco').val('');
+                //$('#tercero').val('');
+                $('#selector5').focus();
+            }
+        });
+    }

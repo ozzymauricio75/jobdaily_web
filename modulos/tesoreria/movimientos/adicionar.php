@@ -447,6 +447,12 @@ if (!empty($url_generar)) {
                             $valor_movimiento_cuota = $valor_movimiento_cuota - $interes_pagado - $abono_capital_pagado; 
                             $nuevo_saldo_credito    = $nuevo_saldo_credito - $abono_capital_pagado;
 
+                            if($abono_capital_pagado>=$datos_cuotas->abono_capital){
+                                $estado_cuota = 2;
+                            } else{
+                                $estado_cuota = 1;
+                            }
+
                             $datos_cuotas_credito = array(
                                 "codigo_credito"       => $codigo_credito,
                                 "numero_cuota"         => $datos_cuotas->numero_cuota,
@@ -454,7 +460,7 @@ if (!empty($url_generar)) {
                                 "abono_capital_pagado" => $abono_capital_pagado,
                                 "saldo_capital_pagado" => $nuevo_saldo_credito,
                                 "observaciones"        => "",
-                                "estado_cuota"         => '0'
+                                "estado_cuota"         => $estado_cuota
                             );
                             $modificar_cuotas = SQL::modificar("cuotas_creditos_bancos", $datos_cuotas_credito, "codigo_credito='$codigo_credito' AND numero_cuota='$datos_cuotas->numero_cuota'");
                         } elseif (($valor_movimiento_cuota<$datos_cuotas->interes) && ($valor_movimiento_cuota!=0)){
@@ -470,7 +476,7 @@ if (!empty($url_generar)) {
                                 "abono_capital_pagado" => $abono_capital_pagado,
                                 "saldo_capital_pagado" => $nuevo_saldo_credito,
                                 "observaciones"        => "",
-                                "estado_cuota"         => '0'
+                                "estado_cuota"         => 1
                             );
                             $modificar_cuotas = SQL::modificar("cuotas_creditos_bancos", $datos_cuotas_credito, "codigo_credito='$codigo_credito' AND numero_cuota='$datos_cuotas->numero_cuota'");
                         }
