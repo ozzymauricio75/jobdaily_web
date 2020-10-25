@@ -50,8 +50,15 @@ if (!empty($url_generar)) {
         $datos_cuota_credito  = SQL::filaEnObjeto($consulta_cuota);
         $estado_cuota_credito = $datos_cuota_credito->estado_cuota;
 
-        $proyecto = SQL::obtenerValor("proyectos","nombre","codigo=$datos->codigo_proyecto");
-        $banco    = SQL::obtenerValor("bancos","descripcion","codigo=$datos->codigo_banco");
+        $proyecto          = SQL::obtenerValor("proyectos","nombre","codigo=$datos->codigo_proyecto");
+        $banco             = SQL::obtenerValor("bancos","descripcion","codigo=$datos->codigo_banco");
+        $interes           = SQL::obtenerValor("cuotas_creditos_bancos","SUM(interes)","codigo_credito='$url_id'");
+        $interes_pagado    = SQL::obtenerValor("cuotas_creditos_bancos","SUM(interes_pagado)","codigo_credito='$url_id'");
+        $interes_por_pagar = $interes-$interes_pagado;
+        $capital           = SQL::obtenerValor("cuotas_creditos_bancos","SUM(abono_capital)","codigo_credito='$url_id'");
+        $capital_pagado    = SQL::obtenerValor("cuotas_creditos_bancos","SUM(abono_capital_pagado)","codigo_credito='$url_id'");
+        $capital_por_pagar = $capital-$capital_pagado;
+        $por_pagar         = $interes_por_pagar+$capital_por_pagar;
 
         /* Obtener cuotas relacionadas con el credito */
         $consulta_cuotas = SQL::seleccionar(array("cuotas_creditos_bancos"), array("*"), "codigo_credito = '$url_id'");
@@ -115,6 +122,18 @@ if (!empty($url_generar)) {
                         )
                     ),
                     $textos["DATOS_CREDITO"]
+                )
+            ),
+            array(
+                HTML::agrupador(
+                    array(
+                        array(   
+                            HTML::mostrarDato("capital", $textos["CAPITAL_POR_PAGAR"], "$".number_format($capital_por_pagar,0)),
+                            HTML::mostrarDato("intereses", $textos["INTERES_POR_PAGAR"], "$".number_format($interes_por_pagar,0)),
+                            HTML::mostrarDato("valor_por pagar", $textos["POR_PAGAR"], "$".number_format($por_pagar,0))
+                        )
+                    ),
+                    $textos["SALDOS_APROXIMADOS"]
                 )
             ),
             array(

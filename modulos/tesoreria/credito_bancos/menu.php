@@ -42,7 +42,7 @@ $botones .= HTML::boton("CONSCRBA",$textos["CONSULTAR"],"ejecutarComando(this, 6
 //$botones .= HTML::boton("MODICRBA",$textos["MODIFICAR"],"ejecutarComando(this, 650, 550);","modificar");
 $botones .= HTML::boton("ELIMCRBA",$textos["ELIMINAR"],"ejecutarComando(this, 650, 500);","eliminar");
 //$botones .= HTML::boton("ANULCRBA",$textos["ANULAR"],"ejecutarComando(this, 650, 400);","anular");
-$botones .= HTML::boton("REPOCRBA",$textos["REPORTE"],"ejecutarComando(this, 790, 600);","reporte");
+//$botones .= HTML::boton("REPOCRBA",$textos["REPORTE"],"ejecutarComando(this, 790, 600);","reporte");
 
 /*** Obtener el número de la página actual ***/
 if (empty($url_pagina)) {
