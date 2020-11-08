@@ -55,6 +55,16 @@
         }
     }
 
+    function activaSaldosListado(){
+        var destino = $('#URLFormulario').val();
+
+        if ($(".por_saldo").is(':checked')){
+            $('#muestra_saldo').val(1);
+        }else{
+            $('#muestra_saldo').val(0);
+        }
+    }
+
     function cargarCuenta() {
         var destino     = $('#URLFormulario').val();
         var cuenta      = $('#selector3').val();
@@ -70,6 +80,15 @@
                 $('#tercero').val('');
                 $('#selector3').focus();
             }
+        });
+    }
+
+    function cargarBancoProveedor() {
+        var destino          = $('#URLFormulario').val();
+        var cuenta_destino   = $('#cuenta_destino').val();
+
+        $.getJSON(destino, {cargarBancoProveedor: true, cuenta_destino: cuenta_destino}, function(datos) {
+            $('#banco_proveedor').val(datos);          
         });
     }
 
@@ -105,7 +124,7 @@
     function cargarCuentaProveedor() {
         var destino         = $('#URLFormulario').val();
         var nit_proveedor   = $('#selector4').val();
-         var lista          = '';
+        var lista           = '';
 
         $.getJSON(destino, {cargarCuentaProveedor: true, nit_proveedor: nit_proveedor}, function(datos) {
             jQuery.each(datos,function(valor, descripcion){

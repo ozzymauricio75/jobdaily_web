@@ -40,7 +40,7 @@ $botones  = HTML::boton("ADICBANC",$textos["ADICIONAR"],"ejecutarComando(this, 8
 $botones .= HTML::boton("CONSBANC",$textos["CONSULTAR"],"ejecutarComando(this, 750, 300);","consultar");
 $botones .= HTML::boton("MODIBANC",$textos["MODIFICAR"],"ejecutarComando(this, 800, 530);","modificar");
 $botones .= HTML::boton("ELIMBANC",$textos["ELIMINAR"],"ejecutarComando(this, 750, 300);","eliminar");
-$botones .= HTML::boton("LISTBANC",$textos["EXPORTAR"],"ejecutarComando(this, 400, 300);","exportar");
+//$botones .= HTML::boton("LISTBANC",$textos["EXPORTAR"],"ejecutarComando(this, 400, 300);","exportar");
 
 // Obtener el numero de la pagina actual
 if (empty($url_pagina)) {

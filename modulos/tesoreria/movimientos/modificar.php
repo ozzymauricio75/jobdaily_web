@@ -142,6 +142,7 @@ if (!empty($url_generar)) {
         $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, $condicion);
         $datos         = SQL::filaEnObjeto($consulta);
         $codigo        = $url_id;
+        $estado        = $datos->estado;
 
         $error         = "";
         $titulo        = $componente->nombre;
@@ -168,68 +169,75 @@ if (!empty($url_generar)) {
             $nombre_proveedor  = SQL::obtenerValor("terceros", "razon_social", "documento_identidad = '".$datos->documento_identidad_tercero."'"); 
         }
 
-        /*** Definición de pestañas general ***/
-        $formularios["PESTANA_GENERAL"] = array(
-            array(
-                HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 9, 9, $codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
+        if($estado==1){
+            $error     = $textos["ERROR_ESTADO_ANULADO"];
+            $titulo    = "";
+            $contenido = "";
 
-                HTML::mostrarDato("nombre_grupo", $textos["GRUPO_TESORERIA"], $grupo_tesoreria),
+        }else{
+            /*** Definición de pestañas general ***/
+            $formularios["PESTANA_GENERAL"] = array(
+                array(
+                    HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 9, 9, $codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
 
-                HTML::mostrarDato("nombre_concepto", $textos["CONCEPTO_TESORERIA"], $concepto_tesoreria)
-            ),
-            array(
-                HTML::agrupador(
-                    array(
+                    HTML::mostrarDato("nombre_grupo", $textos["GRUPO_TESORERIA"], $grupo_tesoreria),
+
+                    HTML::mostrarDato("nombre_concepto", $textos["CONCEPTO_TESORERIA"], $concepto_tesoreria)
+                ),
+                array(
+                    HTML::agrupador(
                         array(
-                            HTML::campoTextoCorto("*selector3",$textos["NUMERO_CUENTA"], 15, 15, $datos->cuenta_origen, array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "autocompletable", "onChange"=>"cargarCuenta()")),
+                            array(
+                                HTML::campoTextoCorto("*selector3",$textos["NUMERO_CUENTA"], 15, 15, $datos->cuenta_origen, array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "autocompletable", "onChange"=>"cargarCuenta()")),
 
-                            HTML::campoTextoCorto("banco", $textos["BANCO"], 20, 20, $banco, array("readonly" => "true"), array("title" => $textos["AYUDA_BANCO"],"onBlur" => "validarItem(this);")),
+                                HTML::campoTextoCorto("banco", $textos["BANCO"], 20, 20, $banco, array("readonly" => "true"), array("title" => $textos["AYUDA_BANCO"],"onBlur" => "validarItem(this);")),
 
-                            HTML::campoTextoCorto("tercero", $textos["TERCERO"], 20, 20, $sucursal, array("readonly" => "true"), array("title" => $textos["AYUDA_TERCERO"],"onBlur" => "validarItem(this);"))
-                        )
-                    ),
-                    $textos["CUENTA_ORIGEN"]
-                )
-            ),
-            array(
-                HTML::agrupador(
-                    array(
-                        array(    
-                            HTML::campoTextoCorto("selector2", $textos["PROYECTO"], 40, 255, $proyecto, array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
+                                HTML::campoTextoCorto("tercero", $textos["TERCERO"], 20, 20, $sucursal, array("readonly" => "true"), array("title" => $textos["AYUDA_TERCERO"],"onBlur" => "validarItem(this);"))
+                            )
                         ),
+                        $textos["CUENTA_ORIGEN"]
+                    )
+                ),
+                array(
+                    HTML::agrupador(
                         array(
-                            HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, $datos->fecha_registra, array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
+                            array(    
+                                HTML::campoTextoCorto("*selector2", $textos["PROYECTO"], 40, 255, $proyecto, array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
+                            ),
+                            array(
+                                HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, $datos->fecha_registra, array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
 
-                            HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, number_format($datos->valor_movimiento,0,',','.'), array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this), valorSaldo(this)"))
-                            .HTML::campoOculto("valor_movimiento_anterior", $datos->valor_movimiento)
+                                HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, number_format($datos->valor_movimiento,0,',','.'), array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this), valorSaldo(this)"))
+                                .HTML::campoOculto("valor_movimiento_anterior", $datos->valor_movimiento)
+                            ),
+                            array(
+                                HTML::campoTextoCorto("observaciones", $textos["OBSERVACIONES"], 75, 254, $datos->observaciones, array("title" => $textos["AYUDA_OBSERVACIONES"]))
+                            )
                         ),
+                        $textos["DATOS_MOVIMIENTO"]
+                    )
+                ),
+                array(
+                    HTML::agrupador(
                         array(
-                            HTML::campoTextoCorto("observaciones", $textos["OBSERVACIONES"], 75, 254, $datos->observaciones, array("title" => $textos["AYUDA_OBSERVACIONES"]))
-                        )
-                    ),
-                    $textos["DATOS_MOVIMIENTO"]
+                            array(
+                                HTML::campoTextoCorto("selector4",$textos["PROVEEDOR"], 45, 45, $nombre_proveedor, array("title"=>$textos["AYUDA_PROVEEDOR"],"class" => "autocompletable", "onBlur"=>"cargarCuentaProveedor()")),
+
+                                 HTML::listaSeleccionSimple("cuenta_destino", $textos["CUENTA_DESTINO"], $listar_cuentas, $datos->cuenta_proveedor, array("title" => $textos["AYUDA_CUENTA_DESTINO"]))
+                            )
+                        ),
+                        $textos["CUENTA_DESTINO"]
+                    )
                 )
-            ),
-            array(
-                HTML::agrupador(
-                    array(
-                        array(
-                            HTML::campoTextoCorto("selector4",$textos["PROVEEDOR"], 45, 45, $nombre_proveedor, array("title"=>$textos["AYUDA_PROVEEDOR"],"class" => "autocompletable", "onBlur"=>"cargarCuentaProveedor()")),
+            );
 
-                             HTML::listaSeleccionSimple("cuenta_destino", $textos["CUENTA_DESTINO"], $listar_cuentas, $datos->cuenta_proveedor, array("title" => $textos["AYUDA_CUENTA_DESTINO"]))
-                        )
-                    ),
-                    $textos["CUENTA_DESTINO"]
-                )
-            )
-        );
+            /*** Definición de botones ***/
+            $botones = array(
+                HTML::boton("botonAceptar", $textos["ACEPTAR"], "modificarItem('$url_id');", "aceptar")
+            );
 
-        /*** Definición de botones ***/
-        $botones = array(
-            HTML::boton("botonAceptar", $textos["ACEPTAR"], "modificarItem('$url_id');", "aceptar")
-        );
-
-        $contenido = HTML::generarPestanas($formularios, $botones);
+            $contenido = HTML::generarPestanas($formularios, $botones);
+        }
     }
 
     /*** Enviar datos para la generación del formulario al script que originó la petición ***/
@@ -270,6 +278,10 @@ if (!empty($url_generar)) {
     } elseif(empty($forma_fecha_movimiento)){
         $error   = true;
         $mensaje = $textos["FECHA_VACIO"];
+
+    } elseif(empty($forma_selector2)){
+        $error   = true;
+        $mensaje = $textos["PROYECTO_VACIO"];    
 
     } elseif(empty($forma_valor)){
         $error   = true;

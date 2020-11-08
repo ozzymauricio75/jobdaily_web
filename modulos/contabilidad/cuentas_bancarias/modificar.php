@@ -53,7 +53,6 @@ if (isset($url_recargarDatosCuenta)) {
         $datos[0] = $textos["ASIGNADA"];
 
     }
-
     HTTP::enviarJSON($datos);
     exit;
 }
@@ -101,8 +100,8 @@ if (!empty($url_generar)) {
         }
 
         $estado = array (
-            "1" => $textos["ACTIVA"],
-            "0" => $textos["INACTIVA"]
+            "0" => $textos["ACTIVA"],
+            "1" => $textos["INACTIVA"]
         ); 
 
         $tipo_cuenta = array(
@@ -110,9 +109,9 @@ if (!empty($url_generar)) {
             "2" => $textos["CORRIENTE"]
         );    
 
-        $bancos               = HTML::generarDatosLista("bancos", "codigo", "descripcion","codigo > 0");
-        $tipos_documentos     = HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo > 0");
-        $listar_sucursales    = HTML::generarDatosLista("seleccion_sucursales_bancos", "id", "nombre_sucursal","codigo_banco = '".array_shift(array_keys($bancos))."'");
+        $bancos            = HTML::generarDatosLista("bancos", "codigo", "descripcion","codigo > 0");
+        $tipos_documentos  = HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo > 0");
+        $listar_sucursales = HTML::generarDatosLista("seleccion_sucursales_bancos", "id", "nombre_sucursal","codigo_banco = '".array_shift(array_keys($bancos))."'");
         $llave_sucursal_banco = $datos->codigo_sucursal_banco.'|'.$datos->codigo_banco.'|'.$datos->codigo_iso.'|'.$datos->codigo_dane_departamento.'|'.$datos->codigo_dane_municipio;
 
         $plan_contable = explode('|',SQL::obtenerValor("seleccion_plan_contable_flujo_bancos","codigo_contable","id = '".$datos->codigo_plan_contable."'"));
@@ -120,7 +119,7 @@ if (!empty($url_generar)) {
         /*** Definicion de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::listaSeleccionSimple("*codigo_sucursal", $textos["SUCURSAL"], HTML::generarDatosLista("sucursales", "codigo", "nombre"), $datos->codigo_sucursal, array("title" => $textos["AYUDA_SUCURSAL"]))
+                HTML::listaSeleccionSimple("*codigo_sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre"), $datos->codigo_sucursal, array("title" => $textos["AYUDA_SUCURSAL"]))
             ),
             /*array(
                 HTML::listaSeleccionSimple("*codigo_tipo_documento", $textos["TIPO_DOCUMENTO"], $tipos_documentos, $datos->codigo_tipo_documento, array("title" => $textos["AYUDA_TIPO_DOCUMENTO"]))
@@ -198,15 +197,9 @@ if (!empty($url_generar)) {
 	}elseif(empty($forma_codigo_banco)){
 		$error   = true;
 		$mensaje = $textos["BANCO_VACIO"];
-	}elseif(empty($forma_codigo_tipo_documento)){
-		$error   = true;
-		$mensaje = $textos["TIPO_DOCUMENTO_VACIO"];
 	}elseif(empty($forma_codigo_sucursal_banco)){
 		$error   = true;
 		$mensaje = $textos["SUCURSAL_BANCO_VACIO"];
-	}elseif(empty($forma_plantilla)) {
-        $error   = true;
-        $mensaje = $textos["PLANTILLA_VACIA"];
     }elseif(SQL::existeItem("menu_cuentas_bancarias","id",$llave,"id != '".$forma_id."'")){
         $error   = true;
         $mensaje = $textos["CUENTA_EXISTE"];
@@ -222,7 +215,7 @@ if (!empty($url_generar)) {
             "codigo_iso"               => $sucursal[2],
             "codigo_dane_departamento" => $sucursal[3],
             "codigo_dane_municipio"    => $sucursal[4],
-            "codigo_banco"             => $sucursal[1],
+            "codigo_banco"             => $forma_codigo_banco,
             "numero"                   => $forma_numero,
             "codigo_plan_contable"     => $forma_codigo_plan_contable,
             "codigo_empresa_auxiliar"  => $auxiliar[0],

@@ -139,12 +139,12 @@ if (isset($url_completar)) {
         );
 
         // Definicion de pestanas
-        $fecha_inicial = date("Y/m/d")." - ".date("Y/m/d");
+        $fecha_inicial = date("Y/m/d")."-".date("Y/m/d");
         $sucursales    = array();
 
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::campoTextoCorto("*fechas", $textos["FECHA_DESDE"].'  -  '.$textos["FECHA_HASTA"], 25, 25, $fecha_inicial, array("title" => $textos["RANGO_FECHAS"], "class" => "fechaRango")),
+                HTML::campoTextoCorto("*fechas", $textos["FECHA_DESDE"].'  --  '.$textos["FECHA_HASTA"], 25, 25, $fecha_inicial, array("title" => $textos["RANGO_FECHAS"], "class" => "fechaRango")),
 
                 HTML::listaSeleccionSimple("tipo_listado",$textos["TIPO_LISTADO"], $tipo_listado,1,array("title"=>$textos["AYUDA_TIPO_LISTADO"]))
             ),
@@ -166,6 +166,14 @@ if (isset($url_completar)) {
                         )
                     ),
                     $textos["CUENTAS"]
+                ),
+                HTML::agrupador(
+                    array(
+                        array(
+                            HTML::marcaChequeo("muestra_saldo",$textos["IMPRIME_SALDOS"], 1, false, array("title"=>$textos["AYUDA_IMPRIME_SALDOS"], "class"=>"por_saldo","onChange"=>"activaSaldosListado()"))
+                        )
+                    ),
+                    $textos["IMPRIME_SALDOS"]
                 )
             ),
             array(
@@ -315,6 +323,11 @@ if (isset($url_completar)) {
         $condicion_concepto = "";
     }
 
+    if($forma_muestra_saldo==1){
+        $condicion_saldo = "mostrar";
+    } else{
+        $condicion_saldo = "no_mostrar";
+    }
     //Titulos segun tipo listado
     if ($forma_tipo_listado=="1"){
         //////////////////////////////ENCABEZADO DEL DOCUMENTO PDF REPORTE DE MOVIMIENTO/////////////////////////////
@@ -341,9 +354,9 @@ if (isset($url_completar)) {
         $archivo->SetFillColor(225,225,225);
 
         $archivo->Ln(6);
-        $archivo->Cell(40,4,$textos["BANCOS"],1,0,'C',true);
+        $archivo->Cell(30,4,$textos["BANCOS"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["CUENTA_ORIGEN"],1,0,'C',true);
-        $archivo->Cell(40,4,$textos["CONCEPTO"],1,0,'C',true);
+        $archivo->Cell(30,4,$textos["CONCEPTO"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["VALOR"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["FECHA_MOVIMIENTO"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["SALDO"],1,0,'C',true);
@@ -351,6 +364,7 @@ if (isset($url_completar)) {
         $archivo->Cell(40,4,$textos["PROVEEDOR"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
         $archivo->Cell(10,4,$textos["ESTADO"],1,0,'C',true);
+        $archivo->Cell(30,4,$textos["OBSERVACIONES"],1,0,'C',true);
         //////////////////////////////FIN ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
         
         /*** Obtener los datos de la tabla movimientos tesoreria ***/
@@ -369,7 +383,14 @@ if (isset($url_completar)) {
                 $codigo_banco      = SQL::obtenerValor("cuentas_bancarias","codigo_banco","numero='$datos_movimiento->cuenta_origen'");
                 $codigo_sucursal   = SQL::obtenerValor("cuentas_bancarias","codigo_sucursal","numero='$datos_movimiento->cuenta_origen'");
                 $nombre_banco      = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco'");
-                $saldo_fecha       = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos_movimiento->codigo'");
+                $observaciones     = $datos_movimiento->observaciones;
+
+                if($condicion_saldo== "mostrar"){
+                    $saldo_fecha   = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos_movimiento->codigo'");
+                }else{
+                    $saldo_fecha   = 0; 
+                }
+            
                 $nombre_proyecto   = SQL::obtenerValor("proyectos","nombre","codigo='$datos_movimiento->codigo_proyecto'");
                 $nombre_concepto   = SQL::obtenerValor("conceptos_tesoreria","nombre_concepto","codigo='$datos_movimiento->codigo_concepto_tesoreria'");
                 $tipo_persona      = SQL::obtenerValor("terceros","tipo_persona","documento_identidad='$datos_movimiento->documento_identidad_tercero'");
@@ -393,9 +414,9 @@ if (isset($url_completar)) {
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////
                 $archivo->Ln(4);
-                $archivo->Cell(40,4,$nombre_banco,1,0,'L',true);
+                $archivo->Cell(30,4,$nombre_banco,1,0,'L',true);
                 $archivo->Cell(20,4,$datos_movimiento->cuenta_origen,1,0,'L',true);
-                $archivo->Cell(40,4,$nombre_concepto,1,0,'L',true);
+                $archivo->Cell(30,4,$nombre_concepto,1,0,'L',true);
                 $archivo->Cell(20,4,""."$ ".number_format($datos_movimiento->valor_movimiento,0),1,0,'R',true);
                 $archivo->Cell(20,4,$datos_movimiento->fecha_registra,1,0,'C',true);
                 $archivo->Cell(20,4,""."$ ".number_format($saldo_fecha,0),1,0,'R',true);
@@ -403,6 +424,7 @@ if (isset($url_completar)) {
                 $archivo->Cell(40,4,$nombre_proveedor,1,0,'L',true);
                 $archivo->Cell(20,4,$datos_movimiento->cuenta_proveedor,1,0,'L',true);
                 $archivo->Cell(10,4,$estado,1,0,'L',true);
+                $archivo->Cell(30,4,$observaciones,1,0,'L',true);
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////
                 $imprime_cabecera = $archivo->breakCell(8);
@@ -420,16 +442,16 @@ if (isset($url_completar)) {
                     $archivo->SetFillColor(225,225,225);
 
                     $archivo->Ln(6);
-                    $archivo->Cell(40,4,$textos["BANCOS"],1,0,'C',true);
+                    $archivo->Cell(30,4,$textos["BANCOS"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["CUENTA_ORIGEN"],1,0,'C',true);
-                    $archivo->Cell(40,4,$textos["CONCEPTO"],1,0,'C',true);
+                    $archivo->Cell(30,4,$textos["CONCEPTO"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["VALOR"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["FECHA_MOVIMIENTO"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["SALDO"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["PROYECTO"],1,0,'C',true);
                     $archivo->Cell(40,4,$textos["PROVEEDOR"],1,0,'C',true);
-                    $archivo->Cell(20,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
-                    $archivo->Cell(10,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
+                    $archivo->Cell(10,4,$textos["ESTADO"],1,0,'C',true);
+                    $archivo->Cell(30,4,$textos["OBSERVACIONES"],1,0,'C',true);
                 }
                 $i++;
                 $item++;
@@ -479,7 +501,7 @@ if (isset($url_completar)) {
         
     } else{
         //Se crean los titulos del archivo excel
-        $titulos_plano = "BANCOS;CUENTA ORIGEN;CONCEPTO;VALOR;FECHA MOVIMIENTO;SALDO;PROYECTO;PROVEEDOR;CUENTA DESTINO;ESTADO\n";
+        $titulos_plano = "BANCOS;CUENTA ORIGEN;CONCEPTO;VALOR;FECHA MOVIMIENTO;SALDO;PROYECTO;PROVEEDOR;CUENTA DESTINO;ESTADO;OBSERVACIONES\n";
             fwrite($archivo, $titulos_plano);
 
         /*** Obtener los datos de la tabla movimientos tesoreria ***/
@@ -493,7 +515,14 @@ if (isset($url_completar)) {
                 $codigo_banco      = SQL::obtenerValor("cuentas_bancarias","codigo_banco","numero='$datos_movimiento->cuenta_origen'");
                 $codigo_sucursal   = SQL::obtenerValor("cuentas_bancarias","codigo_sucursal","numero='$datos_movimiento->cuenta_origen'");
                 $nombre_banco      = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco'");
-                $saldo_fecha       = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos_movimiento->codigo'");
+                $observaciones     = $datos_movimiento->observaciones;
+                
+                if($condicion_saldo== "mostrar"){
+                    $saldo_fecha   = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos_movimiento->codigo'");
+                }else{
+                    $saldo_fecha   = 0; 
+                }
+
                 $nombre_proyecto   = SQL::obtenerValor("proyectos","nombre","codigo='$datos_movimiento->codigo_proyecto'");
                 $nombre_concepto   = SQL::obtenerValor("conceptos_tesoreria","nombre_concepto","codigo='$datos_movimiento->codigo_concepto_tesoreria'");
                 $tipo_persona      = SQL::obtenerValor("terceros","tipo_persona","documento_identidad='$datos_movimiento->documento_identidad_tercero'");
@@ -525,7 +554,7 @@ if (isset($url_completar)) {
                 $cuenta_destino     = $datos_movimiento->cuenta_proveedor;
 
                 //Contenido del archivo
-                $contenido = "$nombre_banco;$cuenta_origen;$nombre_concepto;$valor_movimiento;$fecha_registra;$saldo_fecha;$nombre_proyecto;$nombre_proveedor;$cuenta_destino;$estado\n";
+                $contenido = "$nombre_banco;$cuenta_origen;$nombre_concepto;$valor_movimiento;$fecha_registra;$saldo_fecha;$nombre_proyecto;$nombre_proveedor;$cuenta_destino;$estado;$observaciones\n";
                 $guardarArchivo = fwrite($archivo,$contenido);
             }
         }

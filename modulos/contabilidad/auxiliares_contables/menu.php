@@ -77,9 +77,9 @@ if (isset($url_completar)) {
 
 /*** Generar botones de comandos ***/
 $botones  = HTML::boton("ADICAUCO",$textos["ADICIONAR"],"ejecutarComando(this,420,310);","adicionar");
-$botones .= HTML::boton("CONSAUCO",$textos["CONSULTAR"],"ejecutarComando(this,420,250);","consultar");
+$botones .= HTML::boton("CONSAUCO",$textos["CONSULTAR"],"ejecutarComando(this,420,310);","consultar");
 $botones .= HTML::boton("MODIAUCO",$textos["MODIFICAR"],"ejecutarComando(this,420,310);","modificar");
-$botones .= HTML::boton("ELIMAUCO",$textos["ELIMINAR"],"ejecutarComando(this,420,250);","eliminar");
+$botones .= HTML::boton("ELIMAUCO",$textos["ELIMINAR"],"ejecutarComando(this,420,310);","eliminar");
 
 /*** Obtener el número de la página actual ***/
 if (empty($url_pagina)) {

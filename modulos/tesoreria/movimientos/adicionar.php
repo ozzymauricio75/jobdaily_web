@@ -142,6 +142,16 @@ if (isset($url_completar)) {
 
     HTTP::enviarJSON($lista);
     exit;
+
+/*** Mostrar los datos de la cuenta del proveedor***/
+} elseif (!empty($url_cargarBancoProveedor)) {
+    $cuenta_destino = $url_cuenta_destino;
+
+    $codigo_banco_proveedor = SQL::obtenerValor("cuentas_bancarias_proveedores","codigo_banco","cuenta='$cuenta_destino'");
+    $banco_proveedor        = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco_proveedor'");
+
+    HTTP::enviarJSON($banco_proveedor);
+    exit;
 }
 /*** Mostrar los conceptos de tesoreria ***/
 if(isset($url_recargar_conceptos)){
@@ -230,12 +240,12 @@ if (!empty($url_generar)) {
                 HTML::agrupador(
                     array(
                         array(    
-                            HTML::campoTextoCorto("selector2", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
+                            HTML::campoTextoCorto("*selector2", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
                         ),
                         array(
                             HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
 
-                            HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this),valorSaldo(this)"))
+                            HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this)"))
                         ),
                         array(
                             HTML::campoTextoCorto("*observaciones", $textos["OBSERVACIONES"], 75, 254, "", array("title" => $textos["AYUDA_OBSERVACIONES"]))
@@ -250,7 +260,9 @@ if (!empty($url_generar)) {
                         array(
                             HTML::campoTextoCorto("selector4",$textos["PROVEEDOR"], 45, 45, "", array("title"=>$textos["AYUDA_PROVEEDOR"],"class" => "autocompletable", "onBlur"=>"cargarCuentaProveedor()")),
 
-                            HTML::listaSeleccionSimple("cuenta_destino", $textos["CUENTA_DESTINO"], HTML::generarDatosLista("cuentas_bancarias_proveedores", "cuenta", "documento_identidad_proveedor","documento_identidad_proveedor = 0"), "", array("title" => $textos["AYUDA_CUENTA_DESTINO"])),
+                            HTML::listaSeleccionSimple("cuenta_destino", $textos["CUENTA_DESTINO"], HTML::generarDatosLista("cuentas_bancarias_proveedores", "cuenta", "documento_identidad_proveedor","documento_identidad_proveedor = 0"), "", array("title" => $textos["AYUDA_CUENTA_DESTINO"],"onChange" => "cargarBancoProveedor()")),
+
+                            HTML::campoTextoCorto("banco_proveedor", $textos["BANCO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_BANCO"],"onBlur" => "validarItem(this);")),
                         )
                     ),
                     $textos["CUENTA_DESTINO"]
@@ -310,6 +322,10 @@ if (!empty($url_generar)) {
     } elseif(empty($forma_fecha_movimiento)){
         $error   = true;
         $mensaje = $textos["FECHA_VACIO"];
+
+    } elseif(empty($forma_selector2)){
+        $error   = true;
+        $mensaje = $textos["PROYECTO_VACIO"];
 
     } elseif(empty($forma_valor)){
         $error   = true;
@@ -426,6 +442,7 @@ if (!empty($url_generar)) {
                         $interes_pagado       = $datos_cuotas->interes;
                         $abono_capital_pagado = $datos_cuotas->abono_capital;
                         $nuevo_saldo_credito  = $nuevo_saldo_credito - $abono_capital_pagado;
+                        $estado_cuota         = "0";
 
                         $datos_cuotas_credito = array(
                             "codigo_credito"       => $codigo_credito,
@@ -434,7 +451,7 @@ if (!empty($url_generar)) {
                             "abono_capital_pagado" => $abono_capital_pagado,
                             "saldo_capital_pagado" => $nuevo_saldo_credito,
                             "observaciones"        => "",
-                            "estado_cuota"         => '0'
+                            "estado_cuota"         => $estado_cuota
                         );
                         $modificar_cuotas = SQL::modificar("cuotas_creditos_bancos", $datos_cuotas_credito, "codigo_credito='$codigo_credito' AND numero_cuota='$datos_cuotas->numero_cuota'"); 
                         $valor_movimiento_cuota = $valor_movimiento_cuota-$cuota_del_credito;
@@ -482,6 +499,14 @@ if (!empty($url_generar)) {
                         }
                     }
                 }    
+            }
+            $estado_pagado = SQL::obtenerValor("cuotas_creditos_bancos","MAX(codigo)","estado_cuota=1");
+            if(!$estado_pagado){
+
+                $datos_credito = array(
+                    "estado_credito" => 0
+                );
+                $modificar_credito = SQL::modificar("creditos_bancos", $datos_credito, "codigo_credito='$codigo_credito'");
             }
         }
     }

@@ -78,8 +78,8 @@ if (!empty($url_generar)) {
     $titulo = $componente->nombre;
 
     $estado = array (
-        "1" => $textos["ACTIVA"],
-        "0" => $textos["INACTIVA"]
+        "0" => $textos["ACTIVA"],
+        "1" => $textos["INACTIVA"]
     );
 
     $tipo_cuenta = array(
@@ -94,7 +94,7 @@ if (!empty($url_generar)) {
     /*** Definicion de pestañas general ***/
     $formularios["PESTANA_GENERAL"] = array(
         array(
-            HTML::listaSeleccionSimple("*codigo_sucursal", $textos["SUCURSAL"], HTML::generarDatosLista("sucursales", "codigo", "nombre"), "", array("title" => $textos["AYUDA_SUCURSAL"]))
+            HTML::listaSeleccionSimple("*codigo_sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre"), "", array("title" => $textos["AYUDA_SUCURSAL"]))
         ),
         /*array(
             HTML::listaSeleccionSimple("*codigo_tipo_documento", $textos["TIPO_DOCUMENTO"], $tipos_documentos, "", array("title" => $textos["AYUDA_TIPO_DOCUMENTO"]))
@@ -173,9 +173,6 @@ if (!empty($url_generar)) {
 	}elseif(empty($forma_codigo_banco)){
 		$error   = true;
 		$mensaje = $textos["BANCO_VACIO"];
-	}elseif(empty($forma_codigo_tipo_documento)){
-		$error   = true;
-		$mensaje = $textos["TIPO_DOCUMENTO_VACIO"];
 	}elseif(empty($forma_codigo_sucursal_banco)){
 		$error   = true;
 		$mensaje = $textos["SUCURSAL_BANCO_VACIO"];
@@ -189,7 +186,8 @@ if (!empty($url_generar)) {
         $forma_plantilla             = "AAAA";
         $forma_codigo_tipo_documento = 0;
 
-        $existe = SQL::existeItem("cuentas_bancarias","numero",$forma_numero,"codigo_sucursal = '".$forma_codigo_sucursal."' AND codigo_tipo_documento = '".$forma_codigo_tipo_documento."' AND codigo_sucursal_banco = '".$sucursal[0]."' AND codigo_iso = '".$sucursal[2]."' AND codigo_dane_departamento = '".$sucursal[3]."' AND codigo_dane_municipio = '".$sucursal[4]."' AND codigo_banco = '".$sucursal[1]."'");
+        $existe = SQL::obtenerValor("cuentas_bancarias", "numero", "numero = '$forma_numero'");;
+        //$existe = SQL::existeItem("cuentas_bancarias","numero",$forma_numero,"codigo_sucursal = '".$forma_codigo_sucursal."' AND codigo_tipo_documento = '".$forma_codigo_tipo_documento."' AND codigo_sucursal_banco = '".$sucursal[0]."' AND codigo_iso = '".$sucursal[2]."' AND codigo_dane_departamento = '".$sucursal[3]."' AND codigo_dane_municipio = '".$sucursal[4]."' AND codigo_banco = '".$sucursal[1]."'");
 
         if($existe){
             $error   = true;

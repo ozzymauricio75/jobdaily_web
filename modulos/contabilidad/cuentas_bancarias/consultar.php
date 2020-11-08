@@ -58,8 +58,8 @@ if(!empty($url_generar)){
         }
 
         $estado = array(
-            "0" => $textos["INACTIVA"],
-            "1" => $textos["ACTIVA"]
+            "0" => $textos["ACTIVA"],
+            "1" => $textos["INACTIVA"]
         );
 
         $tipo_cuenta = array(
@@ -69,7 +69,7 @@ if(!empty($url_generar)){
         
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::mostrarDato("sucursal", $textos["SUCURSAL"], $sucursal)
+                HTML::mostrarDato("sucursal", $textos["CONSORCIO"], $sucursal)
             ),
             /*array(
                 HTML::mostrarDato("tipo_documento", $textos["TIPO_DOCUMENTO"], $tipo_documento)

@@ -35,6 +35,7 @@ $textos = array(
     "REPORTE_CUBA"                  => "Listado de cuentas bancarias",
 
     "BANCO"                         => "Banco",
+    "CONSORCIO"                     => "Consorcio",
     "NUMERO"                        => "Número",
     "PESTANA_GENERAL"               => "General",
     "PESTANA_PLANTILLA"             => "Plantilla cheque",
