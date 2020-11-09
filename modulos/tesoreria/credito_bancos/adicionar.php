@@ -95,7 +95,66 @@ if (isset($url_completar)) {
 
     HTTP::enviarJSON($valor_cuota);
     exit; 
+
+/*** Calcular datos del credito ***/
+} elseif (!empty($url_agregarItemCuota)) {
+    $valor_credito = $url_valor_credito;
+    $tasa_mensual  = $url_tasa_mensual;
+    $numero_cuotas = $url_numero_cuotas;
+    $codigo        = $url_codigo;
+    $valor_credito = str_replace(".", "", $valor_credito);
+
+    $calculo_tasa  = (100 + ($tasa_mensual))/100;
+    $valor_cuota   = pow(($calculo_tasa), $numero_cuotas);
+    $valor_cuota   = ($valor_cuota*$tasa_mensual)/100;
+    $valor_cuota   = $valor_cuota*$valor_credito;
+    $calculo       = (pow($calculo_tasa, $numero_cuotas)-1);
+    $valor_cuota   = $valor_cuota/$calculo;
+    $valor_cuota   = number_format($valor_cuota,0);
+    $valor_cuota   = str_replace(",", ".", $valor_cuota);
+    $valor         = 0;
+    
+    $i = 1;
+
+    /*** Grabar las cuotas del credito en cuotas_creditos_bancos ****/
+    while($i<=$numero_cuotas){
+        if($i==1){
+            $interes             = ($tasa_mensual*$valor_credito)/100;
+            $abono_capital       = $valor_cuota - $interes;
+            $nuevo_saldo_credito = $valor_credito - $abono_capital;    
+        }else{
+            if($nuevo_saldo_credito>=$valor_cuota){
+                $interes             = ($tasa_mensual*$nuevo_saldo_credito)/100;
+                $abono_capital       = $valor_cuota - $interes;
+                $nuevo_saldo_credito = $nuevo_saldo_credito - $abono_capital;
+            }else{
+                $interes             = ($tasa_mensual*$nuevo_saldo_credito)/100;
+                $abono_capital       = $nuevo_saldo_credito - $interes;
+                $nuevo_saldo_credito = 0;
+            }
+        }
+
+        $datos_cuotas_credito = array(
+            "codigo_credito"       => $codigo,
+            "numero_cuota"         => $i,
+            "interes"              => 0,
+            "interes_pagado"       => 0,
+            "abono_capital"        => 0,
+            "abono_capital_pagado" => 0,
+            "saldo_capital"        => 0,
+            "saldo_capital_pagado" => 0,
+            "observaciones"        => "",
+            "estado_cuota"         => 1
+        );
+        $insertar_cuotas = SQL::insertar("cuotas_creditos_bancos", $datos_cuotas_credito);  
+        $datos           = array($i); 
+        $i++;
+    }
+
+    HTTP::enviarJSON($datos);
+    exit; 
 }
+
 /*** Generar el formulario para la captura de datos ***/
 if (!empty($url_generar)) {
     $error    = "";
@@ -157,16 +216,30 @@ if (!empty($url_generar)) {
                             HTML::campoTextoCorto("valor_cuota", $textos["VALOR_CUOTA"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_CUOTA"],"onBlur" => "validarItem(this);")),
 
                             HTML::campoTextoCorto("fecha_credito", $textos["FECHA_CREDITO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_CREDITO"])),
+                        ),
+                        array(
+                            HTML::campoTextoCorto("observaciones", $textos["OBSERVACIONES"], 86, 254, "", array("title" => $textos["AYUDA_OBSERVACIONES"]))
+                        ),
+                        array(    
+                            HTML::boton("botonGenerarCuotas", $textos["GENERAR_CUOTAS"], "agregarItemCuota()", "adicionar",array("class"=>"agregar_cuotas"),"etiqueta"),
+
+                            HTML::boton("botonModificarCuotasTabla", $textos["MODIFICAR_CUOTAS"], "modificarCuotasTabla()", "modificar",array("class"=>" modificar_cuota_tabla oculto"),"etiqueta")
+                                .HTML::campoOculto("indice_tabla",0)
                         )
                     ),
                     $textos["DATOS_CREDITO"]
                 )
-            ),
-            array(
-                HTML::campoTextoCorto("observaciones", $textos["OBSERVACIONES"], 86, 254, "", array("title" => $textos["AYUDA_OBSERVACIONES"]))
             )
         );
 
+        $formularios["PESTANA_CUOTAS"] = array(
+            array(
+                HTML::generarTabla(
+                    array("id","NRO_CUOTA","VALOR_CUOTA"),"",array("I","I"),"listaCuotas",false
+                )
+            )   
+        );
+        
         /*** Definicion de botones ***/
         $botones = array(
             HTML::boton("botonAceptar", $textos["ACEPTAR"], "adicionarItem();", "aceptar")
@@ -310,7 +383,7 @@ if (!empty($url_generar)) {
             $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
         } else{
             /*** Grabar las cuotas del credito en cuotas_creditos_bancos ****/
-            while($i<=$forma_numero_cuotas){
+            /*while($i<=$forma_numero_cuotas){
                 if($i==1){
                     $interes             = ($forma_tasa_mensual*$forma_valor_credito)/100;
                     $abono_capital       = $forma_valor_cuota - $interes;
@@ -341,7 +414,7 @@ if (!empty($url_generar)) {
                 );
                 $insertar_cuotas = SQL::insertar("cuotas_creditos_bancos", $datos_cuotas_credito);  
                 $i++; 
-            }
+            }*/
             /*** Insertar datos movimientos tesoreria ***/
             $forma_codigo_movimiento = SQL::obtenerValor("movimientos_tesoreria","MAX(codigo)","codigo>0");
             

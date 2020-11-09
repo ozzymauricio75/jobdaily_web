@@ -37,7 +37,7 @@ if (isset($url_completar)) {
 }
 
 /*** Generar botones de comandos ***/
-$botones  = HTML::boton("ADICCRBA",$textos["ADICIONAR"],"ejecutarComando(this, 700, 500);","adicionar");
+$botones  = HTML::boton("ADICCRBA",$textos["ADICIONAR"],"ejecutarComando(this, 700, 550);","adicionar");
 $botones .= HTML::boton("CONSCRBA",$textos["CONSULTAR"],"ejecutarComando(this, 650, 500);","consultar");
 //$botones .= HTML::boton("MODICRBA",$textos["MODIFICAR"],"ejecutarComando(this, 650, 550);","modificar");
 $botones .= HTML::boton("ELIMCRBA",$textos["ELIMINAR"],"ejecutarComando(this, 650, 500);","eliminar");

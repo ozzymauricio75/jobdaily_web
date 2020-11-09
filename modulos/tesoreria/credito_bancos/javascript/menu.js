@@ -31,6 +31,29 @@
         });
     }
 
+    function agregarItemCuota() {
+        var destino       = $('#URLFormulario').val();
+        var tasa_mensual  = $('#tasa_mensual').val();
+        var numero_cuotas = $('#numero_cuotas').val();
+        var codigo        = $('#codigo').val();
+
+        $.getJSON(destino, {agregarItemCuota: true, tasa_mensual: tasa_mensual, numero_cuotas: numero_cuotas, codigo: codigo
+            }, function(datos) {
+            //jQuery.each(datos, function(id, valor){    
+            
+            for ( j=1; j>=datos; j++) {
+                if ($("#listaCuotas tr:last").hasClass("even")) {
+                    valor = 'odd';
+                }
+                var item  = '<tr id="'+j+'" class="'+0+'">'+
+                '</tr>';
+
+                $('#listaCuotas').append(item);
+            }
+            //});
+        });
+    }
+
     function cargarCuenta() {
         var destino     = $('#URLFormulario').val();
         var cuenta      = $('#selector5').val();
