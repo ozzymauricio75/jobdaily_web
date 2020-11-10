@@ -23,29 +23,9 @@
 * <http://www.gnu.org/licenses/>.
 *
 **/
-$tabla                      = "usuarios";
-$columnas                   = SQL::obtenerColumnas($tabla);
-$consulta                   = SQL::seleccionar(array($tabla), $columnas, "usuario = '$sesion_usuario'");
-$datos                      = SQL::filaEnObjeto($consulta);
-$sesion_id_usuario_ingreso  = $datos->codigo;
-
-/*** Mostrar los datos de la cuenta ***/
-if (!empty($url_insertarCuota)) {
-    $codigo_credito = $url_id;
-    $numero_cuota   = $url_numero_cuota;
-    $abono_capital  = $url_abono_capital;
-
-    $datos = array(
-        $abono_capital      
-    );
-    
-    $modificar = SQL::modificar("cuotas_creditos_bancos", $datos, "numero_cuota = '$numero_cuota' AND codigo_credito = '$codigo_credito'");
-
-    //HTTP::enviarJSON($datos);
-    exit;
 
 /*** Generar el formulario para la captura de datos ***/
-} elseif (!empty($url_generar)) {
+if (!empty($url_generar)) {
 
     /*** Verificar que se haya enviado el ID del elemento a consultar ***/
     if (empty($url_id)) {
@@ -102,22 +82,17 @@ if (!empty($url_insertarCuota)) {
 
                 $item_cuota[]  = array( $id_cuota,
                                         $numero_cuota,
-                                        HTML::campoTextoCorto("numero_cuota[".$numero_cuota."]", "", 15, 15, $abono_capital, array("title"=>$textos["AYUDA_VALOR_CUOTA"], "onkeyup"=>"formatoMiles(this)", "OnChange"=>"insertarCuota(".$numero_cuota.",".$url_id.",".$abono_capital.")")),
-                                        $estado_cuota
-                );
-                /*$item_cuota[]  = array( $id_cuota,
-                                        $numero_cuota,
                                         $interes,
                                         $interes_pagado,
                                         $abono_capital,
                                         $abono_capital_pagado,
                                         $saldo_capital_pagado,
                                         $estado_cuota
-                );*/
+                );
             }
         }
 
-        /*** Definición de pestañas general ***/
+        /*** DefiniciÃ³n de pestaÃ±as general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
                 HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo),
@@ -165,42 +140,29 @@ if (!empty($url_insertarCuota)) {
                 HTML::mostrarDato("observaciones", $textos["OBSERVACIONES"], $datos->observaciones)    
             )
         );
-        /*** Definición de pestaña de cuentas bancarias relacionadas ***/
+        /*** DefiniciÃ³n de pestaÃ±a de cuentas bancarias relacionadas ***/
         if (isset($item_cuota)) {
 
             $formularios["PESTANA_CUOTAS"] = array(
                 array(
                     HTML::generarTabla(
-                        //array("id","NRO_CUOTA","INTERES","INTERES_PAGADO","ABONO_CAPITAL","ABONO_CAPITAL_PAGADO","SALDO_CAPITAL_PAGADO","ESTADO_CUOTA"),
-                        array("id","NRO_CUOTA","ABONO_CAPITAL","ESTADO_CUOTA"),
+                        array("id","NRO_CUOTA","INTERES","INTERES_PAGADO","ABONO_CAPITAL","ABONO_CAPITAL_PAGADO","SALDO_CAPITAL_PAGADO","ESTADO_CUOTA"),
                         $item_cuota,
-                        array("I","D","D"),
+                        array("I","D","D","D","D","D","I"),
                         "lista_items_cuotas",
                         false)
                 )
             );
         } 
 
-        /*** Definición de botones ***/
-        $botones = array(
-            HTML::boton("botonAceptar", $textos["ACEPTAR"], "modificarItem('$url_id');", "aceptar")
-        );
-
-        $contenido = HTML::generarPestanas($formularios, $botones);
+        $contenido = HTML::generarPestanas($formularios);
     }
 
-    /*** Enviar datos para la generación del formulario al script que originó la petición ***/
+    /*** Enviar datos para la generaciÃ³n del formulario al script que originÃ³ la peticiÃ³n ***/
     $respuesta    = array();
     $respuesta[0] = $error;
     $respuesta[1] = $titulo;
     $respuesta[2] = $contenido;
     HTTP::enviarJSON($respuesta);
-
-/*** Validar los datos provenientes del formulario ***/
-}elseif (!empty($forma_procesar)) {
-    /*** Asumir por defecto que no hubo error ***/
-    $error   = false;
-    $mensaje = $textos["ITEM_MODIFICADO"];
 }
-
 ?>

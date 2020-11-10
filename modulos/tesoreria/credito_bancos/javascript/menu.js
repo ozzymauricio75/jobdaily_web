@@ -54,6 +54,16 @@
         });
     }
 
+    function insertarCuota(numero_cuota,id) {
+        var destino       = $('#URLFormulario').val();
+        var abono_capital = $("input[name='numero_cuota["+numero_cuota+"]']").val();
+
+        $.getJSON(destino, {insertarCuota: true, numero_cuota: numero_cuota, id: id, abono_capital: abono_capital 
+            }, function(datos) {
+            
+        });
+    }
+
     function cargarCuenta() {
         var destino     = $('#URLFormulario').val();
         var cuenta      = $('#selector5').val();
