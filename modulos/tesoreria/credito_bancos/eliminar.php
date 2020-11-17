@@ -86,64 +86,71 @@ if (!empty($url_generar)) {
             }
         }
 
-        /*** Definición de pestañas general ***/
-        $formularios["PESTANA_GENERAL"] = array(
-            array(
-                HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo)
-                .HTML::campoOculto("codigo_credito", $datos->codigo),
-                HTML::mostrarDato("proyecto", $textos["PROYECTO"], $proyecto)
-            ),
-            array(
-                HTML::agrupador(
-                    array(
-                        array(   
-                            HTML::mostrarDato("banco", $textos["BANCO"], $banco),
-                            HTML::mostrarDato("numero_credito", $textos["NUMERO_CREDITO"], $datos->numero_credito),
-                            HTML::mostrarDato("valor_credito", $textos["VALOR_CREDITO"], "$".number_format($datos->valor_credito,0)),
-                            HTML::mostrarDato("estado_cuota", $textos["ESTADO_CUOTA"], $textos["ESTADO_".$estado_cuota_credito])
-                        )
-                    ),
-                    $textos["DATOS_BANCO"]
-                )
-            ),
-            array(
-                HTML::agrupador(
-                    array(
-                        array(
-                            HTML::mostrarDato("tasa_mensual", $textos["TASA_MENSUAL"], $datos->tasa_mensual),
-                            HTML::mostrarDato("numero_cuotas", $textos["NUMERO_CUOTAS"], $datos->periodos),
-                            HTML::mostrarDato("valor_cuota", $textos["VALOR_CUOTA"], "$".number_format($datos->valor_cuota,0)),
-                            HTML::mostrarDato("fecha_credito", $textos["FECHA_CREDITO"], $datos->fecha_credito)
-                        )
-                    ),
-                    $textos["DATOS_CREDITO"]
-                )
-            ),
-            array(
-                HTML::mostrarDato("observaciones", $textos["OBSERVACIONES"], $datos->observaciones)    
-            )
-        );
-        /*** Definición de pestaña de cuentas bancarias relacionadas ***/
-        if (isset($item_cuota)) {
+        if($datos_cuotas->abono_capital_pagado!=""){
+            $error     = $textos["ERROR_ESTADO_ELIMINADO"];
+            $titulo    = "";
+            $contenido = "";
 
-            $formularios["PESTANA_CUOTAS"] = array(
+        }else{  
+            /*** Definición de pestañas general ***/
+            $formularios["PESTANA_GENERAL"] = array(
                 array(
-                    HTML::generarTabla(
-                        array("id","NRO_CUOTA","INTERES","INTERES_PAGADO","ABONO_CAPITAL","ABONO_CAPITAL_PAGADO","SALDO_CAPITAL_PAGADO","ESTADO_CUOTA"),
-                        $item_cuota,
-                        array("I","D","D","D","D","D","I"),
-                        "lista_items_cuotas",
-                        false)
+                    HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo)
+                    .HTML::campoOculto("codigo_credito", $datos->codigo),
+                    HTML::mostrarDato("proyecto", $textos["PROYECTO"], $proyecto)
+                ),
+                array(
+                    HTML::agrupador(
+                        array(
+                            array(   
+                                HTML::mostrarDato("banco", $textos["BANCO"], $banco),
+                                HTML::mostrarDato("numero_credito", $textos["NUMERO_CREDITO"], $datos->numero_credito),
+                                HTML::mostrarDato("valor_credito", $textos["VALOR_CREDITO"], "$".number_format($datos->valor_credito,0)),
+                                HTML::mostrarDato("estado_cuota", $textos["ESTADO_CUOTA"], $textos["ESTADO_".$estado_cuota_credito])
+                            )
+                        ),
+                        $textos["DATOS_BANCO"]
+                    )
+                ),
+                array(
+                    HTML::agrupador(
+                        array(
+                            array(
+                                HTML::mostrarDato("tasa_mensual", $textos["TASA_MENSUAL"], $datos->tasa_mensual),
+                                HTML::mostrarDato("numero_cuotas", $textos["NUMERO_CUOTAS"], $datos->periodos),
+                                HTML::mostrarDato("valor_cuota", $textos["VALOR_CUOTA"], "$".number_format($datos->valor_cuota,0)),
+                                HTML::mostrarDato("fecha_credito", $textos["FECHA_CREDITO"], $datos->fecha_credito)
+                            )
+                        ),
+                        $textos["DATOS_CREDITO"]
+                    )
+                ),
+                array(
+                    HTML::mostrarDato("observaciones", $textos["OBSERVACIONES"], $datos->observaciones)    
                 )
             );
+            /*** Definición de pestaña de cuentas bancarias relacionadas ***/
+            if (isset($item_cuota)) {
+
+                $formularios["PESTANA_CUOTAS"] = array(
+                    array(
+                        HTML::generarTabla(
+                            array("id","NRO_CUOTA","INTERES","INTERES_PAGADO","ABONO_CAPITAL","ABONO_CAPITAL_PAGADO","SALDO_CAPITAL_PAGADO","ESTADO_CUOTA"),
+                            $item_cuota,
+                            array("I","D","D","D","D","D","I"),
+                            "lista_items_cuotas",
+                            false)
+                    )
+                );
+            }
+
+            /*** Definición de botones ***/
+            $botones = array(
+                HTML::boton("botonAceptar", $textos["ACEPTAR"], "eliminarItem('$url_id');", "aceptar")
+            );
+
+            $contenido = HTML::generarPestanas($formularios, $botones);
         }
-
-        /*** Definición de botones ***/
-        $botones = array(
-            HTML::boton("botonAceptar", $textos["ACEPTAR"], "eliminarItem('$url_id');", "aceptar")
-        );
-
-        $contenido = HTML::generarPestanas($formularios, $botones);
     }
 
     /*** Enviar datos para la generación del formulario al script que originó la petición ***/

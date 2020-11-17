@@ -32,16 +32,16 @@ $sesion_id_usuario_ingreso  = $datos->codigo;
 /*** Mostrar los datos de la cuenta ***/
 if (!empty($url_insertarCuota)) {
     $codigo_credito = $url_id;
-    $numero_cuota   = $url_numero_cuota;
+    $numero_cuota   = $url_cuota;
     $abono_capital  = $url_abono_capital;
+    $abono_capital  = str_replace(".", "", $abono_capital);
 
     $datos = array(
-        $abono_capital      
+        "abono_capital" => $abono_capital      
     );
     
     $modificar = SQL::modificar("cuotas_creditos_bancos", $datos, "numero_cuota = '$numero_cuota' AND codigo_credito = '$codigo_credito'");
 
-    //HTTP::enviarJSON($datos);
     exit;
 
 /*** Generar el formulario para la captura de datos ***/
@@ -89,8 +89,11 @@ if (!empty($url_insertarCuota)) {
                 "1" => $textos["ESTADO_1"],
                 "2" => $textos["ESTADO_2"]
             );
-            while ($datos_cuotas = SQL::filaEnObjeto($consulta_cuotas)) {
+            
+            $cuota = 1;
 
+            while ($datos_cuotas = SQL::filaEnObjeto($consulta_cuotas)) {
+    
                 $id_cuota             = $datos_cuotas->codigo;
                 $numero_cuota         = $datos_cuotas->numero_cuota;
                 $interes              = $datos_cuotas->interes;
@@ -102,9 +105,11 @@ if (!empty($url_insertarCuota)) {
 
                 $item_cuota[]  = array( $id_cuota,
                                         $numero_cuota,
-                                        HTML::campoTextoCorto("numero_cuota[".$numero_cuota."]", "", 15, 15, $abono_capital, array("title"=>$textos["AYUDA_VALOR_CUOTA"], "onkeyup"=>"formatoMiles(this)", "OnChange"=>"insertarCuota(".$numero_cuota.",".$url_id.",".$abono_capital.")")),
+                                        HTML::campoTextoCorto("cuota[".$cuota."]", "", 15, 15, $abono_capital, array("title"=>$textos["AYUDA_VALOR_CUOTA"], "onkeyup"=>"formatoMiles(this)", "OnChange"=>"insertarCuota(".$cuota.",".$url_id.")"))
+                                        .HTML::campoOculto("listaItems",$item_cuota),
                                         $estado_cuota
                 );
+                $cuota++;
                 /*$item_cuota[]  = array( $id_cuota,
                                         $numero_cuota,
                                         $interes,
@@ -197,10 +202,16 @@ if (!empty($url_insertarCuota)) {
     HTTP::enviarJSON($respuesta);
 
 /*** Validar los datos provenientes del formulario ***/
-}elseif (!empty($forma_procesar)) {
+} elseif (!empty($forma_procesar)) {
     /*** Asumir por defecto que no hubo error ***/
     $error   = false;
     $mensaje = $textos["ITEM_MODIFICADO"];
+
+    /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
+    $respuesta    = array();
+    $respuesta[0] = $error;
+    $respuesta[1] = $mensaje;
+    HTTP::enviarJSON($respuesta);
 }
 
 ?>

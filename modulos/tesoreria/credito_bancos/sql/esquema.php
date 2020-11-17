@@ -174,7 +174,7 @@ $vistas = array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_seleccion_creditos_bancos AS
         SELECT  job_creditos_bancos.codigo AS id,
             CONCAT(job_creditos_bancos.numero_credito, ':',
-             FORMAT(job_creditos_bancos.valor_credito,0), '|', job_creditos_bancos.codigo) AS descripcion
+                FORMAT(job_creditos_bancos.valor_credito,0), '|', job_creditos_bancos.codigo) AS descripcion
         FROM job_creditos_bancos
         WHERE   job_creditos_bancos.codigo > 0;"
     )

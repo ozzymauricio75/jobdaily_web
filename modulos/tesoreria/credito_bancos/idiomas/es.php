@@ -147,7 +147,7 @@ $textos = array(
     "ERROR_EXISTE_NUMERO_CREDITO"   => "Error, ya existe un credito con ese numero",
     "ERROR_ADICIONAR_ITEM"          => "Error, No se pudo adicionar el item",
     "ERROR_SALDO_INICIAL_CUENTA"    => "Error, No existe saldo inicial en esa cuenta, Verifique!!",
-    "ERROR_ESTADO_ANULADO"          => "Error, el registro ya esta anulado",
+    "ERROR_ESTADO_ELIMINADO"        => "Error, el registro no puede ser eliminado",
     "ERROR_EXISTE_NUMERO_CREDITO"   => "Error, ya existe un credito con ese numero"
 );
 ?>

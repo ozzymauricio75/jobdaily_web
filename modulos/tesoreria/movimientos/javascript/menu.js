@@ -2,6 +2,35 @@
         ejecutarFuncionesGlobales();
     });
 
+    function valorCuota() {
+        var destino        = $('#URLFormulario').val();
+        var numero_credito = $('#selector5').val();
+        var numero_cuota   = $('#cuotas_credito').val();
+
+        $.getJSON(destino, {valorCuota: true, numero_credito: numero_credito, numero_cuota: numero_cuota }, function(datos) {
+            if(datos!=""){
+                $('#valor_de_cuota').text(datos);
+            }else{
+                alert('No existen datos para calcular la cuota');
+                $('#valor_de_cuota').text('');
+            }
+        });
+    }
+
+    function cargaValorCredito() {
+        var destino        = $('#URLFormulario').val();
+        var numero_credito = $('#selector5').val();
+
+        $.getJSON(destino, {cargaValorCredito: true, numero_credito: numero_credito }, function(datos) {
+            if(datos!=""){
+                $('#valor_credito').val(datos);
+            }else{
+                alert('No existen datos para calcular el valor');
+                $('#valor_credito').val('');
+            }
+        });
+    }
+
     function activaCamposCuentas(){
         var destino = $('#URLFormulario').val();
 
