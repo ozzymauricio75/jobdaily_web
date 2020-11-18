@@ -310,12 +310,13 @@ if (!empty($url_generar)) {
             $mensaje = $textos["ERROR_ADICIONAR_ITEM"];
         } else{
             /*** Grabar las cuotas del credito en cuotas_creditos_bancos ****/
+            $nuevo_saldo_credito = $forma_valor_cuota*$forma_numero_cuotas;
             while($i<=$forma_numero_cuotas){
                 if($i==1){
                     //$interes             = ($forma_tasa_mensual*$forma_valor_credito)/100;
                     //$abono_capital       = $forma_valor_cuota - $interes;
                     //$nuevo_saldo_credito = $forma_valor_credito - $abono_capital;    
-                    $nuevo_saldo_credito = $forma_valor_credito - $forma_valor_cuota;    
+                    $nuevo_saldo_credito = $nuevo_saldo_credito - $forma_valor_cuota;    
                 }else{
                     if($nuevo_saldo_credito>=$forma_valor_cuota){
                         //$interes             = ($forma_tasa_mensual*$nuevo_saldo_credito)/100;
