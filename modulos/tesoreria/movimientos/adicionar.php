@@ -491,11 +491,11 @@ if (!empty($url_generar)) {
                                 //$valor_movimiento_cuota = $diferencia_abono_capital_pagado;
                                 $abono_capital_pagado   = $diferencia_abono_capital_pagado+$datos_cuotas->abono_capital_pagado; 
                                 $valor_movimiento_cuota = $valor_movimiento_cuota-$diferencia_abono_capital_pagado;
-                                $nuevo_saldo_credito    = $nuevo_saldo_credito-$diferencia_abono_capital_pagado;
+                                $nuevo_saldo_credito    = $nuevo_saldo_credito-$diferencia_abono_capital_pagado-$datos_cuotas->abono_capital_pagado;
                             } else{
                                 $abono_capital_pagado   = $valor_movimiento_cuota+$datos_cuotas->abono_capital_pagado;
                                 $valor_movimiento_cuota = 0; 
-                                $nuevo_saldo_credito    = $nuevo_saldo_credito-$valor_movimiento_cuota;
+                                $nuevo_saldo_credito    = $nuevo_saldo_credito-$valor_movimiento_cuota-$datos_cuotas->abono_capital_pagado;
                             } 
                         } else{
                             $abono_capital_pagado   = $datos_cuotas->abono_capital;
@@ -527,12 +527,12 @@ if (!empty($url_generar)) {
                             if($valor_movimiento_cuota>=$diferencia_abono_capital_pagado){
                                 //$valor_movimiento_cuota = $diferencia_abono_capital_pagado;
                                 $abono_capital_pagado   = $diferencia_abono_capital_pagado+$datos_cuotas->abono_capital_pagado;
-                                $nuevo_saldo_credito    = $nuevo_saldo_credito-$abono_capital_pagado;
+                                $nuevo_saldo_credito    = $nuevo_saldo_credito-$abono_capital_pagado-$datos_cuotas->abono_capital_pagado;
                                 $valor_movimiento_cuota = $valor_movimiento_cuota-$diferencia_abono_capital_pagado;
                                 $estado_cuota = "0";
                             } else{
                                 $abono_capital_pagado = $valor_movimiento_cuota+$datos_cuotas->abono_capital_pagado;
-                                $nuevo_saldo_credito  = $nuevo_saldo_credito-$abono_capital_pagado;
+                                $nuevo_saldo_credito  = $nuevo_saldo_credito-$abono_capital_pagado-$datos_cuotas->abono_capital_pagado;
                                 $valor_movimiento_cuota = $valor_movimiento_cuota-$valor_movimiento_cuota;
                                 $estado_cuota = "2";
                             }   
@@ -559,13 +559,14 @@ if (!empty($url_generar)) {
                     //$valor_movimiento_cuota = $valor_movimiento_cuota-$abono_capital_pagado;
                 }    
             }
-            $estado_pagado = SQL::obtenerValor("cuotas_creditos_bancos","MAX(codigo)","estado_cuota=1");
+            $estado_pagado = SQL::obtenerValor("cuotas_creditos_bancos","MAX(numero_cuota)","estado_cuota!='0' AND codigo_credito='$codigo_credito'");
+            
             if(!$estado_pagado){
 
                 $datos_credito = array(
-                    "estado_credito" => 0
+                    "estado_credito" => '0'
                 );
-                $modificar_credito = SQL::modificar("creditos_bancos", $datos_credito, "codigo_credito='$codigo_credito'");
+                $modificar_credito = SQL::modificar("creditos_bancos", $datos_credito, "numero_credito='$numero_credito'");
             }
         }
     }
