@@ -30,10 +30,13 @@ $tablas["creditos_bancos"]  = array(
     "codigo"                      => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
     "codigo_banco"                => "SMALLINT(2) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo de la tabla movimientos de tesoreria'",
     "codigo_proyecto"             => "INT(9) UNSIGNED ZEROFILL NULL COMMENT 'Codigo interno del proyecto'",
+    "tipo_credito"                => "VARCHAR(30) NULL COMMENT 'Tipo de credito'",
     "numero_credito"              => "VARCHAR(30) NULL COMMENT 'Número del credito'",
     "valor_credito"               => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'Valor del credito'",
     "tasa_mensual"                => "DECIMAL(7,2) UNSIGNED  NOT NULL COMMENT 'Porcentaje de tasa mensual'",
+    "tasa_dtf"                    => "VARCHAR(255) COMMENT 'DTF DEL CREDTIO'",
     "fecha_credito"               => "DATE NOT NULL COMMENT 'Fecha ingreso al sistema'",
+    "fecha_pago_cuota"            => "VARCHAR(2) COMMENT 'Fecha de pago cuota credito'",
     "periodos"                    => "SMALLINT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'cantidad de cuotas del credito'",
     "valor_cuota"                 => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'Valor de la cuota mensual'",
     "estado_credito"              => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->Pagado 1->Por pagar'",
@@ -44,6 +47,7 @@ $tablas["cuotas_creditos_bancos"] = array(
     "codigo"                      => "INT(9) UNSIGNED ZEROFILL AUTO_INCREMENT NOT NULL COMMENT 'Codigo interno asignado por el usuario'",
     "codigo_credito"              => "INT(9) UNSIGNED ZEROFILL NOT NULL COMMENT 'Codigo del credito del banco'",
     "numero_cuota"                => "INT(3) UNSIGNED ZEROFILL NOT NULL COMMENT 'numero de la cuota credito'",
+    "fecha_cuota"                 => "DATE NOT NULL COMMENT 'Fecha pago de cuota'",
     "interes"                     => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'interes del credito'",
     "interes_pagado"              => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'interes pagado del credito'",
     "abono_capital"               => "DECIMAL(15,2) UNSIGNED  NOT NULL COMMENT 'abono capital del credito'",
@@ -149,8 +153,10 @@ $vistas = array(
             job_creditos_bancos.numero_credito AS NUMERO_CREDITO,
             FORMAT(job_creditos_bancos.valor_credito,0) AS VALOR_CREDITO,
             job_creditos_bancos.fecha_credito AS FECHA_CREDITO,
+            job_creditos_bancos.tasa_dtf AS TASA_DTF,
             job_creditos_bancos.periodos AS PERIODOS,
             FORMAT(job_creditos_bancos.valor_cuota,0) AS VALOR_CUOTA,
+            job_creditos_bancos.fecha_pago_cuota AS FECHA_PAGO_CUOTA,
             CONCAT('ESTADO_',job_creditos_bancos.estado_credito) AS ESTADO,
             job_creditos_bancos.observaciones AS OBSERVACIONES
         FROM job_creditos_bancos   
@@ -165,6 +171,7 @@ $vistas = array(
             job_creditos_bancos.fecha_credito AS fecha_credito,
             job_creditos_bancos.periodos AS periodos,
             FORMAT(job_creditos_bancos.valor_cuota,0) AS valor_cuota,
+            job_creditos_bancos.fecha_pago_cuota AS fecha_pago_cuota,
             CONCAT('ESTADO_',job_creditos_bancos.estado_credito) AS estado,
             job_creditos_bancos.observaciones AS observaciones
         FROM job_creditos_bancos   

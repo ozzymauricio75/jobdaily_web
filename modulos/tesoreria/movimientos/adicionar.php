@@ -166,6 +166,33 @@ if(isset($url_recargar_conceptos)){
     exit;
 }
 
+/*** Mostrar el valor del credito ***/
+if(isset($url_validarMonto)){
+    $codigo_concepto  = $url_codigo_concepto;
+    $valor_movimiento = $url_valor_movimiento;
+    $numero_cuenta    = $url_numero_cuenta;
+    
+    $sentido = SQL::obtenerValor("conceptos_tesoreria","sentido","codigo='$codigo_concepto'");
+    
+    if($sentido=="D"){
+        $codigo_movimiento = SQL::obtenerValor("saldos_movimientos","MAX(codigo)","cuenta_origen='$numero_cuenta'");
+        
+        if($codigo_movimiento){
+           $saldo_cuenta   = SQL::obtenerValor("saldos_movimientos","saldo","codigo='$codigo_movimiento'"); 
+        } else {
+            $saldo_inicial = SQL::obtenerValor("saldo_inicial_cuentas","saldo","cuenta_origen='$numero_cuenta'"); 
+        }
+
+        if(($saldo_cuenta>=$valor_movimiento) || ($saldo_inicial>=$valor_movimiento)){
+            $datos = 1;
+        } else{
+            $datos = 0;
+        } 
+    }
+    HTTP::enviarJSON($datos);
+    exit;
+}
+
 /*** Mostrar los creditos activos ***/
 if(isset($url_cargarCuotasCreditos)){
     /*$llave        = explode(":", $url_numero_credito);
@@ -193,7 +220,22 @@ if(isset($url_valorCuota)){
     exit;
 }
 
-/*** Mostrar el valor del credito ***/
+/*** Valida que exista el credito  ***/
+if(isset($url_existeCredito)){
+    $numero_credito = $url_numero_credito;
+    $estado_credito = SQL::obtenerValor("creditos_bancos","estado_credito","numero_credito='$numero_credito'");
+    
+    if($estado_credito){
+        $codigo_credito = SQL::obtenerValor("creditos_bancos","codigo","numero_credito='$numero_credito'");
+    } else{
+        $codigo_credito = "";
+    }
+
+    HTTP::enviarJSON($codigo_credito);
+    exit;
+}
+
+/*** Valida que el valor del movimiento no supere el saldo de la cuenta ***/
 if(isset($url_cargaValorCredito)){
     $numero_credito = $url_numero_credito;
 
@@ -238,7 +280,7 @@ if (!empty($url_generar)) {
                             //HTML::listaSeleccionSimple("*numero_credito", $textos["NUMERO_CREDITO"], $numero_credito, "",array("title" => $textos["AYUDA_NUMERO_CREDITO"],"class" => "oculto"))
                         ),
                     array(
-                        HTML::campoTextoCorto("selector5", $textos["NUMERO_CREDITO"], 30, 30, "", array("title" => $textos["AYUDA_NUMERO_CREDITO"], "", "onChange" => "cargarCuotasCreditos(), cargaValorCredito()")),
+                        HTML::campoTextoCorto("selector5", $textos["NUMERO_CREDITO"], 30, 30, "", array("title" => $textos["AYUDA_NUMERO_CREDITO"], "", "onChange" => "existeCredito(), cargarCuotasCreditos(), cargaValorCredito()")),
 
                         HTML::campoTextoCorto("valor_credito", $textos["VALOR_CREDITO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_VALOR_CREDITO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this)")),
                         //HTML::campoTextoCorto("selector5", $textos["NUMERO_CREDITO"], 30, 30, "", array("title" => $textos["AYUDA_NUMERO_CREDITO"],"class" => "autocompletable","onChange" => "cargarCuotasCreditos()")),
@@ -272,7 +314,7 @@ if (!empty($url_generar)) {
                         array(
                             HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
 
-                            HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this)")),
+                            HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this), validarMonto()")),
 
                             HTML::mostrarDato("valor_de_cuota", $textos["VALOR_CUOTA"], ""),
                         ),
@@ -368,7 +410,7 @@ if (!empty($url_generar)) {
 
         /*$llave                         = explode(":", $forma_selector5);
         $numero_credito                = $llave[0];*/
-        $numero_credito =$forma_selector5;
+        $numero_credito = $forma_selector5;
 
         if(!$forma_selector2){
             $forma_selector2 = "";

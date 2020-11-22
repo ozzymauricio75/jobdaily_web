@@ -59,6 +59,9 @@ if (!empty($url_insertarCuota)) {
         $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$url_id'");
         $datos          = SQL::filaEnObjeto($consulta);
         $estado_credito = $datos->estado_credito;
+        $tipo_credito   = $datos->tipo_credito;
+        $fecha_pago     = $datos->fecha_pago_cuota;
+        $tasa_DTF       = $datos->tasa_dtf;
         
         $error  = "";
         $titulo = $componente->nombre;
@@ -69,7 +72,7 @@ if (!empty($url_insertarCuota)) {
         $consulta_cuota       = SQL::seleccionar(array($vistaConsultaCuotas), $columnas_cuota, "codigo_credito = '$url_id'");
         $datos_cuota_credito  = SQL::filaEnObjeto($consulta_cuota);
         $estado_cuota_credito = $datos_cuota_credito->estado_cuota;
-
+ 
         $proyecto          = SQL::obtenerValor("proyectos","nombre","codigo=$datos->codigo_proyecto");
         $banco             = SQL::obtenerValor("bancos","descripcion","codigo=$datos->codigo_banco");
         $interes           = SQL::obtenerValor("cuotas_creditos_bancos","SUM(interes)","codigo_credito='$url_id'");
@@ -96,6 +99,7 @@ if (!empty($url_insertarCuota)) {
     
                 $id_cuota             = $datos_cuotas->codigo;
                 $numero_cuota         = $datos_cuotas->numero_cuota;
+                $fecha_cuota          = $datos_cuotas->fecha_cuota;
                 $interes              = $datos_cuotas->interes;
                 $interes_pagado       = $datos_cuotas->interes_pagado;
                 $abono_capital        = $datos_cuotas->abono_capital;
@@ -105,6 +109,7 @@ if (!empty($url_insertarCuota)) {
 
                 $item_cuota[]  = array( $id_cuota,
                                         $numero_cuota,
+                                        $fecha_cuota,
                                         HTML::campoTextoCorto("cuota[".$cuota."]", "", 15, 15, $abono_capital, array("title"=>$textos["AYUDA_VALOR_CUOTA"], "onkeyup"=>"formatoMiles(this)", "OnChange"=>"insertarCuota(".$cuota.",".$url_id.")"))
                                         .HTML::campoOculto("listaItems",$item_cuota),
                                         $estado_cuota
@@ -122,11 +127,20 @@ if (!empty($url_insertarCuota)) {
             }
         }
 
+        if($tipo_credito=="1"){
+            $tipo_credito = "Credito";
+        } else{
+            $tipo_credito = "Credipago";
+        }
+
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
                 HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo),
-                HTML::mostrarDato("proyecto", $textos["PROYECTO"], $proyecto)
+                HTML::mostrarDato("proyecto", $textos["PROYECTO"], $proyecto),
+                HTML::mostrarDato("tipo_credito", $textos["TIPO_CREDITO"], $tipo_credito),
+                HTML::mostrarDato("dia_pago", $textos["FECHA_PAGO_CUOTA"], $fecha_pago),
+                HTML::mostrarDato("tasa_dtf", $textos["TASA_DTF"], $tasa_DTF),
             ),
             array(
                 HTML::agrupador(
@@ -177,9 +191,9 @@ if (!empty($url_insertarCuota)) {
                 array(
                     HTML::generarTabla(
                         //array("id","NRO_CUOTA","INTERES","INTERES_PAGADO","ABONO_CAPITAL","ABONO_CAPITAL_PAGADO","SALDO_CAPITAL_PAGADO","ESTADO_CUOTA"),
-                        array("id","NRO_CUOTA","ABONO_CAPITAL","ESTADO_CUOTA"),
+                        array("id","NRO_CUOTA","FECHA_PAGO","ABONO_CAPITAL","ESTADO_CUOTA"),
                         $item_cuota,
-                        array("I","D","D"),
+                        array("I","C","D","D"),
                         "lista_items_cuotas",
                         false)
                 )

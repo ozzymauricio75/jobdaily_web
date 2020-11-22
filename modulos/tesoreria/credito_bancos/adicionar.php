@@ -112,13 +112,20 @@ if (!empty($url_generar)) {
         } else {
             $codigo = 1;
         }
+
+        $tipo_credito = array(
+            "1" => $textos["CREDITO"],
+            "2" => $textos["CREDIPAGO"]
+        );
     
          /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
             array(
                 HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, $codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)")),
   
-                HTML::campoTextoCorto("selector2", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
+                HTML::campoTextoCorto("selector2", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" )),
+
+                HTML::listaSeleccionSimple("*tipo_credito", $textos["TIPO_CREDITO"], $tipo_credito, "", array("title" => $textos["AYUDA_TIPO_CREDITO"]))
             ),
             array(    
                 HTML::agrupador(
@@ -141,7 +148,7 @@ if (!empty($url_generar)) {
                             HTML::campoTextoCorto("*numero_credito", $textos["NUMERO_CREDITO"], 20, 20, "", array("title" => $textos["AYUDA_NUMERO_CREDITO"],"onBlur" => "validarItem(this)")),
 
                             HTML::campoTextoCorto("*valor_credito", $textos["VALOR_CREDITO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_CREDITO"],"onBlur" => "validarItem(this)","onkeyup"=>"formatoMiles(this)"))
-                        )
+                        ),  
                     ),
                     $textos["DATOS_BANCO"]
                 )
@@ -150,13 +157,18 @@ if (!empty($url_generar)) {
                 HTML::agrupador(
                     array(
                         array(
-                            HTML::campoTextoCorto("*tasa_mensual", $textos["TASA_MENSUAL"], 4, 4, "", array("title" => $textos["AYUDA_TASA_MENSUAL"],"onBlur" => "validarItem(this);")), 
+                            HTML::campoTextoCorto("*tasa_mensual", $textos["TASA_MENSUAL"], 4, 4, "", array("title" => $textos["AYUDA_TASA_MENSUAL"],"onBlur" => "validarItem(this);")),
 
+                            HTML::campoTextoCorto("tasa_dtf", $textos["TASA_DTF"], 12, 12, "", array("title" => $textos["AYUDA_TASA_DTF"],"onBlur" => "validarItem(this);")), 
+
+                            HTML::campoTextoCorto("fecha_credito", $textos["FECHA_CREDITO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_CREDITO"]))
+                        ),
+                        array(    
                             HTML::campoTextoCorto("*numero_cuotas", $textos["NUMERO_CUOTAS"], 3, 3, "", array("title" => $textos["AYUDA_NUMERO_CUOTAS"],"onBlur" => "validarItem(this),calcularCredito()")), 
 
                             HTML::campoTextoCorto("valor_cuota", $textos["VALOR_CUOTA"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_CUOTA"],"onBlur" => "validarItem(this);")),
 
-                            HTML::campoTextoCorto("fecha_credito", $textos["FECHA_CREDITO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_CREDITO"])),
+                            HTML::campoTextoCorto("*fecha_pago_cuota", $textos["FECHA_PAGO_CUOTA"], 3, 3, "", array("title" => $textos["AYUDA_FECHA_PAGO_CUOTA"],"onBlur" => "validarItem(this), formatoMiles(this)"))
                         )
                     ),
                     $textos["DATOS_CREDITO"]
@@ -261,12 +273,15 @@ if (!empty($url_generar)) {
         $error   = true;
         $mensaje = $textos["TASA_MENSUAL_VACIO"];
 
+    } elseif(empty($forma_fecha_pago_cuota)){
+        $error   = true;
+        $mensaje = $textos["FECHA_PAGO_VACIO"];
+
     } elseif(empty($forma_numero_cuotas)){
         $error   = true;
         $mensaje = $textos["NUMERO_CUOTAS_VACIO"];        
 
     } else {
-
         /*** Quitar separador de miles a un numero ***/
         function quitarMiles($cadena){
             $valor = array();
@@ -278,6 +293,7 @@ if (!empty($url_generar)) {
             $valor = implode($valor);
             return $valor;
         }
+
         $i = 1;
         $forma_valor_credito = quitarMiles($forma_valor_credito);
         $forma_valor_cuota   = quitarMiles($forma_valor_cuota);
@@ -293,10 +309,13 @@ if (!empty($url_generar)) {
             "codigo"           => $forma_codigo,
             "codigo_banco"     => $codigo_banco,
             "codigo_proyecto"  => $codigo_proyecto,
+            "tipo_credito"     => $forma_tipo_credito,
             "numero_credito"   => $forma_numero_credito,
             "tasa_mensual"     => $forma_tasa_mensual,
+            "tasa_dtf"         => $forma_tasa_dtf,
             "valor_credito"    => $forma_valor_credito,
             "fecha_credito"    => $forma_fecha_credito,
+            "fecha_pago_cuota" => $forma_fecha_pago_cuota,
             "periodos"         => $forma_numero_cuotas,
             "valor_cuota"      => $forma_valor_cuota,
             "estado_credito"   => 1,
@@ -311,19 +330,82 @@ if (!empty($url_generar)) {
         } else{
             /*** Grabar las cuotas del credito en cuotas_creditos_bancos ****/
             $nuevo_saldo_credito = $forma_valor_cuota*$forma_numero_cuotas;
+            $llave               = explode("-", $forma_fecha_credito);
+            /*$anno                = $llave[0];
+            $mes                 = $llave[1];
+            $dia                 = $forma_fecha_pago_cuota;
+            $fecha_inicial       = $anno."-".$mes."-".$dia;
+            $dia_del_mes         = cal_days_in_month(CAL_GREGORIAN, $mes, $anno);*/
+
             while($i<=$forma_numero_cuotas){
                 if($i==1){
                     //$interes             = ($forma_tasa_mensual*$forma_valor_credito)/100;
                     //$abono_capital       = $forma_valor_cuota - $interes;
                     //$nuevo_saldo_credito = $forma_valor_credito - $abono_capital;    
-                    $nuevo_saldo_credito = $nuevo_saldo_credito - $forma_valor_cuota;    
-                }else{
+                    $nuevo_saldo_credito = $nuevo_saldo_credito - $forma_valor_cuota;
+                    $llave               = explode("-", $forma_fecha_credito);
+                    $anno                = $llave[0];
+                    $mes                 = $llave[1];
+                    $dia                 = $forma_fecha_pago_cuota;
+                    $fecha_inicial       = $anno."-".$mes."-".$dia;
+                    $mes                 = (int)$mes;
+                
+                    if($mes==12){
+                        $anno = $anno+1;
+                        $mes  = $mes+1;
+                    } else{
+                        $mes = $mes+1;
+                    }
+
+                    $dia_del_mes = cal_days_in_month(CAL_GREGORIAN, $mes, $anno);
+                
+                    if($dia>$dia_del_mes){
+                       $dia         = $dia_del_mes;
+                       $fecha_cuota = $anno."-".$mes."-".$dia;
+                    } else{
+                        $dia         = $dia;
+                        $fecha_cuota = $anno."-".$mes."-".$dia;
+                    }
+                    
+                } else{
+                    $llave = explode("-", $fecha_cuota);
+                    $anno  = $llave[0];
+                    $mes   = $llave[1];
+                    $dia   = $forma_fecha_pago_cuota;
+                    $mes   = (int)$mes;
+
+                    if($mes==12){
+                        $anno = $anno+1;
+                        $mes  = 01;
+                    } else{
+                        $mes = $mes+1;
+                    }
+
+                    $dia_del_mes = cal_days_in_month(CAL_GREGORIAN, $mes, $anno);
+                    
+                    if($mes==02){
+                        if($dia>$dia_del_mes){
+                            $dia         = $dia_del_mes;
+                            $fecha_cuota = $anno."-".$mes."-".$dia;
+                        } else{
+                            $fecha_cuota = $anno."-".$mes."-".$dia;
+                        } 
+                    } else{
+                        if($dia>$dia_del_mes){
+                            $dia         = $dia_del_mes;
+                            $fecha_cuota = $anno."-".$mes."-".$dia;
+                        } else{
+                            $dia         = $dia;
+                            $fecha_cuota = $anno."-".$mes."-".$dia;
+                        }  
+                    }                
+                    //$fecha_cuota = date("Y-m-d ",strtotime($fecha_cuota."+ 1 month"));
                     if($nuevo_saldo_credito>=$forma_valor_cuota){
                         //$interes             = ($forma_tasa_mensual*$nuevo_saldo_credito)/100;
                         //$abono_capital       = $forma_valor_cuota - $interes;
                         //$nuevo_saldo_credito = $nuevo_saldo_credito - $abono_capital;
                         $nuevo_saldo_credito = $nuevo_saldo_credito - $forma_valor_cuota;
-                    }else{
+                    } else{
                         //$interes             = ($forma_tasa_mensual*$nuevo_saldo_credito)/100;
                         //$abono_capital       = $nuevo_saldo_credito - $interes;
                         $nuevo_saldo_credito = 0;
@@ -333,6 +415,7 @@ if (!empty($url_generar)) {
                 $datos_cuotas_credito = array(
                     "codigo_credito"       => $forma_codigo,
                     "numero_cuota"         => $i,
+                    "fecha_cuota"          => $fecha_cuota,
                     "interes"              => 0,
                     "interes_pagado"       => 0,
                     "abono_capital"        => $forma_valor_cuota,
@@ -345,6 +428,7 @@ if (!empty($url_generar)) {
                 $insertar_cuotas = SQL::insertar("cuotas_creditos_bancos", $datos_cuotas_credito);  
                 $i++; 
             }
+
             /*** Insertar datos movimientos tesoreria ***/
             $forma_codigo_movimiento = SQL::obtenerValor("movimientos_tesoreria","MAX(codigo)","codigo>0");
             

@@ -28,7 +28,7 @@
 /*** Devolver datos para autocompletar la búsqueda ***/
 if (isset($url_completar)) {
     if (($url_item) == "selector1") {
-        echo SQL::datosAutoCompletar("seleccion_municipios", $url_q);
+        echo SQL::datosAutoCompletar("seleccion_bancos", $url_q);
     }
     
     if (($url_item) == "selector2") {
@@ -45,53 +45,36 @@ if (isset($url_completar)) {
 
     exit;
 
-/*** Cargar cuenta de banco ***/
-} elseif (!empty($url_cargarCuenta)) {
-    $cuenta       = $url_cuenta;
-    $consulta     = SQL::seleccionar(array("cuentas_bancarias"), array("*"), "numero='$cuenta'");
-    $datos_cuenta = SQL::filaEnObjeto($consulta);
-    $banco        = $datos_cuenta->codigo_banco;
-    $sucursal     = $datos_cuenta->codigo_sucursal;
-
-    $nombre_banco = SQL::obtenerValor("bancos","descripcion","codigo='$banco'");
-    $tercero      = SQL::obtenerValor("sucursales","nombre","codigo='$sucursal'");
-
-    if($nombre_banco){
-        $datos = array(
-            $nombre_banco,
-            $tercero
-        );
-    }else{
-        $datos = "";
-    }
+/*** Valida que exista el credito  ***/
+} elseif (isset($url_existeCredito)){
+    $numero_credito = $url_numero_credito;
+    $estado_credito = SQL::obtenerValor("creditos_bancos","estado_credito","numero_credito='$numero_credito'");
     
+    if($estado_credito){
+        $codigo_credito = SQL::obtenerValor("creditos_bancos","codigo","numero_credito='$numero_credito'");
+    } else{
+        $codigo_credito = "";
+    }
+
+    HTTP::enviarJSON($codigo_credito);
+    exit;
+}
+
+/*** Valida que el valor del movimiento no supere el saldo de la cuenta ***/
+if(isset($url_cargaValorCredito)){
+    $numero_credito = $url_numero_credito;
+
+    $valor_credito = SQL::obtenerValor("creditos_bancos","valor_credito","numero_credito='$numero_credito'");
+    $codigo_banco  = SQL::obtenerValor("creditos_bancos","codigo_banco","numero_credito='$numero_credito'");
+    $banco         = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco'");
+    $valor_credito = number_format($valor_credito,0);
+
+    $datos = array(
+        $valor_credito,
+        $banco
+    );
+
     HTTP::enviarJSON($datos);
-    exit; 
-
-/*** Verificar si existe saldo inicial ***/
-} elseif (!empty($url_saldoCuenta)) {
-    $cuenta       = $url_cuenta;
-    $consulta     = SQL::seleccionar(array("saldo_inicial_cuentas"), array("*"), "cuenta_origen='$cuenta'");
-
-    if($consulta){
-        $indicador = 1;
-    }else{
-        $indicador = 0;
-    }
-    
-    HTTP::enviarJSON($indicador);
-    exit; 
-
-/*** Mostrar los conceptos de tesoreria ***/
-} elseif(isset($url_recargar_conceptos)){
-    
-    $lista = HTML::generarDatosLista("conceptos_tesoreria","codigo","nombre_concepto","codigo_grupo_tesoreria = '".$url_codigo_grupo."'");
-    
-    if(empty($lista)){
-        $lista = array("0" => $textos["CONCEPTO_SIN_GRUPO"]);
-    }
-
-    HTTP::enviarJSON($lista);
     exit;
 
 /*** Generar el formulario para la captura de datos ***/
@@ -137,6 +120,10 @@ if (isset($url_completar)) {
             "1" => "PDF",
             "2" => "EXCEL"
         );
+        $estado = array(
+            "0" => "Pagado",
+            "1" => "Por Pagar"
+        );
 
         // Definicion de pestanas
         $fecha_inicial = date("Y/m/d")." - ".date("Y/m/d");
@@ -144,93 +131,48 @@ if (isset($url_completar)) {
 
         $formularios["PESTANA_GENERAL"] = array(
             array(
-                HTML::campoTextoCorto("*fechas", $textos["FECHA_DESDE"].'  -  '.$textos["FECHA_HASTA"], 25, 25, $fecha_inicial, array("title" => $textos["RANGO_FECHAS"], "class" => "fechaRango")),
-
                 HTML::listaSeleccionSimple("tipo_listado",$textos["TIPO_LISTADO"], $tipo_listado,1,array("title"=>$textos["AYUDA_TIPO_LISTADO"]))
             ),
             array(
                 HTML::agrupador(
                     array(
                         array(
-                            //HTML::marcaChequeo("todas_cuentas",$textos["TODAS_CUENTAS"], 1, false, array("title"=>$textos["AYUDA_POR_TODAS_CUENTAS"], "class"=>"por_todas_cuentas","onClick"=>"activaCamposCuentas(this)")),
-
-                            HTML::marcaChequeo("por_cuenta",$textos["POR_CUENTA"], 1, false, array("title"=>$textos["AYUDA_POR_CUENTAS"], "class"=>"por_cuenta","onClick"=>"activaCamposCuentas(this)"))
-                            .HTML::campoOculto("por_cuenta_activo", "")
+                            HTML::marcaChequeo("por_credito",$textos["POR_CREDITO"], 1, false, array("title"=>$textos["AYUDA_POR_CREDITO"], "class"=>"por_credito","onClick"=>"activaCamposCreditos(this)"))
+                            .HTML::campoOculto("por_credito_activo", "")
                         ),
                         array(
-                            HTML::campoTextoCorto("selector3",$textos["NUMERO_CUENTA"], 15, 15, "", array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "autocompletable por_banco oculto", "onChange"=>"cargarCuenta(),saldoCuenta()")),
+                            HTML::campoTextoCorto("selector5",$textos["NUMERO_CREDITO"], 15, 15, "", array("title"=>$textos["AYUDA_NUMERO_CREDITO"],"class" => "autocompletable por_banco oculto", "onChange"=>"existeCredito(), cargaValorCredito()")),
 
-                            HTML::campoTextoCorto("banco", $textos["BANCO"], 37, 40, "", array("title" => $textos["AYUDA_BANCO"],"class" => "por_banco oculto", "onBlur" => "validarItem(this);")),
+                            HTML::mostrarDato("banco", $textos["BANCO"], ""),
 
-                            HTML::campoTextoCorto("tercero", $textos["TERCERO"], 37, 40, "", array("title" => $textos["AYUDA_TERCERO"],"class" => "por_banco oculto", "onBlur" => "validarItem(this);"))
+                            //HTML::campoTextoCorto("banco", $textos["BANCO"], 37, 40, "", array("title" => $textos["AYUDA_BANCO"],"class" => "por_banco oculto", "onBlur" => "validarItem(this);")),
+    
+                            HTML::mostrarDato("valor_credito", $textos["VALOR_CREDITO"], ""),
+                            //HTML::campoTextoCorto("valor_credito", $textos["VALOR_CREDITO"], 37, 40, "", array("title" => $textos["AYUDA_VALOR_CREDITO"],"class" => "por_banco oculto", "onBlur" => "validarItem(this);"))
+                        ),
+                        array(
+                            HTML::marcaChequeo("por_estado",$textos["POR_ESTADO"], 1, false, array("title"=>$textos["AYUDA_POR_ESTADO"], "class"=>"por_estado","onClick"=>"activaCamposEstado(this)"))
+                            .HTML::campoOculto("por_estado_activo", "")
+                        ),
+                        array(
+                           HTML::listaSeleccionSimple("estado_credito",$textos["ESTADO"], $estado, 1, array("title"=>$textos["AYUDA_POR_ESTADO"], "class" => "por_estado_credito oculto"))
                         )
                     ),
-                    $textos["CUENTAS"]
+                    $textos["CREDITOS"]
                 )
             ),
             array(
-                /*HTML::agrupador(
+                HTML::agrupador(
                     array(
                         array(
-                            HTML::marcaChequeo("todos_bancos",$textos["TODOS_BANCOS"], 1, false, array("title"=>$textos["AYUDA_POR_TODOS_BANCOS"], "class"=>"por_todos_bancos","onClick"=>"activaCamposArticulos(this)")),
-
-                            HTML::marcaChequeo("por_banco",$textos["POR_BANCO"], 1, false, array("title"=>$textos["AYUDA_POR_BANCO"], "class"=>"por_banco","onClick"=>"activaCamposArticulos(this)")),
+                            HTML::marcaChequeo("por_banco",$textos["POR_BANCO"], 1, false, array("title"=>$textos["AYUDA_POR_BANCO"], "class"=>"por_banco_credito","onClick"=>"activaCamposBancos(this)"))
+                            .HTML::campoOculto("por_banco_activo", "")
                         ),
-                        array(
-                            HTML::campoTextoCorto("selector1",$textos["BANCO"], 45, 255, "", array("title"=>$textos["AYUDA_BANCO"],"class" => "autocompletable", "onChange"=>"cargarCuenta(),saldoCuenta()"))
-
-                            //HTML::marcaSeleccion("bancos", $textos["TODOS_BANCOS"], 1, true, array("title"=>$textos["AYUDA_POR_TODOS_BANCOS"],"class"=>"por_totales","onChange"=>"activaCamposArticulos(this)")),
-
-                            //HTML::marcaSeleccion("bancos", $textos["POR_BANCO"], 0, false, array("title"=>$textos["AYUDA_POR_BANCO"],"class"=>"por_totales","onChange"=>"activaCamposTotales(this)"))
+                        array(    
+                            HTML::campoTextoCorto("selector1", $textos["BANCO"], 45, 255, "", array("title" => $textos["AYUDA_BANCO"], "class" => "autocompletable por_banco_seleccionado oculto" ))
                         )
                     ),
                     $textos["BANCOS"]
-                ),*/
-                HTML::agrupador(
-                    array(
-                        array(
-                            //HTML::marcaChequeo("todos_proyectos",$textos["TODOS_PROYECTOS"], 1, false, array("title"=>$textos["AYUDA_POR_TODOS_PROYECTOS"], "class"=>"por_todos","onClick"=>"activaCamposArticulos(this)")),
-
-                            HTML::marcaChequeo("por_proyecto",$textos["POR_PROYECTO"], 1, false, array("title"=>$textos["AYUDA_POR_PROYECTO"], "class"=>"por_proyecto","onClick"=>"activaCamposProyectos(this)"))
-                            .HTML::campoOculto("por_proyecto_activo", "")
-                        ),
-                        array(    
-                            HTML::campoTextoCorto("selector2", $textos["PROYECTO"], 45, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable por_proyecto_seleccionado oculto" ))
-                        )
-                    ),
-                    $textos["PROYECTO"]
-                ),
-                HTML::agrupador(
-                    array(
-                        array(
-                            //HTML::marcaChequeo("todos_proveedores",$textos["TODOS_PROVEEDORES"], 1, false, array("title"=>$textos["AYUDA_POR_TODOS_PROVEEDORES"], "class"=>"todos_proveedores","onClick"=>"activaCamposArticulos(this)")),
-
-                            HTML::marcaChequeo("por_proveedor",$textos["POR_PROVEEDOR"], 1, false, array("title"=>$textos["AYUDA_POR_PROVEEDOR"], "class"=>"por_proveedor","onClick"=>"activaCamposProveedores(this)"))
-                            .HTML::campoOculto("por_proveedor_activo", "")
-                        ),
-                        array(
-                            HTML::campoTextoCorto("selector4",$textos["PROVEEDOR"], 45, 45, "", array("title"=>$textos["AYUDA_PROVEEDOR"],"class" => "autocompletable oculto por_proveedor_seleccionado", "onBlur"=>"cargarCuentaProveedor()"))
-                        )
-                    ),
-                    $textos["PROVEEDOR"]
-                ),
-            ),
-            array(
-                HTML::agrupador(
-                    array(
-                        array(
-                            //HTML::marcaChequeo("todos_conceptos",$textos["TODOS_CONCEPTOS"], 1, false, array("title"=>$textos["AYUDA_POR_TODOS_CONCEPTOS"], "class"=>"por_todos_conceptos","onClick"=>"activaCamposArticulos(this)")),
-
-                            HTML::marcaChequeo("por_concepto",$textos["POR_CONCEPTO"], 1, false, array("title"=>$textos["AYUDA_POR_CONCEPTO"], "class"=>"por_concepto","onClick"=>"activaCamposConceptos(this)"))
-                            .HTML::campoOculto("por_concepto_activo", "")
-                        ),
-                        array(
-                            HTML::listaSeleccionSimple("codigo_grupo", $textos["GRUPO_TESORERIA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo"), "", array("title" => $textos["AYUDA_GRUPO_TESORERIA"], "class"=>"por_concepto_seleccionado oculto", "onChange" => "verificarConceptos();")),
-
-                            HTML::listaSeleccionSimple("codigo_concepto", $textos["CONCEPTO_TESORERIA"], $concepto, "",array("title" => $textos["AYUDA_CONCEPTO_TESORERIA"],"class"=>"por_concepto_seleccionado oculto"))
-                        )
-                    ),
-                    $textos["CONCEPTO"]
                 )
             )
         );
@@ -264,11 +206,10 @@ if (isset($url_completar)) {
     $forma_fecha_hasta = trim($fechas[1]);
     $forma_fecha_hasta = str_replace("/","-",$forma_fecha_hasta);
 
-    $llave_proyecto    = explode("-", $forma_selector2);
-    $codigo_proyecto   = $llave_proyecto[0];
-
-    $llave                         = explode("-", $forma_selector4);
-    $documento_identidad_proveedor = $llave[0];
+    $llave_banco       = explode(":", $forma_selector1);
+    $codigo_banco      = $llave_banco[0];
+    $codigo_banco      = trim($codigo_banco);
+    $numero_credito    = $forma_selector5;
 
     $nombre         = "";
     $nombreArchivo  = "";
@@ -281,7 +222,7 @@ if (isset($url_completar)) {
         } else{
             $nombre = $cadena.".csv";
         }
-        $nombreArchivo = $rutasGlobales["movimientos"]."/movimiento".$nombre;
+        $nombreArchivo = $rutasGlobales["bancos"]."/bancos".$nombre;
     } while (is_file($nombreArchivo));
         
     if (file_exists($nombreArchivo)){
@@ -291,28 +232,22 @@ if (isset($url_completar)) {
         $archivo = fopen($nombreArchivo,"a+");
     } 
 
-    if($forma_por_cuenta_activo==2){
-        $condicion_cuenta = " AND cuenta_origen='$forma_selector3'";
+    if($forma_por_credito_activo==2){
+        $condicion_credito = "numero_credito='$numero_credito'";
     } else{
-        $condicion_cuenta = "";
+        $condicion_credito = "numero_credito!='0'";
     }
 
-    if($forma_por_proyecto_activo==2){
-        $condicion_proyecto = " AND codigo_proyecto='$codigo_proyecto'";
+    if($forma_por_banco_activo==2){
+        $condicion_banco = " AND codigo_banco='$codigo_banco'";
     } else{
-        $condicion_proyecto = "";
+        $condicion_banco = " AND codigo_banco!='0'";
     }
 
-    if($forma_por_proveedor_activo==2){
-        $condicion_proveedor = " AND documento_identidad_tercero='$documento_identidad_proveedor'";
+    if($forma_por_estado_activo==2){
+        $condicion_estado = " AND estado_credito='$forma_estado_credito'";
     } else{
-        $condicion_proveedor = "";
-    }
-
-    if($forma_por_concepto_activo==2){
-        $condicion_concepto = " AND codigo_concepto_tesoreria='$forma_codigo_concepto'";
-    } else{
-        $condicion_concepto = "";
+        $condicion_estado = " AND estado_credito!=''";
     }
 
     //Titulos segun tipo listado
@@ -324,85 +259,84 @@ if (isset($url_completar)) {
 
         $archivo                 = new PDF("L","mm","Letter");
         $archivo->textoCabecera  = $textos["FECHA"].": ".date("Y-m-d");
-        $archivo->textoTitulo    = $textos["REPOMVTO"];
+        $archivo->textoTitulo    = $textos["REPOCRBA"];
         $archivo->textoPiePagina = $textos["PIE_PAGINA_EMPRESA"];
 
         $archivo->AddPage();
         $archivo->SetFont('Arial','B',8);
-
-        $archivo->SetFont('Arial','B',8);
-        $archivo->Ln(0);
-        $archivo->Cell(35,4,$textos["FECHA_DESDE_HASTA"]." :",0,0,'L');
-        $archivo->SetFont('Arial','',8);
-        $archivo->Cell(70,4,"".$forma_fecha_desde."  ".$forma_fecha_hasta,0,0,'L');
-        $archivo->Cell(40,4,"",0,1,'R');  
   
-        $archivo->SetFont('Arial','B',6);
         $archivo->SetFillColor(225,225,225);
 
         $archivo->Ln(6);
         $archivo->Cell(40,4,$textos["BANCOS"],1,0,'C',true);
-        $archivo->Cell(20,4,$textos["CUENTA_ORIGEN"],1,0,'C',true);
-        $archivo->Cell(40,4,$textos["CONCEPTO"],1,0,'C',true);
-        $archivo->Cell(20,4,$textos["VALOR"],1,0,'C',true);
-        $archivo->Cell(20,4,$textos["FECHA_MOVIMIENTO"],1,0,'C',true);
-        $archivo->Cell(20,4,$textos["SALDO"],1,0,'C',true);
-        $archivo->Cell(20,4,$textos["PROYECTO"],1,0,'C',true);
-        $archivo->Cell(40,4,$textos["PROVEEDOR"],1,0,'C',true);
-        $archivo->Cell(20,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
-        $archivo->Cell(10,4,$textos["ESTADO"],1,0,'C',true);
+        $archivo->Cell(25,4,$textos["TIPO_CREDITO"],1,0,'C',true);
+        $archivo->Cell(30,4,$textos["NRO_CREDITO"],1,0,'C',true);
+        $archivo->Cell(22,4,$textos["CUPO"],1,0,'C',true);
+        $archivo->Cell(10,4,$textos["TASA"],1,0,'C',true);
+        $archivo->Cell(22,4,$textos["SALDO"],1,0,'C',true);
+        $archivo->Cell(22,4,$textos["FECHA_CREDITO"],1,0,'C',true);
+        $archivo->Cell(22,4,$textos["FECHA_TERMINA"],1,0,'C',true);
+        $archivo->Cell(10,4,$textos["PLAZO"],1,0,'C',true);
+        $archivo->Cell(14,4,$textos["DIA_PAGO"],1,0,'C',true);
+        $archivo->Cell(22,4,$textos["ULTIMO_PAGADO"],1,0,'C',true);
+        $archivo->Cell(22,4,$textos["PROXIMO_PAGO"],1,0,'C',true);
         //////////////////////////////FIN ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
         
-        /*** Obtener los datos de la tabla movimientos tesoreria ***/
-        $condicion_fecha       = "fecha_registra>='$forma_fecha_desde' AND fecha_registra<='$forma_fecha_hasta'";
-        $condiciones           = $condicion_fecha.$condicion_cuenta.$condicion_proyecto.$condicion_concepto.$condicion_proveedor;
-        $movimientos_tesoreria = SQL::seleccionar(array("movimientos_tesoreria"),array("*"),"$condiciones");
+        /*** Obtener los datos de la tabla creditos bancos ***/
+        $condiciones     = $condicion_credito.$condicion_banco.$condicion_estado;
+        $creditos_bancos = SQL::seleccionar(array("creditos_bancos"),array("*"),"$condiciones");
 
-        if (SQL::filasDevueltas($movimientos_tesoreria)){
-            while($datos_movimiento = SQL::filaEnObjeto($movimientos_tesoreria)){
+        if (SQL::filasDevueltas($creditos_bancos)){
+            while($datos_creditos_bancos = SQL::filaEnObjeto($creditos_bancos)){
                 if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
                     $archivo->SetFillColor(255,255,255);
                 } else{
                     $archivo->SetFillColor(240,240,240);
                 }
-                //Se lee el movimiento de la tabla movimientos
-                $codigo_banco      = SQL::obtenerValor("cuentas_bancarias","codigo_banco","numero='$datos_movimiento->cuenta_origen'");
-                $codigo_sucursal   = SQL::obtenerValor("cuentas_bancarias","codigo_sucursal","numero='$datos_movimiento->cuenta_origen'");
-                $nombre_banco      = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco'");
-                $saldo_fecha       = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos_movimiento->codigo'");
-                $nombre_proyecto   = SQL::obtenerValor("proyectos","nombre","codigo='$datos_movimiento->codigo_proyecto'");
-                $nombre_concepto   = SQL::obtenerValor("conceptos_tesoreria","nombre_concepto","codigo='$datos_movimiento->codigo_concepto_tesoreria'");
-                $tipo_persona      = SQL::obtenerValor("terceros","tipo_persona","documento_identidad='$datos_movimiento->documento_identidad_tercero'");
+                //Se lee el movimiento de la tabla creditos bancos
+                $codigo_credito = SQL::obtenerValor("creditos_bancos","codigo","numero_credito='$datos_creditos_bancos->numero_credito'");
+                $codigo_banco   = SQL::obtenerValor("creditos_bancos","codigo_banco","numero_credito='$datos_creditos_bancos->numero_credito'");
+                $nombre_banco   = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco'");
+                $fecha_actual   = date("Y-m-d");
 
-                if($tipo_persona==1){
-                    $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
-                    $segundo_nombre   = SQL::obtenerValor("terceros", "segundo_nombre", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
-                    $primer_apellido  = SQL::obtenerValor("terceros", "primer_apellido", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
-                    $segundo_apellido = SQL::obtenerValor("terceros", "segundo_apellido", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
-                    $nombre_proveedor = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
+                $ultima_fecha_paga   =  SQL::obtenerValor("cuotas_creditos_bancos","fecha_cuota","codigo_credito='$codigo_credito' AND saldo_capital_pagado!='' AND estado_cuota='0'");
+              
+                if($ultima_fecha_paga){
+                    $saldo_fecha     = SQL::obtenerValor("cuotas_creditos_bancos","saldo_capital_pagado","codigo_credito='$codigo_credito' AND fecha_cuota='$ultima_fecha_paga'");    
                 } else{
-                    $nombre_proveedor  = SQL::obtenerValor("terceros", "razon_social", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'"); 
+                    $primera_cuota = SQL::obtenerValor("cuotas_creditos_bancos","abono_capital","codigo_credito='$codigo_credito' AND estado_cuota='1' AND numero_cuota='1'");
+                    $saldo_fecha   = SQL::obtenerValor("cuotas_creditos_bancos","saldo_capital","codigo_credito='$codigo_credito' AND numero_cuota='1'");
+                    $saldo_fecha   = $saldo_fecha+$primera_cuota;
                 }
+                
+                $fecha_fin_credito   = SQL::obtenerValor("cuotas_creditos_bancos","MAX(fecha_cuota)","codigo_credito='$codigo_credito'");
+                $ultimo_pagado       = SQL::obtenerValor("cuotas_creditos_bancos","abono_capital_pagado","codigo_credito='$codigo_credito' AND fecha_cuota='$ultima_fecha_paga'");
+                $ultima_cuota_pagada = SQL::obtenerValor("cuotas_creditos_bancos","numero_cuota","codigo_credito='$codigo_credito' AND fecha_cuota='$ultima_fecha_paga'");
+                $siguiente_cuota     = $ultima_cuota_pagada+1;
+                $proximo_pago        = SQL::obtenerValor("cuotas_creditos_bancos","abono_capital","codigo_credito='$codigo_credito' AND numero_cuota='$siguiente_cuota'");
 
-                if ($datos_movimiento->estado == '0'){
-                    $estado = $textos["ESTADO_0"];
+                if ($datos_creditos_bancos->tipo_credito == '1'){
+                    $tipo_credito = $textos["CREDITO"];
                 }
-                if ($datos_movimiento->estado == '1'){
-                    $estado = $textos["ESTADO_1"];
+                if ($datos_creditos_bancos->tipo_credito == '2'){
+                    $tipo_credito = $textos["CREDIPAGO"];
                 }
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////
                 $archivo->Ln(4);
+                $archivo->SetFont('Arial','',6);
                 $archivo->Cell(40,4,$nombre_banco,1,0,'L',true);
-                $archivo->Cell(20,4,$datos_movimiento->cuenta_origen,1,0,'L',true);
-                $archivo->Cell(40,4,$nombre_concepto,1,0,'L',true);
-                $archivo->Cell(20,4,""."$ ".number_format($datos_movimiento->valor_movimiento,0),1,0,'R',true);
-                $archivo->Cell(20,4,$datos_movimiento->fecha_registra,1,0,'C',true);
-                $archivo->Cell(20,4,""."$ ".number_format($saldo_fecha,0),1,0,'R',true);
-                $archivo->Cell(20,4,$nombre_proyecto,1,0,'L',true);
-                $archivo->Cell(40,4,$nombre_proveedor,1,0,'L',true);
-                $archivo->Cell(20,4,$datos_movimiento->cuenta_proveedor,1,0,'L',true);
-                $archivo->Cell(10,4,$estado,1,0,'L',true);
+                $archivo->Cell(25,4,$tipo_credito,1,0,'L',true);
+                $archivo->Cell(30,4,$datos_creditos_bancos->numero_credito,1,0,'D',true);
+                $archivo->Cell(22,4,""."$ ".number_format($datos_creditos_bancos->valor_credito,0),1,0,'R',true);
+                $archivo->Cell(10,4,$datos_creditos_bancos->tasa_dtf,1,0,'C',true);
+                $archivo->Cell(22,4,""."$ ".number_format($saldo_fecha,0),1,0,'R',true);
+                $archivo->Cell(22,4,$datos_creditos_bancos->fecha_credito,1,0,'C',true);
+                $archivo->Cell(22,4,$fecha_fin_credito,1,0,'C',true);
+                $archivo->Cell(10,4,$datos_creditos_bancos->periodos,1,0,'L',true);
+                $archivo->Cell(14,4,$datos_creditos_bancos->fecha_pago_cuota,1,0,'L',true);
+                $archivo->Cell(22,4,""."$ ".number_format($ultimo_pagado,0),1,0,'R',true);
+                $archivo->Cell(22,4,""."$ ".number_format($proximo_pago,0),1,0,'R',true);
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////
                 $imprime_cabecera = $archivo->breakCell(8);
@@ -411,48 +345,28 @@ if (isset($url_completar)) {
                     $archivo->Ln(4);
                     $archivo->SetFont('Arial','B',8);
                     $archivo->Ln(0);
-                    $archivo->Cell(35,4,$textos["FECHA_DESDE_HASTA"]." :",0,0,'L');
-                    $archivo->SetFont('Arial','',8);
-                    $archivo->Cell(70,4,"".$forma_fecha_desde."-".$forma_fecha_hasta,0,0,'L');
-                    $archivo->Cell(40,4,"",0,1,'R');  
   
                     $archivo->SetFont('Arial','B',6);
                     $archivo->SetFillColor(225,225,225);
 
                     $archivo->Ln(6);
                     $archivo->Cell(40,4,$textos["BANCOS"],1,0,'C',true);
-                    $archivo->Cell(20,4,$textos["CUENTA_ORIGEN"],1,0,'C',true);
-                    $archivo->Cell(40,4,$textos["CONCEPTO"],1,0,'C',true);
-                    $archivo->Cell(20,4,$textos["VALOR"],1,0,'C',true);
-                    $archivo->Cell(20,4,$textos["FECHA_MOVIMIENTO"],1,0,'C',true);
-                    $archivo->Cell(20,4,$textos["SALDO"],1,0,'C',true);
-                    $archivo->Cell(20,4,$textos["PROYECTO"],1,0,'C',true);
-                    $archivo->Cell(40,4,$textos["PROVEEDOR"],1,0,'C',true);
-                    $archivo->Cell(20,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
-                    $archivo->Cell(10,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
+                    $archivo->Cell(25,4,$textos["TIPO_CREDITO"],1,0,'C',true);
+                    $archivo->Cell(30,4,$textos["NRO_CREDITO"],1,0,'C',true);
+                    $archivo->Cell(22,4,$textos["CUPO"],1,0,'C',true);
+                    $archivo->Cell(10,4,$textos["TASA"],1,0,'C',true);
+                    $archivo->Cell(22,4,$textos["SALDO"],1,0,'C',true);
+                    $archivo->Cell(22,4,$textos["FECHA_CREDITO"],1,0,'C',true);
+                    $archivo->Cell(22,4,$textos["FECHA_TERMINA"],1,0,'C',true);
+                    $archivo->Cell(10,4,$textos["PLAZO"],1,0,'C',true);
+                    $archivo->Cell(14,4,$textos["DIA_PAGO"],1,0,'C',true);
+                    $archivo->Cell(22,4,$textos["ULTIMO_PAGADO"],1,0,'C',true);
+                    $archivo->Cell(22,4,$textos["PROXIMO_PAGO"],1,0,'C',true);
                 }
                 $i++;
                 $item++;
             }
         }
-
-        if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
-            $archivo->SetFillColor(255,255,255);
-        } else{
-            $archivo->SetFillColor(240,240,240);
-        }
-
-        //Calcula totales del movimiento
-        $total_movimientos     = SQL::obtenerValor("movimientos_tesoreria","SUM(valor_movimiento)","$condiciones");
-        $acumulado_movimientos = $total_movimientos + $acumulado_movimientos;
-        $acumulado_movimientos = number_format($acumulado_movimientos, 0);
-
-        $archivo->Ln(8);
-        $archivo->SetFont('Arial','B',6);
-        $archivo->Cell(100,4,$textos["TOTAL_MOVIMIENTOS"],0,0,'L');
-
-        $archivo->Ln(4);
-        $archivo->Cell(100,4,"$ ".$acumulado_movimientos."",0);
 
         if($archivo->FillColor != sprintf('%.3F %.3F %.3F rg',1,1,1)){
             $archivo->SetFillColor(255,255,255);
@@ -479,53 +393,56 @@ if (isset($url_completar)) {
         
     } else{
         //Se crean los titulos del archivo excel
-        $titulos_plano = "BANCOS;CUENTA ORIGEN;CONCEPTO;VALOR;FECHA MOVIMIENTO;SALDO;PROYECTO;PROVEEDOR;CUENTA DESTINO;ESTADO\n";
+        $titulos_plano = "BANCOS;TIPO_CREDITO;NRO_CREDITO;CUPO;TASA;SALDO;FECHA_CREDITO;FECHA_TERMINA;PLAZO;DIA_PAGO;ULTIMO_PAGADO;PROXIMO_PAGO\n";
             fwrite($archivo, $titulos_plano);
 
-        /*** Obtener los datos de la tabla movimientos tesoreria ***/
-        $condicion_fecha       = "fecha_registra>='$forma_fecha_desde' AND fecha_registra<='$forma_fecha_hasta'";
-        $condiciones           = $condicion_fecha.$condicion_cuenta.$condicion_proyecto.$condicion_concepto.$condicion_proveedor;
-        $movimientos_tesoreria = SQL::seleccionar(array("movimientos_tesoreria"),array("*"),"$condiciones");
+        /*** Obtener los datos de la tabla creditos bancos ***/
+        $condiciones     = $condicion_credito.$condicion_banco.$condicion_estado;
+        $creditos_bancos = SQL::seleccionar(array("creditos_bancos"),array("*"),"$condiciones");
 
-        if (SQL::filasDevueltas($movimientos_tesoreria)){
-            while($datos_movimiento = SQL::filaEnObjeto($movimientos_tesoreria)){
-                //Se lee el movimiento de la tabla movimientos
-                $codigo_banco      = SQL::obtenerValor("cuentas_bancarias","codigo_banco","numero='$datos_movimiento->cuenta_origen'");
-                $codigo_sucursal   = SQL::obtenerValor("cuentas_bancarias","codigo_sucursal","numero='$datos_movimiento->cuenta_origen'");
-                $nombre_banco      = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco'");
-                $saldo_fecha       = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos_movimiento->codigo'");
-                $nombre_proyecto   = SQL::obtenerValor("proyectos","nombre","codigo='$datos_movimiento->codigo_proyecto'");
-                $nombre_concepto   = SQL::obtenerValor("conceptos_tesoreria","nombre_concepto","codigo='$datos_movimiento->codigo_concepto_tesoreria'");
-                $tipo_persona      = SQL::obtenerValor("terceros","tipo_persona","documento_identidad='$datos_movimiento->documento_identidad_tercero'");
+        if (SQL::filasDevueltas($creditos_bancos)){
+            while($datos_creditos_bancos = SQL::filaEnObjeto($creditos_bancos)){
+                //Se lee el movimiento de la tabla creditos bancos
+                $codigo_credito = SQL::obtenerValor("creditos_bancos","codigo","numero_credito='$datos_creditos_bancos->numero_credito'");
+                $codigo_banco   = SQL::obtenerValor("creditos_bancos","codigo_banco","numero_credito='$datos_creditos_bancos->numero_credito'");
+                $nombre_banco   = SQL::obtenerValor("bancos","descripcion","codigo='$codigo_banco'");
+                $fecha_actual   = date("Y-m-d");
 
-                if($tipo_persona==1){
-                    $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
-                    $segundo_nombre   = SQL::obtenerValor("terceros", "segundo_nombre", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
-                    $primer_apellido  = SQL::obtenerValor("terceros", "primer_apellido", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
-                    $segundo_apellido = SQL::obtenerValor("terceros", "segundo_apellido", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'");
-                    $nombre_proveedor = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
+                $ultima_fecha_paga   =  SQL::obtenerValor("cuotas_creditos_bancos","fecha_cuota","codigo_credito='$codigo_credito' AND saldo_capital_pagado!='' AND estado_cuota='0'");
+              
+                if($ultima_fecha_paga){
+                    $saldo_fecha     = SQL::obtenerValor("cuotas_creditos_bancos","saldo_capital_pagado","codigo_credito='$codigo_credito' AND fecha_cuota='$ultima_fecha_paga'");    
                 } else{
-                    $nombre_proveedor  = SQL::obtenerValor("terceros", "razon_social", "documento_identidad = '".$datos_movimiento->documento_identidad_tercero."'"); 
+                    $primera_cuota = SQL::obtenerValor("cuotas_creditos_bancos","abono_capital","codigo_credito='$codigo_credito' AND estado_cuota='1' AND numero_cuota='1'");
+                    $saldo_fecha   = SQL::obtenerValor("cuotas_creditos_bancos","saldo_capital","codigo_credito='$codigo_credito' AND numero_cuota='1'");
+                    $saldo_fecha   = $saldo_fecha+$primera_cuota;
                 }
+                
+                $fecha_fin_credito   = SQL::obtenerValor("cuotas_creditos_bancos","MAX(fecha_cuota)","codigo_credito='$codigo_credito'");
+                $ultimo_pagado       = SQL::obtenerValor("cuotas_creditos_bancos","abono_capital_pagado","codigo_credito='$codigo_credito' AND fecha_cuota='$ultima_fecha_paga'");
+                $ultima_cuota_pagada = SQL::obtenerValor("cuotas_creditos_bancos","numero_cuota","codigo_credito='$codigo_credito' AND fecha_cuota='$ultima_fecha_paga'");
+                $siguiente_cuota     = $ultima_cuota_pagada+1;
+                $proximo_pago        = SQL::obtenerValor("cuotas_creditos_bancos","abono_capital","codigo_credito='$codigo_credito' AND numero_cuota='$siguiente_cuota'");
 
-                if ($datos_movimiento->estado == '0'){
-                    $estado = $textos["ESTADO_0"];
+                if ($datos_creditos_bancos->tipo_credito == '1'){
+                    $tipo_credito = $textos["CREDITO"];
                 }
-                if ($datos_movimiento->estado == '1'){
-                    $estado = $textos["ESTADO_1"];
+                if ($datos_creditos_bancos->tipo_credito == '2'){
+                    $tipo_credito = $textos["CREDIPAGO"];
                 }
                 /////////////////////////////////////////////////////////////////////////////////////////////////
-                $cuenta_origen      = $datos_movimiento->cuenta_origen;
-                $valor_movimiento   = $datos_movimiento->valor_movimiento;
-                $valor_movimiento   = number_format($valor_movimiento, 0);
-                $valor_movimiento   = str_replace(',', '.', $valor_movimiento);
-                $fecha_registra     = $datos_movimiento->fecha_registra;
-                $saldo_fecha        = number_format($saldo_fecha, 0);
+                $valor_credito      = number_format($datos_creditos_bancos->valor_credito,0);
+                $saldo_fecha        = number_format($saldo_fecha,0);
+                $ultimo_pagado      = number_format($ultimo_pagado, 0);
+                $proximo_pago       = number_format($proximo_pago,0);
+
+                $valor_credito      = str_replace(',', '.', $valor_credito);
                 $saldo_fecha        = str_replace(',', '.', $saldo_fecha);
-                $cuenta_destino     = $datos_movimiento->cuenta_proveedor;
+                $ultimo_pagado      = str_replace(',', '.', $ultimo_pagado);
+                $proximo_pago       = str_replace(',', '.', $proximo_pago);
 
                 //Contenido del archivo
-                $contenido = "$nombre_banco;$cuenta_origen;$nombre_concepto;$valor_movimiento;$fecha_registra;$saldo_fecha;$nombre_proyecto;$nombre_proveedor;$cuenta_destino;$estado\n";
+                $contenido = "$nombre_banco;$tipo_credito;$datos_creditos_bancos->numero_credito;$valor_credito;$datos_creditos_bancos->tasa_dtf;$saldo_fecha;$datos_creditos_bancos->fecha_credito;$fecha_fin_credito;$datos_creditos_bancos->periodos;$datos_creditos_bancos->fecha_pago_cuota;$ultimo_pagado;$proximo_pago\n";
                 $guardarArchivo = fwrite($archivo,$contenido);
             }
         }

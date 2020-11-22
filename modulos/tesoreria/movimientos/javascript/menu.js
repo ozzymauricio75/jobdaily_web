@@ -17,6 +17,36 @@
         });
     }
 
+    function existeCredito() {
+        var destino        = $('#URLFormulario').val();
+        var numero_credito = $('#selector5').val();
+
+        $.getJSON(destino, {existeCredito: true, numero_credito: numero_credito }, function(datos) {
+            if(datos==""){
+                alert('No existe el numero del credito');
+                $('#selector5').val('');
+                $('#valor_credito').val('');
+                $('#selector5').focus();
+                 $('#cuotas_credito').val('');
+            }
+        });
+    }
+
+    function validarMonto() {
+        var destino          = $('#URLFormulario').val();
+        var codigo_concepto  = $('#codigo_concepto').val();
+        var valor_movimiento = $('#valor').val();
+        var numero_cuenta    = $('#selector3').val();
+
+        $.getJSON(destino, {validarMonto: true, codigo_concepto: codigo_concepto, valor_movimiento: valor_movimiento, 
+            numero_cuenta: numero_cuenta }, function(datos) {
+            
+            if(datos==0){
+                alert('El valor del movimiento supera el saldo de la cuenta');
+            }
+        });
+    }
+
     function cargaValorCredito() {
         var destino        = $('#URLFormulario').val();
         var numero_credito = $('#selector5').val();
@@ -32,6 +62,19 @@
     }
 
     function activaCamposCuentas(){
+        var destino = $('#URLFormulario').val();
+
+        if ($(".por_cuenta").is(':checked')){
+            $('.por_banco').parent().show();
+            $('#por_cuenta_activo').val(2);
+
+        }else{
+            $('.por_banco').val('');
+            $('.por_banco').parent().hide();
+        }
+    }
+
+    function activaCamposCreditos(){
         var destino = $('#URLFormulario').val();
 
         if ($(".por_cuenta").is(':checked')){

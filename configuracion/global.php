@@ -65,6 +65,7 @@ $rutasGlobales["imagenes"]    = "imagenes";
 $rutasGlobales["estilos"]     = "css";
 $rutasGlobales["archivos"]    = "../archivos";
 $rutasGlobales["movimientos"] = "../archivos/movimientos";
+$rutasGlobales["bancos"]      = "../archivos/bancos";
 $rutasGlobales["graficosPhp"] = "Highcharts-8.1.2/code";
 $rutasGlobales["graficosPhp"] = "../jpgraph/src";
 
