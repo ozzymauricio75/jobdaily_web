@@ -68,9 +68,9 @@ if (!empty($url_generar)) {
         "2" => "EXCEL"
     );
 
-    $condicion = "c.codigo = a.codigo_sucursal AND a.codigo_usuario = '$sesion_id_usuario_ingreso'";
+    /*$condicion = "c.codigo = a.codigo_sucursal AND a.codigo_usuario = '$sesion_id_usuario_ingreso'";
     $consulta_privilegios = SQL::seleccionar($tablas, $columnas, $condicion, "", "");
-    $sucursales = array();
+    $sucursales = array();*/
 
     /*** Definición de pestañas para datos del tercero***/
     $formularios["PESTANA_REPORTE"] = array(
@@ -83,7 +83,7 @@ if (!empty($url_generar)) {
         )
     );
     
-    $formularios["PESTANA_REPORTE"] = array_merge($formularios["PESTANA_REPORTE"],$sucursales);
+    $formularios["PESTANA_REPORTE"] = array_merge($formularios["PESTANA_REPORTE"]);
 
     /*** Definicion de botones ***/
     $botones = array(
