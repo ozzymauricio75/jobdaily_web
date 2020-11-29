@@ -85,7 +85,7 @@ if (!empty($url_generar)) {
         //Inicio la construccion de la tabla
         if (SQL::filasDevueltas($consulta)) {
             /*** Consulta todas las ordenes y documentos ***/
-            $consulta_documentos = SQL::seleccionar(array("correspondencia"),array("*"),"codigo_proyecto='$datos_correspondencia->codigo_proyecto' AND documento_identidad_proveedor='$datos_correspondencia->documento_identidad_proveedor' AND estado_residente='1' AND estado_director='0'");
+            $consulta_documentos = SQL::seleccionar(array("correspondencia"),array("*"),"codigo_proyecto='$datos_correspondencia->codigo_proyecto' AND documento_identidad_proveedor='$datos_correspondencia->documento_identidad_proveedor' AND estado_residente='1' AND estado_director='0' AND codigo_tipo_documento='5'");
             while ($datos = SQL::filaEnObjeto($consulta_documentos)) {
                 /*Obtener Valores*/
                 $codigo_proyecto               = $datos->codigo_proyecto;

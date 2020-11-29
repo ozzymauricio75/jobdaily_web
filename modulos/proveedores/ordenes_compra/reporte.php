@@ -111,7 +111,7 @@ if (!empty($url_generar)) {
     $codigo_proyecto = $llave_proyecto[0];
 
     //Valores total de la orden vs Valor facturado
-    $total_entregado_facturado  = SQL::obtenerValor("aprobaciones","SUM(valor_documento)","codigo_proyecto='$codigo_proyecto'");
+    $total_entregado_facturado  = SQL::obtenerValor("correspondencia","SUM(valor_documento)","codigo_proyecto='$codigo_proyecto' AND estado_residente='1' AND estado_director='1'");
 
     /*** Validar ingreso de campo fecha al formulario ***/
     if (empty($forma_selector5)){

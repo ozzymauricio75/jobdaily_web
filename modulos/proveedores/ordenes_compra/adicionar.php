@@ -132,11 +132,11 @@ if (isset($url_completar)) {
             $nombre_proveedor = $primer_nombre." ".$segundo_nombre." ".$primer_apellido." ".$segundo_apellido;
         }
 
-        $codigo_vendedor       = SQL::obtenerValor("vendedores_proveedor", "codigo", "documento_proveedor ='$url_nit_proveedor' AND activo='1'");
-        $nombre_vendedor       = SQL::obtenerValor("menu_vendedores_proveedor", "NOMBRE_COMPLETO", "DOCUMENTO ='$url_nit_proveedor'");
-        $direccion             = SQL::obtenerValor("terceros", "direccion_principal", "documento_identidad ='$url_nit_proveedor' AND activo='1'");
-        $correo_electronico    = SQL::obtenerValor("vendedores_proveedor", "correo", "documento_proveedor ='$url_nit_proveedor' AND activo='1'");
-        $celular               = SQL::obtenerValor("vendedores_proveedor", "celular", "documento_proveedor ='$url_nit_proveedor' AND activo='1'");
+        $codigo_vendedor    = SQL::obtenerValor("vendedores_proveedor", "codigo", "documento_proveedor ='$url_nit_proveedor' AND activo='1'");
+        $nombre_vendedor    = SQL::obtenerValor("menu_vendedores_proveedor", "NOMBRE_COMPLETO", "DOCUMENTO ='$url_nit_proveedor'");
+        $direccion          = SQL::obtenerValor("terceros", "direccion_principal", "documento_identidad ='$url_nit_proveedor' AND activo='1'");
+        $correo_electronico = SQL::obtenerValor("vendedores_proveedor", "correo", "documento_proveedor ='$url_nit_proveedor' AND activo='1'");
+        $celular            = SQL::obtenerValor("vendedores_proveedor", "celular", "documento_proveedor ='$url_nit_proveedor' AND activo='1'");
 
         $codigo_dane_departamento = SQL::obtenerValor("terceros", "codigo_dane_departamento_localidad", "documento_identidad ='$url_nit_proveedor' AND activo='1'");
         $codigo_dane_municipio    = SQL::obtenerValor("terceros", "codigo_dane_municipio_localidad", "documento_identidad ='$url_nit_proveedor' AND activo='1'");
@@ -378,7 +378,7 @@ if (isset($url_completar)) {
         $url_nit_proveedor   = $llave[0];
 
         $codigo_proyecto     = $url_codigo_proyecto;
-        $sucursal            = $url_sucursal;
+        //$sucursal            = $url_sucursal;
         $fecha_documento     = $url_fecha_documento;
         $numero_orden        = $url_numero_orden;
         $codigo_comprador    = $url_codigo_comprador;
@@ -397,7 +397,7 @@ if (isset($url_completar)) {
         if($estado_orden == false){
 
             $datos_encabezado = array(                         
-                "codigo_sucursal"                   => $sucursal,   
+                "codigo_sucursal"                   => 1,   
                 "codigo_tipo_documento"             => $tipo_documento,
                 "fecha_documento"                   => $fecha_documento,
                 "prefijo_codigo_proyecto"           => $codigo_proyecto,
@@ -406,10 +406,10 @@ if (isset($url_completar)) {
                 "codigo_comprador"                  => $codigo_comprador,
                 "cantidad_registros"                => 0,
                 "cantidad_cumplidos"                => 0,
-                "estado"                            => 4,
+                "estado"                            => '4',
                 "codigo_usuario_orden_compra"       => $sesion_id_usuario_ingreso,
                 "codigo_usuario_anula"              => "",
-                "estado_aprobada"                   => 0,
+                "estado_aprobada"                   => '0',
                 "codigo_usuario_aprueba"            => "",
                 "codigo_moneda"                     => $codigo_moneda,
                 "descuento_global1"                 => $descuento,
@@ -432,9 +432,10 @@ if (isset($url_completar)) {
             if($insertar_orden = false){
                 $respuesta[0]  = false;
                 $respuesta[1]  = $textos["ERROR_GRABAR_ENCABEZADO"];
+            } else{
+                HTTP::enviarJSON($respuesta);
+                exit();
             }
-            HTTP::enviarJSON($respuesta);
-            exit();
         }
     }
 
@@ -500,8 +501,8 @@ if (isset($url_completar)) {
         "consecutivo"              => $consecutivo,
         "codigo_articulo"          => $codigo_articulo,
         "referencia_articulo"      => $referencia,
-        "codigo_sucursal_destino"  => $id_sucursal_orden, 
-        "estado"                   => 4,
+        "codigo_sucursal_destino"  => 1, 
+        "estado"                   => '4',
         "codigo_unidad_medida"     => $unidad_compra,
         "cantidad_total"           => $cantidad_total_articulo,
         "valor_total"              => $subtotal,
@@ -532,7 +533,7 @@ if (isset($url_completar)) {
         "estado" => '0'
     );  
 
-    $descuento_global1   = SQL::insertar("ordenes_compra", $datos_encabezado,true);  
+    $descuento_global1   = SQL::modificar("ordenes_compra", $datos_encabezado,"codigo='$codigo_orden_compra' AND numero_consecutivo='$consecutivo'");  
 
     $tabla = array();
     if ($id_movimiento_orden){
@@ -837,8 +838,8 @@ if (!empty($url_generar)){
                             HTML::campoTextoCorto("*nit_empresa",$textos["NIT"], 13, 15, "", array("disabled" => "true"), array("title",$textos["AYUDA_NIT"], "", "")) 
                         ),
                         array(
-                            HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre",""), "", "", array("title" => $textos["AYUDA_CONSORCIO"], "onBlur" => "validarItem(this)")),
-                            HTML::campoOculto("id_sucursal", ""),
+                            //HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre",""), "", "", array("title" => $textos["AYUDA_CONSORCIO"], "onBlur" => "validarItem(this)")),
+                            //HTML::campoOculto("id_sucursal", ""),
 
                             HTML::listaSeleccionSimple("*codigo_comprador",$textos["COMPRADOR"], "", "", array("disabled" => "true"), array("title",$textos["AYUDA_COMPRADOR"])),
 
@@ -946,7 +947,7 @@ if (!empty($url_generar)){
                 HTML::campoOculto("id_propuesta_pedido",0)
             )
         );
-        
+        $funciones["PESTANA_ARTICULOS"]   = "grabarEncabezado()";
         $formularios["PESTANA_ARTICULOS"] = array(  
             array(
                 HTML::contenedor(
@@ -1135,9 +1136,9 @@ if (!empty($url_generar)){
         $contenido = HTML::generarPestanas($formularios, $botones, "", $funciones, $encabezado, $opcionesLi);
     } else {
         $contenido = "";
-        if (!$sucursales){
+        /*if (!$sucursales){
             $error .= $textos["ERROR_PERMISO_SUCURSALES"];
-        }
+        }*/
         if (!$compradores){
             $error .= $textos["ERROR_COMPRADORES"];
         }
@@ -1215,7 +1216,8 @@ if (!empty($url_generar)){
         $modificar_encabezado = SQL::modificar("ordenes_compra", $datos_encabezado, $condicion_encabezado);
         
         if($modificar_encabezado){
-            $forma_id = $forma_campo_sucursal."|".$forma_campo_fecha_documento."|".$forma_campo_numero_orden_total;
+            //$forma_id = $forma_campo_sucursal."|".$forma_campo_fecha_documento."|".$forma_campo_numero_orden_total;
+            $forma_id = $forma_campo_fecha_documento."|".$forma_campo_numero_orden_total;
             Sesion::registrar("indice_imprimir", $idAsignado);
 
             include("clases/imprimir.php");

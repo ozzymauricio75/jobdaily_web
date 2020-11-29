@@ -59,17 +59,18 @@ if (isset($url_completar)) {
     $llave_proyecto                = explode("-", $codigo_proyecto);
     $codigo_proyecto               = $llave_proyecto[0];
 
-    $consulta_orden  = SQL::seleccionar(array("ordenes_compra"), array("*"), "prefijo_codigo_proyecto = '$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor'");
+    $consulta_orden  = SQL::seleccionar(array("ordenes_compra"), array("*"), "prefijo_codigo_proyecto = '$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor' AND estado!='2' AND estado!='3' AND estado!='4'");
 
     if (SQL::filasDevueltas($consulta_orden)) {
         while($datos = SQL::filaEnObjeto($consulta_orden)){
             $codigo.= $datos->codigo."-";
             $numero_consecutivo.= $datos->numero_consecutivo."-";
         }   
-    }/*else {
+    }else {
         $error   = true;
         $mensaje = $textos["ERROR_EXISTE_ORDEN"];
-    }*/
+    }
+
     $codigo             = trim($codigo,"-");
     $numero_consecutivo = trim($numero_consecutivo,"-");
     /*******************************************************/
@@ -133,7 +134,12 @@ if (isset($url_completar)) {
     $tolerancia                = SQL::obtenerValor("tolerancia","porcentaje","codigo>'0'");
     $total_orden               = number_format($total_orden,2);
     $valor_documentos_cruzados = number_format($valor_documentos_cruzados,2);
-    $indicador  = true;
+    if($total_orden){
+        $indicador = true;
+    } else{
+        $indicador = false;
+    }
+    
     /*******************************************************/
     $datos = array(
         $indicador,
@@ -157,7 +163,7 @@ if (isset($url_completar)) {
 
     $codigo_orden              = SQL::obtenerValor("ordenes_compra","codigo","numero_consecutivo='$orden_compra'");
     $total_orden               = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden'");
-    $valor_documentos_cruzados = SQL::obtenerValor("correspondencia","SUM(valor_documento)","numero_orden_compra='$orden_compra'");
+    $valor_documentos_cruzados = SQL::obtenerValor("correspondencia","SUM(valor_documento)","numero_orden_compra='$orden_compra' AND codigo_tipo_documento='4' OR codigo_tipo_documento='5'");
     $tolerancia                = SQL::obtenerValor("tolerancia","porcentaje","codigo>'0'");
     
     $indicador  = true;
@@ -205,7 +211,7 @@ elseif(isset($url_cruzarDocumentos)){
 }
 
 /*** Mostrar los numeros de documentos a cruzar con la factura ***/
-elseif(isset($url_tipo_documento_cruce)){
+elseif(isset($url_documentosCruce)){
 
     $tipo_documento_cruce          = $url_tipo_documento_cruce;
     $codigo_proyecto               = $url_codigo_proyecto;
@@ -217,7 +223,7 @@ elseif(isset($url_tipo_documento_cruce)){
 
     $llave_proyecto                = explode("-", $codigo_proyecto);
     $codigo_proyecto               = $llave_proyecto[0];
-
+//var_dump("expression",$tipo_documento_cruce,"-",$codigo_proyecto,"-",$documento_identidad_proveedor,"-",$orden_compra);
     $consulta = SQL::seleccionar(array("correspondencia"), array("*"), "codigo_tipo_documento='$tipo_documento_cruce' AND documento_identidad_proveedor='$documento_identidad_proveedor' AND numero_orden_compra='$orden_compra' AND codigo_proyecto='$codigo_proyecto'");
 
     if (SQL::filasDevueltas($consulta)) {
@@ -460,17 +466,18 @@ elseif (!empty($url_generar)) {
             "estado"                        => '0',
             "fecha_recepcion"               => $forma_fecha_recepcion,
             "fecha_vencimiento"             => $forma_fecha_vencimiento, 
-            "fecha_envio"                   => "",
+            "fecha_envio"                   => "0000-00-00",
             "observaciones"                 => $forma_observaciones,
             "estado_residente"              => '0',
             "estado_director"               => '0',
-            "fecha_registro_residente"      => "",
-            "fecha_registro_director"       => "",
+            "fecha_registro_residente"      => "0000-00-00",
+            "fecha_registro_director"       => "0000-00-00",
+            "estado_factura"                => '0',
             "documento_cruzado_por_factura" => ""
         );
     }   
 
-    if($indicador=0){
+    if($indicador==0){
         $insertar = SQL::insertar("correspondencia", $datos);
     }
 

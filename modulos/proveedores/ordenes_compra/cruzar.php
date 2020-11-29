@@ -40,16 +40,21 @@ if (isset($url_completar)) {
     exit;
 
 } elseif(isset($url_existeFactura)){
-    $documento_soporte = $url_documento_soporte;
-    $documento         = SQL::obtenerValor("correspondencia","numero_documento_proveedor","numero_documento_proveedor='$documento_soporte'");
-    $mensaje           = $textos["NO_EXISTE_FACTURA"];
+    $documento_soporte   = $url_documento_soporte;
+    $codigo              = $url_numero_orden;
+    $numero_orden        = SQL::obtenerValor("ordenes_compra","numero_consecutivo","codigo='$codigo' AND estado!='2' AND estado!='3' AND estado!='4'");
 
-    if($documento){
+    $valor_documento = SQL::obtenerValor("correspondencia","valor_documento","numero_documento_proveedor='$documento_soporte' AND estado_residente='1' AND estado_director='1' AND numero_orden_compra='$numero_orden' AND estado_factura='0'");
+
+    $valor_documento = "$".number_format($valor_documento,0);
+    $mensaje         = $textos["NO_EXISTE_FACTURA"];
+
+    /*if($valor_documento){
         $datos = true;
     } else{
         $datos = false;
-    }
-    HTTP::enviarJSON($datos);
+    }*/
+    HTTP::enviarJSON($valor_documento);
     exit; 
 
 } elseif(isset($url_insertaCantidades)){
@@ -256,9 +261,13 @@ if (isset($url_completar)) {
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(
                 array(
-                    HTML::listaSeleccionSimple("*tipo_documento",$textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo=4 OR codigo=5"), "", array("title",$textos["AYUDA_TIPO_DOCUMENTO"])),
+                    HTML::listaSeleccionSimple("*tipo_documento",$textos["TIPO_DOCUMENTO"], HTML::generarDatosLista("tipos_documentos", "codigo", "descripcion","codigo=4 OR codigo=5"), "", array("title",$textos["AYUDA_TIPO_DOCUMENTO"]))
+                    .HTML::campoOculto("url_id",$url_id),
 
-                    HTML::campoTextoCorto("*documento_soporte_orden",$textos["DOCUMENTO_CRUCE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_CRUCE"], "class" => "autocompletable", "onChange" => "existeFactura()"))
+                    HTML::campoTextoCorto("*documento_soporte_orden",$textos["DOCUMENTO_CRUCE"], 15, 15, "", array("title"=>$textos["AYUDA_DOCUMENTO_CRUCE"], "class" => "autocompletable", "onChange" => "existeFactura()")),
+                    
+                    HTML::mostrarDato("valor_documento_proveedor_aprox", $textos["VALOR_TOTAL"], "")
+
                 ),
                 array(
                     HTML::agrupador(
@@ -289,7 +298,7 @@ if (isset($url_completar)) {
                             array(
                                 HTML::mostrarDato("empresa", $textos["EMPRESA"], $empresa),
                                 HTML::mostrarDato("nit", $textos["NIT"], $nit_empresa),
-                                HTML::mostrarDato("consorcio", $textos["CONSORCIO"], $nombre_sucursal),
+                                //HTML::mostrarDato("consorcio", $textos["CONSORCIO"], $nombre_sucursal),
                                 HTML::mostrarDato("comprador", $textos["COMPRADOR"], $nombre_comprador)
                             ),
                             array(
@@ -326,15 +335,15 @@ if (isset($url_completar)) {
                         HTML::agrupador(
                             array(
                                 array(
-                                    HTML::campoTextoCorto("total_unidades",$textos["TOTAL_UNIDADES"], 10, 10, $unidades, array("title"=>$textos["AYUDA_TOTAL_UNIDADES"], array("readOnly"=>"true"),"class"=>"oculto")),
+                                    HTML::campoTextoCorto("total_unidades",$textos["TOTAL_UNIDADES"], 10, 10, $unidades, array("readOnly"=>"true"), array("title"=>$textos["AYUDA_TOTAL_UNIDADES"],"class"=>"oculto")),
                             
-                                    HTML::campoTextoCorto("subtotal_pedido",$textos["SUBTOTAL"], 15, 15, "$".$subtotal, array("title"=>$textos["AYUDA_SUBTOTAL"], array("readOnly"=>"true"),"class"=>"oculto")),
+                                    HTML::campoTextoCorto("subtotal_pedido",$textos["SUBTOTAL"], 15, 15, "$".$subtotal, array("readOnly"=>"true"), array("title"=>$textos["AYUDA_SUBTOTAL"], "class"=>"oculto")),
 
-                                    HTML::campoTextoCorto("descuento_pedido",$textos["DESCUENTO"], 15, 15, "$".$descuento, array("title"=>$textos["AYUDA_DESCUENTO"], array("readOnly"=>"true"),"class"=>"oculto")),
+                                    HTML::campoTextoCorto("descuento_pedido",$textos["DESCUENTO"], 15, 15, "$".$descuento, array("readOnly"=>"true"), array("title"=>$textos["AYUDA_DESCUENTO"], "class"=>"oculto")),
 
-                                    HTML::campoTextoCorto("total_iva_pedido",$textos["TOTAL_IVA"], 15, 15, "$".$total_iva, array("title"=>$textos["AYUDA_IVA"], array("readOnly"=>"true"),"class"=>"oculto")),
+                                    HTML::campoTextoCorto("total_iva_pedido",$textos["TOTAL_IVA"], 15, 15, "$".$total_iva, array("readOnly"=>"true"), array("title"=>$textos["AYUDA_IVA"], "class"=>"oculto")),
 
-                                    HTML::campoTextoCorto("total_pedido",$textos["TOTAL_PEDIDO"], 15, 15, "$".$total_orden, array("title"=>$textos["AYUDA_TOTAL_PEDIDO"], array("readOnly"=>"true"),"class"=>"oculto"))
+                                    HTML::campoTextoCorto("total_pedido",$textos["TOTAL_PEDIDO"], 15, 15, "$".$total_orden, array("readOnly"=>"true"), array("title"=>$textos["AYUDA_TOTAL_PEDIDO"], "class"=>"oculto"))
                                 )
                             ),$textos["TOTALES_ORDEN"]
                         )

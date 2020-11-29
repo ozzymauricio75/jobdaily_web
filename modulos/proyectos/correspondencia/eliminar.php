@@ -42,7 +42,10 @@ if (!empty($url_generar)) {
         $valor_proyecto = number_format($datos->valor_proyecto,0);
         $estado         = $datos->estado;
 
-        if (($estado!=1 && $estado!=3)) {
+        $estado_residente = SQL::obtenerValor("correspondencia","estado_residente", "codigo='$url_id'");
+        $estado_director  = SQL::obtenerValor("correspondencia","estado_director", "codigo='$url_id'");
+
+        if (($estado!=1 && $estado!=3 && $estado_residente==0 && $estado_director==0)) {
             /*Obtener Valores*/
             $codigo_proyecto               = $datos->codigo_proyecto;
             $documento_identidad_proveedor = $datos->documento_identidad_proveedor;
@@ -111,9 +114,10 @@ if (!empty($url_generar)) {
             $contenido = HTML::generarPestanas($formularios, $botones);
         
         } else {
-            if ($estado) {
+            /*if ($estado) {
                 $error = $textos["ERROR_ORDEN_ESTADO"];
-            } 
+            }*/
+             $error    = $textos["ERROR_ORDEN_ESTADO_APROBADOS"];
             $titulo    = "";
             $contenido = "";
         }

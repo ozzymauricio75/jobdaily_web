@@ -86,14 +86,14 @@
                     
                     $('#listaDocumentos').append(item); 
                 }
-                $('#orden_compra_seleccionada').val(orden_compra);
+                $('#orden_compra_seleccionada').val(vector_numero_documento);
                 $('#documento_soporte').val('').focus();
-                $('#orden_compra').attr("disabled","disabled");
+                $('#orden_compra').attr("disabled","disabled"); 
             }else{
                 $('#listaDocumentos').parent().hide();
                 $('#botonCruzar').parent().hide();
             }
-            
+           
         });
     }
 
@@ -233,9 +233,9 @@
 
                 $('#total_orden').text('$'+total_orden);
                 $('#documentos_cruzados').text(valor_documentos_cruzados);
-
+                $('#orden_compra_seleccionada').val(orden_compra);
             }else if(datos[0]==false){
-                alert(error);
+                alert("Error, no existe orden de compra o proveedor asociado al proyecto.");
             }    
         }); 
 
@@ -267,7 +267,7 @@
                 $('#fecha_vencimiento').removeAttr("disabled","disabled");
                 $('#observaciones').removeAttr("disabled","disabled");
                 for(var i=0; i<vector_id.length; i++){ 
-                    $('#orden_compra').append('<option value="'+vector_id[i]+'">' +vector_nombre[i]+ '</option>');
+                    $('#orden_compra').append('<option value="'+vector_nombre[i]+'">' +vector_nombre[i]+ '</option>');
                 }
                 $('#orden_compra').removeAttr('disabled');
             }/*else if(elementos[0]==""){

@@ -149,5 +149,5 @@ ini_set("session.auto_start", "0");
 ini_set("session.name", "ISP");
 ini_set("session.save_path", $rutasGlobales["temporal"]."/sesiones");
 ini_set("session.use_trans_sid", "0");
-ini_set("session.gc_maxlifetime", "360000");
+ini_set("session.gc_maxlifetime", "7200000");
 ?>

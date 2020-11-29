@@ -237,7 +237,7 @@ if (!empty($url_generar)) {
 
         /*** Definición de pestaña PROVEEDOR ***/
         $formularios["PESTANA_PROVEEDOR"] = array(
-            array(
+            /*array(
                 HTML::mostrarDato("actividad_principal", $textos["ACTIVIDAD_PRINCIPAL"], $actividad_principal)
             ),
             array(
@@ -257,7 +257,7 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("publicidad", $textos["PUBLICIDAD"], $textos["SI_NO_".intval($datosProveedor->publicidad)])
             ),array(
                 HTML::mostrarDato("servicios_especiales", $textos["SERVICIOS_ESPECIALES"], $textos["SI_NO_".intval($datosProveedor->servicios_especiales)]),
-            ),
+            ),*/
             array(
                 HTML::mostrarDato("descripcion_servicio", $textos["TIPO_SERVICIO"], $descripcion_servicio),
                 HTML::mostrarDato("fecha_inicio_cobro", $textos["FECHA_INICIO_COBRO"], $inicio_cobro[$datosProveedor->fecha_inicio_cobro])

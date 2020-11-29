@@ -23,16 +23,18 @@
     function existeFactura(){
         var destino           = $('#URLFormulario').val();
         var documento_soporte = $('#documento_soporte_orden').val();
-        var mensaje_error     = "No existe el documento, por favor verifique";
+        var numero_orden      = $('#url_id').val();
+        var mensaje_error     = "No existe el documento o no esta aprobado, por favor verifique";
 
-        $.getJSON(destino, {existeFactura: true, documento_soporte: documento_soporte}, function(datos) {
-            if(datos){
+        $.getJSON(destino, {existeFactura: true, documento_soporte: documento_soporte, numero_orden: numero_orden}, function(datos) {
+            if(datos!="$0"){
                 //$('#documento_soporte_orden').focus();
-                $datos=true; 
+                //$datos=true; 
+                $('#valor_documento_proveedor_aprox').text(datos);
             }else{
                 alert(mensaje_error);
                 $('#documento_soporte_orden').val('').focus();
-                $datos=false;
+                //$datos=false;
             }
             
         });    
@@ -234,7 +236,7 @@
                 for(var i=0; i<vector_id.length; i++){ 
                     $('#vendedor_proveedor').append('<option value="'+vector_id[i]+'">' +vector_nombre[i]+ '</option>');
                 }
-                grabarEncabezado();
+                //grabarEncabezado();
             }
             $('#vendedor_proveedor').removeAttr('disabled');
         });

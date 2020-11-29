@@ -106,13 +106,15 @@ if (!empty($url_generar)) {
         $consulta_orden = SQL::seleccionar(array("ordenes_compra"),array("numero_consecutivo"),"prefijo_codigo_proyecto='$codigo_proyecto' AND documento_identidad_proveedor='$documento_identidad_proveedor'");
 
         if (SQL::filasDevueltas($consulta_orden)) {
-
             while ($datos_orden = SQL::filaEnObjeto($consulta_orden)) {
                 $ordenes[$datos_orden->numero_consecutivo] = $datos_orden->numero_consecutivo;
             }
         }
 
-         if (($estado==0) && ($estado_residente==0) && ($estado_director==0)) {
+        $estado_residente = SQL::obtenerValor("correspondencia","estado_residente", "numero_orden_compra='$numero_orden_compra' AND codigo='$url_id'");
+        $estado_director  = SQL::obtenerValor("correspondencia","estado_director", "numero_orden_compra='$numero_orden_compra' AND codigo='$url_id'");
+
+        if (($estado==0) && ($estado_residente==0) && ($estado_director==0)) {
 
             /*** Definición de pestañas general ***/
             $formularios["PESTANA_GENERAL"] = array(

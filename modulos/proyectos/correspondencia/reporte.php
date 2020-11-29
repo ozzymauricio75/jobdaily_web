@@ -240,6 +240,9 @@ if (!empty($url_generar)) {
                         if ($datos_correspondencia->estado == '2'){
                            $estado_correspondencia = $textos["ESTADO_2"];
                         }
+                        if ($datos_correspondencia->estado == '3'){
+                           $estado_correspondencia = $textos["ESTADO_3"];
+                        }
 
                         $tipo_documento = SQL::obtenerValor("tipos_documentos","descripcion","codigo='$datos_correspondencia->codigo_tipo_documento'"); 
                         $total_orden    = SQL::obtenerValor("movimiento_ordenes_compra","SUM(neto_pagar)","codigo_orden_compra='$codigo_orden_compra'");

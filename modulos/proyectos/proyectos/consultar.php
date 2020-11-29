@@ -48,7 +48,7 @@ if (!empty($url_generar)) {
 
         $nombre_empresa  = SQL::obtenerValor("empresas","razon_social", "codigo = '$empresa'");
         $nombre_sucursal = SQL::obtenerValor("sucursales","nombre", "codigo = '$sucursal' AND codigo_empresa = '$empresa'");
-        $tipo            = SQL::obtenerValor("sucursales","tipo", "codigo = '$sucursal' AND codigo_empresa = '$empresa'");
+        //$tipo            = SQL::obtenerValor("sucursales","tipo", "codigo = '$sucursal' AND codigo_empresa = '$empresa'");
 
         //Coloca texto del tipo de sucursal
         if($tipo ==1){
@@ -70,7 +70,7 @@ if (!empty($url_generar)) {
         $titulo        = $componente->nombre;
 
         /*** Obtener valores ***/
-        $llave_primaria_municipio = $datos -> codigo_iso.",".$datos->codigo_dane_departamento.",".$datos -> codigo_dane_municipio;
+        $llave_primaria_municipio = $datos->codigo_iso.",".$datos->codigo_dane_departamento.",".$datos->codigo_dane_municipio;
 
         $municipio = SQL::obtenerValor("seleccion_municipios","nombre","llave_primaria = '$llave_primaria_municipio'");
         $municipio = explode("|",$municipio);
@@ -79,13 +79,6 @@ if (!empty($url_generar)) {
         $activo = array(
             "0" => $textos["ESTADO_INACTIVA"],
             "1" => $textos["ESTADO_ACTIVA"]
-        );
-
-        $tipoEmpresa = array(
-            "1" => $textos["EMPRESA_DISTRIBUIDORA_MAYORISTA"],
-            "2" => $textos["EMPRESA_VENTAS_PUBLICO"],
-            "3" => $textos["EMPRESA_AMBAS"],
-            "4" => $textos["EMPRESA_SOPORTE"]
         );
 
         $indicador = array(
@@ -101,10 +94,10 @@ if (!empty($url_generar)) {
             array(
                 HTML::mostrarDato("empresa", $textos["EMPRESA"], $nombre_empresa)
             ),
-            array(
+            /*array(
                 HTML::mostrarDato("sucursal", $textos["CONSORCIO"], $nombre_sucursal),
                 HTML::mostrarDato("tipo", $textos["TIPO"], $tipo)
-            ),
+            ),*/
             array(
                 HTML::mostrarDato("nombre", $textos["NOMBRE"], $datos->nombre),
                 HTML::mostrarDato("valor_proyecto", $textos["VALOR_PROYECTO"], $valor_proyecto),

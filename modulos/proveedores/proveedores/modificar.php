@@ -462,7 +462,7 @@ if (!empty($url_generar)) {
         /*** Definición de pestaña PROVEEDOR ***/
         $funciones["PESTANA_PROVEEDOR"] = "recargarActividades()";
         $formularios["PESTANA_PROVEEDOR"] = array(
-            array(
+            /*array(
                 HTML::listaSeleccionSimple("id_actividad_principal", $textos["ACTIVIDAD_PRINCIPAL"], $actividad, $llave_actividad_primaria, array("title" => $textos["AYUDA_ACTIVIDAD_PRINCIPAL"],"onBlur" => "validarItem(this);"))
             ),
             array(
@@ -485,7 +485,7 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::marcaChequeo("servicios_especiales", $textos["SERVICIOS_ESPECIALES"], 1, $datosProveedor->servicios_especiales)
-            ),
+            ),*/
             array(
                 HTML::listaSeleccionSimple("codigo_servicio", $textos["TIPO_SERVICIO"], HTML::generarDatosLista("servicios", "codigo", "descripcion"), $datosProveedor->codigo_servicio, array("title" => $textos["AYUDA_TIPO_SERVICIO"]))
             ),

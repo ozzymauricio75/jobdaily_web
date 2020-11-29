@@ -51,7 +51,7 @@ if (!empty($url_generar)) {
         $consulta_entradas  = SQL::seleccionar($tablas, $columnas, $condicion);
         $entradas           = SQL::filasDevueltas($consulta_entradas);
 
-        if (($estado==4)) {
+        if (($estado=='4')) {
 
             $codigo_orden_compra           = $url_id;
             $numero_consecutivo            = $datos->numero_consecutivo;
@@ -239,12 +239,15 @@ if (!empty($url_generar)) {
 
             $contenido = HTML::generarPestanas($formularios, $botones);
 
-        } else {
-            if ($estado) {
+        } else{
+            $error     = $textos["ERROR_ORDEN_ESTADO"];
+            $titulo    = "";
+            $contenido = "";
+            /*if ($estado) {
                 $error = $textos["ERROR_ORDEN_ESTADO"];
             } 
             $titulo    = "";
-            $contenido = "";
+            $contenido = "";*/
         }
     }
 

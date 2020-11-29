@@ -86,7 +86,7 @@ elseif (!empty($url_generar)) {
             array(
                 HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social","codigo != 0"), "", array("title" => $textos["AYUDA_EMPRESAS"],"onChange" => "recargarLista('codigo_empresa','codigo_sucursal');recargarListaEmpresas();")),
 
-                HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre","codigo != 0"), "", array("title" => $textos["AYUDA_CONSORCIO"]))
+                //HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre","codigo != 0"), "", array("title" => $textos["AYUDA_CONSORCIO"]))
             ),
             array(
                 HTML::campoTextoCorto("*nombre", $textos["NOMBRE"], 40, 60, "", array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);"))
@@ -189,7 +189,7 @@ elseif (!empty($url_generar)) {
 
     } else {
 
-        /*** Validar campor vacios ***/
+        /*** Validar campos vacios ***/
         if (!isset($forma_empresa)) {
             $forma_empresa = "0";
         }
@@ -224,7 +224,7 @@ elseif (!empty($url_generar)) {
         $datos = array(
             "codigo"                       => $forma_codigo,
             "codigo_empresa_ejecuta"       => $forma_empresa,
-            "codigo_sucursal_ejecuta"      => $forma_sucursal,
+            "codigo_sucursal_ejecuta"      => 1,
             "nombre"                       => $forma_nombre,
             "fecha_cierre"                 => $forma_fecha_cierre,
             "activo"                       => $forma_activo,

@@ -291,9 +291,11 @@ $vistas = array(
         WHERE   
                 job_correspondencia.codigo_proyecto = job_proyectos.codigo
                 AND job_correspondencia.documento_identidad_proveedor = job_terceros.documento_identidad
-                AND job_correspondencia.codigo_tipo_documento = job_tipos_documentos.codigo
+                
                 AND job_tipos_documento_identidad.codigo = job_terceros.codigo_tipo_documento 
                 AND job_correspondencia.codigo != 0 
+                AND job_correspondencia.codigo_tipo_documento = '5' 
+                AND job_tipos_documentos.codigo = '5'
         ORDER BY
                 job_correspondencia.estado,job_correspondencia.codigo ASC;"
     ),

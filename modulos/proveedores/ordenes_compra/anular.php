@@ -51,6 +51,8 @@ if (!empty($url_generar)) {
         $consulta_entradas  = SQL::seleccionar($tablas, $columnas, $condicion);
         $entradas           = SQL::filasDevueltas($consulta_entradas);
 
+        $estado_recepcion   = SQL::obtenerValor("correspondencia", "estado", "numero_orden_compra='".$url_id."'");
+
         if (($estado==0) || ($estado==1) || ($estado==4)) {
 
             $codigo_orden_compra           = $url_id;
@@ -177,7 +179,7 @@ if (!empty($url_generar)) {
                                 HTML::mostrarDato("nit", $textos["NIT"], $nit_empresa)
                             ),
                             array(
-                                HTML::mostrarDato("consorcio", $textos["CONSORCIO"], $nombre_sucursal),
+                                //HTML::mostrarDato("consorcio", $textos["CONSORCIO"], $nombre_sucursal),
                                 HTML::mostrarDato("comprador", $textos["COMPRADOR"], $nombre_comprador)
                             ),
                             array(

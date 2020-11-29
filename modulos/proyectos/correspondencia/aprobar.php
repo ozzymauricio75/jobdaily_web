@@ -231,9 +231,9 @@ if (!empty($url_generar)) {
                 HTML::boton("botonAceptar", $textos["ACEPTAR"], "adicionarItem('$url_id');", "aceptar")
             );
             $contenido = HTML::generarPestanas($formularios, $botones);
-        }else {
 
-            $error = $textos["ERROR_ORDEN_ESTADO_AUTORIZADO"];
+        } else {
+            $error     = $textos["ERROR_ORDEN_ESTADO_AUTORIZADO"];
             $titulo    = "";
             $contenido = "";
         }

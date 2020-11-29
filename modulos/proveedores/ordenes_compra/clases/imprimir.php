@@ -27,7 +27,7 @@
 $vistaConsulta = "ordenes_compra";
 $columnas      = SQL::obtenerColumnas($vistaConsulta);
 $llaveOrden    = explode("|",$forma_id);
-$consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo_sucursal = '".$llaveOrden[0]."' AND fecha_documento = '".$llaveOrden[1]."' AND numero_consecutivo = '".$llaveOrden[2]."'");
+$consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, "fecha_documento = '".$llaveOrden[0]."' AND numero_consecutivo = '".$llaveOrden[1]."'");
 
 $datos_ordenes = SQL::filaEnObjeto($consulta);
 $nombre        = "";
@@ -36,7 +36,7 @@ $texto_orden   = "Orden ";
 
 do{
     //$cadena      = Cadena::generarCadenaAleatoria(8);
-    $nombre        = $texto_orden.$llaveOrden[2].".pdf";
+    $nombre        = $texto_orden.$llaveOrden[1].".pdf";
     $nombreArchivo = $rutasGlobales["archivos"]."/".$nombre;
 } while (is_file($nombreArchivo));
 
@@ -175,7 +175,8 @@ $archivo->Cell(70,4,"".$nit."-".$digitoV,0,0,'L');
 $archivo->SetFont('Arial','B',8);
 $archivo->Cell(35,4,$textos["FACTURAR_A"]." :",0,0,'L');
 $archivo->SetFont('Arial','',8);
-$archivo->Cell(70,4,"".$empresa." - ".$consorcio,0,0,'L');
+$archivo->Cell(70,4,"".$empresa,0,0,'L');
+//$archivo->Cell(70,4,"".$empresa." - ".$consorcio,0,0,'L');
 $archivo->Cell(40,4,"",0,1,'R');
 
 $archivo->SetFont('Arial','B',8);
@@ -271,7 +272,8 @@ $archivo->Cell(23,4,$textos["VALOR_TOTAL"],1,0,'C',true);
 //Se lee el movimiento de la tabla movimientos
 $vistaConsulta          = "movimiento_ordenes_compra";
 $columnas               = SQL::obtenerColumnas($vistaConsulta);
-$consulta_movimiento    = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo_sucursal_destino = '".$datos_ordenes->codigo_sucursal."' AND codigo_orden_compra = '".$datos_ordenes->codigo."'");
+$consulta_movimiento    = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo_orden_compra = '".$datos_ordenes->codigo."'");
+//$consulta_movimiento    = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo_sucursal_destino = '".$datos_ordenes->codigo_sucursal."' AND codigo_orden_compra = '".$datos_ordenes->codigo."'");
 //Inicia valores en cero de totales
 $total                  = 0;
 $subtotal_orden         = 0;
@@ -372,7 +374,8 @@ if (SQL::filasDevueltas($consulta_movimiento)) {
             $archivo->SetFont('Arial','B',8);
             $archivo->Cell(35,4,$textos["FACTURAR_A"]." :",0,0,'L');
             $archivo->SetFont('Arial','',8);
-            $archivo->Cell(70,4,"".$empresa." - ".$consorcio,0,0,'L');
+            //$archivo->Cell(70,4,"".$empresa." - ".$consorcio,0,0,'L');
+            $archivo->Cell(70,4,"".$empresa,0,0,'L');
             $archivo->Cell(40,4,"",0,1,'R');
 
             $archivo->SetFont('Arial','B',8);

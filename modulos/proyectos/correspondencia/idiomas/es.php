@@ -178,6 +178,7 @@ $textos = array(
     "ERROR_ELIMINAR_ITEM"               => "No se pudo eliminar el documento",
     "ERROR_ORDEN_ESTADO"                => "La operación no puede realizar debido a que el documento no está aprobado o está anulado.",
     "ERROR_ORDEN_ESTADO_AUTORIZADO"     => "La operación no puede realizar debido a que el documento No esta recibido.",
+    "ERROR_ORDEN_ESTADO_APROBADOS"      => "La operación no puede realizar debido a que el documento ya tiene aprobaciones.",
     "ERROR_EXISTE_CODIGO"               => "Ya existe un almacén con ese código",
     "ERROR_EXISTE_ORDEN"                => "No existe una orden de compra asociada al proyecto o al proveedor",
     "ERROR_EXISTE_NOMBRE"               => "Ya existe un almacén con ese nombre",

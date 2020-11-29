@@ -48,18 +48,11 @@ if (!empty($url_generar)) {
         $activo             = $datos->activo;
 
         $nombre_empresa  = SQL::obtenerValor("empresas","razon_social", "codigo = '$empresa'");
-        $nombre_sucursal = SQL::obtenerValor("sucursales","nombre", "codigo = '$sucursal' AND codigo_empresa = '$empresa'");
-        $tipo            = SQL::obtenerValor("sucursales","tipo", "codigo = '$sucursal' AND codigo_empresa = '$empresa'");
+        //$nombre_sucursal = SQL::obtenerValor("sucursales","nombre", "codigo = '$sucursal' AND codigo_empresa = '$empresa'");
+        //$tipo            = SQL::obtenerValor("sucursales","tipo", "codigo = '$sucursal' AND codigo_empresa = '$empresa'");
 
-        $error         = "";
-        $titulo        = $componente->nombre;
-
-        $tipoEmpresa = array(
-            "1" => $textos["EMPRESA_DISTRIBUIDORA_MAYORISTA"],
-            "2" => $textos["EMPRESA_VENTAS_PUBLICO"],
-            "3" => $textos["EMPRESA_AMBAS"],
-            "4" => $textos["EMPRESA_SOPORTE"]
-        );
+        $error     = "";
+        $titulo    = $componente->nombre;
 
         $indicador = array(
             "0" => $textos["INDICADOR_NO"],
@@ -74,16 +67,16 @@ if (!empty($url_generar)) {
         }
 
         //Coloca texto del tipo de sucursal
-        if($tipo ==1){
+        /*if($tipo ==1){
             $tipo = "Consorcio";
         }elseif ($tipo ==2) {
             $tipo = "Unión temporal";
         }elseif ($tipo ==0) {
             $tipo = "Principal";
-        }
+        }*/
 
         /*** Obtener valores ***/
-        $llave_primaria_municipio = $datos -> codigo_iso.",".$datos->codigo_dane_departamento.",".$datos -> codigo_dane_municipio;
+        $llave_primaria_municipio = $datos->codigo_iso.",".$datos->codigo_dane_departamento.",".$datos ->codigo_dane_municipio;
 
         $municipio = SQL::obtenerValor("seleccion_municipios","nombre","llave_primaria = '$llave_primaria_municipio'");
         $municipio = explode("|",$municipio);
@@ -98,12 +91,12 @@ if (!empty($url_generar)) {
                 HTML::mostrarDato("codigo", $textos["CODIGO"], $datos->codigo)
             ),
             array(
-                HTML::mostrarDato("empresa", $textos["EMPRESA"], $nombre_empresa),
+                HTML::mostrarDato("empresa", $textos["EMPRESA"], $nombre_empresa)
             ),
-            array(   
+            /*array(   
                 HTML::mostrarDato("sucursal", $textos["CONSORCIO"], $nombre_sucursal),
                 HTML::mostrarDato("tipo", $textos["TIPO"], $tipo)
-            ),
+            ),*/
             array(
                 HTML::mostrarDato("nombre", $textos["NOMBRE"], $datos->nombre),
 

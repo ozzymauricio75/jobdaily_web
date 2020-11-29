@@ -73,13 +73,6 @@ if (!empty($url_generar)) {
             "0" => $textos["INDICADOR_NO"],
             "1" => $textos["INDICADOR_SI"]
         );
-
-        $tipoEmpresa = array(
-            "1" => $textos["EMPRESA_DISTRIBUIDORA_MAYORISTA"],
-            "2" => $textos["EMPRESA_VENTAS_PUBLICO"],
-            "3" => $textos["EMPRESA_AMBAS"],
-            "4" => $textos["EMPRESA_SOPORTE"]
-        );
         
         /*** Obtener valores ***/
         $llave_primaria_municipio = $datos->codigo_iso.",".$datos->codigo_dane_departamento.",".$datos->codigo_dane_municipio;
@@ -111,8 +104,8 @@ if (!empty($url_generar)) {
            array(
                 HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social","codigo != 0"), $datos->codigo_empresa_ejecuta, array("title" => $textos["AYUDA_EMPRESAS"],"onChange" => "recargarLista('codigo_empresa','codigo_sucursal');recargarListaEmpresas();")),
 
-                HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre","codigo != 0"), $datos->codigo_sucursal_ejecuta, array("title" => $textos["AYUDA_CONSORCIO"],"onChange" => "recargarListaEmpresas();"))
-                .HTML::campoOculto("tipo", $tipo),
+                /*HTML::listaSeleccionSimple("*sucursal", $textos["CONSORCIO"], HTML::generarDatosLista("sucursales", "codigo", "nombre","codigo != 0"), $datos->codigo_sucursal_ejecuta, array("title" => $textos["AYUDA_CONSORCIO"],"onChange" => "recargarListaEmpresas();"))
+                .HTML::campoOculto("tipo", $tipo),*/
             ),
             array(
                 HTML::campoTextoCorto("*nombre", $textos["NOMBRE"], 40, 60, $datos->nombre, array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);"))
@@ -189,9 +182,9 @@ if (!empty($url_generar)) {
 	}elseif(empty($forma_empresa)){
 		$error   = true;
         $mensaje = $textos["EMPRESA_VACIO"];
-	}elseif(empty($forma_sucursal)){
+	/*}elseif(empty($forma_sucursal)){
         $error   = true;
-        $mensaje = $textos["SUCURSAL_VACIO"];
+        $mensaje = $textos["SUCURSAL_VACIO"];*/
         
     }elseif(empty($forma_nombre)){
 		$error   = true;
@@ -236,12 +229,13 @@ if (!empty($url_generar)) {
         }
 
         $forma_valor_proyecto = quitarMiles($forma_valor_proyecto);
+        $forma_valor_proyecto = str_replace(",", "", $forma_valor_proyecto);
 
         /*** Insertar datos ***/
         $datos = array(
             "codigo"                       => $forma_codigo,
             "codigo_empresa_ejecuta"       => $forma_empresa,
-            "codigo_sucursal_ejecuta"      => $forma_sucursal,
+            "codigo_sucursal_ejecuta"      => 1,
             "nombre"                       => $forma_nombre,
             "fecha_cierre"                 => $forma_fecha_cierre,
             "activo"                       => $forma_activo,

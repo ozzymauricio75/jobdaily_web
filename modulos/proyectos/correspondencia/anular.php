@@ -109,12 +109,12 @@ if (!empty($url_generar)) {
 
                 $contenido = HTML::generarPestanas($formularios, $botones);
         } else {
-            if ($estado) {
+            /*if ($estado) {
                 $error = $textos["ERROR_ORDEN_ESTADO"];
-            }elseif(($estado==0) && ($codigo_tipo_documento!=3) || ($codigo_tipo_documento!=4) || ($codigo_tipo_documento!=5)) {
+            } elseif(($estado==0) && ($codigo_tipo_documento!=3) || ($codigo_tipo_documento!=4) || ($codigo_tipo_documento!=5)) {
                 $error = $textos["ERROR_TIPO_DOCUMENTOS"];
-            }
-
+            }*/
+            $error     = $textos["ERROR_ORDEN_ESTADO_APROBADOS"];
             $titulo    = "";
             $contenido = "";
         }

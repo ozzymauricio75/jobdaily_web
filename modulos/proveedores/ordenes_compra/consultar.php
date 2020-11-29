@@ -184,7 +184,7 @@ if (!empty($url_generar)) {
                             HTML::mostrarDato("factura_proveedor", $textos["FACTURA_PROVEEDOR"], $numero_factura_proveedor)
                         ),
                         array(
-                            HTML::mostrarDato("consorcio", $textos["CONSORCIO"], $nombre_sucursal),
+                            //HTML::mostrarDato("consorcio", $textos["CONSORCIO"], $nombre_sucursal),
                             HTML::mostrarDato("comprador", $textos["COMPRADOR"], $nombre_comprador)
                         ),
                         array(
