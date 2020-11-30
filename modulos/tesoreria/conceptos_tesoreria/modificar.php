@@ -42,17 +42,23 @@ if (!empty($url_generar)) {
         $contenido = "";
 
     } else {
-        $vistaConsulta = "conceptos_tesoreria";
-        $condicion     = "codigo = '$url_id'";
-        $columnas      = SQL::obtenerColumnas($vistaConsulta);
-        $consulta      = SQL::seleccionar(array($vistaConsulta), $columnas, $condicion);
-        $datos         = SQL::filaEnObjeto($consulta);
+        $vistaConsulta  = "conceptos_tesoreria";
+        $condicion      = "codigo = '$url_id'";
+        $columnas       = SQL::obtenerColumnas($vistaConsulta);
+        $consulta       = SQL::seleccionar(array($vistaConsulta), $columnas, $condicion);
+        $datos          = SQL::filaEnObjeto($consulta);
+        $codigo_sentido = $datos->sentido;
 
-        $error         = "";
-        $titulo        = $componente->nombre;
+        $error          = "";
+        $titulo         = $componente->nombre;
+
+        $sentidos = array(
+            "D" => $textos["DEBITO"],
+            "C" => $textos["CREDITO"]
+        );
 
         /*** Obtener valores ***/
-        $grupo_tesoreria = SQL::obtenerValor("grupos_tesoreria","nombre_grupo","codigo = '$datos->codigo_grupo_tesoreria'");
+        $grupo_tesoreria = SQL::obtenerValor("grupos_tesoreria","nombre_grupo","codigo='$datos->codigo_grupo_tesoreria'");
 
         /*** Definición de pestañas general ***/
         $formularios["PESTANA_GENERAL"] = array(
@@ -60,10 +66,13 @@ if (!empty($url_generar)) {
                 HTML::campoTextoCorto("*codigo", $textos["CODIGO"], 4, 4, $datos->codigo, array("readonly" => "true"), array("title" => $textos["AYUDA_CODIGO"],"onBlur" => "validarItem(this);", "onKeyPress" => "return campoEntero(event)"))
             ),
             array(
-                HTML::listaSeleccionSimple("*codigo_grupo", $textos["EMPRESA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo != 0"), $datos->grupo_tesoreria, array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onBlur" => "validarItem(this);"))
+                HTML::listaSeleccionSimple("*codigo_grupo", $textos["GRUPO_TESORERIA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo","codigo != 0"), $datos->codigo_grupo_tesoreria, array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onBlur" => "validarItem(this);"))
             ),
             array(
                 HTML::campoTextoCorto("*nombre", $textos["NOMBRE"], 40, 60, $datos->nombre_concepto, array("title" => $textos["AYUDA_NOMBRE"],"onBlur" => "validarItem(this);"))
+            ),
+            array(
+                 HTML::listaSeleccionSimple("sentido", $textos["SENTIDO"], $sentidos, $codigo_sentido, array("title" => $textos["AYUDA_SENTIDO"])),
             )
         );
 
@@ -137,7 +146,8 @@ if (!empty($url_generar)) {
         $datos = array(
             "codigo"                       => $forma_codigo,
             "codigo_grupo_tesoreria"       => $forma_codigo_grupo,
-            "nombre_concepto"              => $forma_nombre
+            "nombre_concepto"              => $forma_nombre,
+            "sentido"                      => $forma_sentido
         );
 
         $consulta = SQL::modificar("conceptos_tesoreria", $datos, "codigo = '$forma_id'");
