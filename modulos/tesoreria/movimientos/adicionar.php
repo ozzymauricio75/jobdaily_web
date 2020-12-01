@@ -48,6 +48,10 @@ if (isset($url_completar)) {
         echo SQL::datosAutoCompletar("seleccion_proveedores", $url_q);
     }
 
+    if (($url_item) == "selector6") {
+        echo SQL::datosAutoCompletar("menu_cuentas_bancarias", $url_q);
+    }
+
     /*if (($url_item) == "selector5") {
         echo SQL::datosAutoCompletar("seleccion_creditos_bancos", $url_q);
     }*/
@@ -76,6 +80,29 @@ if (isset($url_completar)) {
     HTTP::enviarJSON($datos);
     exit; 
 
+/*** Mostrar los datos de la cuenta destino***/
+} elseif (!empty($url_cargarCuentas)) {
+    $cuenta_destino = $url_cuenta_destino;
+    $consulta       = SQL::seleccionar(array("cuentas_bancarias"), array("*"), "numero='$cuenta_destino'");
+    $datos_cuenta   = SQL::filaEnObjeto($consulta);
+    $banco          = $datos_cuenta->codigo_banco;
+    $sucursal       = $datos_cuenta->codigo_sucursal;
+
+    $nombre_banco   = SQL::obtenerValor("bancos","descripcion","codigo='$banco'");
+    $tercero        = SQL::obtenerValor("sucursales","nombre","codigo='$sucursal'");
+
+    if($nombre_banco){
+        $datos = array(
+            $nombre_banco,
+            $tercero
+        );
+    }else{
+        $datos = "";
+    }
+    
+    HTTP::enviarJSON($datos);
+    exit; 
+
     /*** Verificar si existe saldo inicial ***/
 } elseif (!empty($url_saldoCuenta)) {
     $cuenta       = $url_cuenta;
@@ -88,6 +115,20 @@ if (isset($url_completar)) {
     }
     
     HTTP::enviarJSON($indicador);
+    exit; 
+   
+   /*** Valida que la cuenta origen sea diferente a la de destino***/
+} elseif (!empty($url_cuentasDiferentes)) {
+    $cuenta_origen  = $url_cuenta_origen;
+    $cuenta_destino = $url_cuenta_destino;
+
+    if($cuenta_origen!=$cuenta_destino){
+        $datos = 1;
+    } else{
+        $datos = 0;
+    }
+    
+    HTTP::enviarJSON($datos);
     exit; 
 
     /*** Verificar si el saldo es mayor que el movimiento a ingresar ***/
@@ -308,6 +349,20 @@ if (!empty($url_generar)) {
             array(
                 HTML::agrupador(
                     array(
+                        array(
+                            HTML::campoTextoCorto("*selector6",$textos["NUMERO_CUENTA"], 15, 15, "", array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "autocompletable", "onChange"=>"cargarCuentas(), cuentasDiferentes()")),
+
+                            HTML::campoTextoCorto("banco_destino", $textos["BANCO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_BANCO"],"onBlur" => "validarItem(this);")),
+
+                            HTML::campoTextoCorto("tercero_destino", $textos["TERCERO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_TERCERO"],"onBlur" => "validarItem(this);"))
+                        )
+                    ),
+                    $textos["CUENTA_DESTINO_PROPIA"]
+                )
+            ),
+            array(
+                HTML::agrupador(
+                    array(
                         array(    
                             HTML::campoTextoCorto("*selector2", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
                         ),
@@ -336,7 +391,7 @@ if (!empty($url_generar)) {
                             HTML::campoTextoCorto("banco_proveedor", $textos["BANCO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_BANCO"],"onBlur" => "validarItem(this);")),
                         )
                     ),
-                    $textos["CUENTA_DESTINO"]
+                    $textos["CUENTA_DESTINO_PROVEEDOR"]
                 )
             )
         );
@@ -456,6 +511,7 @@ if (!empty($url_generar)) {
             "codigo_concepto_tesoreria"    => $forma_codigo_concepto,
             "cuenta_proveedor"             => $forma_cuenta_destino,
             "cuenta_origen"                => $forma_selector3,
+            "cuenta_destino"               => "",
             "valor_movimiento"             => $forma_valor,
             "documento_identidad_tercero"  => $documento_identidad_proveedor,
             "fecha_registra"               => $forma_fecha_movimiento,
@@ -487,11 +543,48 @@ if (!empty($url_generar)) {
             );
             $insertar_saldo = SQL::insertar("saldos_movimientos", $datos_saldos_movimientos);
 
+            if($forma_selector6){
+                $forma_codigo                      = $forma_codigo + 1;
+                $codigo_saldos_movimientos_destino = SQL::obtenerValor("saldos_movimientos","MAX(codigo)","cuenta_destino='$forma_selector6'");
+                $saldo_anterior                    = SQL::obtenerValor("saldos_movimientos","saldo","codigo='$codigo_saldos_movimientos_destino'");
+                $nuevo_saldo                       = $saldo_anterior + $forma_valor;
+                
+                /*** Insertar datos ***/
+                $datos_tesoreria = array(
+                    "codigo"                       => $forma_codigo,
+                    "sentido"                      => "C",
+                    "codigo_proyecto"              => $forma_selector2,
+                    "numero_credito"               => $numero_credito,
+                    "codigo_grupo_tesoreria"       => 3,
+                    "codigo_concepto_tesoreria"    => 20,
+                    "cuenta_proveedor"             => $forma_cuenta_destino,
+                    "cuenta_origen"                => $forma_selector3,
+                    "cuenta_destino"               => $forma_selector6,
+                    "valor_movimiento"             => $forma_valor,
+                    "documento_identidad_tercero"  => "",
+                    "fecha_registra"               => $forma_fecha_movimiento,
+                    "codigo_usuario_registra"      => $forma_sesion_id_usuario_ingreso,
+                    "observaciones"                => $forma_observaciones,
+                    "estado"                       => 0
+                );
+                $insertar = SQL::insertar("movimientos_tesoreria", $datos_tesoreria);
+
+                /*** Grabar nuevo saldo en la tabla saldos_movimientos ****/
+                $datos_saldos_movimientos_destino = array(
+                    "codigo_movimiento"       => $forma_codigo,
+                    "cuenta_origen"           => "",
+                    "cuenta_destino"          => $forma_selector6,
+                    "saldo"                   => $nuevo_saldo,
+                    "fecha_saldo"             => $forma_fecha_movimiento,
+                    "codigo_usuario_registra" => $forma_sesion_id_usuario_ingreso,
+                    "observaciones"           => $forma_observaciones
+                ); 
+                $insertar_saldo_destino = SQL::insertar("saldos_movimientos", $datos_saldos_movimientos_destino); 
+            } 
             /*** Obtener valores del credito ***/
             /*$llave          = explode(":", $forma_selector5);
             $numero_credito = $llave[0];*/
-            $numero_credito = $forma_selector5;
-
+            $numero_credito      = $forma_selector5;
             $codigo_credito      = SQL::obtenerValor("creditos_bancos","codigo","numero_credito='$numero_credito'");
             $cuota_del_credito   = SQL::obtenerValor("creditos_bancos","valor_cuota","numero_credito='$numero_credito'");
             $numero_de_cuotas    = SQL::obtenerValor("creditos_bancos","periodos","numero_credito='$numero_credito'");

@@ -155,6 +155,24 @@
         });
     }
 
+    function cargarCuentas() {
+        var destino         = $('#URLFormulario').val();
+        var cuenta_destino  = $('#selector6').val();
+
+        $.getJSON(destino, {cargarCuentas: true, cuenta_destino: cuenta_destino}, function(datos) {
+            if(datos!=""){
+                $('#banco_destino').val(datos[0]);
+                $('#tercero_destino').val(datos[1]);
+            }else{
+                alert('No existen datos con ese numero de cuenta');
+                $('#selector6').val('');
+                $('#banco_destino').val('');
+                $('#tercero_destino').val('');
+                $('#selector6').focus();
+            }
+        });
+    }
+
     function cargarBancoProveedor() {
         var destino          = $('#URLFormulario').val();
         var cuenta_destino   = $('#cuenta_destino').val();
@@ -174,6 +192,21 @@
                 $('#selector3').val('');
                 $('#banco').val('');
                 $('#tercero').val('');
+                $('#selector3').focus();
+            }
+        });
+    }
+
+    function cuentasDiferentes() {
+        var destino        = $('#URLFormulario').val();
+        var cuenta_origen  = $('#selector3').val();
+        var cuenta_destino = $('#selector6').val();
+
+        $.getJSON(destino, {cuentasDiferentes: true, cuenta_origen: cuenta_origen, cuenta_destino: cuenta_destino}, function(datos) {
+            if(datos==0){
+                alert('La cuenta destino debe ser diferente a la de origen');
+                $('#selector3').val('');
+                $('#selector6').val('');
                 $('#selector3').focus();
             }
         });

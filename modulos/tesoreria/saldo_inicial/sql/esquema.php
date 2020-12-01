@@ -119,7 +119,7 @@ $vistas = array(
         WHERE job_saldo_inicial_cuentas.codigo != 0;"
     ),
     array(
-        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_seleccion_saldo_inicial_cuentas AS
+        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_saldo_inicial_cuentas AS
         SELECT job_saldo_inicial_cuentas.codigo AS id,
             job_saldo_inicial_cuentas.codigo AS codigo,
             job_saldo_inicial_cuentas.cuenta_origen AS cuenta_origen,

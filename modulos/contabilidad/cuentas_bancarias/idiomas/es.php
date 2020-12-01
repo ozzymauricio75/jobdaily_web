@@ -111,6 +111,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
     "NUMERO_VACIO"                  => "Debe ingresar el numero de la cuanta bancaria",
     "PLAN_CONTABLE_VACIO"           => "Debe ingresar la descripción o el código contable que afecta la cuanta bancaria",
     "SUCURSAL_VACIO"                => "Debe seleccionar el almacen",
+    "ALMACEN_VACIO"                 => "Debe seleccionar la empresa",
     "BANCO_VACIO"                   => "Debe seleccionar el banco",
     "TIPO_DOCUMENTO_VACIO"          => "Debe seleccionar el tipo de documento",
     "SUCURSAL_BANCO_VACIO"          => "Debe seleccionar la sucursal bancaria",
