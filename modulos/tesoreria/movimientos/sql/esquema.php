@@ -34,7 +34,8 @@ $tablas["saldos_movimientos"]  = array(
     "saldo"                       => "DECIMAL(15,4) UNSIGNED  NOT NULL COMMENT 'Valor total del movimiento'",
     "fecha_saldo"                 => "DATETIME NOT NULL COMMENT 'Fecha ingreso al sistema'",
     "codigo_usuario_registra"     => "SMALLINT(4) UNSIGNED ZEROFILL NOT NULL COMMENT 'Id del usuario que genera el registro'",
-    "observaciones"               => "VARCHAR(255) COMMENT 'Observacion general del movimiento'"
+    "observaciones"               => "VARCHAR(255) COMMENT 'Observacion general del movimiento'",
+    "estado"                      => "ENUM('0','1') NOT NULL DEFAULT '0' COMMENT '0->Activo 1->Anulado'",
 );
 
 $tablas["movimientos_tesoreria"]  = array(

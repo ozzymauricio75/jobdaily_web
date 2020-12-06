@@ -109,6 +109,10 @@ if (!empty($url_generar)) {
                 ),
                 array(
                     HTML::mostrarDato("cuenta_origen", $textos["CUENTA_ORIGEN"], $datos->cuenta_origen),
+
+                    HTML::mostrarDato("cuenta_destino_propio", $textos["CUENTA_DESTINO_PROPIA"], $datos->cuenta_destino)
+                ),
+                array(    
                     HTML::mostrarDato("sucursal", $textos["TERCERO"], $sucursal)
                 ),
                 array(    
@@ -144,32 +148,122 @@ if (!empty($url_generar)) {
     /*** Asumir por defecto que no hubo error ***/
     $error   = false;
     $mensaje = $textos["ITEM_ANULADO"];
-
-    $datos = array(
-        "estado"         => "1",
-        "fecha_registra" => date("Y-m-d H:i:s")
-    );
-    
-    $consulta = SQL::modificar("movimientos_tesoreria", $datos, "codigo = '$forma_id'");
-
-    if ($consulta) {
-        $saldo       = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$forma_id'");
-        $nuevo_saldo = $saldo + $forma_valor_movimiento;
-
-        $datos_saldos_movimientos = array(
-            "saldo"                   => $nuevo_saldo,
-            "fecha_saldo"             => date("Y-m-d H:i:s"),
-            "codigo_usuario_registra" => $forma_sesion_id_usuario_ingreso
-        );
-        $modificar_saldo = SQL::modificar("saldos_movimientos", $datos_saldos_movimientos, "codigo_movimiento='$forma_id'"); 
+   
+    $forma_valor_movimiento = (int)$forma_valor_movimiento;
+ 
+    // Anulo movimiento de la cuenta origen 
+    $vistaConsulta    = "movimientos_tesoreria";
+    $columnas         = SQL::obtenerColumnas($vistaConsulta);
+    $consulta         = SQL::seleccionar(array($vistaConsulta), $columnas, "codigo = '$forma_id'");
+    $datos_movimiento = SQL::filaEnObjeto($consulta);
+    $estado           = $datos->estado;
         
-        $error       = false;
-        $mensaje     = $textos["ITEM_ANULADO"];
+    $existe_transferencia = SQL::obtenerValor("movimientos_tesoreria","codigo","cuenta_origen='$datos_movimiento->cuenta_origen' AND fecha_registra='$datos_movimiento->fecha_registra' AND valor_movimiento='$datos_movimiento->valor_movimiento' AND sentido='C' AND estado='0' AND cuenta_destino IS NOT NULL");
+
+    $existe_debito_credito = SQL::obtenerValor("movimientos_tesoreria","codigo","cuenta_origen='$datos_movimiento->cuenta_origen' AND cuenta_destino IS NULL AND fecha_registra='$datos_movimiento->fecha_registra' AND valor_movimiento='$datos_movimiento->valor_movimiento' AND sentido='D' AND estado='0'");
+     
+    $datos = array(
+        "estado"         => 1,
+        "fecha_registra" => date("Y-m-d H:i:s")
+    ); 
+    $consulta = SQL::modificar("movimientos_tesoreria", $datos, "codigo = '$forma_id'");
+    
+    if($consulta){
+        //Busca las cuentas entre las cuales hubo la transferencia
+        if(($existe_transferencia) && ($existe_debito_credito)){
+            $cuenta_origen  = SQL::obtenerValor("movimientos_tesoreria","cuenta_origen","codigo='$existe_debito_credito'");
+            $cuenta_destino = SQL::obtenerValor("movimientos_tesoreria","cuenta_destino","codigo='$existe_transferencia'");
+        } else {
+            $cuenta_origen = SQL::obtenerValor("movimientos_tesoreria","cuenta_origen","codigo='$forma_id'");
+        }
+
+        if(($cuenta_origen) && ($cuenta_destino)){
+            // Busco movimiento de la cuenta destino a la que se transfirio
+            
+            //Para el debito
+            if($existe_debito_credito){
+                $datos = array(
+                    "estado"         => 1,
+                    "fecha_registra" => date("Y-m-d H:i:s")
+                ); 
+                $consulta = SQL::modificar("movimientos_tesoreria", $datos, "codigo='$existe_debito_credito'");
+                //Creo los nuevos saldos despues de anular movimiento
+                $codigo_saldo_origen = SQL::obtenerValor("saldos_movimientos","MAX(codigo)","cuenta_origen='$cuenta_origen' ");
+                $saldo_origen = SQL::obtenerValor("saldos_movimientos","saldo","codigo='$codigo_saldo_origen' ");
+                $saldo_origen       = (int)$saldo_origen;
+                $nuevo_saldo_origen = $saldo_origen + $forma_valor_movimiento;
+                //Origen
+                $anula_saldo_origen_anterior = SQL::obtenerValor("saldos_movimientos","MAX(codigo)","cuenta_origen='$cuenta_origen' AND codigo='$codigo_saldo_origen'");
+                $datos_estado_origen = array(
+                    "estado"         => 1,
+                    "fecha_saldo"    => date("Y-m-d H:i:s")
+                );
+                $modifica_estado_origen = SQL::modificar("saldos_movimientos", $datos_estado_origen, "codigo='$anula_saldo_origen_anterior'");
+                $datos_saldos_movimientos_origen = array(
+                    "codigo_movimiento"       => $existe_debito_credito,
+                    "cuenta_origen"           => $cuenta_origen,
+                    "saldo"                   => $nuevo_saldo_origen,
+                    "fecha_saldo"             => date("Y-m-d H:i:s"),
+                    "codigo_usuario_registra" => $sesion_id_usuario_ingreso,
+                    "observaciones"           => $forma_observaciones,
+                    "estado"                  => 0
+                );
+                $insertar_saldo_origen = SQL::insertar("saldos_movimientos", $datos_saldos_movimientos_origen);
+            }
+
+            //Para el credito
+            if($existe_transferencia){
+                $datos = array(
+                    "estado"         => 1,
+                    "fecha_registra" => date("Y-m-d H:i:s")
+                ); 
+                $consulta = SQL::modificar("movimientos_tesoreria", $datos, "codigo='$existe_transferencia'");////Creo los nuevos saldos despues de anular movimiento
+                $codigo_saldo_destino = SQL::obtenerValor("saldos_movimientos","MAX(codigo)","cuenta_origen='$cuenta_destino' ");
+                $saldo_destino = SQL::obtenerValor("saldos_movimientos","saldo","codigo='$codigo_saldo_destino' ");
+                $saldo_destino       = (int)$saldo_destino;
+                $nuevo_saldo_destino = $saldo_destino - $forma_valor_movimiento;
+                //Destino
+                $anula_saldo_origen_destino  = SQL::obtenerValor("saldos_movimientos","MAX(codigo)","cuenta_origen='$cuenta_destino' AND codigo='$codigo_saldo_destino'");
+                $datos_estado_origen = array(
+                    "estado"         => 1,
+                    "fecha_saldo"    => date("Y-m-d H:i:s")
+                );
+                $modifica_estado_destino = SQL::modificar("saldos_movimientos", $datos_estado_origen, "codigo='$anula_saldo_origen_destino'");
+                //Destino
+                $datos_saldos_movimientos_destino = array(
+                    "codigo_movimiento"       => $existe_transferencia,
+                    "cuenta_origen"           => $cuenta_destino,
+                    "saldo"                   => $nuevo_saldo_destino,
+                    "fecha_saldo"             => date("Y-m-d H:i:s"),
+                    "codigo_usuario_registra" => $sesion_id_usuario_ingreso,
+                    "observaciones"           => $forma_observaciones,
+                    "estado"                  => 0
+                );
+                $insertar_saldo_destino = SQL::insertar("saldos_movimientos", $datos_saldos_movimientos_destino);
+            }     
+            $error   = false;
+            $mensaje = $textos["ITEM_ANULADO"];
+
+        } else{
+            $saldo = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$forma_id' AND estado='0'");
+            $nuevo_saldo = $saldo + $forma_valor_movimiento;
+
+            $datos_saldos_movimientos = array(
+                "saldo"                   => $nuevo_saldo,
+                "fecha_saldo"             => date("Y-m-d H:i:s"),
+                "codigo_usuario_registra" => $sesion_id_usuario_ingreso,
+                "estado"                  => 0
+            );
+            $modificar_saldo = SQL::modificar("saldos_movimientos", $datos_saldos_movimientos, "codigo_movimiento='$forma_id'"); 
+        
+            $error   = false;
+            $mensaje = $textos["ITEM_ANULADO"];
+        }
+        
     } else {
         $error   = true;
         $mensaje = $textos["ERROR_ANULAR_ITEM"];
     }
-
     /*** Enviar datos con la respuesta del proceso al script que originó la petición ***/
     $respuesta    = array();
     $respuesta[0] = $error;

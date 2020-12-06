@@ -49,10 +49,11 @@ if (!empty($url_generar)) {
         $sucursal           = SQL::obtenerValor("cuentas_bancarias","codigo_sucursal","numero='$datos->cuenta_origen'");
         $sucursal           = SQL::obtenerValor("sucursales","nombre","codigo='$sucursal'");
         $tipo_persona       = SQL::obtenerValor("terceros","tipo_persona","documento_identidad='$datos->documento_identidad_tercero'");
-        $valor_movimiento   = number_format($datos->valor_movimiento,0);
-        $proyecto           = SQL::obtenerValor("proyectos","nombre","codigo='$datos->codigo_proyecto'");
-        $saldo              = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos->codigo'");
-        $saldo              = number_format($saldo,0);
+
+        $valor_movimiento = number_format($datos->valor_movimiento,0);
+        $proyecto         = SQL::obtenerValor("proyectos","nombre","codigo='$datos->codigo_proyecto'");
+        $saldo            = SQL::obtenerValor("saldos_movimientos","saldo","codigo_movimiento='$datos->codigo' AND estado='0'");
+        $saldo            = number_format($saldo,0);
 
         if($tipo_persona==1){
             $primer_nombre    = SQL::obtenerValor("terceros", "primer_nombre", "documento_identidad = '".$datos->documento_identidad_tercero."'");
@@ -76,6 +77,9 @@ if (!empty($url_generar)) {
             ),
             array(
                 HTML::mostrarDato("cuenta_origen", $textos["CUENTA_ORIGEN"], $datos->cuenta_origen),
+                HTML::mostrarDato("cuenta_destino_propio", $textos["CUENTA_DESTINO_PROPIA"], $datos->cuenta_destino),
+            ),
+            array(
                 HTML::mostrarDato("sucursal", $textos["TERCERO"], $sucursal)
             ),
             array(    

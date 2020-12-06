@@ -17,6 +17,40 @@
         });
     }
 
+    function activaCampos() {
+        var destino         = $('#URLFormulario').val();
+        var codigo_concepto = $('#codigo_concepto').val();
+
+        $.getJSON(destino, {activaCampos: true, codigo_concepto: codigo_concepto}, function(datos) {
+            if(datos!=0){
+                $('#selector5').parent().show();
+                $('#valor_credito').parent().show();
+                $('#cuotas_credito').parent().show();
+            } else {
+                $('#selector5').parent().hide();
+                $('#valor_credito').parent().hide();
+                $('#cuotas_credito').parent().hide();
+            }
+        });
+    }
+
+    function activaCamposProveedorMovimiento() {
+        var destino      = $('#URLFormulario').val();
+        var codigo_grupo = $('#codigo_grupo').val();
+
+        $.getJSON(destino, {activaCamposProveedorMovimiento: true, codigo_grupo: codigo_grupo}, function(datos) {
+            if(datos!=0){
+                $('#selector4').parent().show();
+                $('#cuenta_destino').parent().show();
+                $('#banco_proveedor').parent().show();
+            } else {
+                $('#selector4').parent().hide();
+                $('#cuenta_destino').parent().hide();
+                $('#banco_proveedor').parent().hide();
+            }
+        });
+    }
+
     function existeCredito() {
         var destino        = $('#URLFormulario').val();
         var numero_credito = $('#selector5').val();
@@ -41,7 +75,7 @@
         $.getJSON(destino, {validarMonto: true, codigo_concepto: codigo_concepto, valor_movimiento: valor_movimiento, 
             numero_cuenta: numero_cuenta }, function(datos) {
             
-            if(datos==0){
+            if(datos=="0"){
                 alert('El valor del movimiento supera el saldo de la cuenta');
             }
         });

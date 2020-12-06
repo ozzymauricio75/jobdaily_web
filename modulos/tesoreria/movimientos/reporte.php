@@ -356,15 +356,16 @@ if (isset($url_completar)) {
         $archivo->Ln(6);
         $archivo->Cell(30,4,$textos["BANCOS"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["CUENTA_ORIGEN"],1,0,'C',true);
+        $archivo->Cell(20,4,$textos["CUENTA_DESTINO_PROPIA"],1,0,'C',true);
         $archivo->Cell(30,4,$textos["CONCEPTO"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["VALOR"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["FECHA_MOVIMIENTO"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["SALDO"],1,0,'C',true);
         $archivo->Cell(20,4,$textos["PROYECTO"],1,0,'C',true);
-        $archivo->Cell(40,4,$textos["PROVEEDOR"],1,0,'C',true);
-        $archivo->Cell(20,4,$textos["CUENTA_DESTINO"],1,0,'C',true);
+        $archivo->Cell(30,4,$textos["PROVEEDOR"],1,0,'C',true);
+        $archivo->Cell(20,4,$textos["CUENTA_DESTINO_PROVEEDOR"],1,0,'C',true);
         $archivo->Cell(10,4,$textos["ESTADO"],1,0,'C',true);
-        $archivo->Cell(30,4,$textos["OBSERVACIONES"],1,0,'C',true);
+        $archivo->Cell(20,4,$textos["OBSERVACIONES"],1,0,'C',true);
         //////////////////////////////FIN ENCABEZADO DEL DOCUMENTO PDF ORDEN DE COMPRA/////////////////////////////
         
         /*** Obtener los datos de la tabla movimientos tesoreria ***/
@@ -416,15 +417,16 @@ if (isset($url_completar)) {
                 $archivo->Ln(4);
                 $archivo->Cell(30,4,$nombre_banco,1,0,'L',true);
                 $archivo->Cell(20,4,$datos_movimiento->cuenta_origen,1,0,'L',true);
+                $archivo->Cell(20,4,$datos_movimiento->cuenta_destino,1,0,'L',true);
                 $archivo->Cell(30,4,$nombre_concepto,1,0,'L',true);
                 $archivo->Cell(20,4,""."$ ".number_format($datos_movimiento->valor_movimiento,0),1,0,'R',true);
                 $archivo->Cell(20,4,$datos_movimiento->fecha_registra,1,0,'C',true);
                 $archivo->Cell(20,4,""."$ ".number_format($saldo_fecha,0),1,0,'R',true);
                 $archivo->Cell(20,4,$nombre_proyecto,1,0,'L',true);
-                $archivo->Cell(40,4,$nombre_proveedor,1,0,'L',true);
+                $archivo->Cell(30,4,$nombre_proveedor,1,0,'L',true);
                 $archivo->Cell(20,4,$datos_movimiento->cuenta_proveedor,1,0,'L',true);
                 $archivo->Cell(10,4,$estado,1,0,'L',true);
-                $archivo->Cell(30,4,$observaciones,1,0,'L',true);
+                $archivo->Cell(20,4,$observaciones,1,0,'L',true);
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////
                 $imprime_cabecera = $archivo->breakCell(8);
@@ -444,14 +446,16 @@ if (isset($url_completar)) {
                     $archivo->Ln(6);
                     $archivo->Cell(30,4,$textos["BANCOS"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["CUENTA_ORIGEN"],1,0,'C',true);
+                    $archivo->Cell(20,4,$textos["CUENTA_DESTINO_PROPIA"],1,0,'C',true);
                     $archivo->Cell(30,4,$textos["CONCEPTO"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["VALOR"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["FECHA_MOVIMIENTO"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["SALDO"],1,0,'C',true);
                     $archivo->Cell(20,4,$textos["PROYECTO"],1,0,'C',true);
-                    $archivo->Cell(40,4,$textos["PROVEEDOR"],1,0,'C',true);
+                    $archivo->Cell(30,4,$textos["PROVEEDOR"],1,0,'C',true);
+                    $archivo->Cell(20,4,$textos["CUENTA_DESTINO_PROVEEDOR"],1,0,'C',true);
                     $archivo->Cell(10,4,$textos["ESTADO"],1,0,'C',true);
-                    $archivo->Cell(30,4,$textos["OBSERVACIONES"],1,0,'C',true);
+                    $archivo->Cell(20,4,$textos["OBSERVACIONES"],1,0,'C',true);
                 }
                 $i++;
                 $item++;
@@ -501,7 +505,7 @@ if (isset($url_completar)) {
         
     } else{
         //Se crean los titulos del archivo excel
-        $titulos_plano = "BANCOS;CUENTA ORIGEN;CONCEPTO;VALOR;FECHA MOVIMIENTO;SALDO;PROYECTO;PROVEEDOR;CUENTA DESTINO;ESTADO;OBSERVACIONES\n";
+        $titulos_plano = "BANCOS;CUENTA ORIGEN;CONCEPTO;VALOR;FECHA MOVIMIENTO;SALDO;PROYECTO;PROVEEDOR;CUENTA PROVEEDOR;ESTADO;OBSERVACIONES\n";
             fwrite($archivo, $titulos_plano);
 
         /*** Obtener los datos de la tabla movimientos tesoreria ***/
