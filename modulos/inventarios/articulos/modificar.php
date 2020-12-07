@@ -355,7 +355,7 @@ if (!empty($url_generar)) {
 
     /*** Validar codigo ***/
     if ($url_item == "codigo") {
-      $existe = SQL::existeItem("articulos", "codigo", $url_valor,"id !='$url_id'");
+      $existe = SQL::existeItem("articulos", "codigo", $url_valor,"principal != '0' AND referencia!=''");
       if ($existe) {
         HTTP::enviarJSON($textos["ERROR_EXISTE_CODIGO"]);
       } 
@@ -409,10 +409,10 @@ if(empty($forma_codigo)){
 	$error   = true;
 	$mensaje = $textos["DESCRIPCION_VACIO"]; 
 		
-}elseif(empty($forma_referencia_principal)){
+}/*elseif(empty($forma_referencia_principal)){
 	$error   = true;
 	$mensaje = $textos["REFERENCIA_VACIO"];   
-}elseif(empty($forma_codigo_unidad_compra)){
+}*/elseif(empty($forma_codigo_unidad_compra)){
     $error = true;
     $mensaje = $textos["UNIDAD_COMPRA_VACIO"];   
 }elseif(empty($forma_documento_identidad_proveedor)){
@@ -437,9 +437,11 @@ if(empty($forma_codigo)){
         return $valor;
     }
     
-    $forma_costo = quitarMiles($forma_costo);
+    //$forma_costo = quitarMiles($forma_costo);
     $forma_costo = str_replace(",", ".", $forma_costo); 
-
+    $forma_documento_identidad_proveedor = $forma_selector1;
+    $forma_documento_identidad_proveedor = explode("-",$forma_documento_identidad_proveedor);
+    $forma_documento_identidad_proveedor = $forma_documento_identidad_proveedor[0];
     $datos = array(
         "codigo"                     => $forma_codigo,
         "descripcion"                => $forma_descripcion,
@@ -493,9 +495,8 @@ if(empty($forma_codigo)){
         "principal"                     => 1
     );
                         
-    $condicion  = "documento_identidad_proveedor = '$forma_documento_identidad_proveedor' AND codigo_articulo='$forma_codigo' AND principal = '1'";
-
-    $insertar   = SQL::modificar("referencias_proveedor", $datos, $condicion);
+    $condicion = "codigo_articulo='$forma_codigo' AND principal = '1'";
+    $insertar  = SQL::modificar("referencias_proveedor", $datos, $condicion);
 
     if ($insertar) {
         $error   = false;

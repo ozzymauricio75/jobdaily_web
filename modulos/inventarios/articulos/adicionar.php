@@ -240,7 +240,7 @@ if (!empty($url_generar)) {
                 .HTML::campoOculto("codigo_maximo", $codigo),
             ),
             array(
-                HTML::campoTextoCorto("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"], "class" => "autocompletable", "onblur" => "validarItem(this)","onchange" => "cargarDatos()")),
+                HTML::campoTextoCorto("codigo_alfanumerico", $textos["REFERENCIA_PROVEEDOR"], 30, 30, "", array("title" => $textos["AYUDA_REFERENCIA_PROVEEDOR"], "class" => "autocompletable", "onblur" => "validarItem(this)",/*"onchange" => "cargarDatos()"*/)),
 
                 HTML::campoTextoCorto("codigo_barras", $textos["CODIGO_BARRAS"], 13, 13, "",array("title" => $textos["AYUDA_CODIGO_BARRAS"],"onKeyPress" => "return campoEntero(event)"))
             ),
@@ -367,7 +367,7 @@ if (!empty($url_generar)) {
 
     /*** Validar referencia ***/
     if ($url_item == "codigo_alfanumerico") {
-        $existe = SQL::existeItem("referencias_proveedor", "referencia", $url_valor,"principal != '0'");
+        $existe = SQL::existeItem("referencias_proveedor", "referencia", $url_valor,"principal != '0' AND referencia!=''");
         if ($existe) {
             HTTP::enviarJSON($textos["ERROR_EXISTE_CODIGO"]);
         } 
@@ -434,7 +434,7 @@ if (!empty($url_generar)) {
       $error = true;
       $mensaje = $textos["PROVEEDOR_VACIO"];   
            
-    }elseif($existe = SQL::existeItem("referencias_proveedor", "referencia", $forma_codigo_alfanumerico, "principal != '0'")){
+    }elseif($existe = SQL::existeItem("referencias_proveedor", "referencia", $forma_codigo_alfanumerico, "principal != '0' AND referencia!=''")){
 	    $error   = true;
         $mensaje = $textos["ERROR_EXISTE_CODIGO"];   
     }else {
