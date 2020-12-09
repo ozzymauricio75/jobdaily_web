@@ -352,7 +352,7 @@ if (!empty($url_generar)) {
                 
                     if($mes==12){
                         $anno = $anno+1;
-                        $mes  = $mes+1;
+                        $mes  = 1;
                     } else{
                         $mes = $mes+1;
                     }

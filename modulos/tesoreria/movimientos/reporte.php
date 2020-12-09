@@ -327,7 +327,7 @@ if (isset($url_completar)) {
         $condicion_concepto = "";
     }
 
-    if(($forma_muestra_saldo==1) && ($sesion_id_usuario_ingreso==20)){
+    if(($forma_muestra_saldo==1) && ($sesion_id_usuario_ingreso==20) || ($forma_muestra_saldo==1) && ($sesion_id_usuario_ingreso==0000)){
         $condicion_saldo = "mostrar";
     } else{
         $condicion_saldo = "no_mostrar";

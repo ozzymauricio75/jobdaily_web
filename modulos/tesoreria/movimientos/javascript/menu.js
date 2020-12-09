@@ -34,6 +34,23 @@
         });
     }
 
+    function activaCamposEntreCuentas() {
+        var destino         = $('#URLFormulario').val();
+        var codigo_concepto = $('#codigo_concepto').val();
+
+        $.getJSON(destino, {activaCamposEntreCuentas: true, codigo_concepto: codigo_concepto}, function(datos) {
+            if(datos!=0){
+                $('#selector6').parent().show();
+                $('#banco_destino').parent().show();
+                $('#tercero_destino').parent().show();
+            } else {
+                $('#selector6').parent().hide();
+                $('#banco_destino').parent().hide();
+                $('#tercero_destino').parent().hide();
+            }
+        });
+    }
+
     function activaCamposProveedorMovimiento() {
         var destino      = $('#URLFormulario').val();
         var codigo_grupo = $('#codigo_grupo').val();

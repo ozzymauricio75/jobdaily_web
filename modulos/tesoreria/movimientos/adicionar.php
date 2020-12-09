@@ -324,6 +324,20 @@ if(isset($url_activaCampos)){
     exit;   
 }
 
+/*** Activa los campos si es un abono entre cuentas***/
+if(isset($url_activaCamposEntreCuentas)){
+    $codigo_concepto = $url_codigo_concepto;
+
+    if($codigo_concepto==25){
+        $datos = 1;
+    } else{
+        $datos = 0;
+    }
+        
+    HTTP::enviarJSON($datos);
+    exit;   
+}
+
 /*** Activa los campos si es una transaccion proveedor***/
 if(isset($url_activaCamposProveedorMovimiento)){
     $llave             = explode(":", $url_codigo_grupo);
@@ -369,7 +383,7 @@ if (!empty($url_generar)) {
                             
                             HTML::listaSeleccionSimple("*codigo_grupo", $textos["GRUPO_TESORERIA"], HTML::generarDatosLista("grupos_tesoreria", "codigo", "nombre_grupo"), "", array("title" => $textos["AYUDA_GRUPO_TESORERIA"],"onChange" => "verificarConceptos(), activaCamposProveedorMovimiento()")),
 
-                            HTML::listaSeleccionSimple("*codigo_concepto", $textos["CONCEPTO_TESORERIA"], HTML::generarDatosLista("conceptos_tesoreria", "codigo", "nombre_concepto"), "", array("title" => $textos["AYUDA_CONCEPTO_TESORERIA"],"onChange" => "activaCampos()")),
+                            HTML::listaSeleccionSimple("*codigo_concepto", $textos["CONCEPTO_TESORERIA"], HTML::generarDatosLista("conceptos_tesoreria", "codigo", "nombre_concepto"), "", array("title" => $textos["AYUDA_CONCEPTO_TESORERIA"],"onChange" => "activaCampos(), activaCamposEntreCuentas()")),
 
                             //HTML::listaSeleccionSimple("*numero_credito", $textos["NUMERO_CREDITO"], $numero_credito, "",array("title" => $textos["AYUDA_NUMERO_CREDITO"],"class" => "oculto"))
                         ),
@@ -403,11 +417,11 @@ if (!empty($url_generar)) {
                 HTML::agrupador(
                     array(
                         array(
-                            HTML::campoTextoCorto("*selector6",$textos["NUMERO_CUENTA"], 15, 15, "", array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "autocompletable", "onChange"=>"cargarCuentas(), cuentasDiferentes()")),
+                            HTML::campoTextoCorto("*selector6",$textos["NUMERO_CUENTA"], 15, 15, "", array("title"=>$textos["AYUDA_NUMERO_CUENTA"],"class" => "oculto autocompletable", "onChange"=>"cargarCuentas(), cuentasDiferentes()")),
 
-                            HTML::campoTextoCorto("banco_destino", $textos["BANCO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_BANCO"],"onBlur" => "validarItem(this);")),
+                            HTML::campoTextoCorto("banco_destino", $textos["BANCO"], 20, 20, "", array("title" => $textos["AYUDA_BANCO"], "class" => "oculto", "onBlur" => "validarItem(this)")),
 
-                            HTML::campoTextoCorto("tercero_destino", $textos["TERCERO"], 20, 20, "", array("readonly" => "true"), array("title" => $textos["AYUDA_TERCERO"],"onBlur" => "validarItem(this);"))
+                            HTML::campoTextoCorto("tercero_destino", $textos["TERCERO"], 20, 20, "", array("title" => $textos["AYUDA_TERCERO"], "class" => "oculto", "onBlur" => "validarItem(this);"))
                         )
                     ),
                     $textos["CUENTA_DESTINO_PROPIA"]
@@ -420,7 +434,7 @@ if (!empty($url_generar)) {
                             HTML::campoTextoCorto("*selector2", $textos["PROYECTO"], 40, 255, "", array("title" => $textos["AYUDA_PROYECTO"], "class" => "autocompletable extracto" ))
                         ),
                         array(
-                            HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"),array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
+                            HTML::campoTextoCorto("fecha_movimiento", $textos["FECHA_MOVIMIENTO"], 10, 10, date("Y-m-d"), array("class" => "selectorFecha"), array("title" => $textos["AYUDA_FECHA_MOVIMIENTO"])),
 
                             HTML::campoTextoCorto("*valor", $textos["VALOR_MOVIMIENTO"], 20, 20, "", array("title" => $textos["AYUDA_VALOR_MOVIMIENTO"],"onBlur" => "validarItem(this)", "onkeyup"=>"formatoMiles(this), validarMonto()")),
 
@@ -512,7 +526,7 @@ if (!empty($url_generar)) {
 
     } else {
         $sentido = SQL::obtenerValor("conceptos_tesoreria","sentido","codigo='$forma_codigo_concepto'");
-        
+      
         $llave                         = explode("-", $forma_selector4);
         $documento_identidad_proveedor = $llave[0];
 
