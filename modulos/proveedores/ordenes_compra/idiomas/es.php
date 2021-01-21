@@ -463,6 +463,10 @@ $textos = array(
     "NUMERO_PEDIDO"                            => "Numero pedido",
     "REGIMEN_EMPRESA"                          => "Regimen",
     "CODIGO_INTERNO"                           => "Codigo interno",
-    "PEDIDO"                                   => "Pedido"
+    "PEDIDO"                                   => "Pedido",
+    "FECHA_ENTREGA_FACTURA"                    => "Fecha entrega Fact:",
+    "FECHA_ENTREGA_FACTURA_TEXTO"              => "Hasta el 25 De Cada Mes",
+    "CORREO_RECEPCION"                         => "Enviar Factura a:",
+    "CORREO_RECEPCION_FACTURA"                 => "recepcion@hgingenieria.com.co",
 );
 ?>

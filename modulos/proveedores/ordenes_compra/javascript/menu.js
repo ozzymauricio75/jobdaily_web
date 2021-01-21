@@ -371,7 +371,7 @@
                     var ancho                  = datos[34];
                     var alto                   = datos[35];
                     costo                      = ponerMiles(costo);
-                    
+                   
                     $("#descripcion").parent().show();
                     $("#id_unidad_compra").parent().show();
                     $("#costo_unitario").parent().show();

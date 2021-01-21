@@ -44,7 +44,9 @@ if (isset($url_completar)) {
     $codigo              = $url_numero_orden;
     $numero_orden        = SQL::obtenerValor("ordenes_compra","numero_consecutivo","codigo='$codigo' AND estado!='2' AND estado!='3' AND estado!='4'");
 
-    $valor_documento = SQL::obtenerValor("correspondencia","valor_documento","numero_documento_proveedor='$documento_soporte' AND estado_residente='1' AND estado_director='1' AND numero_orden_compra='$numero_orden' AND estado_factura='0'");
+    //$valor_documento = SQL::obtenerValor("correspondencia","valor_documento","numero_documento_proveedor='$documento_soporte' AND estado_residente='1' AND estado_director='1' AND numero_orden_compra='$numero_orden' AND estado_factura='0'");
+
+    $valor_documento = SQL::obtenerValor("correspondencia","valor_documento","numero_documento_proveedor='$documento_soporte' AND numero_orden_compra='$numero_orden' AND estado_factura='0'");
 
     $valor_documento = "$".number_format($valor_documento,0);
     $mensaje         = $textos["NO_EXISTE_FACTURA"];

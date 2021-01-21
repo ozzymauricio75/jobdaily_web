@@ -138,9 +138,9 @@ if (!empty($url_generar)) {
 
     /*** Definición de pestañas para datos del tercero***/
     $formularios["PESTANA_COMPRADOR"] = array(
-        array(
+        /*array(
             HTML::listaSeleccionSimple("*empresa", $textos["EMPRESA"], HTML::generarDatosLista("empresas", "codigo", "razon_social","codigo != 0"), "", array("title" => $textos["AYUDA_EMPRESAS"],""))
-        ),
+        ),*/
         array(
             HTML::campoTextoCorto("*documento_identidad", $textos["DOCUMENTO_COMPRADOR"], 15, 15, "", array("title" => $textos["AYUDA_DOCUMENTO_PROVEEDOR"],""))
         ),
@@ -264,7 +264,7 @@ if (!empty($url_generar)) {
             $documento_tercero = $datos->documento_identidad;
 
             $datos_compradores = array(
-                "codigo_empresa"      => $forma_empresa,
+                "codigo_empresa"      => 1,
                 "documento_identidad" => $forma_documento_identidad,
                 "activo"              => "1",
                 "id_usuario_registra" => $sesion_id_usuario_ingreso,

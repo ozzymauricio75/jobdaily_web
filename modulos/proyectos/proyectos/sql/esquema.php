@@ -166,7 +166,7 @@ $registros["componentes"] = array(
 );
 
 $vistas = array(
-    array(
+    /*array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_proyectos AS
         SELECT  job_proyectos.codigo AS id,
                 job_proyectos.codigo AS CODIGO,
@@ -190,7 +190,7 @@ $vistas = array(
     ),
     array(
         "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_proyectos AS
-        SELECT 	job_proyectos.codigo AS id,
+        SELECT  job_proyectos.codigo AS id,
                 job_proyectos.nombre AS nombre,
                 job_empresas.razon_social AS empresa,
                 job_sucursales.nombre AS sucursal,
@@ -208,13 +208,60 @@ $vistas = array(
                     job_terceros.razon_social
                 )) AS tercero
 
-        FROM 	job_proyectos,
+        FROM    job_proyectos,
                 job_terceros,
                 job_empresas,
                 job_sucursales
 
-        WHERE 	job_proyectos.codigo_sucursal_ejecuta = job_sucursales.codigo
+        WHERE   job_proyectos.codigo_sucursal_ejecuta = job_sucursales.codigo
                 AND job_proyectos.codigo_empresa_ejecuta = job_sucursales.codigo_empresa
+                AND job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
+                AND job_proyectos.codigo != 0;"
+    ),
+    */
+    array(
+        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_menu_proyectos AS
+        SELECT  job_proyectos.codigo AS id,
+                job_proyectos.codigo AS CODIGO,
+                job_proyectos.nombre AS NOMBRE,
+                FORMAT(job_proyectos.valor_proyecto,0) AS VALOR_PROYECTO,
+                job_terceros.razon_social AS EMPRESA,
+                job_terceros.documento_identidad AS TERCERO,
+                IF(job_proyectos.activo = '0', 'Cerrado', 'Abierto') AS ESTADO
+
+        FROM    job_proyectos,
+                job_empresas,
+                job_terceros
+        WHERE    
+                job_proyectos.codigo_empresa_ejecuta = job_empresas.codigo 
+                AND job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
+                AND job_proyectos.codigo != 0;"
+    ),
+    array(
+        "CREATE OR REPLACE ALGORITHM = MERGE VIEW job_buscador_proyectos AS
+        SELECT 	job_proyectos.codigo AS id,
+                job_proyectos.nombre AS nombre,
+                job_empresas.razon_social AS empresa,
+                job_proyectos.valor_proyecto AS valor_proyecto,
+                IF(job_proyectos.activo = '0', 'Cerrado', 'Abierto') AS activo,
+                CONCAT(
+                IF(job_terceros.primer_nombre IS NOT NULL,(
+                        CONCAT(
+                            IF(job_terceros.primer_nombre IS NOT NULL,CONCAT(job_terceros.primer_nombre,' '),''),
+                            IF(job_terceros.segundo_nombre IS NOT NULL,CONCAT(job_terceros.segundo_nombre,' '),''),
+                            IF(job_terceros.primer_apellido IS NOT NULL,CONCAT(job_terceros.primer_apellido,' '),''),
+                            IF(job_terceros.segundo_apellido IS NOT NULL,CONCAT(job_terceros.segundo_apellido,' '),'')
+                        )
+                    ),
+                    job_terceros.razon_social
+                )) AS tercero
+
+        FROM 	job_proyectos,
+                job_terceros,
+                job_empresas
+
+        WHERE 	
+                job_proyectos.codigo_empresa_ejecuta = job_empresas.codigo 
                 AND job_empresas.documento_identidad_tercero = job_terceros.documento_identidad
                 AND job_proyectos.codigo != 0;"
     ),

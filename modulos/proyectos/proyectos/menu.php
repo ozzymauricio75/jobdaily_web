@@ -28,7 +28,7 @@
 /*** Nombre de la vista a partir de la cual se genera la tabla ***/
 $vistaMenu     = "menu_proyectos";
 $vistaBuscador = "buscador_proyectos";
-$alineacion    = array("I","D","D","C","C","D","D");
+$alineacion    = array("I","D","D","C","C","D");
 
 /*** Devolver datos para autocompletar la busqueda ***/
 if (isset($url_completar)) {

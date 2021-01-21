@@ -245,6 +245,17 @@ $archivo->Cell(35,4,$textos["OBSERVACIONES"]." :",0,0,'L');
 $archivo->SetFont('Arial','',8);
 $archivo->Cell(150,4,"".$observaciones_orden."",0);
 $archivo->SetFont('Arial','B',8);
+$archivo->Cell(35,4,$textos["FECHA_ENTREGA_FACTURA"]." :",0,0,'L');
+$archivo->SetFont('Arial','',8);
+$archivo->Cell(70,4,"".$textos["FECHA_ENTREGA_FACTURA_TEXTO"]."",0);
+$archivo->Cell(40,4,"",0,1,'R');
+
+
+$archivo->SetFont('Arial','B',8);
+$archivo->Cell(35,4,$textos["CORREO_RECEPCION"]." :",0,0,'L');
+$archivo->SetFont('Arial','',8);
+$archivo->Cell(70,4,"".$textos["CORREO_RECEPCION_FACTURA"]."",0);
+$archivo->Cell(40,4,"",0,1,'R');
 
 if ($descuento_financiero != 0) {
     $archivo->SetFont('Arial','B',8);
@@ -444,6 +455,17 @@ if (SQL::filasDevueltas($consulta_movimiento)) {
             $archivo->SetFont('Arial','',8);
             $archivo->Cell(150,4,"".$observaciones_orden."",0);
             $archivo->SetFont('Arial','B',8);
+            $archivo->Cell(35,4,$textos["FECHA_ENTREGA_FACTURA"]." :",0,0,'L');
+            $archivo->SetFont('Arial','',8);
+            $archivo->Cell(70,4,"".$textos["FECHA_ENTREGA_FACTURA_TEXTO"]."",0);
+            $archivo->Cell(40,4,"",0,1,'R');
+
+
+            $archivo->SetFont('Arial','B',8);
+            $archivo->Cell(35,4,$textos["CORREO_RECEPCION"]." :",0,0,'L');
+            $archivo->SetFont('Arial','',8);
+            $archivo->Cell(70,4,"".$textos["CORREO_RECEPCION_FACTURA"]."",0);
+            $archivo->Cell(40,4,"",0,1,'R');
 
             if ($descuento_financiero != 0) {
                 $archivo->SetFont('Arial','B',8);
@@ -557,6 +579,16 @@ $archivo->Cell(260,4,$textos["IMPORTANTE"],0,0,'L');
 $archivo->Ln(4);
 $archivo->SetFont('Arial','',8);
 $archivo->Cell(260,4,$textos["IMPORTANTE2"],0,0,'L');
+$archivo->Ln(4);
+$archivo->SetFont('Arial','',8);
+$archivo->Cell(260,4,$textos["CORREO_RECEPCION"],0,0,'L');
+$archivo->Ln(4);
+$archivo->Cell(260,4,$textos["CORREO_RECEPCION_FACTURA"],0,0,'L');
+$archivo->SetFont('Arial','',8);
+$archivo->Ln(4);
+$archivo->Cell(260,4,$textos["CORREO_RECEPCION"],0,0,'L');
+$archivo->Ln(4);
+$archivo->Cell(260,4,$textos["CORREO_RECEPCION_FACTURA"],0,0,'L');
 
 $archivo->Output($nombreArchivo, "F");
 

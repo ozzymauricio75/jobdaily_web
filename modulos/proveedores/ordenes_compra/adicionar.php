@@ -211,6 +211,7 @@ if (isset($url_completar)) {
         //$documento_identidad_proveedor = SQL::obtenerValor("seleccion_proveedores", "nombre", "id = '$documento_identidad_proveedor'");
  
         // Realiza consulta para mandar datos a java script y cargar si codigo existe - faltan algunos no esenciales
+
         $consulta                = SQL::seleccionar(array("articulos"), array("*"), "codigo = '$codigo_articulo' AND activo = '1'", "", "codigo", 1);
         $codigo_impuesto_compra  = SQL::obtenerValor("articulos", "codigo_impuesto_compra", "codigo = '$codigo_articulo'");
         $nombre_impuesto_compra  = SQL::obtenerValor("tasas", "descripcion", "codigo = '$codigo_impuesto_compra'");
@@ -224,6 +225,7 @@ if (isset($url_completar)) {
         $costo                   = SQL::obtenerValor("lista_precio_articulos", "costo", "codigo_articulo = '$codigo_articulo'");
         $consulta_imagen         = SQL::seleccionar(array("imagenes"), array("id_asociado","categoria","ancho","alto"), "id_asociado = '$codigo_articulo' AND categoria ='2'");
         $imagen                  = SQL::filaEnObjeto($consulta_imagen);
+        
         if ($imagen) {
             $id_asociado = $imagen->id_asociado;
             $categoria   = $imagen->categoria;
@@ -290,7 +292,8 @@ if (isset($url_completar)) {
 
         $empresa              = $url_empresa;
         $razon_social_empresa = SQL::obtenerValor("empresas", "razon_social", "codigo = '$empresa'");
-        $consulta             = SQL::seleccionar(array("menu_compradores"), array("*"), "RAZON_SOCIAL = '$razon_social_empresa'");
+        //$consulta             = SQL::seleccionar(array("menu_compradores"), array("*"), "RAZON_SOCIAL = '$razon_social_empresa'");
+        $consulta             = SQL::seleccionar(array("menu_compradores"), array("*"), "RAZON_SOCIAL != ''");
         $tabla                = array();
 
         if (SQL::filasDevueltas($consulta)) {
